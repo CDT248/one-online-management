@@ -2,117 +2,373 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#087f5b">
-  <title>ONE ONLINE | Management System</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#087f5b">
+<title>ONE ONLINE | Login</title>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      min-height: 100vh;
-      display: grid;
-      place-items: center;
-      padding: 20px;
-      background: #f0f5f3;
-      color: #172033;
-      font-family: Arial, sans-serif;
-    }
-
-    .card {
-      width: 100%;
-      max-width: 430px;
-      padding: 35px 25px;
-      background: white;
-      border-radius: 18px;
-      text-align: center;
-      box-shadow: 0 10px 35px #00000012;
-    }
-
-    .logo {
-      width: 65px;
-      height: 65px;
-      margin: 0 auto 18px;
-      display: grid;
-      place-items: center;
-      border-radius: 18px;
-      background: #087f5b;
-      color: white;
-      font-size: 35px;
-      font-weight: bold;
-    }
-
-    h1 { font-size: 25px; margin-bottom: 8px; }
-    p { color: #64748b; line-height: 1.6; }
-
-    .status {
-      display: inline-block;
-      margin-top: 22px;
-      padding: 10px 16px;
-      border-radius: 30px;
-      background: #f1f5f9;
-      color: #475569;
-      font-size: 13px;
-      font-weight: bold;
-    }
-
-    .success { background: #dcfce7; color: #166534; }
-    .error { background: #fee2e2; color: #991b1b; }
-  </style>
+<style>
+:root {
+  --primary:#087f5b;
+  --bg:#f0f5f3;
+  --card:#ffffff;
+  --text:#172033;
+  --muted:#64748b;
+  --border:#e2e8f0;
+}
+* {box-sizing:border-box;margin:0;padding:0}
+body {
+  min-height:100vh;
+  display:grid;
+  place-items:center;
+  padding:20px;
+  background:var(--bg);
+  color:var(--text);
+  font-family:Arial,sans-serif;
+}
+.container {width:100%;max-width:420px}
+.card {
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:20px;
+  padding:32px 25px;
+  box-shadow:0 15px 45px #0000000d;
+}
+.logo {
+  width:65px;height:65px;
+  display:grid;place-items:center;
+  margin:0 auto 16px;
+  background:var(--primary);
+  color:white;border-radius:18px;
+  font-size:34px;font-weight:bold;
+}
+.heading{text-align:center;margin-bottom:27px}
+.heading h1{font-size:25px;margin-bottom:7px}
+.heading p{color:var(--muted);font-size:14px}
+label {
+  display:block;font-size:13px;
+  font-weight:bold;margin:16px 0 7px;
+}
+input {
+  width:100%;height:48px;
+  border:1px solid var(--border);
+  border-radius:10px;padding:0 13px;
+  font-size:15px;outline:none;
+  background:var(--card);color:var(--text);
+}
+input:focus {border-color:var(--primary)}
+button {
+  width:100%;height:48px;
+  border:0;border-radius:10px;
+  background:var(--primary);
+  color:white;font-size:15px;
+  font-weight:bold;cursor:pointer;
+  margin-top:22px;
+}
+button:disabled{opacity:.6;cursor:not-allowed}
+.message {
+  display:none;padding:12px;
+  margin-top:16px;border-radius:9px;
+  font-size:13px;line-height:1.5;
+  overflow-wrap:anywhere;
+}
+.error{display:block;background:#fee2e2;color:#991b1b}
+.success{display:block;background:#dcfce7;color:#166534}
+.info{display:block;background:#e0f2fe;color:#075985}
+.profile {
+  display:none;text-align:center;
+}
+.avatar {
+  width:70px;height:70px;border-radius:50%;
+  margin:0 auto 15px;background:#dcfce7;
+  color:#087f5b;display:grid;place-items:center;
+  font-size:30px;font-weight:bold;
+}
+.role {
+  display:inline-block;margin-top:12px;
+  background:#dcfce7;color:#166534;
+  padding:8px 15px;border-radius:30px;
+  font-size:13px;font-weight:bold;
+}
+.details {
+  margin-top:22px;padding:15px;
+  border:1px solid var(--border);
+  border-radius:12px;text-align:left;
+  line-height:2;font-size:14px;
+  overflow-wrap:anywhere;
+}
+.logout {background:#dc2626}
+.footer {
+  text-align:center;color:var(--muted);
+  font-size:12px;margin-top:20px;
+}
+@media(max-width:480px) {
+  .card{padding:27px 20px}
+}
+</style>
 </head>
 
 <body>
+<div class="container">
   <main class="card">
-    <div class="logo">O</div>
-    <h1>ONE ONLINE</h1>
-    <p>Management System</p>
-    <div id="status" class="status">Connecting to Database...</div>
+
+    <section id="loginSection">
+      <div class="logo">O</div>
+      <div class="heading">
+        <h1>ONE ONLINE</h1>
+        <p>Management System</p>
+      </div>
+
+      <form id="loginForm">
+        <label for="email">Email Address</label>
+        <input id="email" type="email"
+          placeholder="Enter your email"
+          autocomplete="username" required>
+
+        <label for="password">Password</label>
+        <input id="password" type="password"
+          placeholder="Enter your password"
+          autocomplete="current-password" required>
+
+        <button id="loginButton" type="submit">
+          Sign In
+        </button>
+      </form>
+
+      <div id="loginMessage" class="message"></div>
+    </section>
+
+    <section id="profileSection" class="profile">
+      <div class="logo">O</div>
+      <div class="heading">
+        <h1>ONE ONLINE</h1>
+        <p>Welcome to Management System</p>
+      </div>
+
+      <div class="avatar" id="avatar">U</div>
+      <h2 id="userName">User</h2>
+      <div class="role" id="userRole">USER</div>
+
+      <div class="details">
+        <div><b>Email:</b> <span id="userEmail"></span></div>
+        <div><b>Account:</b> <span id="userStatus"></span></div>
+        <div><b>Access:</b> <span id="userAccess"></span></div>
+      </div>
+
+      <div id="profileMessage" class="message"></div>
+
+      <button id="logoutButton" class="logout">
+        Sign Out
+      </button>
+    </section>
+
   </main>
 
-  <script>
-    const SUPABASE_URL = "https://hcxolagfqzpycrsoigch.supabase.co";
-    const SUPABASE_KEY = "sb_publishable_LQtGMu4GZZ6XpXm6VBhzAw_dr2y4URL ";
+  <div class="footer">
+    © ONE ONLINE | Management System
+  </div>
+</div>
 
-    const statusBox = document.getElementById("status");
+<script>
+/* =====================================
+   SUPABASE CONFIGURATION
+===================================== */
 
-    async function connectDatabase() {
-      try {
-        if (!window.supabase) {
-          throw new Error("Supabase library could not load.");
-        }
+const SUPABASE_URL =
+  "https://hcxolagfqzpycrsoigch.supabase.co";
 
-        if (
-          SUPABASE_URL.includes("YOUR_") ||
-          SUPABASE_KEY.includes("YOUR_")
-        ) {
-          throw new Error("Supabase configuration is missing.");
-        }
+const SUPABASE_KEY =
+  "sb_publishable_LQtGMu4GZZ6XpXm6VBhzAw_dr2y4gwn";
 
-        const client = window.supabase.createClient(
-          SUPABASE_URL,
-          SUPABASE_KEY
-        );
+/* =====================================
+   INITIALIZE
+===================================== */
 
-        const { error } = await client.auth.getSession();
+const loginSection = document.getElementById("loginSection");
+const profileSection = document.getElementById("profileSection");
+const loginMessage = document.getElementById("loginMessage");
+const profileMessage = document.getElementById("profileMessage");
+const loginButton = document.getElementById("loginButton");
 
-        if (error) throw error;
+let db = null;
 
-        window.ONE_ONLINE_DB = client;
+function showMessage(element, message, type) {
+  element.textContent = message;
+  element.className = "message " + type;
+}
 
-        statusBox.textContent = "Supabase Connected Successfully";
-        statusBox.className = "status success";
+function showLogin() {
+  loginSection.style.display = "block";
+  profileSection.style.display = "none";
+}
 
-      } catch (error) {
-        console.error(error);
-        statusBox.textContent = "Connection Failed: " + error.message;
-        statusBox.className = "status error";
-      }
+function showProfile() {
+  loginSection.style.display = "none";
+  profileSection.style.display = "block";
+}
+
+function formatRole(role) {
+  return String(role || "guest")
+    .replaceAll("_", " ")
+    .toUpperCase();
+}
+
+/* =====================================
+   LOAD USER PROFILE
+===================================== */
+
+async function loadUserProfile(user) {
+  const { data, error } = await db
+    .from("profiles")
+    .select("id, role, status, permissions")
+    .eq("id", user.id)
+    .single();
+
+  if (error || !data) {
+    throw new Error(
+      "Profile not found. Please contact Super Admin."
+    );
+  }
+
+  if (data.status !== "active") {
+    await db.auth.signOut();
+    throw new Error(
+      "Your account is inactive. Contact Super Admin."
+    );
+  }
+
+  document.getElementById("userName").textContent =
+    user.user_metadata?.full_name || user.email;
+
+  document.getElementById("avatar").textContent =
+    (user.email || "U").charAt(0).toUpperCase();
+
+  document.getElementById("userEmail").textContent =
+    user.email || "";
+
+  document.getElementById("userRole").textContent =
+    formatRole(data.role);
+
+  document.getElementById("userStatus").textContent =
+    data.status;
+
+  document.getElementById("userAccess").textContent =
+    data.role === "super_admin"
+      ? "Full Administration"
+      : "Permission Based";
+
+  showProfile();
+}
+
+/* =====================================
+   CHECK EXISTING SESSION
+===================================== */
+
+async function checkSession() {
+  const { data, error } = await db.auth.getSession();
+
+  if (error) throw error;
+
+  if (data.session) {
+    await loadUserProfile(data.session.user);
+  } else {
+    showLogin();
+  }
+}
+
+/* =====================================
+   LOGIN
+===================================== */
+
+document.getElementById("loginForm")
+.addEventListener("submit", async function(e) {
+  e.preventDefault();
+
+  loginButton.disabled = true;
+  loginButton.textContent = "Signing In...";
+
+  loginMessage.className = "message";
+
+  const email =
+    document.getElementById("email").value.trim();
+
+  const password =
+    document.getElementById("password").value;
+
+  try {
+    const { data, error } = await db.auth
+      .signInWithPassword({ email, password });
+
+    if (error) throw error;
+
+    await loadUserProfile(data.user);
+
+  } catch (error) {
+    showLogin();
+    showMessage(loginMessage, error.message, "error");
+
+  } finally {
+    loginButton.disabled = false;
+    loginButton.textContent = "Sign In";
+  }
+});
+
+/* =====================================
+   LOGOUT
+===================================== */
+
+document.getElementById("logoutButton")
+.addEventListener("click", async function() {
+  const button = this;
+  button.disabled = true;
+  button.textContent = "Signing Out...";
+
+  try {
+    const { error } = await db.auth.signOut();
+    if (error) throw error;
+
+    document.getElementById("loginForm").reset();
+    showLogin();
+
+  } catch (error) {
+    showMessage(profileMessage, error.message, "error");
+
+  } finally {
+    button.disabled = false;
+    button.textContent = "Sign Out";
+  }
+});
+
+/* =====================================
+   START APPLICATION
+===================================== */
+
+async function startApp() {
+  try {
+    if (!window.supabase) {
+      throw new Error("Supabase library failed to load.");
     }
 
-    connectDatabase();
-  </script>
+    if (SUPABASE_KEY.includes("PASTE_")) {
+      throw new Error("Please add your Publishable Key.");
+    }
+
+    db = window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_KEY
+    );
+
+    await checkSession();
+
+  } catch (error) {
+    showLogin();
+    showMessage(loginMessage, error.message, "error");
+  }
+}
+
+startApp();
+</script>
 </body>
 </html>
