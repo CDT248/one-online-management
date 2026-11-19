@@ -6,7 +6,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#087f5b">
 <title>ONE ONLINE | Management System</title>
-
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
@@ -23,997 +22,626 @@
   --shadow:0 8px 25px rgba(0,0,0,.05);
 }
 *{box-sizing:border-box;margin:0;padding:0}
-body{
-  min-height:100vh;
-  background:var(--bg);
-  color:var(--text);
-  font-family:Arial,sans-serif;
-}
+body{min-height:100vh;background:var(--bg);color:var(--text);font-family:Arial,sans-serif}
 button,input{font:inherit}
 button{cursor:pointer}
 .hidden{display:none!important}
 
 /* LOGIN */
-.auth-wrap{
-  min-height:100vh;
-  display:grid;
-  place-items:center;
-  padding:20px;
-}
-.auth-card{
-  width:100%;
-  max-width:440px;
-  padding:30px 25px;
-  background:var(--card);
-  border:1px solid var(--border);
-  border-radius:20px;
-  box-shadow:var(--shadow);
-}
-.logo{
-  width:65px;height:65px;
-  margin:0 auto 16px;
-  display:grid;place-items:center;
-  border-radius:18px;
-  background:var(--primary);
-  color:#fff;font-size:35px;font-weight:bold;
-}
+.auth-wrap{min-height:100vh;display:grid;place-items:center;padding:20px}
+.auth-card{width:100%;max-width:440px;padding:30px 25px;background:var(--card);border:1px solid var(--border);border-radius:20px;box-shadow:var(--shadow)}
+.logo{width:65px;height:65px;margin:0 auto 16px;display:grid;place-items:center;border-radius:18px;background:var(--primary);color:#fff;font-size:35px;font-weight:bold}
 .heading{text-align:center;margin-bottom:25px}
 .heading h1{font-size:25px;margin-bottom:8px}
 .heading p{font-size:14px;color:var(--muted)}
-label{
-  display:block;margin:16px 0 7px;
-  font-size:13px;font-weight:bold;
-}
-input{
-  width:100%;height:48px;padding:0 13px;
-  border:1px solid var(--border);
-  border-radius:10px;background:var(--input);
-  color:var(--text);outline:none;
-}
+label{display:block;margin:16px 0 7px;font-size:13px;font-weight:bold}
+input{width:100%;height:48px;padding:0 13px;border:1px solid var(--border);border-radius:10px;background:var(--input);color:var(--text);outline:none}
 input:focus{border-color:var(--primary)}
-.btn{
-  border:0;border-radius:10px;
-  background:var(--primary);color:white;
-  padding:13px 18px;font-weight:bold;
-}
+.btn{border:0;border-radius:10px;background:var(--primary);color:white;padding:13px 18px;font-weight:bold}
 .btn:disabled{opacity:.6;cursor:not-allowed}
 .full{width:100%;margin-top:20px}
-.secondary{
-  background:transparent;color:var(--primary);
-  border:1px solid var(--border);
-}
-.link{
-  display:block;margin-top:17px;text-align:center;
-  color:var(--primary);font-size:13px;
-  font-weight:bold;cursor:pointer;
-}
-.message{
-  display:none;padding:13px;margin-top:16px;
-  border-radius:10px;font-size:13px;
-  line-height:1.6;overflow-wrap:anywhere;
-}
+.secondary{background:transparent;color:var(--primary);border:1px solid var(--border)}
+.link{display:block;margin-top:17px;text-align:center;color:var(--primary);font-size:13px;font-weight:bold;cursor:pointer}
+.message{display:none;padding:13px;margin-top:16px;border-radius:10px;font-size:13px;line-height:1.6;overflow-wrap:anywhere}
 .error{display:block;background:#fee2e2;color:#991b1b}
 .success{display:block;background:#dcfce7;color:#166534}
 .info{display:block;background:#e0f2fe;color:#075985}
-.auth-footer{
-  margin-top:20px;text-align:center;
-  color:var(--muted);font-size:12px;
-}
 
 /* APPLICATION */
 #appSection{display:none;min-height:100vh}
-.sidebar{
-  position:fixed;left:0;top:0;bottom:0;
-  width:255px;background:var(--sidebar);
-  border-right:1px solid var(--border);
-  z-index:30;display:flex;flex-direction:column;
-  transition:transform .25s;
-}
-.brand{
-  height:82px;padding:16px 20px;
-  display:flex;align-items:center;gap:12px;
-  border-bottom:1px solid var(--border);
-}
-.brand-logo{
-  width:43px;height:43px;flex-shrink:0;
-  display:grid;place-items:center;
-  background:var(--primary);color:white;
-  border-radius:12px;font-size:25px;font-weight:bold;
-}
+.sidebar{position:fixed;left:0;top:0;bottom:0;width:255px;background:var(--sidebar);border-right:1px solid var(--border);z-index:30;display:flex;flex-direction:column;transition:transform .25s}
+.brand{height:82px;padding:16px 20px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border)}
+.brand-logo{width:43px;height:43px;flex-shrink:0;display:grid;place-items:center;background:var(--primary);color:white;border-radius:12px;font-size:25px;font-weight:bold}
 .brand-name{font-size:16px;font-weight:bold}
 .brand-sub{font-size:10px;color:var(--muted);margin-top:4px}
 .nav-area{padding:20px 13px;overflow-y:auto;flex:1}
-.nav-label{
-  color:var(--muted);font-size:10px;
-  font-weight:bold;letter-spacing:1px;
-  padding:8px 12px;
-}
-.nav-link{
-  display:flex;align-items:center;gap:12px;
-  width:100%;padding:13px 12px;
-  border:0;border-radius:9px;
-  background:transparent;color:var(--muted);
-  text-align:left;font-size:14px;
-  margin:3px 0;
-}
-.nav-link:hover,.nav-link.active{
-  background:var(--primary-light);
-  color:var(--primary);font-weight:bold;
-}
+.nav-label{color:var(--muted);font-size:10px;font-weight:bold;letter-spacing:1px;padding:8px 12px}
+.nav-link{display:flex;align-items:center;gap:12px;width:100%;padding:13px 12px;border:0;border-radius:9px;background:transparent;color:var(--muted);text-align:left;font-size:14px;margin:3px 0}
+.nav-link:hover,.nav-link.active{background:var(--primary-light);color:var(--primary);font-weight:bold}
 .nav-icon{width:22px;text-align:center;font-size:17px}
-.sidebar-bottom{
-  padding:15px;border-top:1px solid var(--border);
-}
-.account-mini{
-  display:flex;align-items:center;gap:10px;
-  padding:8px;
-}
-.mini-avatar{
-  width:38px;height:38px;border-radius:50%;
-  display:grid;place-items:center;
-  background:var(--primary-light);
-  color:var(--primary);font-weight:bold;
-}
+.sidebar-bottom{padding:15px;border-top:1px solid var(--border)}
+.account-mini{display:flex;align-items:center;gap:10px;padding:8px}
+.mini-avatar{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:var(--primary-light);color:var(--primary);font-weight:bold}
 .mini-info{min-width:0}
 .mini-name{font-size:13px;font-weight:bold}
 .mini-role{font-size:11px;color:var(--muted);margin-top:4px}
-
 .main-area{margin-left:255px;min-height:100vh}
-.topbar{
-  height:70px;background:var(--card);
-  border-bottom:1px solid var(--border);
-  display:flex;align-items:center;justify-content:space-between;
-  padding:0 28px;position:sticky;top:0;z-index:20;
-}
+.topbar{height:70px;background:var(--card);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:sticky;top:0;z-index:20}
 .top-left{display:flex;align-items:center;gap:14px}
 .top-title{font-size:17px;font-weight:bold}
 .top-right{display:flex;align-items:center;gap:12px}
-.icon-btn{
-  width:40px;height:40px;border:1px solid var(--border);
-  background:var(--card);color:var(--text);
-  border-radius:10px;font-size:18px;
-}
-.profile-top{
-  display:flex;align-items:center;gap:9px;
-  border:0;background:transparent;color:var(--text);
-  text-align:left;
-}
-.top-avatar{
-  width:36px;height:36px;border-radius:50%;
-  background:var(--primary-light);color:var(--primary);
-  display:grid;place-items:center;font-weight:bold;
-}
+.icon-btn{width:40px;height:40px;border:1px solid var(--border);background:var(--card);color:var(--text);border-radius:10px;font-size:18px}
+.profile-top{display:flex;align-items:center;gap:9px;border:0;background:transparent;color:var(--text);text-align:left}
+.top-avatar{width:36px;height:36px;border-radius:50%;background:var(--primary-light);color:var(--primary);display:grid;place-items:center;font-weight:bold}
 .top-user{font-size:12px;font-weight:bold}
 .top-user small{display:block;color:var(--muted);margin-top:3px}
-
 .content{padding:28px;max-width:1500px;margin:auto}
-.page-heading{
-  display:flex;justify-content:space-between;
-  align-items:flex-start;gap:15px;margin-bottom:25px;
-}
+.page-heading{display:flex;justify-content:space-between;align-items:flex-start;gap:15px;margin-bottom:25px}
 .page-heading h1{font-size:24px;margin-bottom:7px}
 .page-heading p{font-size:13px;color:var(--muted)}
-.welcome-tag{
-  display:inline-block;padding:8px 12px;
-  border-radius:30px;background:var(--primary-light);
-  color:var(--primary);font-size:12px;font-weight:bold;
-}
-.stats-grid{
-  display:grid;
-  grid-template-columns:repeat(3,minmax(0,1fr));
-  gap:17px;margin-bottom:25px;
-}
-.stat-card{
-  background:var(--card);border:1px solid var(--border);
-  border-radius:15px;padding:20px;
-  box-shadow:var(--shadow);
-}
-.stat-top{
-  display:flex;align-items:center;
-  justify-content:space-between;margin-bottom:18px;
-}
-.stat-icon{
-  width:43px;height:43px;border-radius:12px;
-  display:grid;place-items:center;font-size:21px;
-  background:var(--primary-light);
-}
+.welcome-tag{display:inline-block;padding:8px 12px;border-radius:30px;background:var(--primary-light);color:var(--primary);font-size:12px;font-weight:bold}
+.stats-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:17px;margin-bottom:25px}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:15px;padding:20px;box-shadow:var(--shadow)}
+.stat-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.stat-icon{width:43px;height:43px;border-radius:12px;display:grid;place-items:center;font-size:21px;background:var(--primary-light)}
 .stat-label{font-size:13px;color:var(--muted)}
 .stat-value{font-size:26px;font-weight:bold}
 .stat-note{font-size:11px;color:var(--muted);margin-top:7px}
-
-.section-card{
-  background:var(--card);border:1px solid var(--border);
-  border-radius:15px;padding:22px;
-  box-shadow:var(--shadow);margin-bottom:20px;
-}
+.section-card{background:var(--card);border:1px solid var(--border);border-radius:15px;padding:22px;box-shadow:var(--shadow);margin-bottom:20px}
 .section-title{font-size:16px;font-weight:bold;margin-bottom:7px}
 .section-desc{font-size:12px;color:var(--muted);line-height:1.6}
-.quick-grid{
-  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
-  gap:13px;margin-top:18px;
-}
-.quick-item{
-  padding:17px;border:1px solid var(--border);
-  border-radius:12px;background:var(--card);
-  color:var(--text);text-align:left;
-}
+.quick-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin-top:18px}
+.quick-item{padding:17px;border:1px solid var(--border);border-radius:12px;background:var(--card);color:var(--text);text-align:left}
 .quick-item:hover{border-color:var(--primary)}
 .quick-icon{font-size:23px;margin-bottom:12px}
 .quick-item b{display:block;font-size:13px}
 .quick-item small{display:block;color:var(--muted);font-size:11px;margin-top:6px}
-
-.profile-grid{
-  display:grid;grid-template-columns:1fr 2fr;
-  gap:20px;
-}
-.profile-summary{
-  background:var(--card);border:1px solid var(--border);
-  border-radius:15px;padding:25px;text-align:center;
-}
-.big-avatar{
-  width:80px;height:80px;border-radius:50%;
-  margin:5px auto 15px;display:grid;place-items:center;
-  background:var(--primary-light);color:var(--primary);
-  font-size:30px;font-weight:bold;
-}
+.profile-grid{display:grid;grid-template-columns:1fr 2fr;gap:20px}
+.profile-summary{background:var(--card);border:1px solid var(--border);border-radius:15px;padding:25px;text-align:center}
+.big-avatar{width:80px;height:80px;border-radius:50%;margin:5px auto 15px;display:grid;place-items:center;background:var(--primary-light);color:var(--primary);font-size:30px;font-weight:bold}
 .profile-summary h2{font-size:18px}
-.role-badge{
-  display:inline-block;margin-top:12px;padding:8px 15px;
-  border-radius:30px;background:var(--primary-light);
-  color:var(--primary);font-size:11px;font-weight:bold;
-}
-.profile-details{
-  background:var(--card);border:1px solid var(--border);
-  border-radius:15px;padding:22px;
-}
-.detail-row{
-  display:flex;justify-content:space-between;
-  gap:15px;padding:15px 0;
-  border-bottom:1px solid var(--border);font-size:13px;
-}
+.role-badge{display:inline-block;margin-top:12px;padding:8px 15px;border-radius:30px;background:var(--primary-light);color:var(--primary);font-size:11px;font-weight:bold}
+.profile-details{background:var(--card);border:1px solid var(--border);border-radius:15px;padding:22px}
+.detail-row{display:flex;justify-content:space-between;gap:15px;padding:15px 0;border-bottom:1px solid var(--border);font-size:13px}
 .detail-row:last-child{border-bottom:0}
 .detail-row span:first-child{color:var(--muted)}
-.detail-row span:last-child{
-  font-weight:bold;text-align:right;overflow-wrap:anywhere;
-}
-.page-footer{
-  text-align:center;color:var(--muted);
-  font-size:11px;padding:25px 0;
-}
-.mobile-menu{display:none}
-.overlay{
-  display:none;position:fixed;inset:0;
-  background:#0008;z-index:25;
-}
+.detail-row span:last-child{font-weight:bold;text-align:right;overflow-wrap:anywhere}
 
-/* RESPONSIVE */
-@media(max-width:1000px){
-  .stats-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
-}
+/* PASSWORD CHANGE */
+.password-card{max-width:650px}
+.password-card input{margin-bottom:3px}
+.password-help{font-size:12px;color:var(--muted);line-height:1.6;margin-top:12px}
+.password-card .btn{margin-top:18px}
+.page-footer{text-align:center;color:var(--muted);font-size:11px;padding:25px 0}
+.mobile-menu{display:none}
+.overlay{display:none;position:fixed;inset:0;background:#0008;z-index:25}
+
+@media(max-width:1000px){.stats-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:700px){
-  .sidebar{transform:translateX(-100%)}
-  .sidebar.open{transform:translateX(0)}
-  .overlay.show{display:block}
-  .main-area{margin-left:0}
-  .topbar{padding:0 15px;height:62px}
-  .mobile-menu{display:block}
-  .content{padding:20px 15px}
-  .page-heading h1{font-size:21px}
-  .stats-grid{grid-template-columns:1fr 1fr;gap:10px}
-  .stat-card{padding:15px}
-  .stat-value{font-size:22px}
-  .quick-grid{grid-template-columns:1fr 1fr}
-  .profile-grid{grid-template-columns:1fr}
-  .top-user{display:none}
+.sidebar{transform:translateX(-100%)}
+.sidebar.open{transform:translateX(0)}
+.overlay.show{display:block}
+.main-area{margin-left:0}
+.topbar{padding:0 15px;height:62px}
+.mobile-menu{display:block}
+.content{padding:20px 15px}
+.page-heading h1{font-size:21px}
+.stats-grid{grid-template-columns:1fr 1fr;gap:10px}
+.stat-card{padding:15px}
+.stat-value{font-size:22px}
+.quick-grid{grid-template-columns:1fr 1fr}
+.profile-grid{grid-template-columns:1fr}
+.top-user{display:none}
 }
-@media(max-width:380px){
-  .stats-grid{grid-template-columns:1fr}
-  .quick-grid{grid-template-columns:1fr}
+@media(max-width:380px){.stats-grid,.quick-grid{grid-template-columns:1fr}}
+@media(prefers-color-scheme:dark){
+:root{
+--bg:#101827;--card:#192536;--text:#f1f5f9;
+--muted:#a0aec0;--border:#344256;--sidebar:#192536;
+--input:#111d2d;--primary-light:#173d34;
+}
 }
 </style>
 </head>
 
 <body>
 
-<!-- AUTHENTICATION -->
 <div class="auth-wrap" id="authWrap">
-  <main class="auth-card">
+<main class="auth-card">
 
-    <section id="loginSection">
-      <div class="logo">O</div>
-      <div class="heading">
-        <h1>ONE ONLINE</h1>
-        <p>Management System</p>
-      </div>
+<section id="loginSection">
+<div class="logo">O</div>
+<div class="heading"><h1>ONE ONLINE</h1><p>Management System</p></div>
+<form id="loginForm">
+<label>Email Address</label>
+<input id="email" type="email" placeholder="Enter your email" autocomplete="username" required>
+<label>Password</label>
+<input id="password" type="password" placeholder="Enter your password" autocomplete="current-password" required>
+<button class="btn full" id="loginButton" type="submit">Sign In</button>
+</form>
+<span class="link" id="forgotButton">Forgot Password?</span>
+<div id="loginMessage" class="message"></div>
+</section>
 
-      <form id="loginForm">
-        <label>Email Address</label>
-        <input id="email" type="email" placeholder="Enter your email"
-          autocomplete="username" required>
+<section id="forgotSection" class="hidden">
+<div class="logo">O</div>
+<div class="heading"><h1>Reset Password</h1><p>Enter your registered email address</p></div>
+<label>Email Address</label>
+<input id="resetEmail" type="email" placeholder="Your email">
+<button class="btn full" id="sendResetButton">Send Reset Email</button>
+<button class="btn secondary full" id="backLoginButton">Back to Login</button>
+<div id="resetMessage" class="message"></div>
+</section>
 
-        <label>Password</label>
-        <input id="password" type="password" placeholder="Enter your password"
-          autocomplete="current-password" required>
+<section id="updateSection" class="hidden">
+<div class="logo">O</div>
+<div class="heading"><h1>New Password</h1><p>Create your new account password</p></div>
+<label>New Password</label>
+<input id="newPassword" type="password" placeholder="New password">
+<label>Confirm Password</label>
+<input id="confirmPassword" type="password" placeholder="Confirm password">
+<button class="btn full" id="updatePasswordButton">Update Password</button>
+<div id="updateMessage" class="message"></div>
+</section>
 
-        <button class="btn full" id="loginButton" type="submit">Sign In</button>
-      </form>
-
-      <span class="link" id="forgotButton">Forgot Password?</span>
-      <div id="loginMessage" class="message"></div>
-    </section>
-
-    <section id="forgotSection" class="hidden">
-      <div class="logo">O</div>
-      <div class="heading">
-        <h1>Reset Password</h1>
-        <p>Enter your registered email address</p>
-      </div>
-      <label>Email Address</label>
-      <input id="resetEmail" type="email" placeholder="Your email">
-      <button class="btn full" id="sendResetButton">Send Reset Email</button>
-      <button class="btn secondary full" id="backLoginButton">Back to Login</button>
-      <div id="resetMessage" class="message"></div>
-    </section>
-
-    <section id="updateSection" class="hidden">
-      <div class="logo">O</div>
-      <div class="heading">
-        <h1>New Password</h1>
-        <p>Create your new account password</p>
-      </div>
-      <label>New Password</label>
-      <input id="newPassword" type="password" placeholder="New password">
-      <label>Confirm Password</label>
-      <input id="confirmPassword" type="password" placeholder="Confirm password">
-      <button class="btn full" id="updatePasswordButton">Update Password</button>
-      <div id="updateMessage" class="message"></div>
-    </section>
-
-  </main>
+</main>
 </div>
 
-<!-- MAIN APPLICATION -->
 <div id="appSection">
+<div class="overlay" id="overlay"></div>
 
-  <div class="overlay" id="overlay"></div>
+<aside class="sidebar" id="sidebar">
+<div class="brand">
+<div class="brand-logo">O</div>
+<div><div class="brand-name">ONE ONLINE</div><div class="brand-sub">MANAGEMENT SYSTEM</div></div>
+</div>
 
-  <aside class="sidebar" id="sidebar">
-    <div class="brand">
-      <div class="brand-logo">O</div>
-      <div>
-        <div class="brand-name">ONE ONLINE</div>
-        <div class="brand-sub">MANAGEMENT SYSTEM</div>
-      </div>
-    </div>
+<nav class="nav-area">
+<div class="nav-label">MAIN MENU</div>
+<button class="nav-link active" data-page="dashboard"><span class="nav-icon">▦</span> Dashboard</button>
+<div class="nav-label" style="margin-top:15px">ACCOUNT</div>
+<button class="nav-link" data-page="account"><span class="nav-icon">👤</span> My Account</button>
+</nav>
 
-    <nav class="nav-area">
-      <div class="nav-label">MAIN MENU</div>
+<div class="sidebar-bottom">
+<div class="account-mini">
+<div class="mini-avatar" id="sideAvatar">U</div>
+<div class="mini-info"><div class="mini-name" id="sideName">User</div><div class="mini-role" id="sideRole">USER</div></div>
+</div>
+<button class="btn full" id="sideLogout">Sign Out</button>
+</div>
+</aside>
 
-      <button class="nav-link active" data-page="dashboard">
-        <span class="nav-icon">▦</span> Dashboard
-      </button>
+<main class="main-area">
+<header class="topbar">
+<div class="top-left">
+<button class="icon-btn mobile-menu" id="menuButton">☰</button>
+<div class="top-title" id="topTitle">Dashboard</div>
+</div>
+<div class="top-right">
+<button class="profile-top" id="topAccount">
+<div class="top-avatar" id="topAvatar">U</div>
+<div class="top-user"><span id="topName">User</span><small id="topRole">USER</small></div>
+</button>
+</div>
+</header>
 
-      <div class="nav-label" style="margin-top:15px">ACCOUNT</div>
+<div class="content">
 
-      <button class="nav-link" data-page="account">
-        <span class="nav-icon">👤</span> My Account
-      </button>
-    </nav>
+<section id="dashboardPage">
+<div class="page-heading">
+<div><h1>Dashboard</h1><p>Welcome to ONE ONLINE Management System</p></div>
+<span class="welcome-tag" id="welcomeRole">SUPER ADMIN</span>
+</div>
 
-    <div class="sidebar-bottom">
-      <div class="account-mini">
-        <div class="mini-avatar" id="sideAvatar">U</div>
-        <div class="mini-info">
-          <div class="mini-name" id="sideName">User</div>
-          <div class="mini-role" id="sideRole">USER</div>
-        </div>
-      </div>
-      <button class="btn full" id="sideLogout">Sign Out</button>
-    </div>
-  </aside>
+<div class="stats-grid">
+<div class="stat-card"><div class="stat-top"><span class="stat-label">Total Customers</span><span class="stat-icon">👥</span></div><div class="stat-value">—</div><div class="stat-note">Database connection pending</div></div>
+<div class="stat-card"><div class="stat-top"><span class="stat-label">Active Customers</span><span class="stat-icon">🟢</span></div><div class="stat-value">—</div><div class="stat-note">Database connection pending</div></div>
+<div class="stat-card"><div class="stat-top"><span class="stat-label">Due Customers</span><span class="stat-icon">⏳</span></div><div class="stat-value">—</div><div class="stat-note">Database connection pending</div></div>
+<div class="stat-card"><div class="stat-top"><span class="stat-label">Total Collection</span><span class="stat-icon">💰</span></div><div class="stat-value">—</div><div class="stat-note">Database connection pending</div></div>
+<div class="stat-card"><div class="stat-top"><span class="stat-label">Total Spend</span><span class="stat-icon">💳</span></div><div class="stat-value">—</div><div class="stat-note">Database connection pending</div></div>
+<div class="stat-card"><div class="stat-top"><span class="stat-label">Net Balance</span><span class="stat-icon">📊</span></div><div class="stat-value">—</div><div class="stat-note">Database connection pending</div></div>
+</div>
 
-  <main class="main-area">
-    <header class="topbar">
-      <div class="top-left">
-        <button class="icon-btn mobile-menu" id="menuButton">☰</button>
-        <div class="top-title" id="topTitle">Dashboard</div>
-      </div>
+<div class="section-card">
+<div class="section-title">Quick Access</div>
+<div class="section-desc">Frequently used management options.</div>
+<div class="quick-grid">
+<button class="quick-item"><div class="quick-icon">👥</div><b>Total Customer</b><small>Customer management</small></button>
+<button class="quick-item"><div class="quick-icon">➕</div><b>Add Customer</b><small>Create new customer</small></button>
+<button class="quick-item"><div class="quick-icon">⏳</div><b>Due Customer</b><small>Manage customer dues</small></button>
+<button class="quick-item"><div class="quick-icon">📧</div><b>Send Email</b><small>Email management</small></button>
+<button class="quick-item"><div class="quick-icon">💸</div><b>Spend Add</b><small>Record expenses</small></button>
+<button class="quick-item" id="quickAccount"><div class="quick-icon">👤</div><b>My Account</b><small>Account information</small></button>
+</div>
+</div>
 
-      <div class="top-right">
-        <button class="profile-top" id="topAccount">
-          <div class="top-avatar" id="topAvatar">U</div>
-          <div class="top-user">
-            <span id="topName">User</span>
-            <small id="topRole">USER</small>
-          </div>
-        </button>
-      </div>
-    </header>
+<div class="section-card">
+<div class="section-title">System Status</div>
+<p class="section-desc">Login and profile verification completed. Customer and financial statistics will be connected in the next step.</p>
+</div>
+</section>
 
-    <div class="content">
+<section id="accountPage" class="hidden">
+<div class="page-heading">
+<div><h1>My Account</h1><p>Account information and security settings</p></div>
+</div>
 
-      <!-- DASHBOARD PAGE -->
-      <section id="dashboardPage">
-        <div class="page-heading">
-          <div>
-            <h1>Dashboard</h1>
-            <p>Welcome to ONE ONLINE Management System</p>
-          </div>
-          <span class="welcome-tag" id="welcomeRole">SUPER ADMIN</span>
-        </div>
+<div class="profile-grid">
+<div class="profile-summary">
+<div class="big-avatar" id="accountAvatar">U</div>
+<h2 id="accountName">User</h2>
+<p style="font-size:12px;color:var(--muted);margin-top:7px" id="accountEmail"></p>
+<span class="role-badge" id="accountRole">USER</span>
+</div>
 
-        <div class="stats-grid">
-          <div class="stat-card">
-            <div class="stat-top">
-              <span class="stat-label">Total Customers</span>
-              <span class="stat-icon">👥</span>
-            </div>
-            <div class="stat-value">—</div>
-            <div class="stat-note">Database connection pending</div>
-          </div>
+<div class="profile-details">
+<div class="section-title">Profile Information</div>
+<div class="detail-row"><span>Email Address</span><span id="detailEmail"></span></div>
+<div class="detail-row"><span>User ID</span><span id="detailId"></span></div>
+<div class="detail-row"><span>Account Role</span><span id="detailRole"></span></div>
+<div class="detail-row"><span>Account Status</span><span id="detailStatus"></span></div>
+<div class="detail-row"><span>Access Level</span><span id="detailAccess"></span></div>
+</div>
+</div>
 
-          <div class="stat-card">
-            <div class="stat-top">
-              <span class="stat-label">Active Customers</span>
-              <span class="stat-icon">🟢</span>
-            </div>
-            <div class="stat-value">—</div>
-            <div class="stat-note">Database connection pending</div>
-          </div>
+<div class="section-card password-card">
+<div class="section-title">🔐 Change Password</div>
+<p class="section-desc">Change your account password securely. Enter your current password first.</p>
 
-          <div class="stat-card">
-            <div class="stat-top">
-              <span class="stat-label">Due Customers</span>
-              <span class="stat-icon">⏳</span>
-            </div>
-            <div class="stat-value">—</div>
-            <div class="stat-note">Database connection pending</div>
-          </div>
+<form id="changePasswordForm">
+<label>Current Password</label>
+<input id="currentPassword" type="password" placeholder="Enter current password" autocomplete="current-password" required>
 
-          <div class="stat-card">
-            <div class="stat-top">
-              <span class="stat-label">Total Collection</span>
-              <span class="stat-icon">💰</span>
-            </div>
-            <div class="stat-value">—</div>
-            <div class="stat-note">Database connection pending</div>
-          </div>
+<label>New Password</label>
+<input id="accountNewPassword" type="password" placeholder="Enter new password" autocomplete="new-password" minlength="8" required>
 
-          <div class="stat-card">
-            <div class="stat-top">
-              <span class="stat-label">Total Spend</span>
-              <span class="stat-icon">💳</span>
-            </div>
-            <div class="stat-value">—</div>
-            <div class="stat-note">Database connection pending</div>
-          </div>
+<label>Confirm New Password</label>
+<input id="accountConfirmPassword" type="password" placeholder="Confirm new password" autocomplete="new-password" minlength="8" required>
 
-          <div class="stat-card">
-            <div class="stat-top">
-              <span class="stat-label">Net Balance</span>
-              <span class="stat-icon">📊</span>
-            </div>
-            <div class="stat-value">—</div>
-            <div class="stat-note">Database connection pending</div>
-          </div>
-        </div>
+<p class="password-help">Password must contain at least 8 characters. Choose a password that is difficult for others to guess.</p>
 
-        <div class="section-card">
-          <div class="section-title">Quick Access</div>
-          <div class="section-desc">
-            Frequently used management options will appear here.
-          </div>
+<button class="btn" id="changePasswordButton" type="submit">Change Password</button>
+<div id="changePasswordMessage" class="message"></div>
+</form>
+</div>
 
-          <div class="quick-grid">
-            <button class="quick-item">
-              <div class="quick-icon">👥</div>
-              <b>Total Customer</b>
-              <small>Customer management</small>
-            </button>
+<button class="btn" style="max-width:200px" id="accountLogout">Sign Out</button>
+</section>
 
-            <button class="quick-item">
-              <div class="quick-icon">➕</div>
-              <b>Add Customer</b>
-              <small>Create new customer</small>
-            </button>
-
-            <button class="quick-item">
-              <div class="quick-icon">⏳</div>
-              <b>Due Customer</b>
-              <small>Manage customer dues</small>
-            </button>
-
-            <button class="quick-item">
-              <div class="quick-icon">📧</div>
-              <b>Send Email</b>
-              <small>Email management</small>
-            </button>
-
-            <button class="quick-item">
-              <div class="quick-icon">💸</div>
-              <b>Spend Add</b>
-              <small>Record expenses</small>
-            </button>
-
-            <button class="quick-item" id="quickAccount">
-              <div class="quick-icon">👤</div>
-              <b>My Account</b>
-              <small>View account information</small>
-            </button>
-          </div>
-        </div>
-
-        <div class="section-card">
-          <div class="section-title">System Status</div>
-          <p class="section-desc" id="systemStatus">
-            Login and profile verification completed successfully.
-            Customer and financial statistics will be connected in the next step.
-          </p>
-        </div>
-      </section>
-
-      <!-- MY ACCOUNT PAGE -->
-      <section id="accountPage" class="hidden">
-        <div class="page-heading">
-          <div>
-            <h1>My Account</h1>
-            <p>Your account and permission information</p>
-          </div>
-        </div>
-
-        <div class="profile-grid">
-          <div class="profile-summary">
-            <div class="big-avatar" id="accountAvatar">U</div>
-            <h2 id="accountName">User</h2>
-            <p style="font-size:12px;color:var(--muted);margin-top:7px" id="accountEmail"></p>
-            <span class="role-badge" id="accountRole">USER</span>
-          </div>
-
-          <div class="profile-details">
-            <div class="section-title">Profile Information</div>
-            <div class="detail-row">
-              <span>Email Address</span>
-              <span id="detailEmail"></span>
-            </div>
-            <div class="detail-row">
-              <span>User ID</span>
-              <span id="detailId"></span>
-            </div>
-            <div class="detail-row">
-              <span>Account Role</span>
-              <span id="detailRole"></span>
-            </div>
-            <div class="detail-row">
-              <span>Account Status</span>
-              <span id="detailStatus"></span>
-            </div>
-            <div class="detail-row">
-              <span>Access Level</span>
-              <span id="detailAccess"></span>
-            </div>
-          </div>
-        </div>
-
-        <button class="btn full" style="max-width:200px" id="accountLogout">
-          Sign Out
-        </button>
-      </section>
-
-      <div class="page-footer">© ONE ONLINE | Management System</div>
-    </div>
-  </main>
+<div class="page-footer">© ONE ONLINE | Management System</div>
+</div>
+</main>
 </div>
 
 <script>
-/* =====================================
-   SUPABASE CONFIGURATION
-===================================== */
+/* SUPABASE CONFIG */
+const SUPABASE_URL="https://hcxolagfqzpycrsoigch.supabase.co";
+const SUPABASE_KEY="sb_publishable_LQtGMu4GZZ6XpXm6VBhzAw_dr2y4gwn";
 
-const SUPABASE_URL =
-  "https://hcxolagfqzpycrsoigch.supabase.co";
+let db=null;
+let recoveryMode=false;
+let currentUser=null;
+let currentProfile=null;
 
-const SUPABASE_KEY =
-  "sb_publishable_LQtGMu4GZZ6XpXm6VBhzAw_dr2y4gwn";
-
-let db = null;
-let recoveryMode = false;
-let currentUser = null;
-let currentProfile = null;
-
-/* =====================================
-   HELPERS
-===================================== */
-
-const $ = id => document.getElementById(id);
+const $=id=>document.getElementById(id);
 
 function showAuth(section){
-  ["loginSection","forgotSection","updateSection"].forEach(id=>{
-    $(id).classList.add("hidden");
-  });
-  $(section).classList.remove("hidden");
-  $("authWrap").style.display = "grid";
-  $("appSection").style.display = "none";
+["loginSection","forgotSection","updateSection"].forEach(id=>$(id).classList.add("hidden"));
+$(section).classList.remove("hidden");
+$("authWrap").style.display="grid";
+$("appSection").style.display="none";
 }
 
 function showMessage(element,text,type){
-  element.textContent = text;
-  element.className = "message " + type;
+element.textContent=text;
+element.className="message "+type;
 }
 
 function formatRole(role){
-  return String(role || "guest")
-    .replaceAll("_"," ")
-    .toUpperCase();
+return String(role||"guest").replaceAll("_"," ").toUpperCase();
 }
 
-function clearAuthMessages(){
-  ["loginMessage","resetMessage","updateMessage"].forEach(id=>{
-    $(id).textContent="";
-    $(id).className="message";
-  });
-}
-
-/* =====================================
-   PAGE NAVIGATION
-===================================== */
-
+/* NAVIGATION */
 function openPage(page){
-  $("dashboardPage").classList.toggle("hidden",page!=="dashboard");
-  $("accountPage").classList.toggle("hidden",page!=="account");
-
-  $("topTitle").textContent =
-    page==="account" ? "My Account" : "Dashboard";
-
-  document.querySelectorAll(".nav-link").forEach(btn=>{
-    btn.classList.toggle("active",btn.dataset.page===page);
-  });
-
-  closeMobileMenu();
-  window.scrollTo({top:0,behavior:"smooth"});
+$("dashboardPage").classList.toggle("hidden",page!=="dashboard");
+$("accountPage").classList.toggle("hidden",page!=="account");
+$("topTitle").textContent=page==="account"?"My Account":"Dashboard";
+document.querySelectorAll(".nav-link").forEach(btn=>{
+btn.classList.toggle("active",btn.dataset.page===page);
+});
+closeMobileMenu();
+window.scrollTo({top:0,behavior:"smooth"});
 }
 
 document.querySelectorAll(".nav-link").forEach(btn=>{
-  btn.addEventListener("click",()=>{
-    openPage(btn.dataset.page);
-  });
+btn.addEventListener("click",()=>openPage(btn.dataset.page));
 });
-
 $("topAccount").addEventListener("click",()=>openPage("account"));
 $("quickAccount").addEventListener("click",()=>openPage("account"));
 
-/* =====================================
-   MOBILE SIDEBAR
-===================================== */
-
+/* MOBILE MENU */
 function closeMobileMenu(){
-  $("sidebar").classList.remove("open");
-  $("overlay").classList.remove("show");
+$("sidebar").classList.remove("open");
+$("overlay").classList.remove("show");
 }
-
 $("menuButton").addEventListener("click",()=>{
-  $("sidebar").classList.toggle("open");
-  $("overlay").classList.toggle("show");
+$("sidebar").classList.toggle("open");
+$("overlay").classList.toggle("show");
 });
-
 $("overlay").addEventListener("click",closeMobileMenu);
 
-/* =====================================
-   PROFILE VERIFICATION
-===================================== */
-
+/* PROFILE */
 async function loadProfile(user){
+const {data,error}=await db.from("profiles")
+.select("id, role, status, permissions")
+.eq("id",user.id).maybeSingle();
 
-  const {data,error} = await db
-    .from("profiles")
-    .select("id, role, status, permissions")
-    .eq("id",user.id)
-    .maybeSingle();
+if(error){
+throw new Error("PROFILE DATABASE ERROR\nCode: "+(error.code||"Unknown")+"\nMessage: "+error.message+"\nDetails: "+(error.details||"None")+"\nHint: "+(error.hint||"None"));
+}
+if(!data)throw new Error("PROFILE NOT FOUND. User ID: "+user.id);
 
-  if(error){
-    throw new Error(
-      "PROFILE DATABASE ERROR\n"+
-      "Code: "+(error.code||"Unknown")+"\n"+
-      "Message: "+error.message+"\n"+
-      "Details: "+(error.details||"None")+"\n"+
-      "Hint: "+(error.hint||"None")
-    );
-  }
-
-  if(!data){
-    throw new Error(
-      "PROFILE NOT FOUND. User ID: "+user.id
-    );
-  }
-
-  if(String(data.status).toLowerCase()!=="active"){
-    await db.auth.signOut();
-    throw new Error("Your account is inactive. Contact Super Admin.");
-  }
-
-  currentUser=user;
-  currentProfile=data;
-
-  const name =
-    user.user_metadata?.full_name ||
-    user.user_metadata?.name ||
-    user.email ||
-    "User";
-
-  const role=formatRole(data.role);
-  const initial=(name.charAt(0)||"U").toUpperCase();
-
-  $("sideName").textContent=name;
-  $("sideRole").textContent=role;
-  $("sideAvatar").textContent=initial;
-
-  $("topName").textContent=name;
-  $("topRole").textContent=role;
-  $("topAvatar").textContent=initial;
-
-  $("welcomeRole").textContent=role;
-
-  $("accountName").textContent=name;
-  $("accountEmail").textContent=user.email||"";
-  $("accountAvatar").textContent=initial;
-  $("accountRole").textContent=role;
-
-  $("detailEmail").textContent=user.email||"";
-  $("detailId").textContent=user.id;
-  $("detailRole").textContent=data.role;
-  $("detailStatus").textContent=data.status;
-  $("detailAccess").textContent=
-    data.role==="super_admin" ? "Full Administration" : "Permission Based";
-
-  window.ONE_ONLINE_USER={
-    id:user.id,
-    email:user.email,
-    role:data.role,
-    status:data.status,
-    permissions:data.permissions
-  };
-
-  $("authWrap").style.display="none";
-  $("appSection").style.display="block";
-
-  openPage("dashboard");
+if(String(data.status).toLowerCase()!=="active"){
+await db.auth.signOut();
+throw new Error("Your account is inactive. Contact Super Admin.");
 }
 
-/* =====================================
-   LOGIN
-===================================== */
+currentUser=user;
+currentProfile=data;
 
+const name=user.user_metadata?.full_name||user.user_metadata?.name||user.email||"User";
+const role=formatRole(data.role);
+const initial=(name.charAt(0)||"U").toUpperCase();
+
+$("sideName").textContent=name;
+$("sideRole").textContent=role;
+$("sideAvatar").textContent=initial;
+$("topName").textContent=name;
+$("topRole").textContent=role;
+$("topAvatar").textContent=initial;
+$("welcomeRole").textContent=role;
+$("accountName").textContent=name;
+$("accountEmail").textContent=user.email||"";
+$("accountAvatar").textContent=initial;
+$("accountRole").textContent=role;
+$("detailEmail").textContent=user.email||"";
+$("detailId").textContent=user.id;
+$("detailRole").textContent=data.role;
+$("detailStatus").textContent=data.status;
+$("detailAccess").textContent=data.role==="super_admin"?"Full Administration":"Permission Based";
+
+window.ONE_ONLINE_USER={
+id:user.id,email:user.email,role:data.role,
+status:data.status,permissions:data.permissions
+};
+
+$("authWrap").style.display="none";
+$("appSection").style.display="block";
+openPage("dashboard");
+}
+
+/* LOGIN */
 $("loginForm").addEventListener("submit",async e=>{
-  e.preventDefault();
-  clearAuthMessages();
-
-  const button=$("loginButton");
-  button.disabled=true;
-  button.textContent="Signing In...";
-
-  try{
-    const email=$("email").value.trim();
-    const password=$("password").value;
-
-    const {data,error}=await db.auth.signInWithPassword({
-      email,password
-    });
-
-    if(error) throw error;
-
-    await loadProfile(data.user);
-
-  }catch(error){
-    showAuth("loginSection");
-    showMessage($("loginMessage"),error.message,"error");
-  }finally{
-    button.disabled=false;
-    button.textContent="Sign In";
-  }
+e.preventDefault();
+const button=$("loginButton");
+button.disabled=true;
+button.textContent="Signing In...";
+try{
+const {data,error}=await db.auth.signInWithPassword({
+email:$("email").value.trim(),
+password:$("password").value
+});
+if(error)throw error;
+await loadProfile(data.user);
+}catch(error){
+showAuth("loginSection");
+showMessage($("loginMessage"),error.message,"error");
+}finally{
+button.disabled=false;
+button.textContent="Sign In";
+}
 });
 
-/* =====================================
-   SESSION CHECK
-===================================== */
-
+/* SESSION */
 async function checkSession(){
-  const {data,error}=await db.auth.getSession();
-  if(error) throw error;
-
-  if(data.session){
-    await loadProfile(data.session.user);
-  }else{
-    showAuth("loginSection");
-  }
+const {data,error}=await db.auth.getSession();
+if(error)throw error;
+if(data.session)await loadProfile(data.session.user);
+else showAuth("loginSection");
 }
 
-/* =====================================
-   FORGOT PASSWORD
-===================================== */
-
+/* FORGOT PASSWORD */
 $("forgotButton").addEventListener("click",()=>{
-  clearAuthMessages();
-  $("resetEmail").value=$("email").value;
-  showAuth("forgotSection");
+$("resetEmail").value=$("email").value;
+showAuth("forgotSection");
 });
-
-$("backLoginButton").addEventListener("click",()=>{
-  clearAuthMessages();
-  showAuth("loginSection");
-});
+$("backLoginButton").addEventListener("click",()=>showAuth("loginSection"));
 
 $("sendResetButton").addEventListener("click",async()=>{
-  const button=$("sendResetButton");
-  const email=$("resetEmail").value.trim();
-
-  if(!email){
-    showMessage($("resetMessage"),"Please enter your email.","error");
-    return;
-  }
-
-  button.disabled=true;
-  button.textContent="Sending...";
-
-  try{
-    const redirectUrl=window.location.origin+window.location.pathname;
-
-    const {error}=await db.auth.resetPasswordForEmail(email,{
-      redirectTo:redirectUrl
-    });
-
-    if(error) throw error;
-
-    showMessage(
-      $("resetMessage"),
-      "Password reset email sent. Check your inbox.",
-      "success"
-    );
-
-  }catch(error){
-    showMessage($("resetMessage"),error.message,"error");
-  }finally{
-    button.disabled=false;
-    button.textContent="Send Reset Email";
-  }
+const button=$("sendResetButton");
+const email=$("resetEmail").value.trim();
+if(!email){
+showMessage($("resetMessage"),"Please enter your email.","error");
+return;
+}
+button.disabled=true;
+button.textContent="Sending...";
+try{
+const redirectUrl=window.location.origin+window.location.pathname;
+const {error}=await db.auth.resetPasswordForEmail(email,{redirectTo:redirectUrl});
+if(error)throw error;
+showMessage($("resetMessage"),"Password reset email sent. Check your inbox.","success");
+}catch(error){
+showMessage($("resetMessage"),error.message,"error");
+}finally{
+button.disabled=false;
+button.textContent="Send Reset Email";
+}
 });
 
-/* =====================================
-   UPDATE PASSWORD
-===================================== */
-
+/* FORGOT PASSWORD UPDATE */
 $("updatePasswordButton").addEventListener("click",async()=>{
-  const button=$("updatePasswordButton");
-  const password=$("newPassword").value;
-  const confirm=$("confirmPassword").value;
+const button=$("updatePasswordButton");
+const password=$("newPassword").value;
+const confirm=$("confirmPassword").value;
 
-  if(password.length<8){
-    showMessage($("updateMessage"),
-      "Password must contain at least 8 characters.","error");
-    return;
-  }
-
-  if(password!==confirm){
-    showMessage($("updateMessage"),
-      "Passwords do not match.","error");
-    return;
-  }
-
-  button.disabled=true;
-  button.textContent="Updating...";
-
-  try{
-    const {error}=await db.auth.updateUser({password});
-    if(error) throw error;
-
-    recoveryMode=false;
-
-    showMessage($("updateMessage"),
-      "Password updated successfully. Please sign in again.",
-      "success");
-
-    await db.auth.signOut();
-
-    setTimeout(()=>showAuth("loginSection"),1800);
-
-  }catch(error){
-    showMessage($("updateMessage"),error.message,"error");
-  }finally{
-    button.disabled=false;
-    button.textContent="Update Password";
-  }
+if(password.length<8){
+showMessage($("updateMessage"),"Password must contain at least 8 characters.","error");
+return;
+}
+if(password!==confirm){
+showMessage($("updateMessage"),"Passwords do not match.","error");
+return;
+}
+button.disabled=true;
+button.textContent="Updating...";
+try{
+const {error}=await db.auth.updateUser({password});
+if(error)throw error;
+recoveryMode=false;
+showMessage($("updateMessage"),"Password updated successfully. Please sign in again.","success");
+await db.auth.signOut();
+setTimeout(()=>showAuth("loginSection"),1800);
+}catch(error){
+showMessage($("updateMessage"),error.message,"error");
+}finally{
+button.disabled=false;
+button.textContent="Update Password";
+}
 });
 
-/* =====================================
-   AUTH EVENTS
-===================================== */
+/* CHANGE PASSWORD - MY ACCOUNT */
+$("changePasswordForm").addEventListener("submit",async e=>{
+e.preventDefault();
 
+const button=$("changePasswordButton");
+const messageBox=$("changePasswordMessage");
+
+const currentPassword=$("currentPassword").value;
+const newPassword=$("accountNewPassword").value;
+const confirmPassword=$("accountConfirmPassword").value;
+
+if(!currentUser || !currentUser.email){
+showMessage(messageBox,"Your session is unavailable. Please sign in again.","error");
+return;
+}
+
+if(newPassword.length<8){
+showMessage(messageBox,"New password must contain at least 8 characters.","error");
+return;
+}
+
+if(newPassword!==confirmPassword){
+showMessage(messageBox,"New password and confirm password do not match.","error");
+return;
+}
+
+if(currentPassword===newPassword){
+showMessage(messageBox,"New password must be different from current password.","error");
+return;
+}
+
+button.disabled=true;
+button.textContent="Verifying Password...";
+
+try{
+// Verify current password through Supabase Auth
+const {error:verifyError}=await db.auth.signInWithPassword({
+email:currentUser.email,
+password:currentPassword
+});
+
+if(verifyError){
+throw new Error("Current password is incorrect.");
+}
+
+button.textContent="Updating Password...";
+
+// Update password
+const {error:updateError}=await db.auth.updateUser({
+password:newPassword
+});
+
+if(updateError)throw updateError;
+
+$("changePasswordForm").reset();
+
+showMessage(
+messageBox,
+"Password changed successfully! Your new password is now active.",
+"success"
+);
+
+}catch(error){
+showMessage(messageBox,error.message,"error");
+}finally{
+button.disabled=false;
+button.textContent="Change Password";
+}
+});
+
+/* AUTH EVENTS */
 function setupAuthEvents(){
-  db.auth.onAuthStateChange((event,session)=>{
-    if(event==="PASSWORD_RECOVERY"){
-      recoveryMode=true;
-      showAuth("updateSection");
-    }
-
-    if(event==="SIGNED_OUT" && !recoveryMode){
-      currentUser=null;
-      currentProfile=null;
-      window.ONE_ONLINE_USER=null;
-      showAuth("loginSection");
-    }
-  });
+db.auth.onAuthStateChange((event,session)=>{
+if(event==="PASSWORD_RECOVERY"){
+recoveryMode=true;
+showAuth("updateSection");
+}
+if(event==="SIGNED_OUT"&&!recoveryMode){
+currentUser=null;
+currentProfile=null;
+window.ONE_ONLINE_USER=null;
+showAuth("loginSection");
+}
+});
 }
 
-/* =====================================
-   LOGOUT
-===================================== */
-
+/* LOGOUT */
 async function logout(button){
-  button.disabled=true;
-  button.textContent="Signing Out...";
+button.disabled=true;
+button.textContent="Signing Out...";
+try{
+const {error}=await db.auth.signOut();
+if(error)throw error;
+currentUser=null;
+currentProfile=null;
+window.ONE_ONLINE_USER=null;
+$("loginForm").reset();
+showAuth("loginSection");
+}catch(error){
+alert("Logout Error: "+error.message);
+}finally{
+button.disabled=false;
+button.textContent="Sign Out";
+}
+}
+$("sideLogout").addEventListener("click",function(){logout(this)});
+$("accountLogout").addEventListener("click",function(){logout(this)});
 
-  try{
-    const {error}=await db.auth.signOut();
-    if(error) throw error;
+/* START */
+async function startSystem(){
+try{
+if(!window.supabase)throw new Error("Supabase library failed to load.");
 
-    currentUser=null;
-    currentProfile=null;
-    window.ONE_ONLINE_USER=null;
-    $("loginForm").reset();
-    showAuth("loginSection");
+db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+setupAuthEvents();
 
-  }catch(error){
-    alert("Logout Error: "+error.message);
-  }finally{
-    button.disabled=false;
-    button.textContent="Sign Out";
-  }
+const params=new URLSearchParams(window.location.search);
+if(params.get("type")==="recovery"){
+recoveryMode=true;
+showAuth("updateSection");
 }
 
-$("sideLogout").addEventListener("click",function(){
-  logout(this);
-});
+await checkSession();
 
-$("accountLogout").addEventListener("click",function(){
-  logout(this);
-});
-
-/* =====================================
-   START SYSTEM
-===================================== */
-
-async function startSystem(){
-  try{
-    if(!window.supabase){
-      throw new Error("Supabase library failed to load.");
-    }
-
-    db=window.supabase.createClient(
-      SUPABASE_URL,
-      SUPABASE_KEY
-    );
-
-    setupAuthEvents();
-
-    // Supabase recovery link support
-    const params=new URLSearchParams(window.location.search);
-    if(params.get("type")==="recovery"){
-      recoveryMode=true;
-      showAuth("updateSection");
-    }
-
-    await checkSession();
-
-  }catch(error){
-    showAuth("loginSection");
-    showMessage(
-      $("loginMessage"),
-      "SYSTEM ERROR: "+error.message,
-      "error"
-    );
-  }
+}catch(error){
+showAuth("loginSection");
+showMessage($("loginMessage"),"SYSTEM ERROR: "+error.message,"error");
+}
 }
 
 startSystem();
 </script>
-
 </body>
 </html>
