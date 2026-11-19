@@ -4,644 +4,1114 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#087f5b">
+<meta name="theme-color" content="#0b1220">
 <title>ONE ONLINE | Management System</title>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
 
 <style>
-:root{
-  --primary:#087f5b;
-  --primary-light:#e6f5ef;
-  --bg:#f1f5f4;
-  --card:#ffffff;
-  --text:#172033;
-  --muted:#64748b;
-  --border:#e2e8f0;
-  --sidebar:#ffffff;
-  --input:#ffffff;
-  --shadow:0 8px 25px rgba(0,0,0,.05);
+:root {
+  --bg:#0b1220;
+  --panel:#111c2e;
+  --panel2:#17243a;
+  --border:#26364d;
+  --text:#edf4ff;
+  --muted:#91a2ba;
+  --primary:#10b981;
+  --primary2:#059669;
+  --danger:#ef4444;
+  --input:#0b1627;
+  --shadow:0 20px 60px rgba(0,0,0,.28);
 }
-*{box-sizing:border-box;margin:0;padding:0}
-body{min-height:100vh;background:var(--bg);color:var(--text);font-family:Arial,sans-serif}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Inter,Arial,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+}
 button,input{font:inherit}
 button{cursor:pointer}
 .hidden{display:none!important}
+.muted{color:var(--muted)}
+.small{font-size:12px}
+.brand{
+  display:flex;align-items:center;gap:11px;
+  font-size:20px;font-weight:800;letter-spacing:.3px
+}
+.brand-icon{
+  width:42px;height:42px;border-radius:13px;
+  display:grid;place-items:center;
+  color:white;background:linear-gradient(135deg,#10b981,#047857);
+  box-shadow:0 8px 22px #05966940;
+}
+.btn{
+  border:0;border-radius:10px;padding:12px 17px;
+  font-weight:700;transition:.2s
+}
+.btn-primary{background:var(--primary);color:#04251b}
+.btn-primary:hover{background:#34d399}
+.btn-secondary{background:var(--panel2);color:var(--text);border:1px solid var(--border)}
+.btn-danger{background:#ef444420;color:#fca5a5;border:1px solid #ef444455}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.field{margin-bottom:17px}
+.field label{display:block;font-size:13px;font-weight:600;margin-bottom:8px;color:#c7d5e8}
+.field input{
+  width:100%;height:46px;border-radius:10px;
+  background:var(--input);border:1px solid var(--border);
+  color:var(--text);padding:0 13px;outline:none
+}
+.field input:focus{border-color:var(--primary);box-shadow:0 0 0 3px #10b98120}
+.auth-wrap{
+  min-height:100vh;display:grid;place-items:center;
+  padding:22px;background:
+  radial-gradient(ellipse at 15% 10%,#064e3b55,transparent 45%),
+  radial-gradient(ellipse at 90% 90%,#1e3a8a33,transparent 45%),var(--bg)
+}
+.auth-card{
+  width:min(100%,430px);padding:34px;
+  background:var(--panel);border:1px solid var(--border);
+  border-radius:22px;box-shadow:var(--shadow)
+}
+.auth-card .brand{justify-content:center;margin-bottom:30px}
+.auth-title{text-align:center;font-size:25px;font-weight:800;margin:0 0 8px}
+.auth-desc{text-align:center;color:var(--muted);font-size:13px;margin:0 0 27px;line-height:1.7}
+.auth-links{display:flex;justify-content:space-between;gap:10px;margin-top:18px;font-size:12px}
+a{color:#34d399;text-decoration:none}
+a:hover{text-decoration:underline}
+.notice{font-size:13px;padding:12px;border-radius:9px;margin-bottom:16px;line-height:1.6}
+.notice.error{background:#7f1d1d40;border:1px solid #ef444455;color:#fca5a5}
+.notice.success{background:#065f4633;border:1px solid #10b98155;color:#6ee7b7}
+.auth-card .btn{width:100%}
 
-/* LOGIN */
-.auth-wrap{min-height:100vh;display:grid;place-items:center;padding:20px}
-.auth-card{width:100%;max-width:440px;padding:30px 25px;background:var(--card);border:1px solid var(--border);border-radius:20px;box-shadow:var(--shadow)}
-.logo{width:65px;height:65px;margin:0 auto 16px;display:grid;place-items:center;border-radius:18px;background:var(--primary);color:#fff;font-size:35px;font-weight:bold}
-.heading{text-align:center;margin-bottom:25px}
-.heading h1{font-size:25px;margin-bottom:8px}
-.heading p{font-size:14px;color:var(--muted)}
-label{display:block;margin:16px 0 7px;font-size:13px;font-weight:bold}
-input{width:100%;height:48px;padding:0 13px;border:1px solid var(--border);border-radius:10px;background:var(--input);color:var(--text);outline:none}
-input:focus{border-color:var(--primary)}
-.btn{border:0;border-radius:10px;background:var(--primary);color:white;padding:13px 18px;font-weight:bold}
-.btn:disabled{opacity:.6;cursor:not-allowed}
-.full{width:100%;margin-top:20px}
-.secondary{background:transparent;color:var(--primary);border:1px solid var(--border)}
-.link{display:block;margin-top:17px;text-align:center;color:var(--primary);font-size:13px;font-weight:bold;cursor:pointer}
-.message{display:none;padding:13px;margin-top:16px;border-radius:10px;font-size:13px;line-height:1.6;overflow-wrap:anywhere}
-.error{display:block;background:#fee2e2;color:#991b1b}
-.success{display:block;background:#dcfce7;color:#166534}
-.info{display:block;background:#e0f2fe;color:#075985}
+/* APP */
+#app{min-height:100vh}
+.sidebar{
+  position:fixed;inset:0 auto 0 0;width:255px;
+  background:#0e192a;border-right:1px solid var(--border);
+  display:flex;flex-direction:column;padding:22px 15px;z-index:20
+}
+.sidebar .brand{padding:0 8px 25px}
+.nav-label{
+  font-size:10px;letter-spacing:1.5px;font-weight:800;
+  color:#657994;padding:13px 12px 8px
+}
+.nav-link{
+  display:flex;align-items:center;gap:12px;
+  width:100%;padding:12px;border:0;border-radius:10px;
+  color:#a9bad0;background:transparent;text-align:left;
+  font-size:13px;font-weight:600;margin-bottom:4px
+}
+.nav-link i{width:19px;text-align:center}
+.nav-link:hover,.nav-link.active{background:#10b9811a;color:#34d399}
+.sidebar-bottom{margin-top:auto;border-top:1px solid var(--border);padding-top:15px}
+.sidebar-user{display:flex;align-items:center;gap:10px;padding:10px 8px;min-width:0}
+.avatar{
+  width:38px;height:38px;border-radius:50%;object-fit:cover;
+  background:#1e334b;border:1px solid #36506d;flex-shrink:0;
+  display:grid;place-items:center;color:#b9c9dc;font-weight:800
+}
+.avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.user-info{min-width:0;flex:1}
+.user-info strong{display:block;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.user-info span{display:block;color:var(--muted);font-size:10px;margin-top:4px}
+.main{margin-left:255px;min-height:100vh}
+.topbar{
+  height:74px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 30px;background:#0d1727dd;position:sticky;top:0;z-index:10;
+  backdrop-filter:blur(15px)
+}
+.topbar h2{font-size:17px;margin:0}
+.top-actions{display:flex;align-items:center;gap:12px}
+.icon-btn{
+  width:39px;height:39px;border-radius:10px;border:1px solid var(--border);
+  background:var(--panel);color:var(--text)
+}
+.menu-btn{display:none}
+.content{padding:30px;max-width:1500px;margin:auto}
+.welcome{
+  padding:27px;border-radius:17px;
+  background:linear-gradient(120deg,#064e3b,#0c3340 65%,#152c45);
+  border:1px solid #16775c;margin-bottom:25px
+}
+.welcome h1{font-size:25px;margin:0 0 9px}
+.welcome p{font-size:13px;color:#c1e9dc;margin:0;line-height:1.7}
+.section-title{font-size:16px;font-weight:800;margin:25px 0 15px}
+.stats{
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:15px
+}
+.stat{
+  background:var(--panel);border:1px solid var(--border);
+  padding:19px;border-radius:14px;min-height:115px
+}
+.stat-icon{
+  width:36px;height:36px;border-radius:10px;
+  display:grid;place-items:center;background:#10b9811b;color:#34d399;
+  margin-bottom:13px
+}
+.stat strong{font-size:19px;display:block}
+.stat span{font-size:11px;color:var(--muted);display:block;margin-top:5px}
+.quick-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}
+.quick{
+  border:1px solid var(--border);background:var(--panel);
+  border-radius:13px;padding:18px;text-align:left;color:var(--text)
+}
+.quick:hover{border-color:#10b981;transform:translateY(-2px)}
+.quick i{color:#34d399;font-size:19px;margin-bottom:12px}
+.quick strong{display:block;font-size:13px}
+.quick span{font-size:11px;color:var(--muted);display:block;margin-top:6px}
+.page-card{
+  background:var(--panel);border:1px solid var(--border);
+  border-radius:15px;padding:23px;margin-bottom:18px
+}
+.page-card h3{font-size:16px;margin:0 0 17px}
+.profile-head{display:flex;align-items:center;gap:18px;margin-bottom:22px}
+.profile-big{
+  width:85px;height:85px;border-radius:50%;object-fit:cover;
+  background:#1e334b;border:2px solid #10b981
+}
+.profile-details h3{margin:0 0 7px;font-size:18px}
+.profile-details p{margin:0;color:var(--muted);font-size:12px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 17px}
+.form-actions{display:flex;gap:10px;flex-wrap:wrap}
+.role-tag{
+  display:inline-block;background:#10b98120;color:#6ee7b7;
+  padding:6px 10px;border-radius:20px;font-size:11px;font-weight:700
+}
+.overlay{
+  display:none;position:fixed;inset:0;background:#0009;z-index:15
+}
+#toast{
+  position:fixed;right:20px;bottom:20px;z-index:100;
+  max-width:min(380px,calc(100% - 40px));
+  background:#17243a;border:1px solid var(--border);
+  border-radius:12px;padding:14px 18px;font-size:13px;
+  box-shadow:var(--shadow);display:none
+}
+#toast.error{border-color:#ef4444;color:#fca5a5}
+#toast.success{border-color:#10b981;color:#6ee7b7}
+.footer-note{font-size:11px;color:#657994;text-align:center;margin-top:28px}
 
-/* APPLICATION */
-#appSection{display:none;min-height:100vh}
-.sidebar{position:fixed;left:0;top:0;bottom:0;width:255px;background:var(--sidebar);border-right:1px solid var(--border);z-index:30;display:flex;flex-direction:column;transition:transform .25s}
-.brand{height:82px;padding:16px 20px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border)}
-.brand-logo{width:43px;height:43px;flex-shrink:0;display:grid;place-items:center;background:var(--primary);color:white;border-radius:12px;font-size:25px;font-weight:bold}
-.brand-name{font-size:16px;font-weight:bold}
-.brand-sub{font-size:10px;color:var(--muted);margin-top:4px}
-.nav-area{padding:20px 13px;overflow-y:auto;flex:1}
-.nav-label{color:var(--muted);font-size:10px;font-weight:bold;letter-spacing:1px;padding:8px 12px}
-.nav-link{display:flex;align-items:center;gap:12px;width:100%;padding:13px 12px;border:0;border-radius:9px;background:transparent;color:var(--muted);text-align:left;font-size:14px;margin:3px 0}
-.nav-link:hover,.nav-link.active{background:var(--primary-light);color:var(--primary);font-weight:bold}
-.nav-icon{width:22px;text-align:center;font-size:17px}
-.sidebar-bottom{padding:15px;border-top:1px solid var(--border)}
-.account-mini{display:flex;align-items:center;gap:10px;padding:8px}
-.mini-avatar{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:var(--primary-light);color:var(--primary);font-weight:bold}
-.mini-info{min-width:0}
-.mini-name{font-size:13px;font-weight:bold}
-.mini-role{font-size:11px;color:var(--muted);margin-top:4px}
-.main-area{margin-left:255px;min-height:100vh}
-.topbar{height:70px;background:var(--card);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:sticky;top:0;z-index:20}
-.top-left{display:flex;align-items:center;gap:14px}
-.top-title{font-size:17px;font-weight:bold}
-.top-right{display:flex;align-items:center;gap:12px}
-.icon-btn{width:40px;height:40px;border:1px solid var(--border);background:var(--card);color:var(--text);border-radius:10px;font-size:18px}
-.profile-top{display:flex;align-items:center;gap:9px;border:0;background:transparent;color:var(--text);text-align:left}
-.top-avatar{width:36px;height:36px;border-radius:50%;background:var(--primary-light);color:var(--primary);display:grid;place-items:center;font-weight:bold}
-.top-user{font-size:12px;font-weight:bold}
-.top-user small{display:block;color:var(--muted);margin-top:3px}
-.content{padding:28px;max-width:1500px;margin:auto}
-.page-heading{display:flex;justify-content:space-between;align-items:flex-start;gap:15px;margin-bottom:25px}
-.page-heading h1{font-size:24px;margin-bottom:7px}
-.page-heading p{font-size:13px;color:var(--muted)}
-.welcome-tag{display:inline-block;padding:8px 12px;border-radius:30px;background:var(--primary-light);color:var(--primary);font-size:12px;font-weight:bold}
-.stats-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:17px;margin-bottom:25px}
-.stat-card{background:var(--card);border:1px solid var(--border);border-radius:15px;padding:20px;box-shadow:var(--shadow)}
-.stat-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
-.stat-icon{width:43px;height:43px;border-radius:12px;display:grid;place-items:center;font-size:21px;background:var(--primary-light)}
-.stat-label{font-size:13px;color:var(--muted)}
-.stat-value{font-size:26px;font-weight:bold}
-.stat-note{font-size:11px;color:var(--muted);margin-top:7px}
-.section-card{background:var(--card);border:1px solid var(--border);border-radius:15px;padding:22px;box-shadow:var(--shadow);margin-bottom:20px}
-.section-title{font-size:16px;font-weight:bold;margin-bottom:7px}
-.section-desc{font-size:12px;color:var(--muted);line-height:1.6}
-.quick-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin-top:18px}
-.quick-item{padding:17px;border:1px solid var(--border);border-radius:12px;background:var(--card);color:var(--text);text-align:left}
-.quick-item:hover{border-color:var(--primary)}
-.quick-icon{font-size:23px;margin-bottom:12px}
-.quick-item b{display:block;font-size:13px}
-.quick-item small{display:block;color:var(--muted);font-size:11px;margin-top:6px}
-.profile-grid{display:grid;grid-template-columns:1fr 2fr;gap:20px}
-.profile-summary{background:var(--card);border:1px solid var(--border);border-radius:15px;padding:25px;text-align:center}
-.big-avatar{width:80px;height:80px;border-radius:50%;margin:5px auto 15px;display:grid;place-items:center;background:var(--primary-light);color:var(--primary);font-size:30px;font-weight:bold}
-.profile-summary h2{font-size:18px}
-.role-badge{display:inline-block;margin-top:12px;padding:8px 15px;border-radius:30px;background:var(--primary-light);color:var(--primary);font-size:11px;font-weight:bold}
-.profile-details{background:var(--card);border:1px solid var(--border);border-radius:15px;padding:22px}
-.detail-row{display:flex;justify-content:space-between;gap:15px;padding:15px 0;border-bottom:1px solid var(--border);font-size:13px}
-.detail-row:last-child{border-bottom:0}
-.detail-row span:first-child{color:var(--muted)}
-.detail-row span:last-child{font-weight:bold;text-align:right;overflow-wrap:anywhere}
-
-/* PASSWORD CHANGE */
-.password-card{max-width:650px}
-.password-card input{margin-bottom:3px}
-.password-help{font-size:12px;color:var(--muted);line-height:1.6;margin-top:12px}
-.password-card .btn{margin-top:18px}
-.page-footer{text-align:center;color:var(--muted);font-size:11px;padding:25px 0}
-.mobile-menu{display:none}
-.overlay{display:none;position:fixed;inset:0;background:#0008;z-index:25}
-
-@media(max-width:1000px){.stats-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:1050px){
+ .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
 @media(max-width:700px){
-.sidebar{transform:translateX(-100%)}
-.sidebar.open{transform:translateX(0)}
-.overlay.show{display:block}
-.main-area{margin-left:0}
-.topbar{padding:0 15px;height:62px}
-.mobile-menu{display:block}
-.content{padding:20px 15px}
-.page-heading h1{font-size:21px}
-.stats-grid{grid-template-columns:1fr 1fr;gap:10px}
-.stat-card{padding:15px}
-.stat-value{font-size:22px}
-.quick-grid{grid-template-columns:1fr 1fr}
-.profile-grid{grid-template-columns:1fr}
-.top-user{display:none}
+ .sidebar{transform:translateX(-100%);transition:.25s}
+ .sidebar.open{transform:translateX(0)}
+ .overlay.show{display:block}
+ .main{margin-left:0}
+ .topbar{height:64px;padding:0 16px}
+ .menu-btn{display:inline-grid;place-items:center}
+ .content{padding:18px 14px}
+ .welcome{padding:21px}
+ .welcome h1{font-size:21px}
+ .quick-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .auth-card{padding:25px 20px}
+ .form-grid{grid-template-columns:1fr}
+ .profile-head{align-items:flex-start}
 }
-@media(max-width:380px){.stats-grid,.quick-grid{grid-template-columns:1fr}}
-@media(prefers-color-scheme:dark){
-:root{
---bg:#101827;--card:#192536;--text:#f1f5f9;
---muted:#a0aec0;--border:#344256;--sidebar:#192536;
---input:#111d2d;--primary-light:#173d34;
-}
+@media(max-width:380px){
+ .stats{grid-template-columns:1fr 1fr;gap:9px}
+ .stat{padding:13px}
+ .quick-grid{grid-template-columns:1fr}
 }
 </style>
 </head>
 
 <body>
 
-<div class="auth-wrap" id="authWrap">
-<main class="auth-card">
+<!-- LOGIN -->
+<section id="loginScreen" class="auth-wrap">
+ <div class="auth-card">
+  <div class="brand">
+   <div class="brand-icon"><i class="fa-solid fa-network-wired"></i></div>
+   <span>ONE ONLINE</span>
+  </div>
 
-<section id="loginSection">
-<div class="logo">O</div>
-<div class="heading"><h1>ONE ONLINE</h1><p>Management System</p></div>
-<form id="loginForm">
-<label>Email Address</label>
-<input id="email" type="email" placeholder="Enter your email" autocomplete="username" required>
-<label>Password</label>
-<input id="password" type="password" placeholder="Enter your password" autocomplete="current-password" required>
-<button class="btn full" id="loginButton" type="submit">Sign In</button>
-</form>
-<span class="link" id="forgotButton">Forgot Password?</span>
-<div id="loginMessage" class="message"></div>
+  <div id="loginForm">
+   <h1 class="auth-title">Welcome Back</h1>
+   <p class="auth-desc">Sign in to your management account</p>
+   <div id="loginMessage"></div>
+
+   <form id="signInForm">
+    <div class="field">
+     <label>Email Address</label>
+     <input id="loginEmail" type="email" placeholder="Enter your email" required autocomplete="username">
+    </div>
+    <div class="field">
+     <label>Password</label>
+     <input id="loginPassword" type="password" placeholder="Enter your password" required autocomplete="current-password">
+    </div>
+    <button class="btn btn-primary" id="loginButton" type="submit">
+     <i class="fa-solid fa-right-to-bracket"></i> Sign In
+    </button>
+   </form>
+   <div class="auth-links">
+    <a href="#" id="forgotLink">Forgot Password?</a>
+    <span class="muted">Secure Login</span>
+   </div>
+  </div>
+
+  <div id="forgotForm" class="hidden">
+   <h1 class="auth-title">Reset Password</h1>
+   <p class="auth-desc">Enter your registered email address. We will send a recovery link.</p>
+   <div id="forgotMessage"></div>
+   <form id="forgotEmailForm">
+    <div class="field">
+     <label>Email Address</label>
+     <input id="forgotEmail" type="email" required placeholder="Your account email">
+    </div>
+    <button class="btn btn-primary" id="forgotButton">Send Recovery Link</button>
+   </form>
+   <div class="auth-links">
+    <a href="#" id="backLogin">Back to Login</a>
+   </div>
+  </div>
+
+  <div id="recoveryForm" class="hidden">
+   <h1 class="auth-title">Set New Password</h1>
+   <p class="auth-desc">Choose a new password for your account.</p>
+   <div id="recoveryMessage"></div>
+   <form id="newPasswordForm">
+    <div class="field">
+     <label>New Password</label>
+     <input id="recoveryPassword" type="password" minlength="8" required placeholder="Minimum 8 characters">
+    </div>
+    <div class="field">
+     <label>Confirm Password</label>
+     <input id="recoveryConfirm" type="password" minlength="8" required placeholder="Confirm new password">
+    </div>
+    <button class="btn btn-primary" id="recoveryButton">Update Password</button>
+   </form>
+  </div>
+
+  <div class="footer-note">ONE ONLINE Management System</div>
+ </div>
 </section>
 
-<section id="forgotSection" class="hidden">
-<div class="logo">O</div>
-<div class="heading"><h1>Reset Password</h1><p>Enter your registered email address</p></div>
-<label>Email Address</label>
-<input id="resetEmail" type="email" placeholder="Your email">
-<button class="btn full" id="sendResetButton">Send Reset Email</button>
-<button class="btn secondary full" id="backLoginButton">Back to Login</button>
-<div id="resetMessage" class="message"></div>
+<!-- APPLICATION -->
+<section id="app" class="hidden">
+ <div class="overlay" id="overlay"></div>
+
+ <aside class="sidebar" id="sidebar">
+  <div class="brand">
+   <div class="brand-icon"><i class="fa-solid fa-network-wired"></i></div>
+   <span>ONE ONLINE</span>
+  </div>
+
+  <div class="nav-label">MAIN MENU</div>
+  <button class="nav-link active" data-page="dashboard">
+   <i class="fa-solid fa-house"></i> Dashboard
+  </button>
+
+  <div class="nav-label">ACCOUNT</div>
+  <button class="nav-link" data-page="account">
+   <i class="fa-solid fa-user-circle"></i> My Account
+  </button>
+  <button class="nav-link hidden" id="manageAdminsNav" data-page="admins">
+   <i class="fa-solid fa-users-gear"></i> Manage Admins
+  </button>
+
+  <div class="sidebar-bottom">
+   <div class="sidebar-user">
+    <div class="avatar" id="sideAvatar">O</div>
+    <div class="user-info">
+     <strong id="sideName">User</strong>
+     <span id="sideRole">Account</span>
+    </div>
+   </div>
+   <button class="nav-link" id="logoutButton">
+    <i class="fa-solid fa-right-from-bracket"></i> Logout
+   </button>
+  </div>
+ </aside>
+
+ <main class="main">
+  <header class="topbar">
+   <div style="display:flex;align-items:center;gap:13px">
+    <button class="icon-btn menu-btn" id="menuButton"><i class="fa-solid fa-bars"></i></button>
+    <h2 id="pageTitle">Dashboard</h2>
+   </div>
+   <div class="top-actions">
+    <span class="role-tag" id="topRole">SUPER ADMIN</span>
+    <div class="avatar" id="topAvatar">O</div>
+   </div>
+  </header>
+
+  <div class="content">
+
+   <!-- DASHBOARD -->
+   <div id="dashboardPage">
+    <div class="welcome">
+     <h1 id="welcomeName">Welcome to ONE ONLINE</h1>
+     <p>Your management system is ready. Manage your operations from one place.</p>
+    </div>
+
+    <div class="section-title">Overview</div>
+    <div class="stats">
+     <div class="stat">
+      <div class="stat-icon"><i class="fa-solid fa-users"></i></div>
+      <strong>—</strong><span>Total Customers</span>
+     </div>
+     <div class="stat">
+      <div class="stat-icon"><i class="fa-solid fa-clock"></i></div>
+      <strong>—</strong><span>Due Customers</span>
+     </div>
+     <div class="stat">
+      <div class="stat-icon"><i class="fa-solid fa-wallet"></i></div>
+      <strong>৳ —</strong><span>Total Payments</span>
+     </div>
+     <div class="stat">
+      <div class="stat-icon"><i class="fa-solid fa-money-bill-transfer"></i></div>
+      <strong>৳ —</strong><span>Total Spends</span>
+     </div>
+    </div>
+
+    <div class="section-title">Quick Access</div>
+    <div class="quick-grid">
+     <button class="quick" data-page="account">
+      <i class="fa-solid fa-user-gear"></i>
+      <strong>My Account</strong>
+      <span>Manage your personal information</span>
+     </button>
+     <button class="quick" data-page="account">
+      <i class="fa-solid fa-lock"></i>
+      <strong>Security</strong>
+      <span>Change your account password</span>
+     </button>
+     <button class="quick hidden" id="quickAdmins" data-page="admins">
+      <i class="fa-solid fa-users-gear"></i>
+      <strong>Manage Admins</strong>
+      <span>Manage system accounts</span>
+     </button>
+    </div>
+    <div class="footer-note">ONE ONLINE • Management System V2.0</div>
+   </div>
+
+   <!-- MY ACCOUNT -->
+   <div id="accountPage" class="hidden">
+    <div class="page-card">
+     <h3>My Profile</h3>
+     <div class="profile-head">
+      <img class="profile-big" id="profileAvatar" alt="Profile Picture">
+      <div class="profile-details">
+       <h3 id="profileName">User</h3>
+       <p id="profileEmail">—</p>
+       <p style="margin-top:8px"><span class="role-tag" id="profileRole">GUEST</span></p>
+      </div>
+     </div>
+
+     <div class="form-actions">
+      <label class="btn btn-primary" for="avatarInput">
+       <i class="fa-solid fa-camera"></i> Upload Picture
+      </label>
+      <input id="avatarInput" type="file" accept="image/jpeg,image/png,image/webp" class="hidden">
+      <button class="btn btn-secondary" id="removeAvatarButton">
+       <i class="fa-solid fa-trash"></i> Remove Picture
+      </button>
+     </div>
+     <p class="muted small" style="margin-top:13px">JPG, PNG or WEBP • Maximum 5 MB</p>
+    </div>
+
+    <div class="page-card">
+     <h3>Personal Information</h3>
+     <form id="profileForm">
+      <div class="form-grid">
+       <div class="field">
+        <label>Full Name</label>
+        <input id="profileNameInput" maxlength="100" placeholder="Your full name">
+       </div>
+       <div class="field">
+        <label>Email Address</label>
+        <input id="profileEmailInput" disabled>
+       </div>
+       <div class="field">
+        <label>Phone Number</label>
+        <input id="profilePhoneInput" maxlength="30" placeholder="Phone number">
+       </div>
+       <div class="field">
+        <label>Account Role</label>
+        <input id="profileRoleInput" disabled>
+       </div>
+      </div>
+      <button class="btn btn-primary" id="saveProfileButton">Save Profile</button>
+     </form>
+    </div>
+
+    <div class="page-card">
+     <h3>Change Password</h3>
+     <form id="changePasswordForm">
+      <div class="form-grid">
+       <div class="field">
+        <label>Current Password</label>
+        <input id="currentPassword" type="password" required autocomplete="current-password">
+       </div>
+       <div class="field">
+        <label>New Password</label>
+        <input id="newPassword" type="password" minlength="8" required autocomplete="new-password">
+       </div>
+       <div class="field">
+        <label>Confirm New Password</label>
+        <input id="confirmPassword" type="password" minlength="8" required autocomplete="new-password">
+       </div>
+      </div>
+      <button class="btn btn-primary" id="changePasswordButton">Update Password</button>
+     </form>
+    </div>
+   </div>
+
+   <!-- ADMIN PLACEHOLDER -->
+   <div id="adminsPage" class="hidden">
+    <div class="page-card">
+     <h3><i class="fa-solid fa-users-gear"></i> Manage Admins</h3>
+     <p class="muted">The secure Admin Management module will be connected in the next setup phase.</p>
+     <p class="muted small">Account creation, role assignment, permissions and account status will be managed here.</p>
+    </div>
+   </div>
+
+  </div>
+ </main>
 </section>
 
-<section id="updateSection" class="hidden">
-<div class="logo">O</div>
-<div class="heading"><h1>New Password</h1><p>Create your new account password</p></div>
-<label>New Password</label>
-<input id="newPassword" type="password" placeholder="New password">
-<label>Confirm Password</label>
-<input id="confirmPassword" type="password" placeholder="Confirm password">
-<button class="btn full" id="updatePasswordButton">Update Password</button>
-<div id="updateMessage" class="message"></div>
-</section>
-
-</main>
-</div>
-
-<div id="appSection">
-<div class="overlay" id="overlay"></div>
-
-<aside class="sidebar" id="sidebar">
-<div class="brand">
-<div class="brand-logo">O</div>
-<div><div class="brand-name">ONE ONLINE</div><div class="brand-sub">MANAGEMENT SYSTEM</div></div>
-</div>
-
-<nav class="nav-area">
-<div class="nav-label">MAIN MENU</div>
-<button class="nav-link active" data-page="dashboard"><span class="nav-icon">▦</span> Dashboard</button>
-<div class="nav-label" style="margin-top:15px">ACCOUNT</div>
-<button class="nav-link" data-page="account"><span class="nav-icon">👤</span> My Account</button>
-</nav>
-
-<div class="sidebar-bottom">
-<div class="account-mini">
-<div class="mini-avatar" id="sideAvatar">U</div>
-<div class="mini-info"><div class="mini-name" id="sideName">User</div><div class="mini-role" id="sideRole">USER</div></div>
-</div>
-<button class="btn full" id="sideLogout">Sign Out</button>
-</div>
-</aside>
-
-<main class="main-area">
-<header class="topbar">
-<div class="top-left">
-<button class="icon-btn mobile-menu" id="menuButton">☰</button>
-<div class="top-title" id="topTitle">Dashboard</div>
-</div>
-<div class="top-right">
-<button class="profile-top" id="topAccount">
-<div class="top-avatar" id="topAvatar">U</div>
-<div class="top-user"><span id="topName">User</span><small id="topRole">USER</small></div>
-</button>
-</div>
-</header>
-
-<div class="content">
-
-<section id="dashboardPage">
-<div class="page-heading">
-<div><h1>Dashboard</h1><p>Welcome to ONE ONLINE Management System</p></div>
-<span class="welcome-tag" id="welcomeRole">SUPER ADMIN</span>
-</div>
-
-<div class="stats-grid">
-<div class="stat-card"><div class="stat-top"><span class="stat-label">Total Customers</span><span class="stat-icon">👥</span></div><div class="stat-value">—</div><div class="stat-note">Database connection pending</div></div>
-<div class="stat-card"><div class="stat-top"><span class="stat-label">Active Customers</span><span class="stat-icon">🟢</span></div><div class="stat-value">—</div><div class="stat-note">Database connection pending</div></div>
-<div class="stat-card"><div class="stat-top"><span class="stat-label">Due Customers</span><span class="stat-icon">⏳</span></div><div class="stat-value">—</div><div class="stat-note">Database connection pending</div></div>
-<div class="stat-card"><div class="stat-top"><span class="stat-label">Total Collection</span><span class="stat-icon">💰</span></div><div class="stat-value">—</div><div class="stat-note">Database connection pending</div></div>
-<div class="stat-card"><div class="stat-top"><span class="stat-label">Total Spend</span><span class="stat-icon">💳</span></div><div class="stat-value">—</div><div class="stat-note">Database connection pending</div></div>
-<div class="stat-card"><div class="stat-top"><span class="stat-label">Net Balance</span><span class="stat-icon">📊</span></div><div class="stat-value">—</div><div class="stat-note">Database connection pending</div></div>
-</div>
-
-<div class="section-card">
-<div class="section-title">Quick Access</div>
-<div class="section-desc">Frequently used management options.</div>
-<div class="quick-grid">
-<button class="quick-item"><div class="quick-icon">👥</div><b>Total Customer</b><small>Customer management</small></button>
-<button class="quick-item"><div class="quick-icon">➕</div><b>Add Customer</b><small>Create new customer</small></button>
-<button class="quick-item"><div class="quick-icon">⏳</div><b>Due Customer</b><small>Manage customer dues</small></button>
-<button class="quick-item"><div class="quick-icon">📧</div><b>Send Email</b><small>Email management</small></button>
-<button class="quick-item"><div class="quick-icon">💸</div><b>Spend Add</b><small>Record expenses</small></button>
-<button class="quick-item" id="quickAccount"><div class="quick-icon">👤</div><b>My Account</b><small>Account information</small></button>
-</div>
-</div>
-
-<div class="section-card">
-<div class="section-title">System Status</div>
-<p class="section-desc">Login and profile verification completed. Customer and financial statistics will be connected in the next step.</p>
-</div>
-</section>
-
-<section id="accountPage" class="hidden">
-<div class="page-heading">
-<div><h1>My Account</h1><p>Account information and security settings</p></div>
-</div>
-
-<div class="profile-grid">
-<div class="profile-summary">
-<div class="big-avatar" id="accountAvatar">U</div>
-<h2 id="accountName">User</h2>
-<p style="font-size:12px;color:var(--muted);margin-top:7px" id="accountEmail"></p>
-<span class="role-badge" id="accountRole">USER</span>
-</div>
-
-<div class="profile-details">
-<div class="section-title">Profile Information</div>
-<div class="detail-row"><span>Email Address</span><span id="detailEmail"></span></div>
-<div class="detail-row"><span>User ID</span><span id="detailId"></span></div>
-<div class="detail-row"><span>Account Role</span><span id="detailRole"></span></div>
-<div class="detail-row"><span>Account Status</span><span id="detailStatus"></span></div>
-<div class="detail-row"><span>Access Level</span><span id="detailAccess"></span></div>
-</div>
-</div>
-
-<div class="section-card password-card">
-<div class="section-title">🔐 Change Password</div>
-<p class="section-desc">Change your account password securely. Enter your current password first.</p>
-
-<form id="changePasswordForm">
-<label>Current Password</label>
-<input id="currentPassword" type="password" placeholder="Enter current password" autocomplete="current-password" required>
-
-<label>New Password</label>
-<input id="accountNewPassword" type="password" placeholder="Enter new password" autocomplete="new-password" minlength="8" required>
-
-<label>Confirm New Password</label>
-<input id="accountConfirmPassword" type="password" placeholder="Confirm new password" autocomplete="new-password" minlength="8" required>
-
-<p class="password-help">Password must contain at least 8 characters. Choose a password that is difficult for others to guess.</p>
-
-<button class="btn" id="changePasswordButton" type="submit">Change Password</button>
-<div id="changePasswordMessage" class="message"></div>
-</form>
-</div>
-
-<button class="btn" style="max-width:200px" id="accountLogout">Sign Out</button>
-</section>
-
-<div class="page-footer">© ONE ONLINE | Management System</div>
-</div>
-</main>
-</div>
+<div id="toast"></div>
 
 <script>
-/* SUPABASE CONFIG */
-const SUPABASE_URL="https://hcxolagfqzpycrsoigch.supabase.co";
-const SUPABASE_KEY="sb_publishable_LQtGMu4GZZ6XpXm6VBhzAw_dr2y4gwn";
+/* =========================================
+   ONE ONLINE V2 - FRONTEND CONFIGURATION
+========================================= */
 
-let db=null;
-let recoveryMode=false;
-let currentUser=null;
-let currentProfile=null;
+const SUPABASE_URL = "https://zkiaeynsgviqjyilfphc.supabase.co";
+const SUPABASE_KEY = "sb_publishable_Hzou3f71h7aOVVDpnsL2yg_m_JMyuvP";
 
-const $=id=>document.getElementById(id);
-
-function showAuth(section){
-["loginSection","forgotSection","updateSection"].forEach(id=>$(id).classList.add("hidden"));
-$(section).classList.remove("hidden");
-$("authWrap").style.display="grid";
-$("appSection").style.display="none";
-}
-
-function showMessage(element,text,type){
-element.textContent=text;
-element.className="message "+type;
-}
-
-function formatRole(role){
-return String(role||"guest").replaceAll("_"," ").toUpperCase();
-}
-
-/* NAVIGATION */
-function openPage(page){
-$("dashboardPage").classList.toggle("hidden",page!=="dashboard");
-$("accountPage").classList.toggle("hidden",page!=="account");
-$("topTitle").textContent=page==="account"?"My Account":"Dashboard";
-document.querySelectorAll(".nav-link").forEach(btn=>{
-btn.classList.toggle("active",btn.dataset.page===page);
-});
-closeMobileMenu();
-window.scrollTo({top:0,behavior:"smooth"});
-}
-
-document.querySelectorAll(".nav-link").forEach(btn=>{
-btn.addEventListener("click",()=>openPage(btn.dataset.page));
-});
-$("topAccount").addEventListener("click",()=>openPage("account"));
-$("quickAccount").addEventListener("click",()=>openPage("account"));
-
-/* MOBILE MENU */
-function closeMobileMenu(){
-$("sidebar").classList.remove("open");
-$("overlay").classList.remove("show");
-}
-$("menuButton").addEventListener("click",()=>{
-$("sidebar").classList.toggle("open");
-$("overlay").classList.toggle("show");
-});
-$("overlay").addEventListener("click",closeMobileMenu);
-
-/* PROFILE */
-async function loadProfile(user){
-const {data,error}=await db.from("profiles")
-.select("id, role, status, permissions")
-.eq("id",user.id).maybeSingle();
-
-if(error){
-throw new Error("PROFILE DATABASE ERROR\nCode: "+(error.code||"Unknown")+"\nMessage: "+error.message+"\nDetails: "+(error.details||"None")+"\nHint: "+(error.hint||"None"));
-}
-if(!data)throw new Error("PROFILE NOT FOUND. User ID: "+user.id);
-
-if(String(data.status).toLowerCase()!=="active"){
-await db.auth.signOut();
-throw new Error("Your account is inactive. Contact Super Admin.");
-}
-
-currentUser=user;
-currentProfile=data;
-
-const name=user.user_metadata?.full_name||user.user_metadata?.name||user.email||"User";
-const role=formatRole(data.role);
-const initial=(name.charAt(0)||"U").toUpperCase();
-
-$("sideName").textContent=name;
-$("sideRole").textContent=role;
-$("sideAvatar").textContent=initial;
-$("topName").textContent=name;
-$("topRole").textContent=role;
-$("topAvatar").textContent=initial;
-$("welcomeRole").textContent=role;
-$("accountName").textContent=name;
-$("accountEmail").textContent=user.email||"";
-$("accountAvatar").textContent=initial;
-$("accountRole").textContent=role;
-$("detailEmail").textContent=user.email||"";
-$("detailId").textContent=user.id;
-$("detailRole").textContent=data.role;
-$("detailStatus").textContent=data.status;
-$("detailAccess").textContent=data.role==="super_admin"?"Full Administration":"Permission Based";
-
-window.ONE_ONLINE_USER={
-id:user.id,email:user.email,role:data.role,
-status:data.status,permissions:data.permissions
-};
-
-$("authWrap").style.display="none";
-$("appSection").style.display="block";
-openPage("dashboard");
-}
-
-/* LOGIN */
-$("loginForm").addEventListener("submit",async e=>{
-e.preventDefault();
-const button=$("loginButton");
-button.disabled=true;
-button.textContent="Signing In...";
-try{
-const {data,error}=await db.auth.signInWithPassword({
-email:$("email").value.trim(),
-password:$("password").value
-});
-if(error)throw error;
-await loadProfile(data.user);
-}catch(error){
-showAuth("loginSection");
-showMessage($("loginMessage"),error.message,"error");
-}finally{
-button.disabled=false;
-button.textContent="Sign In";
-}
-});
-
-/* SESSION */
-async function checkSession(){
-const {data,error}=await db.auth.getSession();
-if(error)throw error;
-if(data.session)await loadProfile(data.session.user);
-else showAuth("loginSection");
-}
-
-/* FORGOT PASSWORD */
-$("forgotButton").addEventListener("click",()=>{
-$("resetEmail").value=$("email").value;
-showAuth("forgotSection");
-});
-$("backLoginButton").addEventListener("click",()=>showAuth("loginSection"));
-
-$("sendResetButton").addEventListener("click",async()=>{
-const button=$("sendResetButton");
-const email=$("resetEmail").value.trim();
-if(!email){
-showMessage($("resetMessage"),"Please enter your email.","error");
-return;
-}
-button.disabled=true;
-button.textContent="Sending...";
-try{
-const redirectUrl=window.location.origin+window.location.pathname;
-const {error}=await db.auth.resetPasswordForEmail(email,{redirectTo:redirectUrl});
-if(error)throw error;
-showMessage($("resetMessage"),"Password reset email sent. Check your inbox.","success");
-}catch(error){
-showMessage($("resetMessage"),error.message,"error");
-}finally{
-button.disabled=false;
-button.textContent="Send Reset Email";
-}
-});
-
-/* FORGOT PASSWORD UPDATE */
-$("updatePasswordButton").addEventListener("click",async()=>{
-const button=$("updatePasswordButton");
-const password=$("newPassword").value;
-const confirm=$("confirmPassword").value;
-
-if(password.length<8){
-showMessage($("updateMessage"),"Password must contain at least 8 characters.","error");
-return;
-}
-if(password!==confirm){
-showMessage($("updateMessage"),"Passwords do not match.","error");
-return;
-}
-button.disabled=true;
-button.textContent="Updating...";
-try{
-const {error}=await db.auth.updateUser({password});
-if(error)throw error;
-recoveryMode=false;
-showMessage($("updateMessage"),"Password updated successfully. Please sign in again.","success");
-await db.auth.signOut();
-setTimeout(()=>showAuth("loginSection"),1800);
-}catch(error){
-showMessage($("updateMessage"),error.message,"error");
-}finally{
-button.disabled=false;
-button.textContent="Update Password";
-}
-});
-
-/* CHANGE PASSWORD - MY ACCOUNT */
-$("changePasswordForm").addEventListener("submit",async e=>{
-e.preventDefault();
-
-const button=$("changePasswordButton");
-const messageBox=$("changePasswordMessage");
-
-const currentPassword=$("currentPassword").value;
-const newPassword=$("accountNewPassword").value;
-const confirmPassword=$("accountConfirmPassword").value;
-
-if(!currentUser || !currentUser.email){
-showMessage(messageBox,"Your session is unavailable. Please sign in again.","error");
-return;
-}
-
-if(newPassword.length<8){
-showMessage(messageBox,"New password must contain at least 8 characters.","error");
-return;
-}
-
-if(newPassword!==confirmPassword){
-showMessage(messageBox,"New password and confirm password do not match.","error");
-return;
-}
-
-if(currentPassword===newPassword){
-showMessage(messageBox,"New password must be different from current password.","error");
-return;
-}
-
-button.disabled=true;
-button.textContent="Verifying Password...";
-
-try{
-// Verify current password through Supabase Auth
-const {error:verifyError}=await db.auth.signInWithPassword({
-email:currentUser.email,
-password:currentPassword
-});
-
-if(verifyError){
-throw new Error("Current password is incorrect.");
-}
-
-button.textContent="Updating Password...";
-
-// Update password
-const {error:updateError}=await db.auth.updateUser({
-password:newPassword
-});
-
-if(updateError)throw updateError;
-
-$("changePasswordForm").reset();
-
-showMessage(
-messageBox,
-"Password changed successfully! Your new password is now active.",
-"success"
+const db = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY,
+  {
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true
+    }
+  }
 );
 
-}catch(error){
-showMessage(messageBox,error.message,"error");
-}finally{
-button.disabled=false;
-button.textContent="Change Password";
+let currentUser = null;
+let currentProfile = null;
+let currentSession = null;
+let recoveryMode = false;
+let toastTimer = null;
+
+const $ = id => document.getElementById(id);
+
+function toast(message, type="success") {
+  const el = $("toast");
+  el.textContent = message;
+  el.className = type;
+  el.style.display = "block";
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.style.display="none", 4000);
 }
+
+function setMessage(id, message, type="error") {
+  $(id).innerHTML = "";
+  const div = document.createElement("div");
+  div.className = "notice " + type;
+  div.textContent = message;
+  $(id).appendChild(div);
+}
+
+function clearMessage(id) {
+  $(id).innerHTML = "";
+}
+
+function roleLabel(role) {
+  return String(role || "guest").replaceAll("_"," ").toUpperCase();
+}
+
+function showLoginForm(name) {
+  ["loginForm","forgotForm","recoveryForm"].forEach(id => $(id).classList.add("hidden"));
+  $(name).classList.remove("hidden");
+}
+
+function showLogin() {
+  $("app").classList.add("hidden");
+  $("loginScreen").classList.remove("hidden");
+  showLoginForm("loginForm");
+}
+
+function avatarHTML(url, fallback) {
+  if (url) {
+    const img = document.createElement("img");
+    img.src = url;
+    img.alt = "Profile";
+    img.onerror = () => {
+      img.remove();
+      const p = document.createElement("span");
+      p.textContent = fallback || "U";
+      $("sideAvatar").appendChild(p);
+    };
+    return img;
+  }
+  const span = document.createElement("span");
+  span.textContent = (fallback || "U").charAt(0).toUpperCase();
+  return span;
+}
+
+function setAvatar(element, url, fallback) {
+  element.innerHTML = "";
+  element.appendChild(avatarHTML(url, fallback));
+}
+
+function closeSidebar() {
+  $("sidebar").classList.remove("open");
+  $("overlay").classList.remove("show");
+}
+
+function navigate(page) {
+  if (page === "admins" && currentProfile?.role !== "super_admin") {
+    toast("Only Super Admin can access this page.", "error");
+    return;
+  }
+
+  ["dashboard","account","admins"].forEach(p => {
+    $(p + "Page").classList.toggle("hidden", p !== page);
+  });
+
+  document.querySelectorAll(".nav-link[data-page]").forEach(btn => {
+    btn.classList.toggle("active", btn.dataset.page === page);
+  });
+
+  const titles = {
+    dashboard:"Dashboard",
+    account:"My Account",
+    admins:"Manage Admins"
+  };
+  $("pageTitle").textContent = titles[page] || "Dashboard";
+  closeSidebar();
+  window.scrollTo(0,0);
+}
+
+async function loadProfile(user) {
+  const { data, error } = await db
+    .from("profiles")
+    .select("id,full_name,email,phone,avatar_url,role,status,permissions")
+    .eq("id", user.id)
+    .maybeSingle();
+
+  if (error) {
+    throw new Error("Profile database error: " + error.message);
+  }
+
+  if (!data) {
+    throw new Error("Your profile does not exist.");
+  }
+
+  if (data.status !== "active") {
+    throw new Error("Your account is inactive. Contact the Super Admin.");
+  }
+
+  currentUser = user;
+  currentProfile = data;
+
+  renderApplication();
+}
+
+function renderApplication() {
+  const p = currentProfile;
+  const name = p.full_name || currentUser.email || "User";
+  const email = currentUser.email || p.email || "";
+
+  $("welcomeName").textContent = "Welcome, " + name;
+  $("sideName").textContent = name;
+  $("sideRole").textContent = roleLabel(p.role);
+  $("topRole").textContent = roleLabel(p.role);
+  $("profileRole").textContent = roleLabel(p.role);
+  $("profileName").textContent = name;
+  $("profileEmail").textContent = email;
+
+  $("profileNameInput").value = p.full_name || "";
+  $("profileEmailInput").value = email;
+  $("profilePhoneInput").value = p.phone || "";
+  $("profileRoleInput").value = roleLabel(p.role);
+
+  setAvatar($("sideAvatar"), p.avatar_url, name);
+  setAvatar($("topAvatar"), p.avatar_url, name);
+
+  $("profileAvatar").src = p.avatar_url ||
+    "https://placehold.co/150x150/17243a/ffffff?text=Profile";
+
+  const isSuper = p.role === "super_admin";
+  $("manageAdminsNav").classList.toggle("hidden", !isSuper);
+  $("quickAdmins").classList.toggle("hidden", !isSuper);
+
+  $("loginScreen").classList.add("hidden");
+  $("app").classList.remove("hidden");
+
+  navigate("dashboard");
+}
+
+async function verifySession(session) {
+  if (!session?.user) {
+    currentSession = null;
+    currentUser = null;
+    currentProfile = null;
+    showLogin();
+    return;
+  }
+
+  currentSession = session;
+
+  try {
+    await loadProfile(session.user);
+  } catch (error) {
+    console.error(error);
+    await db.auth.signOut();
+    showLogin();
+    setMessage("loginMessage", error.message || "Account verification failed.");
+  }
+}
+
+/* =========================================
+   LOGIN
+========================================= */
+
+$("signInForm").addEventListener("submit", async e => {
+  e.preventDefault();
+  clearMessage("loginMessage");
+
+  const email = $("loginEmail").value.trim();
+  const password = $("loginPassword").value;
+  const button = $("loginButton");
+
+  button.disabled = true;
+  button.textContent = "Signing in...";
+
+  try {
+    const { data, error } = await db.auth.signInWithPassword({
+      email,
+      password
+    });
+
+    if (error) throw error;
+    if (!data.user) throw new Error("Login failed.");
+
+    await verifySession(data.session);
+  } catch (error) {
+    setMessage("loginMessage", error.message || "Unable to sign in.");
+  } finally {
+    button.disabled = false;
+    button.innerHTML = '<i class="fa-solid fa-right-to-bracket"></i> Sign In';
+  }
 });
 
-/* AUTH EVENTS */
-function setupAuthEvents(){
-db.auth.onAuthStateChange((event,session)=>{
-if(event==="PASSWORD_RECOVERY"){
-recoveryMode=true;
-showAuth("updateSection");
-}
-if(event==="SIGNED_OUT"&&!recoveryMode){
-currentUser=null;
-currentProfile=null;
-window.ONE_ONLINE_USER=null;
-showAuth("loginSection");
-}
+/* =========================================
+   FORGOT PASSWORD
+========================================= */
+
+$("forgotLink").addEventListener("click", e => {
+  e.preventDefault();
+  clearMessage("forgotMessage");
+  showLoginForm("forgotForm");
 });
+
+$("backLogin").addEventListener("click", e => {
+  e.preventDefault();
+  clearMessage("loginMessage");
+  showLoginForm("loginForm");
+});
+
+$("forgotEmailForm").addEventListener("submit", async e => {
+  e.preventDefault();
+
+  const button = $("forgotButton");
+  const email = $("forgotEmail").value.trim();
+
+  button.disabled = true;
+  button.textContent = "Sending...";
+
+  try {
+    const redirectTo = window.location.origin + window.location.pathname;
+
+    const { error } = await db.auth.resetPasswordForEmail(email, {
+      redirectTo
+    });
+
+    if (error) throw error;
+
+    setMessage(
+      "forgotMessage",
+      "If the account exists, a password recovery email has been sent. Check your inbox.",
+      "success"
+    );
+  } catch (error) {
+    setMessage("forgotMessage", error.message);
+  } finally {
+    button.disabled = false;
+    button.textContent = "Send Recovery Link";
+  }
+});
+
+/* =========================================
+   PASSWORD RECOVERY
+========================================= */
+
+async function updateRecoveryPassword() {
+  const password = $("recoveryPassword").value;
+  const confirm = $("recoveryConfirm").value;
+
+  if (password.length < 8) {
+    setMessage("recoveryMessage","Password must be at least 8 characters.");
+    return;
+  }
+
+  if (password !== confirm) {
+    setMessage("recoveryMessage","Passwords do not match.");
+    return;
+  }
+
+  const button = $("recoveryButton");
+  button.disabled = true;
+  button.textContent = "Updating...";
+
+  try {
+    const { error } = await db.auth.updateUser({ password });
+    if (error) throw error;
+
+    recoveryMode = false;
+    setMessage(
+      "recoveryMessage",
+      "Password updated successfully. Please sign in with your new password.",
+      "success"
+    );
+
+    await db.auth.signOut();
+    setTimeout(() => {
+      window.history.replaceState({}, document.title, window.location.pathname);
+      showLogin();
+    }, 1800);
+
+  } catch (error) {
+    setMessage("recoveryMessage",error.message);
+  } finally {
+    button.disabled = false;
+    button.textContent = "Update Password";
+  }
 }
 
-/* LOGOUT */
-async function logout(button){
-button.disabled=true;
-button.textContent="Signing Out...";
-try{
-const {error}=await db.auth.signOut();
-if(error)throw error;
-currentUser=null;
-currentProfile=null;
-window.ONE_ONLINE_USER=null;
-$("loginForm").reset();
-showAuth("loginSection");
-}catch(error){
-alert("Logout Error: "+error.message);
-}finally{
-button.disabled=false;
-button.textContent="Sign Out";
+$("newPasswordForm").addEventListener("submit", async e => {
+  e.preventDefault();
+  await updateRecoveryPassword();
+});
+
+/* =========================================
+   PROFILE UPDATE
+========================================= */
+
+$("profileForm").addEventListener("submit", async e => {
+  e.preventDefault();
+
+  const button = $("saveProfileButton");
+  button.disabled = true;
+  button.textContent = "Saving...";
+
+  try {
+    const updates = {
+      full_name: $("profileNameInput").value.trim(),
+      phone: $("profilePhoneInput").value.trim(),
+      updated_at: new Date().toISOString()
+    };
+
+    const { error } = await db
+      .from("profiles")
+      .update(updates)
+      .eq("id", currentUser.id);
+
+    if (error) throw error;
+
+    currentProfile = { ...currentProfile, ...updates };
+    renderApplication();
+    navigate("account");
+    toast("Profile updated successfully.");
+  } catch (error) {
+    toast(error.message || "Unable to update profile.", "error");
+  } finally {
+    button.disabled = false;
+    button.textContent = "Save Profile";
+  }
+});
+
+/* =========================================
+   PROFILE PICTURE UPLOAD
+========================================= */
+
+function oldAvatarPath(url) {
+  if (!url) return null;
+
+  const marker = "/profile-photos/";
+  const index = url.indexOf(marker);
+
+  if (index < 0) return null;
+
+  try {
+    return decodeURIComponent(url.substring(index + marker.length).split("?")[0]);
+  } catch {
+    return null;
+  }
 }
-}
-$("sideLogout").addEventListener("click",function(){logout(this)});
-$("accountLogout").addEventListener("click",function(){logout(this)});
 
-/* START */
-async function startSystem(){
-try{
-if(!window.supabase)throw new Error("Supabase library failed to load.");
+$("avatarInput").addEventListener("change", async e => {
+  const file = e.target.files?.[0];
+  if (!file) return;
 
-db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
-setupAuthEvents();
+  if (!["image/jpeg","image/png","image/webp"].includes(file.type)) {
+    toast("Only JPG, PNG and WEBP images are supported.", "error");
+    e.target.value = "";
+    return;
+  }
 
-const params=new URLSearchParams(window.location.search);
-if(params.get("type")==="recovery"){
-recoveryMode=true;
-showAuth("updateSection");
-}
+  if (file.size > 5 * 1024 * 1024) {
+    toast("Image must be smaller than 5 MB.", "error");
+    e.target.value = "";
+    return;
+  }
 
-await checkSession();
+  try {
+    const extension = file.type === "image/png" ? "png" :
+      file.type === "image/webp" ? "webp" : "jpg";
 
-}catch(error){
-showAuth("loginSection");
-showMessage($("loginMessage"),"SYSTEM ERROR: "+error.message,"error");
-}
-}
+    const path = currentUser.id + "/avatar." + extension;
 
-startSystem();
+    const { error: uploadError } = await db.storage
+      .from("profile-photos")
+      .upload(path, file, {
+        upsert: true,
+        contentType: file.type,
+        cacheControl: "3600"
+      });
+
+    if (uploadError) throw uploadError;
+
+    const { data } = db.storage
+      .from("profile-photos")
+      .getPublicUrl(path);
+
+    const avatarUrl = data.publicUrl + "?v=" + Date.now();
+
+    const { error: updateError } = await db
+      .from("profiles")
+      .update({
+        avatar_url: avatarUrl,
+        updated_at: new Date().toISOString()
+      })
+      .eq("id", currentUser.id);
+
+    if (updateError) throw updateError;
+
+    currentProfile.avatar_url = avatarUrl;
+    renderApplication();
+    navigate("account");
+    toast("Profile picture uploaded successfully.");
+
+  } catch (error) {
+    toast(error.message || "Picture upload failed.", "error");
+  } finally {
+    e.target.value = "";
+  }
+});
+
+/* =========================================
+   REMOVE PROFILE PICTURE
+========================================= */
+
+$("removeAvatarButton").addEventListener("click", async () => {
+  if (!currentProfile?.avatar_url) {
+    toast("No profile picture to remove.", "error");
+    return;
+  }
+
+  if (!confirm("Are you sure you want to remove your profile picture?")) {
+    return;
+  }
+
+  try {
+    const path = oldAvatarPath(currentProfile.avatar_url);
+
+    if (path) {
+      const { error } = await db.storage
+        .from("profile-photos")
+        .remove([path]);
+
+      if (error) throw error;
+    }
+
+    const { error: updateError } = await db
+      .from("profiles")
+      .update({
+        avatar_url: null,
+        updated_at: new Date().toISOString()
+      })
+      .eq("id", currentUser.id);
+
+    if (updateError) throw updateError;
+
+    currentProfile.avatar_url = null;
+    renderApplication();
+    navigate("account");
+    toast("Profile picture removed.");
+
+  } catch (error) {
+    toast(error.message || "Unable to remove picture.", "error");
+  }
+});
+
+/* =========================================
+   CHANGE PASSWORD
+========================================= */
+
+$("changePasswordForm").addEventListener("submit", async e => {
+  e.preventDefault();
+
+  const currentPassword = $("currentPassword").value;
+  const newPassword = $("newPassword").value;
+  const confirmPassword = $("confirmPassword").value;
+  const button = $("changePasswordButton");
+
+  if (newPassword.length < 8) {
+    toast("New password must contain at least 8 characters.", "error");
+    return;
+  }
+
+  if (newPassword !== confirmPassword) {
+    toast("New passwords do not match.", "error");
+    return;
+  }
+
+  if (newPassword === currentPassword) {
+    toast("New password must be different from current password.", "error");
+    return;
+  }
+
+  button.disabled = true;
+  button.textContent = "Updating...";
+
+  try {
+    const { error: verifyError } = await db.auth.signInWithPassword({
+      email: currentUser.email,
+      password: currentPassword
+    });
+
+    if (verifyError) {
+      throw new Error("Current password is incorrect.");
+    }
+
+    const { error } = await db.auth.updateUser({
+      password: newPassword
+    });
+
+    if (error) throw error;
+
+    $("changePasswordForm").reset();
+    toast("Password changed successfully.");
+
+  } catch (error) {
+    toast(error.message || "Password update failed.", "error");
+  } finally {
+    button.disabled = false;
+    button.textContent = "Update Password";
+  }
+});
+
+/* =========================================
+   NAVIGATION
+========================================= */
+
+document.querySelectorAll("[data-page]").forEach(btn => {
+  btn.addEventListener("click", () => navigate(btn.dataset.page));
+});
+
+$("menuButton").addEventListener("click", () => {
+  $("sidebar").classList.add("open");
+  $("overlay").classList.add("show");
+});
+
+$("overlay").addEventListener("click", closeSidebar);
+
+$("logoutButton").addEventListener("click", async () => {
+  if (!confirm("Are you sure you want to logout?")) return;
+
+  const { error } = await db.auth.signOut();
+
+  if (error) {
+    toast(error.message, "error");
+    return;
+  }
+
+  currentUser = null;
+  currentProfile = null;
+  currentSession = null;
+  showLogin();
+  toast("Logged out successfully.");
+});
+
+/* =========================================
+   AUTH STATE + INITIAL SESSION
+========================================= */
+
+db.auth.onAuthStateChange((event, session) => {
+  if (event === "PASSWORD_RECOVERY") {
+    recoveryMode = true;
+    $("loginScreen").classList.remove("hidden");
+    $("app").classList.add("hidden");
+    showLoginForm("recoveryForm");
+    return;
+  }
+
+  if (event === "SIGNED_OUT") {
+    currentUser = null;
+    currentProfile = null;
+    currentSession = null;
+    showLogin();
+    return;
+  }
+
+  if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED") {
+    if (session?.user && session.user.id !== currentUser?.id) {
+      setTimeout(() => verifySession(session), 0);
+    }
+  }
+});
+
+(async function initialize() {
+  try {
+    const { data, error } = await db.auth.getSession();
+    if (error) throw error;
+
+    const hash = window.location.hash;
+    const isRecovery =
+      hash.includes("type=recovery") ||
+      new URLSearchParams(window.location.search).get("type") === "recovery";
+
+    if (isRecovery) {
+      recoveryMode = true;
+      showLoginForm("recoveryForm");
+      return;
+    }
+
+    if (data.session) {
+      await verifySession(data.session);
+    } else {
+      showLogin();
+    }
+  } catch (error) {
+    console.error(error);
+    showLogin();
+    setMessage("loginMessage", "Unable to initialize login: " + error.message);
+  }
+})();
 </script>
+
 </body>
 </html>
