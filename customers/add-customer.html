@@ -6,1351 +6,835 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Add Customer | ONE ONLINE</title>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 <style>
-:root {
-    --primary:#087f5b;
-    --primary2:#0ca678;
-    --bg:#f4f7fb;
-    --card:#ffffff;
-    --text:#172033;
-    --muted:#718096;
-    --border:#e2e8f0;
-    --input:#ffffff;
-    --soft:#e8f7f1;
-    --danger:#e03131;
-    --shadow:0 5px 20px rgba(20,35,60,.06);
+:root{
+  --primary:#087f5b;
+  --primary2:#12a879;
+  --bg:#f4f7fb;
+  --card:#ffffff;
+  --text:#172033;
+  --muted:#718096;
+  --border:#e2e8f0;
+  --input:#ffffff;
+  --success:#15803d;
+  --danger:#dc2626;
+  --shadow:0 8px 30px rgba(15,23,42,.06);
 }
-
-* { box-sizing:border-box; }
-
-body {
-    margin:0;
-    padding:22px;
-    font-family:Arial,Helvetica,sans-serif;
-    background:var(--bg);
-    color:var(--text);
-    transition:.2s;
+*{box-sizing:border-box}
+body{
+  margin:0;
+  padding:22px;
+  font-family:Arial,Helvetica,sans-serif;
+  background:var(--bg);
+  color:var(--text);
 }
-
-body.dark {
-    --bg:#111827;
-    --card:#1f2937;
-    --text:#f3f4f6;
-    --muted:#aab4c3;
-    --border:#374151;
-    --input:#111827;
-    --soft:#17382f;
-    --shadow:0 5px 20px rgba(0,0,0,.2);
+body.dark-mode{
+  --bg:#101827;
+  --card:#1b2738;
+  --text:#f1f5f9;
+  --muted:#a6b3c5;
+  --border:#344256;
+  --input:#111c2c;
+  --shadow:0 8px 30px rgba(0,0,0,.2);
 }
-
-body.funny {
-    --primary:#a855f7;
-    --primary2:#ec4899;
-    --bg:#fff0fa;
-    --card:#ffffff;
-    --text:#43204e;
-    --muted:#916b9c;
-    --border:#f0d5f1;
-    --input:#fffaff;
-    --soft:#fce7f3;
+body.funny-mode{
+  --primary:#9333ea;
+  --primary2:#ec4899;
+  --bg:#fff0fa;
+  --card:#ffffff;
+  --text:#35134f;
+  --muted:#805b91;
+  --border:#f0c8e8;
+  --input:#fffaff;
 }
-
-body.dark.funny {
-    --bg:#21142d;
-    --card:#30203e;
-    --text:#fff0ff;
-    --muted:#d0b3dc;
-    --border:#52375f;
-    --input:#24182f;
-    --soft:#48284f;
+.container{max-width:1150px;margin:auto}
+.page-header{
+  display:flex;justify-content:space-between;
+  align-items:center;gap:15px;margin-bottom:22px;
+  flex-wrap:wrap;
 }
-
-.container {
-    max-width:1100px;
-    margin:auto;
+.heading{display:flex;align-items:center;gap:13px}
+.heading-icon{
+  width:48px;height:48px;border-radius:14px;
+  display:grid;place-items:center;color:white;
+  background:linear-gradient(135deg,var(--primary),var(--primary2));
+  font-size:20px;
 }
-
-.page-header {
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    gap:15px;
-    flex-wrap:wrap;
-    margin-bottom:22px;
+h1{font-size:23px;margin:0 0 5px}
+.subtitle{font-size:13px;color:var(--muted)}
+.header-tag{
+  background:var(--card);border:1px solid var(--border);
+  padding:10px 14px;border-radius:10px;
+  font-size:12px;color:var(--muted);
 }
-
-.page-title {
-    font-size:25px;
-    font-weight:800;
-    margin:0 0 6px;
+.card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:15px;padding:22px;margin-bottom:18px;
+  box-shadow:var(--shadow);
 }
-
-.page-subtitle {
-    font-size:13px;
-    color:var(--muted);
+.section-title{
+  display:flex;align-items:center;gap:10px;
+  font-size:16px;font-weight:700;
+  margin:0 0 20px;padding-bottom:13px;
+  border-bottom:1px solid var(--border);
 }
-
-.header-date {
-    background:var(--card);
-    border:1px solid var(--border);
-    padding:12px 16px;
-    border-radius:12px;
-    font-size:13px;
-    box-shadow:var(--shadow);
+.section-title i{color:var(--primary)}
+.grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:17px;
 }
-
-.section {
-    background:var(--card);
-    border:1px solid var(--border);
-    border-radius:15px;
-    padding:22px;
-    margin-bottom:18px;
-    box-shadow:var(--shadow);
+.field{min-width:0}
+.field.full{grid-column:1/-1}
+label{
+  display:block;font-size:12px;font-weight:700;
+  margin-bottom:7px;color:var(--text);
 }
-
-.section-title {
-    display:flex;
-    align-items:center;
-    gap:10px;
-    font-size:16px;
-    font-weight:800;
-    margin-bottom:20px;
+label .optional{font-weight:400;color:var(--muted)}
+input,select,textarea{
+  width:100%;height:43px;padding:10px 12px;
+  border:1px solid var(--border);border-radius:9px;
+  background:var(--input);color:var(--text);
+  font-size:13px;outline:none;
+  transition:.2s;
 }
-
-.section-number {
-    width:29px;
-    height:29px;
-    display:grid;
-    place-items:center;
-    border-radius:9px;
-    color:white;
-    background:var(--primary);
-    font-size:13px;
+textarea{height:85px;resize:vertical}
+input:focus,select:focus,textarea:focus{
+  border-color:var(--primary);
+  box-shadow:0 0 0 3px rgba(8,127,91,.10);
 }
-
-.grid {
-    display:grid;
-    grid-template-columns:repeat(2,minmax(0,1fr));
-    gap:16px;
+input::placeholder,textarea::placeholder{color:var(--muted)}
+.toggle-row{
+  display:flex;gap:12px;flex-wrap:wrap;
 }
-
-.field {
-    min-width:0;
+.toggle-box{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:15px;padding:13px 15px;border:1px solid var(--border);
+  border-radius:10px;flex:1;min-width:180px;
+  background:var(--input);
 }
-
-.field.full {
-    grid-column:1/-1;
+.toggle-info strong{display:block;font-size:13px}
+.toggle-info small{display:block;color:var(--muted);font-size:11px;margin-top:4px}
+.switch{position:relative;width:42px;height:23px;flex-shrink:0}
+.switch input{opacity:0;width:0;height:0}
+.slider{
+  position:absolute;inset:0;border-radius:20px;
+  background:#aab4c2;cursor:pointer;transition:.2s;
 }
-
-label {
-    display:block;
-    font-size:13px;
-    font-weight:700;
-    margin-bottom:7px;
+.slider:before{
+  content:"";position:absolute;width:17px;height:17px;
+  left:3px;top:3px;background:white;border-radius:50%;
+  transition:.2s;
 }
-
-.required { color:#e03131; }
-
-input,select,textarea {
-    width:100%;
-    padding:12px 13px;
-    border:1px solid var(--border);
-    border-radius:9px;
-    outline:none;
-    background:var(--input);
-    color:var(--text);
-    font-size:14px;
-    font-family:inherit;
-    transition:.2s;
+.switch input:checked + .slider{background:var(--primary)}
+.switch input:checked + .slider:before{transform:translateX(19px)}
+.product{
+  border:1px solid var(--border);border-radius:12px;
+  padding:16px;margin-bottom:13px;background:var(--input);
 }
-
-input:focus,select:focus,textarea:focus {
-    border-color:var(--primary);
-    box-shadow:0 0 0 3px rgba(8,127,91,.10);
+.product-top{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:15px;
 }
-
-input:disabled {
-    opacity:.75;
-    cursor:not-allowed;
+.product-top strong{font-size:13px}
+.remove-product{
+  border:0;background:#fee2e2;color:#b91c1c;
+  width:30px;height:30px;border-radius:8px;cursor:pointer;
 }
-
-textarea {
-    resize:vertical;
-    min-height:85px;
+.add-product{
+  border:1px dashed var(--primary);background:transparent;
+  color:var(--primary);padding:11px 15px;border-radius:9px;
+  font-weight:700;font-size:12px;cursor:pointer;
 }
-
-.hint {
-    font-size:11px;
-    color:var(--muted);
-    margin-top:6px;
+.actions{
+  display:flex;justify-content:flex-end;gap:10px;
+  flex-wrap:wrap;margin-top:20px;
 }
-
-.switch-grid {
-    display:grid;
-    grid-template-columns:repeat(3,minmax(0,1fr));
-    gap:13px;
+.btn{
+  border:0;border-radius:9px;padding:13px 20px;
+  font-weight:700;font-size:13px;cursor:pointer;
+  display:inline-flex;align-items:center;gap:9px;
 }
-
-.switch-card {
-    border:1px solid var(--border);
-    border-radius:12px;
-    padding:15px;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    gap:10px;
-    background:var(--input);
+.btn-primary{
+  color:#fff;background:linear-gradient(135deg,var(--primary),var(--primary2));
 }
-
-.switch-info strong {
-    display:block;
-    font-size:13px;
+.btn-secondary{
+  color:var(--text);background:var(--card);
+  border:1px solid var(--border);
 }
-
-.switch-info small {
-    display:block;
-    font-size:11px;
-    color:var(--muted);
-    margin-top:5px;
+.btn:disabled{opacity:.6;cursor:not-allowed}
+.message{
+  display:none;padding:15px 17px;border-radius:10px;
+  margin-bottom:18px;font-size:13px;line-height:1.6;
 }
-
-.toggle {
-    position:relative;
-    width:45px;
-    height:25px;
-    flex-shrink:0;
+.message.success{display:block;background:#dcfce7;color:#166534;border:1px solid #86efac}
+.message.error{display:block;background:#fee2e2;color:#991b1b;border:1px solid #fecaca}
+.message.info{display:block;background:#dbeafe;color:#1e40af;border:1px solid #93c5fd}
+body.dark-mode .message.success{background:#123b2b;color:#86efac;border-color:#226344}
+body.dark-mode .message.error{background:#451d25;color:#fca5a5;border-color:#71303b}
+body.dark-mode .message.info{background:#172e50;color:#bfdbfe;border-color:#31568a}
+.required{color:#dc2626}
+.note{font-size:11px;color:var(--muted);margin-top:6px}
+@media(max-width:800px){
+  body{padding:13px}
+  .grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .card{padding:17px}
 }
-
-.toggle input {
-    opacity:0;
-    width:0;
-    height:0;
-}
-
-.toggle span {
-    position:absolute;
-    inset:0;
-    background:#adb5bd;
-    border-radius:30px;
-    cursor:pointer;
-    transition:.2s;
-}
-
-.toggle span:before {
-    content:"";
-    position:absolute;
-    width:19px;
-    height:19px;
-    left:3px;
-    top:3px;
-    background:white;
-    border-radius:50%;
-    transition:.2s;
-}
-
-.toggle input:checked + span {
-    background:var(--primary);
-}
-
-.toggle input:checked + span:before {
-    transform:translateX(20px);
-}
-
-.products-header {
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    gap:10px;
-    flex-wrap:wrap;
-    margin-bottom:15px;
-}
-
-.product-card {
-    border:1px solid var(--border);
-    border-radius:12px;
-    padding:16px;
-    margin-bottom:13px;
-    background:var(--input);
-}
-
-.product-top {
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:15px;
-}
-
-.product-heading {
-    font-size:14px;
-    font-weight:800;
-}
-
-.remove-btn {
-    border:0;
-    background:#fff0f0;
-    color:#d63333;
-    border-radius:8px;
-    padding:8px 11px;
-    cursor:pointer;
-    font-weight:700;
-}
-
-.btn {
-    border:0;
-    padding:12px 18px;
-    border-radius:9px;
-    font-size:13px;
-    font-weight:800;
-    cursor:pointer;
-    transition:.2s;
-}
-
-.btn-primary {
-    background:var(--primary);
-    color:white;
-}
-
-.btn-primary:hover {
-    background:var(--primary2);
-}
-
-.btn-light {
-    background:var(--soft);
-    color:var(--primary);
-    border:1px solid var(--border);
-}
-
-.btn:disabled {
-    opacity:.6;
-    cursor:not-allowed;
-}
-
-.total-box {
-    background:var(--soft);
-    border:1px solid var(--border);
-    padding:17px;
-    border-radius:12px;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    gap:10px;
-    margin-top:16px;
-}
-
-.total-box strong {
-    font-size:14px;
-}
-
-.total-amount {
-    color:var(--primary);
-    font-size:21px;
-    font-weight:900;
-}
-
-.footer-actions {
-    display:flex;
-    justify-content:flex-end;
-    gap:12px;
-    flex-wrap:wrap;
-    padding-bottom:30px;
-}
-
-.status {
-    display:none;
-    padding:13px 15px;
-    border-radius:10px;
-    margin-bottom:16px;
-    font-size:13px;
-    line-height:1.5;
-}
-
-.status.success {
-    display:block;
-    background:#d3f9d8;
-    color:#176b2c;
-}
-
-.status.error {
-    display:block;
-    background:#ffe3e3;
-    color:#a51111;
-}
-
-.status.info {
-    display:block;
-    background:#dbeafe;
-    color:#1e40af;
-}
-
-.loading {
-    text-align:center;
-    padding:40px;
-    color:var(--muted);
-}
-
-@media(max-width:700px) {
-    body { padding:13px; }
-    .grid { grid-template-columns:1fr; }
-    .switch-grid { grid-template-columns:1fr; }
-    .section { padding:16px; }
-    .page-title { font-size:21px; }
-    .header-date { width:100%; }
-    .footer-actions { flex-direction:column-reverse; }
-    .footer-actions .btn { width:100%; }
-    .total-box { align-items:flex-start; flex-direction:column; }
+@media(max-width:520px){
+  .grid{grid-template-columns:1fr}
+  .field.full{grid-column:auto}
+  .toggle-box{min-width:100%}
+  .header-tag{width:100%}
+  h1{font-size:20px}
+  .actions .btn{width:100%;justify-content:center}
 }
 </style>
 </head>
 
 <body>
-
 <div class="container">
 
-    <div class="page-header">
-        <div>
-            <h1 class="page-title">Add New Customer</h1>
-            <div class="page-subtitle">
-                ONE ONLINE | Customer Management
-            </div>
+  <div class="page-header">
+    <div class="heading">
+      <div class="heading-icon"><i class="fa-solid fa-user-plus"></i></div>
+      <div>
+        <h1>Add Customer</h1>
+        <div class="subtitle">Create a new customer account in ONE ONLINE</div>
+      </div>
+    </div>
+    <div class="header-tag">
+      <i class="fa-solid fa-database"></i>
+      Google Sheets Database
+    </div>
+  </div>
+
+  <div id="message" class="message"></div>
+
+  <form id="customerForm">
+
+    <!-- CUSTOMER INFORMATION -->
+    <section class="card">
+      <h2 class="section-title">
+        <i class="fa-solid fa-user"></i>
+        Customer Information
+      </h2>
+
+      <div class="grid">
+
+        <div class="field">
+          <label>Customer Name <span class="required">*</span></label>
+          <input name="name" required placeholder="Enter customer name">
         </div>
 
-        <div class="header-date">
-            <strong>Create Date:</strong>
-            <span id="createDate">Loading...</span>
+        <div class="field">
+          <label>Mobile Number <span class="required">*</span></label>
+          <input name="phone" required type="tel" placeholder="01XXXXXXXXX">
         </div>
+
+        <div class="field">
+          <label>Alternative Mobile <span class="optional">(Optional)</span></label>
+          <input name="altPhone" type="tel" placeholder="Alternative number">
+        </div>
+
+        <div class="field">
+          <label>IP Address</label>
+          <input name="ip" placeholder="192.168.1.1">
+        </div>
+
+        <div class="field">
+          <label>Area / Zone</label>
+          <input name="area" placeholder="Enter area">
+        </div>
+
+        <div class="field">
+          <label>Customer Gmail</label>
+          <input name="email" type="email" placeholder="customer@gmail.com">
+        </div>
+
+        <div class="field full">
+          <label>Full Address</label>
+          <textarea name="address" placeholder="Enter complete address"></textarea>
+        </div>
+
+        <div class="field full">
+          <label>Google Map Link</label>
+          <input name="mapLink" type="url" placeholder="https://maps.google.com/...">
+        </div>
+
+      </div>
+    </section>
+
+    <!-- BILLING INFORMATION -->
+    <section class="card">
+      <h2 class="section-title">
+        <i class="fa-solid fa-file-invoice-dollar"></i>
+        Billing Information
+      </h2>
+
+      <div class="grid">
+
+        <div class="field">
+          <label>Customer Bill (৳)</label>
+          <input name="customerBill" type="number" min="0" step="0.01" value="0">
+        </div>
+
+        <div class="field">
+          <label>Internet Bill (৳)</label>
+          <input name="internetBill" type="number" min="0" step="0.01" value="0">
+        </div>
+
+        <div class="field">
+          <label>Due Amount (৳)</label>
+          <input name="dueAmount" type="number" min="0" step="0.01" value="0">
+        </div>
+
+        <div class="field">
+          <label>Billing Date</label>
+          <input name="billingDate" type="date">
+        </div>
+
+        <div class="field">
+          <label>Connection Date</label>
+          <input name="connectionDate" type="date">
+        </div>
+
+        <div class="field">
+          <label>Customer Status</label>
+          <select name="status">
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+          </select>
+        </div>
+
+        <div class="field full">
+          <label>Due Reason</label>
+          <textarea name="dueReason" placeholder="Write due reason if applicable"></textarea>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- AUTOMATION SETTINGS -->
+    <section class="card">
+      <h2 class="section-title">
+        <i class="fa-solid fa-sliders"></i>
+        Billing & Automation Settings
+      </h2>
+
+      <div class="toggle-row">
+
+        <div class="toggle-box">
+          <div class="toggle-info">
+            <strong>Bill Trigger</strong>
+            <small>Enable customer bill trigger</small>
+          </div>
+          <label class="switch">
+            <input type="checkbox" name="billTrigger" checked>
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="toggle-box">
+          <div class="toggle-info">
+            <strong>IP Bill Trigger</strong>
+            <small>Enable IP bill trigger</small>
+          </div>
+          <label class="switch">
+            <input type="checkbox" name="ipBillTrigger">
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="toggle-box">
+          <div class="toggle-info">
+            <strong>Auto Mail</strong>
+            <small>Save automatic mail preference</small>
+          </div>
+          <label class="switch">
+            <input type="checkbox" name="autoMail">
+            <span class="slider"></span>
+          </label>
+        </div>
+
+      </div>
+
+      <p class="note">
+        Auto Mail এখন শুধু ON/OFF হিসেবে সংরক্ষিত হবে। ইমেইল পাঠানোর Automation পরে যুক্ত করতে হবে।
+      </p>
+    </section>
+
+    <!-- PRODUCT INFORMATION -->
+    <section class="card">
+      <h2 class="section-title">
+        <i class="fa-solid fa-boxes-stacked"></i>
+        Product Information
+      </h2>
+
+      <div id="products"></div>
+
+      <button type="button" class="add-product" id="addProduct">
+        <i class="fa-solid fa-plus"></i>
+        Add Router / ONU
+      </button>
+    </section>
+
+    <!-- NOTES -->
+    <section class="card">
+      <h2 class="section-title">
+        <i class="fa-solid fa-note-sticky"></i>
+        Additional Information
+      </h2>
+
+      <div class="field">
+        <label>Additional Notes</label>
+        <textarea name="notes" placeholder="Write additional customer information..."></textarea>
+      </div>
+    </section>
+
+    <div class="actions">
+      <button type="reset" class="btn btn-secondary" id="resetBtn">
+        <i class="fa-solid fa-rotate-left"></i>
+        Reset Form
+      </button>
+
+      <button type="submit" class="btn btn-primary" id="saveBtn">
+        <i class="fa-solid fa-floppy-disk"></i>
+        Save Customer
+      </button>
     </div>
 
-    <div id="message" class="status"></div>
-
-    <div id="loading" class="loading">
-        Checking account and permissions...
-    </div>
-
-    <form id="customerForm" style="display:none">
-
-        <!-- CUSTOMER INFORMATION -->
-
-        <div class="section">
-            <div class="section-title">
-                <span class="section-number">01</span>
-                Customer Information
-            </div>
-
-            <div class="grid">
-
-                <div class="field">
-                    <label>Customer Name <span class="required">*</span></label>
-                    <input id="name" type="text" required
-                    placeholder="Enter customer name">
-                </div>
-
-                <div class="field">
-                    <label>Mobile Number <span class="required">*</span></label>
-                    <input id="phone" type="tel" required
-                    placeholder="01XXXXXXXXX">
-                </div>
-
-                <div class="field">
-                    <label>Alternative Mobile</label>
-                    <input id="alt_phone" type="tel"
-                    placeholder="Alternative number">
-                </div>
-
-                <div class="field">
-                    <label>Customer IP</label>
-                    <input id="ip" type="text"
-                    placeholder="Example: 192.168.1.10">
-                </div>
-
-                <div class="field">
-                    <label>Area / Zone</label>
-                    <input id="area" type="text"
-                    placeholder="Enter area">
-                </div>
-
-                <div class="field">
-                    <label>Customer Gmail</label>
-                    <input id="email" type="email"
-                    placeholder="customer@gmail.com">
-                </div>
-
-                <div class="field full">
-                    <label>Full Address</label>
-                    <textarea id="address"
-                    placeholder="Enter customer full address"></textarea>
-                </div>
-
-                <div class="field full">
-                    <label>Google Map Location / Link</label>
-                    <input id="location" type="text"
-                    placeholder="Paste Google Maps link or location">
-                </div>
-
-            </div>
-        </div>
-
-        <!-- BILLING INFORMATION -->
-
-        <div class="section">
-            <div class="section-title">
-                <span class="section-number">02</span>
-                Billing Information
-            </div>
-
-            <div class="grid">
-
-                <div class="field">
-                    <label>Customer Bill (৳)</label>
-                    <input id="customer_bill" type="number"
-                    min="0" step="0.01" value="0"
-                    placeholder="0.00">
-                </div>
-
-                <div class="field">
-                    <label>Internet Bill (৳)</label>
-                    <input id="internet_bill" type="number"
-                    min="0" step="0.01" value="0"
-                    placeholder="0.00">
-                </div>
-
-                <div class="field">
-                    <label>Due Amount (৳)</label>
-                    <input id="due_amount" type="number"
-                    min="0" step="0.01" value="0"
-                    placeholder="0.00">
-                </div>
-
-                <div class="field">
-                    <label>Billing Date</label>
-                    <input id="billing_date" type="date">
-                </div>
-
-                <div class="field full">
-                    <label>Due Reason</label>
-                    <textarea id="due_reason"
-                    placeholder="Enter due reason"></textarea>
-                </div>
-
-            </div>
-
-            <div class="total-box">
-                <strong>Total Monthly Bill</strong>
-                <div class="total-amount" id="totalBill">৳ 0.00</div>
-            </div>
-        </div>
-
-        <!-- AUTOMATION -->
-
-        <div class="section">
-            <div class="section-title">
-                <span class="section-number">03</span>
-                Billing Automation
-            </div>
-
-            <div class="switch-grid">
-
-                <div class="switch-card">
-                    <div class="switch-info">
-                        <strong>Bill Trigger</strong>
-                        <small>Enable automatic bill status</small>
-                    </div>
-
-                    <label class="toggle">
-                        <input id="bill_trigger" type="checkbox">
-                        <span></span>
-                    </label>
-                </div>
-
-                <div class="switch-card">
-                    <div class="switch-info">
-                        <strong>IP Bill Trigger</strong>
-                        <small>Enable IP bill automation</small>
-                    </div>
-
-                    <label class="toggle">
-                        <input id="ip_bill_trigger" type="checkbox">
-                        <span></span>
-                    </label>
-                </div>
-
-                <div class="switch-card">
-                    <div class="switch-info">
-                        <strong>Auto Mail</strong>
-                        <small>Save automatic mail preference</small>
-                    </div>
-
-                    <label class="toggle">
-                        <input id="auto_mail" type="checkbox">
-                        <span></span>
-                    </label>
-                </div>
-
-            </div>
-
-            <div class="hint">
-                Auto Mail currently saves the ON/OFF preference.
-                Actual email automation requires a separate email service.
-            </div>
-        </div>
-
-        <!-- PRODUCT INFORMATION -->
-
-        <div class="section">
-            <div class="products-header">
-                <div class="section-title" style="margin:0">
-                    <span class="section-number">04</span>
-                    Product Information
-                </div>
-
-                <button type="button" class="btn btn-light"
-                id="addProductBtn">
-                    + Add Product
-                </button>
-            </div>
-
-            <div id="productsContainer"></div>
-
-            <div class="hint">
-                You can add multiple Router and ONU products.
-            </div>
-        </div>
-
-        <!-- CONNECTION INFORMATION -->
-
-        <div class="section">
-            <div class="section-title">
-                <span class="section-number">05</span>
-                Connection & Status
-            </div>
-
-            <div class="grid">
-
-                <div class="field">
-                    <label>Connection Date</label>
-                    <input id="connection_date" type="date">
-                </div>
-
-                <div class="field">
-                    <label>Customer Status</label>
-                    <select id="status">
-                        <option value="active">Active</option>
-                        <option value="inactive">Inactive</option>
-                    </select>
-                </div>
-
-                <div class="field full">
-                    <label>Additional Notes</label>
-                    <textarea id="notes"
-                    placeholder="Additional information..."></textarea>
-                </div>
-
-            </div>
-        </div>
-
-        <!-- ACTIONS -->
-
-        <div class="footer-actions">
-            <button type="reset" class="btn btn-light">
-                Reset Form
-            </button>
-
-            <button type="submit" class="btn btn-primary"
-            id="saveBtn">
-                Save Customer
-            </button>
-        </div>
-
-    </form>
+  </form>
 </div>
 
 <script>
-/* =====================================================
-   ONE ONLINE - SUPABASE CONFIGURATION
-===================================================== */
+/************************************************************
+ * ONE ONLINE — ADD CUSTOMER FRONTEND
+ ************************************************************/
 
-const SUPABASE_URL =
-'https://zkiaeynsgviqjyilfphc.supabase.co';
+const API_URL =
+"https://script.google.com/macros/s/AKfycbxrhL_45Ey9QHICYzpNdsYRapqRZv36fzyEORs02MCnlAuju8yF-s5bDOfxY_l5qNrG/exec";
 
-const SUPABASE_KEY =
-'sb_publishable_Hzou3f71h7aOVVDpnsL2yg_m_JMyuvP';
-
-const db = window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
-);
-
-let currentUser = null;
-let currentProfile = null;
-
-
-/* =====================================================
-   PARENT THEME SYNC
-===================================================== */
-
-function syncParentTheme() {
-    try {
-        const parentDoc = window.parent.document;
-        const html = parentDoc.documentElement;
-        const body = parentDoc.body;
-
-        const classes = [
-            ...html.classList,
-            ...body.classList
-        ].join(' ').toLowerCase();
-
-        const theme = (
-            html.getAttribute('data-theme') ||
-            body.getAttribute('data-theme') ||
-            html.dataset.theme ||
-            body.dataset.theme ||
-            ''
-        ).toLowerCase();
-
-        const dark =
-            classes.includes('dark') ||
-            classes.includes('night') ||
-            theme === 'dark';
-
-        const funny =
-            classes.includes('funny') ||
-            theme === 'funny';
-
-        document.body.classList.toggle('dark', dark);
-        document.body.classList.toggle('funny', funny);
-
-    } catch(e) {
-        // Standalone preview fallback
-    }
-}
-
-syncParentTheme();
-
-try {
-    const observer = new MutationObserver(syncParentTheme);
-
-    observer.observe(window.parent.document.documentElement, {
-        attributes:true,
-        attributeFilter:['class','data-theme']
-    });
-
-    observer.observe(window.parent.document.body, {
-        attributes:true,
-        attributeFilter:['class','data-theme']
-    });
-} catch(e) {}
-
-
-/* =====================================================
-   HELPERS
-===================================================== */
-
-const $ = id => document.getElementById(id);
-
-function showMessage(message, type='info') {
-    const box = $('message');
-
-    box.className = 'status ' + type;
-    box.textContent = message;
-
-    box.scrollIntoView({
-        behavior:'smooth',
-        block:'center'
-    });
-}
-
-function hideMessage() {
-    $('message').className = 'status';
-    $('message').textContent = '';
-}
-
-function todayISO() {
-    const d = new Date();
-
-    const local = new Date(
-        d.getTime() - d.getTimezoneOffset() * 60000
-    );
-
-    return local.toISOString().slice(0,10);
-}
-
-function formatMoney(value) {
-    return Number(value || 0).toLocaleString(
-        'en-BD',
-        {
-            minimumFractionDigits:2,
-            maximumFractionDigits:2
-        }
-    );
-}
-
-function getValue(id) {
-    return $(id).value.trim();
-}
-
-function getNumber(id) {
-    return Number($(id).value || 0);
-}
-
-function getChecked(id) {
-    return $(id).checked;
-}
-
-
-/* =====================================================
-   CREATE DATE
-===================================================== */
-
-function setCreateDate() {
-    const date = new Date();
-
-    $('createDate').textContent =
-        date.toLocaleDateString('en-BD', {
-            year:'numeric',
-            month:'long',
-            day:'numeric'
-        });
-}
-
-
-/* =====================================================
-   TOTAL BILL CALCULATION
-===================================================== */
-
-function calculateTotal() {
-    const customerBill = getNumber('customer_bill');
-    const internetBill = getNumber('internet_bill');
-
-    const total = customerBill + internetBill;
-
-    $('totalBill').textContent =
-        '৳ ' + formatMoney(total);
-}
-
-$('customer_bill').addEventListener(
-    'input',
-    calculateTotal
-);
-
-$('internet_bill').addEventListener(
-    'input',
-    calculateTotal
-);
-
-
-/* =====================================================
-   PRODUCT MANAGEMENT
-===================================================== */
+const form = document.getElementById("customerForm");
+const messageBox = document.getElementById("message");
+const saveBtn = document.getElementById("saveBtn");
+const productsBox = document.getElementById("products");
 
 let productCounter = 0;
 
-function addProduct(data = {}) {
 
-    productCounter++;
+// ==========================================================
+// THEME SYNC WITH PARENT INDEX
+// ==========================================================
 
-    const id = productCounter;
+function applyParentTheme(){
 
-    const card = document.createElement('div');
+  try{
 
-    card.className = 'product-card';
-    card.dataset.productId = id;
+    const parentBody = window.parent.document.body;
 
-    card.innerHTML = `
-        <div class="product-top">
-            <div class="product-heading">
-                Product #${id}
-            </div>
+    const classList = parentBody.classList;
 
-            <button type="button"
-                class="remove-btn"
-                data-remove="${id}">
-                Remove
-            </button>
-        </div>
+    document.body.classList.toggle(
+      "dark-mode",
+      classList.contains("dark-mode") ||
+      classList.contains("dark")
+    );
 
-        <div class="grid">
+    document.body.classList.toggle(
+      "funny-mode",
+      classList.contains("funny-mode")
+    );
 
-            <div class="field">
-                <label>Product Type</label>
-                <select class="product-type">
-                    <option value="router">Router</option>
-                    <option value="onu">ONU</option>
-                </select>
-            </div>
+  }catch(error){
+    // Cross-origin parent: use default theme.
+  }
 
-            <div class="field">
-                <label>Product Name / Model</label>
-                <input class="product-name"
-                type="text"
-                placeholder="Example: TP-Link Router">
-            </div>
-
-            <div class="field">
-                <label>Serial Number</label>
-                <input class="product-serial"
-                type="text"
-                placeholder="Serial number">
-            </div>
-
-            <div class="field">
-                <label>MAC Address</label>
-                <input class="product-mac"
-                type="text"
-                placeholder="MAC address">
-            </div>
-
-            <div class="field">
-                <label>Product Price (৳)</label>
-                <input class="product-price"
-                type="number"
-                min="0"
-                step="0.01"
-                value="0">
-            </div>
-
-            <div class="field">
-                <label>Product Note</label>
-                <input class="product-note"
-                type="text"
-                placeholder="Product details">
-            </div>
-
-        </div>
-    `;
-
-    $('productsContainer').appendChild(card);
-
-    card.querySelector('.product-type').value =
-        data.product_type || 'router';
-
-    card.querySelector('.product-name').value =
-        data.product_name || '';
-
-    card.querySelector('.product-serial').value =
-        data.serial_number || '';
-
-    card.querySelector('.product-mac').value =
-        data.mac_address || '';
-
-    card.querySelector('.product-price').value =
-        data.product_price ?? 0;
-
-    card.querySelector('.product-note').value =
-        data.product_note || '';
 }
 
-$('addProductBtn').addEventListener(
-    'click',
-    () => addProduct()
-);
+applyParentTheme();
 
-$('productsContainer').addEventListener(
-    'click',
-    function(e) {
-        const button = e.target.closest('[data-remove]');
+try{
 
-        if (!button) return;
+  const observer = new MutationObserver(applyParentTheme);
 
-        const id = button.dataset.remove;
-
-        const card = document.querySelector(
-            `.product-card[data-product-id="${id}"]`
-        );
-
-        if (card) card.remove();
+  observer.observe(
+    window.parent.document.body,
+    {
+      attributes:true,
+      attributeFilter:["class","data-theme"]
     }
+  );
+
+}catch(error){}
+
+
+// ==========================================================
+// MESSAGE
+// ==========================================================
+
+function showMessage(type,text){
+
+  messageBox.className = "message " + type;
+  messageBox.textContent = text;
+
+  messageBox.scrollIntoView({
+    behavior:"smooth",
+    block:"center"
+  });
+
+}
+
+function hideMessage(){
+
+  messageBox.className = "message";
+  messageBox.textContent = "";
+
+}
+
+
+// ==========================================================
+// PRODUCT ROW
+// ==========================================================
+
+function addProduct(){
+
+  productCounter++;
+
+  const id = productCounter;
+
+  const html = `
+    <div class="product" data-product="${id}">
+
+      <div class="product-top">
+        <strong>
+          <i class="fa-solid fa-box"></i>
+          Product #${id}
+        </strong>
+
+        <button type="button"
+          class="remove-product"
+          onclick="removeProduct(${id})"
+          title="Remove product">
+          <i class="fa-solid fa-trash"></i>
+        </button>
+      </div>
+
+      <div class="grid">
+
+        <div class="field">
+          <label>Product Type</label>
+          <select class="p-type">
+            <option value="router">Router</option>
+            <option value="onu">ONU</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Product Name</label>
+          <input class="p-name" placeholder="Router / ONU name">
+        </div>
+
+        <div class="field">
+          <label>Model</label>
+          <input class="p-model" placeholder="Product model">
+        </div>
+
+        <div class="field">
+          <label>Serial Number</label>
+          <input class="p-serial" placeholder="Serial number">
+        </div>
+
+        <div class="field">
+          <label>MAC Address</label>
+          <input class="p-mac" placeholder="MAC address">
+        </div>
+
+        <div class="field">
+          <label>Product Price (৳)</label>
+          <input class="p-price" type="number" min="0" step="0.01" value="0">
+        </div>
+
+        <div class="field full">
+          <label>Product Note</label>
+          <input class="p-note" placeholder="Additional product information">
+        </div>
+
+      </div>
+    </div>
+  `;
+
+  productsBox.insertAdjacentHTML("beforeend",html);
+
+}
+
+function removeProduct(id){
+
+  const element = document.querySelector(
+    '[data-product="' + id + '"]'
+  );
+
+  if(element) element.remove();
+
+}
+
+document.getElementById("addProduct").addEventListener(
+  "click",
+  addProduct
 );
 
-function collectProducts() {
 
-    const cards = [
-        ...document.querySelectorAll('.product-card')
-    ];
+// Add one empty product by default
+addProduct();
 
-    const products = [];
 
-    cards.forEach(card => {
+// ==========================================================
+// GET PRODUCTS
+// ==========================================================
 
-        const type = card.querySelector(
-            '.product-type'
-        ).value;
+function getProducts(){
 
-        const name = card.querySelector(
-            '.product-name'
-        ).value.trim();
+  const productElements = document.querySelectorAll(".product");
 
-        const serial = card.querySelector(
-            '.product-serial'
-        ).value.trim();
+  const products = [];
 
-        const mac = card.querySelector(
-            '.product-mac'
-        ).value.trim();
+  productElements.forEach(function(element){
 
-        const price = Number(
-            card.querySelector('.product-price').value || 0
-        );
+    const product = {
 
-        const note = card.querySelector(
-            '.product-note'
-        ).value.trim();
+      productType:element.querySelector(".p-type").value,
 
-        // Ignore completely empty product
-        if (!name && !serial && !mac && !note && price === 0) {
-            return;
-        }
+      productName:element.querySelector(".p-name").value.trim(),
 
-        products.push({
-            product_type:type,
-            product_name:name || null,
-            serial_number:serial || null,
-            mac_address:mac || null,
-            product_price:price,
-            product_note:note || null
-        });
+      model:element.querySelector(".p-model").value.trim(),
+
+      serial:element.querySelector(".p-serial").value.trim(),
+
+      mac:element.querySelector(".p-mac").value.trim(),
+
+      price:Number(
+        element.querySelector(".p-price").value || 0
+      ),
+
+      note:element.querySelector(".p-note").value.trim()
+
+    };
+
+    // Skip completely empty product rows
+
+    const hasData =
+      product.productName ||
+      product.model ||
+      product.serial ||
+      product.mac ||
+      product.price ||
+      product.note;
+
+    if(hasData){
+      products.push(product);
+    }
+
+  });
+
+  return products;
+
+}
+
+
+// ==========================================================
+// FORM DATA
+// ==========================================================
+
+function getFormPayload(){
+
+  const fd = new FormData(form);
+
+  const data = {
+
+    name:fd.get("name"),
+
+    phone:fd.get("phone"),
+
+    altPhone:fd.get("altPhone"),
+
+    ip:fd.get("ip"),
+
+    area:fd.get("area"),
+
+    address:fd.get("address"),
+
+    mapLink:fd.get("mapLink"),
+
+    email:fd.get("email"),
+
+    customerBill:Number(fd.get("customerBill") || 0),
+
+    internetBill:Number(fd.get("internetBill") || 0),
+
+    dueAmount:Number(fd.get("dueAmount") || 0),
+
+    dueReason:fd.get("dueReason"),
+
+    billingDate:fd.get("billingDate"),
+
+    connectionDate:fd.get("connectionDate"),
+
+    billTrigger:form.elements.billTrigger.checked,
+
+    ipBillTrigger:form.elements.ipBillTrigger.checked,
+
+    autoMail:form.elements.autoMail.checked,
+
+    status:fd.get("status"),
+
+    notes:fd.get("notes"),
+
+    products:getProducts(),
+
+    createdBy:"ONE ONLINE"
+
+  };
+
+  return {
+    action:"addCustomer",
+    data:data
+  };
+
+}
+
+
+// ==========================================================
+// SUBMIT CUSTOMER
+// ==========================================================
+
+form.addEventListener("submit",async function(event){
+
+  event.preventDefault();
+
+  hideMessage();
+
+  if(!form.reportValidity()){
+    return;
+  }
+
+  const payload = getFormPayload();
+
+  const originalButton = saveBtn.innerHTML;
+
+  saveBtn.disabled = true;
+
+  saveBtn.innerHTML =
+    '<i class="fa-solid fa-spinner fa-spin"></i> Saving Customer...';
+
+  try{
+
+    const response = await fetch(API_URL,{
+
+      method:"POST",
+
+      redirect:"follow",
+
+      headers:{
+        "Content-Type":"text/plain;charset=utf-8"
+      },
+
+      body:JSON.stringify(payload)
+
     });
 
-    return products;
-}
+    const responseText = await response.text();
 
+    let result;
 
-/* =====================================================
-   AUTHENTICATION AND PERMISSION
-===================================================== */
+    try{
 
-async function checkAccess() {
+      result = JSON.parse(responseText);
 
-    const { data:sessionData, error:sessionError } =
-        await db.auth.getSession();
+    }catch(parseError){
 
-    if (sessionError) {
-        throw sessionError;
+      throw new Error(
+        "Server response could not be verified. Check Apps Script deployment and API response."
+      );
+
     }
 
-    currentUser = sessionData.session?.user;
+    if(!response.ok || !result.success){
 
-    if (!currentUser) {
-        throw new Error(
-            'Login required. Please login from ONE ONLINE Dashboard.'
-        );
+      throw new Error(
+        result.message || "Customer could not be saved."
+      );
+
     }
 
-    const { data:profile, error:profileError } =
-        await db
-        .from('profiles')
-        .select('id,role,status,full_name')
-        .eq('id', currentUser.id)
-        .single();
+    // Success confirmation
 
-    if (profileError) {
-        throw new Error(
-            'Profile loading failed: ' + profileError.message
-        );
-    }
+    const customerCode =
+      result.customer && result.customer.customerCode
+        ? result.customer.customerCode
+        : "";
 
-    currentProfile = profile;
-
-    if (profile.status !== 'active') {
-        throw new Error(
-            'Your account is inactive. Contact Super Admin.'
-        );
-    }
-
-    const isSuperAdmin =
-        profile.role === 'super_admin';
-
-    if (!isSuperAdmin) {
-
-        const { data:allowed, error:permissionError } =
-            await db.rpc(
-                'has_permission',
-                {
-                    permission_name:'customers.create'
-                }
-            );
-
-        if (permissionError) {
-            throw new Error(
-                'Permission check failed: ' +
-                permissionError.message
-            );
-        }
-
-        if (allowed !== true) {
-            throw new Error(
-                'You do not have permission to create customers.'
-            );
-        }
-    }
-
-    return true;
-}
-
-
-/* =====================================================
-   INITIALIZATION
-===================================================== */
-
-async function initialize() {
-
-    setCreateDate();
-
-    $('loading').style.display = 'block';
-
-    try {
-
-        await checkAccess();
-
-        $('loading').style.display = 'none';
-        $('customerForm').style.display = 'block';
-
-        addProduct();
-
-        calculateTotal();
-
-    } catch(error) {
-
-        $('loading').innerHTML = `
-            <div style="color:#e03131;font-weight:700">
-                Unable to Open Add Customer
-            </div>
-            <p>${escapeHTML(error.message)}</p>
-            <button class="btn btn-primary"
-                onclick="location.reload()">
-                Try Again
-            </button>
-        `;
-    }
-}
-
-function escapeHTML(value) {
-    return String(value ?? '').replace(
-        /[&<>"']/g,
-        c => ({
-            '&':'&amp;',
-            '<':'&lt;',
-            '>':'&gt;',
-            '"':'&quot;',
-            "'":'&#39;'
-        })[c]
+    showMessage(
+      "success",
+      "✓ Customer Saved Successfully! " +
+      (customerCode ? "Customer Code: " + customerCode : "") +
+      " — Customer information has been submitted to Google Sheets."
     );
-}
 
+    // Reset form after successful response
 
-/* =====================================================
-   CUSTOMER CODE GENERATOR
-===================================================== */
+    form.reset();
 
-function generateCustomerCode() {
+    productsBox.innerHTML = "";
 
-    const date = todayISO().replaceAll('-', '');
+    productCounter = 0;
 
-    const random = crypto.randomUUID()
-        .replaceAll('-', '')
-        .substring(0,6)
-        .toUpperCase();
+    addProduct();
 
-    return `CUS-${date}-${random}`;
-}
+  }catch(error){
 
+    console.error("Customer save error:",error);
 
-/* =====================================================
-   BUILD CUSTOMER PAYLOAD
-===================================================== */
+    showMessage(
+      "error",
+      "Save Failed: " + error.message +
+      " Please check your internet connection and Apps Script deployment."
+    );
 
-function buildPayload() {
+  }finally{
 
-    const name = getValue('name');
-    const phone = getValue('phone');
+    saveBtn.disabled = false;
 
-    if (!name) {
-        throw new Error('Customer Name is required.');
-    }
+    saveBtn.innerHTML = originalButton;
 
-    if (!phone) {
-        throw new Error('Mobile Number is required.');
-    }
+  }
 
-    const dueAmount = getNumber('due_amount');
+});
 
-    if (dueAmount < 0) {
-        throw new Error('Due amount cannot be negative.');
-    }
 
-    const customerBill = getNumber('customer_bill');
-    const internetBill = getNumber('internet_bill');
+// ==========================================================
+// RESET MESSAGE
+// ==========================================================
 
-    if (customerBill < 0 || internetBill < 0) {
-        throw new Error('Bill amount cannot be negative.');
-    }
+document.getElementById("resetBtn").addEventListener(
+  "click",
+  function(){
 
-    const products = collectProducts();
+    setTimeout(function(){
 
-    return {
+      hideMessage();
 
-        customer_code:generateCustomerCode(),
+      productsBox.innerHTML = "";
 
-        name:name,
-        phone:phone,
+      productCounter = 0;
 
-        alt_phone:getValue('alt_phone') || null,
+      addProduct();
 
-        ip:getValue('ip') || null,
+    },50);
 
-        email:getValue('email') || null,
-
-        area:getValue('area') || null,
-
-        address:getValue('address') || null,
-
-        location:getValue('location') || null,
-
-        customer_bill:customerBill,
-
-        internet_bill:internetBill,
-
-        due_amount:dueAmount,
-
-        due_reason:getValue('due_reason') || null,
-
-        billing_date:getValue('billing_date') || null,
-
-        bill_trigger:getChecked('bill_trigger'),
-
-        ip_bill_trigger:getChecked('ip_bill_trigger'),
-
-        auto_mail:getChecked('auto_mail'),
-
-        connection_date:
-            getValue('connection_date') || null,
-
-        status:getValue('status'),
-
-        notes:getValue('notes') || null,
-
-        products:products
-    };
-}
-
-
-/* =====================================================
-   SAVE CUSTOMER USING RPC
-===================================================== */
-
-$('customerForm').addEventListener(
-    'submit',
-    async function(e) {
-
-        e.preventDefault();
-
-        hideMessage();
-
-        const saveButton = $('saveBtn');
-
-        saveButton.disabled = true;
-        saveButton.textContent = 'Saving Customer...';
-
-        try {
-
-            // Recheck session before saving
-            await checkAccess();
-
-            const payload = buildPayload();
-
-            const { data, error } = await db.rpc(
-                'add_customer_full',
-                {
-                    p_payload:payload
-                }
-            );
-
-            if (error) {
-                throw error;
-            }
-
-            if (!data || data.success !== true) {
-                throw new Error(
-                    data?.message || 'Customer save failed.'
-                );
-            }
-
-            showMessage(
-                'Customer created successfully! Customer Code: ' +
-                data.customer_code,
-                'success'
-            );
-
-            // Reset form after successful save
-            $('customerForm').reset();
-
-            $('productsContainer').innerHTML = '';
-
-            productCounter = 0;
-
-            addProduct();
-
-            calculateTotal();
-
-            setCreateDate();
-
-            window.scrollTo({
-                top:0,
-                behavior:'smooth'
-            });
-
-        } catch(error) {
-
-            console.error('Customer Save Error:', error);
-
-            showMessage(
-                error.message ||
-                'Unable to save customer. Please try again.',
-                'error'
-            );
-
-        } finally {
-
-            saveButton.disabled = false;
-            saveButton.textContent = 'Save Customer';
-
-        }
-    }
+  }
 );
-
-
-/* =====================================================
-   RESET FORM
-===================================================== */
-
-$('customerForm').addEventListener(
-    'reset',
-    function() {
-
-        setTimeout(() => {
-
-            $('productsContainer').innerHTML = '';
-
-            productCounter = 0;
-
-            addProduct();
-
-            calculateTotal();
-
-            hideMessage();
-
-        }, 0);
-    }
-);
-
-
-/* =====================================================
-   START APPLICATION
-===================================================== */
-
-initialize();
 
 </script>
-
 </body>
 </html>
