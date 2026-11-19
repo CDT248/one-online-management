@@ -10,348 +10,604 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-:root {
+:root{
   --primary:#087f5b;
+  --primary-light:#e6f5ef;
   --bg:#f1f5f4;
   --card:#ffffff;
   --text:#172033;
   --muted:#64748b;
   --border:#e2e8f0;
+  --sidebar:#ffffff;
   --input:#ffffff;
+  --shadow:0 8px 25px rgba(0,0,0,.05);
 }
-* {box-sizing:border-box;margin:0;padding:0}
-
-body {
+*{box-sizing:border-box;margin:0;padding:0}
+body{
   min-height:100vh;
-  display:grid;
-  place-items:center;
-  padding:20px;
   background:var(--bg);
   color:var(--text);
   font-family:Arial,sans-serif;
 }
+button,input{font:inherit}
+button{cursor:pointer}
+.hidden{display:none!important}
 
-.container {width:100%;max-width:440px}
-
-.card {
+/* LOGIN */
+.auth-wrap{
+  min-height:100vh;
+  display:grid;
+  place-items:center;
+  padding:20px;
+}
+.auth-card{
+  width:100%;
+  max-width:440px;
+  padding:30px 25px;
   background:var(--card);
   border:1px solid var(--border);
   border-radius:20px;
-  padding:30px 25px;
-  box-shadow:0 15px 45px #0000000d;
+  box-shadow:var(--shadow);
 }
-
-.logo {
-  width:65px;
-  height:65px;
+.logo{
+  width:65px;height:65px;
   margin:0 auto 16px;
-  display:grid;
-  place-items:center;
+  display:grid;place-items:center;
   border-radius:18px;
   background:var(--primary);
-  color:white;
-  font-size:35px;
-  font-weight:bold;
+  color:#fff;font-size:35px;font-weight:bold;
 }
-
-.heading {text-align:center;margin-bottom:25px}
-.heading h1 {font-size:25px;margin-bottom:8px}
-.heading p {font-size:14px;color:var(--muted)}
-
-label {
-  display:block;
-  margin:16px 0 7px;
-  font-size:13px;
-  font-weight:bold;
+.heading{text-align:center;margin-bottom:25px}
+.heading h1{font-size:25px;margin-bottom:8px}
+.heading p{font-size:14px;color:var(--muted)}
+label{
+  display:block;margin:16px 0 7px;
+  font-size:13px;font-weight:bold;
 }
-
-input {
-  width:100%;
-  height:48px;
-  padding:0 13px;
+input{
+  width:100%;height:48px;padding:0 13px;
   border:1px solid var(--border);
-  border-radius:10px;
-  background:var(--input);
-  color:var(--text);
-  font-size:15px;
-  outline:none;
+  border-radius:10px;background:var(--input);
+  color:var(--text);outline:none;
 }
-
-input:focus {border-color:var(--primary)}
-
-button {
-  width:100%;
-  min-height:48px;
-  margin-top:20px;
-  padding:12px;
-  border:0;
-  border-radius:10px;
-  background:var(--primary);
-  color:white;
-  font-size:15px;
-  font-weight:bold;
-  cursor:pointer;
+input:focus{border-color:var(--primary)}
+.btn{
+  border:0;border-radius:10px;
+  background:var(--primary);color:white;
+  padding:13px 18px;font-weight:bold;
 }
-
-button:disabled {opacity:.6;cursor:not-allowed}
-
-.secondary {
-  margin-top:12px;
-  background:transparent;
-  color:var(--primary);
+.btn:disabled{opacity:.6;cursor:not-allowed}
+.full{width:100%;margin-top:20px}
+.secondary{
+  background:transparent;color:var(--primary);
   border:1px solid var(--border);
 }
-
-.logout {background:#dc2626}
-
-.link {
-  display:block;
-  margin-top:17px;
-  text-align:center;
-  color:var(--primary);
-  font-size:13px;
-  cursor:pointer;
-  font-weight:bold;
+.link{
+  display:block;margin-top:17px;text-align:center;
+  color:var(--primary);font-size:13px;
+  font-weight:bold;cursor:pointer;
+}
+.message{
+  display:none;padding:13px;margin-top:16px;
+  border-radius:10px;font-size:13px;
+  line-height:1.6;overflow-wrap:anywhere;
+}
+.error{display:block;background:#fee2e2;color:#991b1b}
+.success{display:block;background:#dcfce7;color:#166534}
+.info{display:block;background:#e0f2fe;color:#075985}
+.auth-footer{
+  margin-top:20px;text-align:center;
+  color:var(--muted);font-size:12px;
 }
 
-.message {
-  display:none;
-  padding:13px;
-  margin-top:16px;
-  border-radius:10px;
-  font-size:13px;
-  line-height:1.6;
-  overflow-wrap:anywhere;
-  white-space:pre-wrap;
+/* APPLICATION */
+#appSection{display:none;min-height:100vh}
+.sidebar{
+  position:fixed;left:0;top:0;bottom:0;
+  width:255px;background:var(--sidebar);
+  border-right:1px solid var(--border);
+  z-index:30;display:flex;flex-direction:column;
+  transition:transform .25s;
 }
-
-.error {display:block;background:#fee2e2;color:#991b1b}
-.success {display:block;background:#dcfce7;color:#166534}
-.info {display:block;background:#e0f2fe;color:#075985}
-
-.panel {display:none}
-
-.avatar {
-  width:70px;
-  height:70px;
-  display:grid;
-  place-items:center;
-  margin:0 auto 15px;
-  border-radius:50%;
-  background:#dcfce7;
-  color:#087f5b;
-  font-size:30px;
-  font-weight:bold;
+.brand{
+  height:82px;padding:16px 20px;
+  display:flex;align-items:center;gap:12px;
+  border-bottom:1px solid var(--border);
 }
-
-.role {
-  display:inline-block;
-  margin-top:12px;
-  padding:8px 16px;
-  border-radius:30px;
-  background:#dcfce7;
-  color:#166534;
-  font-size:13px;
-  font-weight:bold;
+.brand-logo{
+  width:43px;height:43px;flex-shrink:0;
+  display:grid;place-items:center;
+  background:var(--primary);color:white;
+  border-radius:12px;font-size:25px;font-weight:bold;
 }
+.brand-name{font-size:16px;font-weight:bold}
+.brand-sub{font-size:10px;color:var(--muted);margin-top:4px}
+.nav-area{padding:20px 13px;overflow-y:auto;flex:1}
+.nav-label{
+  color:var(--muted);font-size:10px;
+  font-weight:bold;letter-spacing:1px;
+  padding:8px 12px;
+}
+.nav-link{
+  display:flex;align-items:center;gap:12px;
+  width:100%;padding:13px 12px;
+  border:0;border-radius:9px;
+  background:transparent;color:var(--muted);
+  text-align:left;font-size:14px;
+  margin:3px 0;
+}
+.nav-link:hover,.nav-link.active{
+  background:var(--primary-light);
+  color:var(--primary);font-weight:bold;
+}
+.nav-icon{width:22px;text-align:center;font-size:17px}
+.sidebar-bottom{
+  padding:15px;border-top:1px solid var(--border);
+}
+.account-mini{
+  display:flex;align-items:center;gap:10px;
+  padding:8px;
+}
+.mini-avatar{
+  width:38px;height:38px;border-radius:50%;
+  display:grid;place-items:center;
+  background:var(--primary-light);
+  color:var(--primary);font-weight:bold;
+}
+.mini-info{min-width:0}
+.mini-name{font-size:13px;font-weight:bold}
+.mini-role{font-size:11px;color:var(--muted);margin-top:4px}
 
-.details {
-  margin-top:22px;
-  padding:15px;
-  border:1px solid var(--border);
-  border-radius:12px;
+.main-area{margin-left:255px;min-height:100vh}
+.topbar{
+  height:70px;background:var(--card);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 28px;position:sticky;top:0;z-index:20;
+}
+.top-left{display:flex;align-items:center;gap:14px}
+.top-title{font-size:17px;font-weight:bold}
+.top-right{display:flex;align-items:center;gap:12px}
+.icon-btn{
+  width:40px;height:40px;border:1px solid var(--border);
+  background:var(--card);color:var(--text);
+  border-radius:10px;font-size:18px;
+}
+.profile-top{
+  display:flex;align-items:center;gap:9px;
+  border:0;background:transparent;color:var(--text);
   text-align:left;
-  font-size:13px;
-  line-height:2;
-  overflow-wrap:anywhere;
+}
+.top-avatar{
+  width:36px;height:36px;border-radius:50%;
+  background:var(--primary-light);color:var(--primary);
+  display:grid;place-items:center;font-weight:bold;
+}
+.top-user{font-size:12px;font-weight:bold}
+.top-user small{display:block;color:var(--muted);margin-top:3px}
+
+.content{padding:28px;max-width:1500px;margin:auto}
+.page-heading{
+  display:flex;justify-content:space-between;
+  align-items:flex-start;gap:15px;margin-bottom:25px;
+}
+.page-heading h1{font-size:24px;margin-bottom:7px}
+.page-heading p{font-size:13px;color:var(--muted)}
+.welcome-tag{
+  display:inline-block;padding:8px 12px;
+  border-radius:30px;background:var(--primary-light);
+  color:var(--primary);font-size:12px;font-weight:bold;
+}
+.stats-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:17px;margin-bottom:25px;
+}
+.stat-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:15px;padding:20px;
+  box-shadow:var(--shadow);
+}
+.stat-top{
+  display:flex;align-items:center;
+  justify-content:space-between;margin-bottom:18px;
+}
+.stat-icon{
+  width:43px;height:43px;border-radius:12px;
+  display:grid;place-items:center;font-size:21px;
+  background:var(--primary-light);
+}
+.stat-label{font-size:13px;color:var(--muted)}
+.stat-value{font-size:26px;font-weight:bold}
+.stat-note{font-size:11px;color:var(--muted);margin-top:7px}
+
+.section-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:15px;padding:22px;
+  box-shadow:var(--shadow);margin-bottom:20px;
+}
+.section-title{font-size:16px;font-weight:bold;margin-bottom:7px}
+.section-desc{font-size:12px;color:var(--muted);line-height:1.6}
+.quick-grid{
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:13px;margin-top:18px;
+}
+.quick-item{
+  padding:17px;border:1px solid var(--border);
+  border-radius:12px;background:var(--card);
+  color:var(--text);text-align:left;
+}
+.quick-item:hover{border-color:var(--primary)}
+.quick-icon{font-size:23px;margin-bottom:12px}
+.quick-item b{display:block;font-size:13px}
+.quick-item small{display:block;color:var(--muted);font-size:11px;margin-top:6px}
+
+.profile-grid{
+  display:grid;grid-template-columns:1fr 2fr;
+  gap:20px;
+}
+.profile-summary{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:15px;padding:25px;text-align:center;
+}
+.big-avatar{
+  width:80px;height:80px;border-radius:50%;
+  margin:5px auto 15px;display:grid;place-items:center;
+  background:var(--primary-light);color:var(--primary);
+  font-size:30px;font-weight:bold;
+}
+.profile-summary h2{font-size:18px}
+.role-badge{
+  display:inline-block;margin-top:12px;padding:8px 15px;
+  border-radius:30px;background:var(--primary-light);
+  color:var(--primary);font-size:11px;font-weight:bold;
+}
+.profile-details{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:15px;padding:22px;
+}
+.detail-row{
+  display:flex;justify-content:space-between;
+  gap:15px;padding:15px 0;
+  border-bottom:1px solid var(--border);font-size:13px;
+}
+.detail-row:last-child{border-bottom:0}
+.detail-row span:first-child{color:var(--muted)}
+.detail-row span:last-child{
+  font-weight:bold;text-align:right;overflow-wrap:anywhere;
+}
+.page-footer{
+  text-align:center;color:var(--muted);
+  font-size:11px;padding:25px 0;
+}
+.mobile-menu{display:none}
+.overlay{
+  display:none;position:fixed;inset:0;
+  background:#0008;z-index:25;
 }
 
-.footer {
-  margin-top:20px;
-  text-align:center;
-  color:var(--muted);
-  font-size:12px;
+/* RESPONSIVE */
+@media(max-width:1000px){
+  .stats-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
-
-.small {
-  font-size:12px;
-  color:var(--muted);
-  text-align:center;
-  margin-top:15px;
-  line-height:1.6;
+@media(max-width:700px){
+  .sidebar{transform:translateX(-100%)}
+  .sidebar.open{transform:translateX(0)}
+  .overlay.show{display:block}
+  .main-area{margin-left:0}
+  .topbar{padding:0 15px;height:62px}
+  .mobile-menu{display:block}
+  .content{padding:20px 15px}
+  .page-heading h1{font-size:21px}
+  .stats-grid{grid-template-columns:1fr 1fr;gap:10px}
+  .stat-card{padding:15px}
+  .stat-value{font-size:22px}
+  .quick-grid{grid-template-columns:1fr 1fr}
+  .profile-grid{grid-template-columns:1fr}
+  .top-user{display:none}
 }
-
-@media(max-width:480px) {
-  .card {padding:25px 19px}
-}
-
-@media(prefers-color-scheme:dark) {
-  :root {
-    --bg:#101827;
-    --card:#192536;
-    --text:#f1f5f9;
-    --muted:#a0aec0;
-    --border:#344256;
-    --input:#111d2d;
-  }
+@media(max-width:380px){
+  .stats-grid{grid-template-columns:1fr}
+  .quick-grid{grid-template-columns:1fr}
 }
 </style>
 </head>
 
 <body>
 
-<div class="container">
+<!-- AUTHENTICATION -->
+<div class="auth-wrap" id="authWrap">
+  <main class="auth-card">
 
-<main class="card">
+    <section id="loginSection">
+      <div class="logo">O</div>
+      <div class="heading">
+        <h1>ONE ONLINE</h1>
+        <p>Management System</p>
+      </div>
 
-<!-- LOGIN -->
-<section id="loginSection">
+      <form id="loginForm">
+        <label>Email Address</label>
+        <input id="email" type="email" placeholder="Enter your email"
+          autocomplete="username" required>
 
-  <div class="logo">O</div>
+        <label>Password</label>
+        <input id="password" type="password" placeholder="Enter your password"
+          autocomplete="current-password" required>
 
-  <div class="heading">
-    <h1>ONE ONLINE</h1>
-    <p>Management System</p>
-  </div>
+        <button class="btn full" id="loginButton" type="submit">Sign In</button>
+      </form>
 
-  <form id="loginForm">
+      <span class="link" id="forgotButton">Forgot Password?</span>
+      <div id="loginMessage" class="message"></div>
+    </section>
 
-    <label>Email Address</label>
-    <input
-      id="email"
-      type="email"
-      placeholder="Enter your email"
-      autocomplete="username"
-      required
-    >
+    <section id="forgotSection" class="hidden">
+      <div class="logo">O</div>
+      <div class="heading">
+        <h1>Reset Password</h1>
+        <p>Enter your registered email address</p>
+      </div>
+      <label>Email Address</label>
+      <input id="resetEmail" type="email" placeholder="Your email">
+      <button class="btn full" id="sendResetButton">Send Reset Email</button>
+      <button class="btn secondary full" id="backLoginButton">Back to Login</button>
+      <div id="resetMessage" class="message"></div>
+    </section>
 
-    <label>Password</label>
-    <input
-      id="password"
-      type="password"
-      placeholder="Enter your password"
-      autocomplete="current-password"
-      required
-    >
+    <section id="updateSection" class="hidden">
+      <div class="logo">O</div>
+      <div class="heading">
+        <h1>New Password</h1>
+        <p>Create your new account password</p>
+      </div>
+      <label>New Password</label>
+      <input id="newPassword" type="password" placeholder="New password">
+      <label>Confirm Password</label>
+      <input id="confirmPassword" type="password" placeholder="Confirm password">
+      <button class="btn full" id="updatePasswordButton">Update Password</button>
+      <div id="updateMessage" class="message"></div>
+    </section>
 
-    <button id="loginButton" type="submit">
-      Sign In
-    </button>
-
-  </form>
-
-  <span class="link" id="forgotButton">
-    Forgot Password?
-  </span>
-
-  <div id="loginMessage" class="message"></div>
-
-</section>
-
-
-<!-- FORGOT PASSWORD -->
-<section id="forgotSection" class="panel">
-
-  <div class="logo">O</div>
-
-  <div class="heading">
-    <h1>Reset Password</h1>
-    <p>Enter your registered email address</p>
-  </div>
-
-  <label>Email Address</label>
-  <input id="resetEmail" type="email" placeholder="Your email">
-
-  <button id="sendResetButton">
-    Send Reset Email
-  </button>
-
-  <button class="secondary" id="backLoginButton">
-    Back to Login
-  </button>
-
-  <div id="resetMessage" class="message"></div>
-
-</section>
-
-
-<!-- UPDATE PASSWORD -->
-<section id="updateSection" class="panel">
-
-  <div class="logo">O</div>
-
-  <div class="heading">
-    <h1>New Password</h1>
-    <p>Create your new account password</p>
-  </div>
-
-  <label>New Password</label>
-  <input id="newPassword" type="password"
-    placeholder="New password" autocomplete="new-password">
-
-  <label>Confirm Password</label>
-  <input id="confirmPassword" type="password"
-    placeholder="Confirm password" autocomplete="new-password">
-
-  <button id="updatePasswordButton">
-    Update Password
-  </button>
-
-  <div id="updateMessage" class="message"></div>
-
-</section>
-
-
-<!-- PROFILE -->
-<section id="profileSection" class="panel">
-
-  <div class="logo">O</div>
-
-  <div class="heading">
-    <h1>ONE ONLINE</h1>
-    <p>Welcome to Management System</p>
-  </div>
-
-  <div class="avatar" id="avatar">U</div>
-
-  <h2 id="userName" style="text-align:center;font-size:19px">
-    User
-  </h2>
-
-  <div style="text-align:center">
-    <span class="role" id="userRole">USER</span>
-  </div>
-
-  <div class="details">
-    <div><b>Email:</b> <span id="userEmail"></span></div>
-    <div><b>User ID:</b> <span id="userId"></span></div>
-    <div><b>Role:</b> <span id="userRoleText"></span></div>
-    <div><b>Status:</b> <span id="userStatus"></span></div>
-    <div><b>Access:</b> <span id="userAccess"></span></div>
-  </div>
-
-  <div id="profileMessage" class="message"></div>
-
-  <button id="logoutButton" class="logout">
-    Sign Out
-  </button>
-
-</section>
-
-</main>
-
-<div class="footer">
-  © ONE ONLINE | Management System
+  </main>
 </div>
 
-</div>
+<!-- MAIN APPLICATION -->
+<div id="appSection">
 
+  <div class="overlay" id="overlay"></div>
+
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="brand-logo">O</div>
+      <div>
+        <div class="brand-name">ONE ONLINE</div>
+        <div class="brand-sub">MANAGEMENT SYSTEM</div>
+      </div>
+    </div>
+
+    <nav class="nav-area">
+      <div class="nav-label">MAIN MENU</div>
+
+      <button class="nav-link active" data-page="dashboard">
+        <span class="nav-icon">▦</span> Dashboard
+      </button>
+
+      <div class="nav-label" style="margin-top:15px">ACCOUNT</div>
+
+      <button class="nav-link" data-page="account">
+        <span class="nav-icon">👤</span> My Account
+      </button>
+    </nav>
+
+    <div class="sidebar-bottom">
+      <div class="account-mini">
+        <div class="mini-avatar" id="sideAvatar">U</div>
+        <div class="mini-info">
+          <div class="mini-name" id="sideName">User</div>
+          <div class="mini-role" id="sideRole">USER</div>
+        </div>
+      </div>
+      <button class="btn full" id="sideLogout">Sign Out</button>
+    </div>
+  </aside>
+
+  <main class="main-area">
+    <header class="topbar">
+      <div class="top-left">
+        <button class="icon-btn mobile-menu" id="menuButton">☰</button>
+        <div class="top-title" id="topTitle">Dashboard</div>
+      </div>
+
+      <div class="top-right">
+        <button class="profile-top" id="topAccount">
+          <div class="top-avatar" id="topAvatar">U</div>
+          <div class="top-user">
+            <span id="topName">User</span>
+            <small id="topRole">USER</small>
+          </div>
+        </button>
+      </div>
+    </header>
+
+    <div class="content">
+
+      <!-- DASHBOARD PAGE -->
+      <section id="dashboardPage">
+        <div class="page-heading">
+          <div>
+            <h1>Dashboard</h1>
+            <p>Welcome to ONE ONLINE Management System</p>
+          </div>
+          <span class="welcome-tag" id="welcomeRole">SUPER ADMIN</span>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-top">
+              <span class="stat-label">Total Customers</span>
+              <span class="stat-icon">👥</span>
+            </div>
+            <div class="stat-value">—</div>
+            <div class="stat-note">Database connection pending</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-top">
+              <span class="stat-label">Active Customers</span>
+              <span class="stat-icon">🟢</span>
+            </div>
+            <div class="stat-value">—</div>
+            <div class="stat-note">Database connection pending</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-top">
+              <span class="stat-label">Due Customers</span>
+              <span class="stat-icon">⏳</span>
+            </div>
+            <div class="stat-value">—</div>
+            <div class="stat-note">Database connection pending</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-top">
+              <span class="stat-label">Total Collection</span>
+              <span class="stat-icon">💰</span>
+            </div>
+            <div class="stat-value">—</div>
+            <div class="stat-note">Database connection pending</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-top">
+              <span class="stat-label">Total Spend</span>
+              <span class="stat-icon">💳</span>
+            </div>
+            <div class="stat-value">—</div>
+            <div class="stat-note">Database connection pending</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-top">
+              <span class="stat-label">Net Balance</span>
+              <span class="stat-icon">📊</span>
+            </div>
+            <div class="stat-value">—</div>
+            <div class="stat-note">Database connection pending</div>
+          </div>
+        </div>
+
+        <div class="section-card">
+          <div class="section-title">Quick Access</div>
+          <div class="section-desc">
+            Frequently used management options will appear here.
+          </div>
+
+          <div class="quick-grid">
+            <button class="quick-item">
+              <div class="quick-icon">👥</div>
+              <b>Total Customer</b>
+              <small>Customer management</small>
+            </button>
+
+            <button class="quick-item">
+              <div class="quick-icon">➕</div>
+              <b>Add Customer</b>
+              <small>Create new customer</small>
+            </button>
+
+            <button class="quick-item">
+              <div class="quick-icon">⏳</div>
+              <b>Due Customer</b>
+              <small>Manage customer dues</small>
+            </button>
+
+            <button class="quick-item">
+              <div class="quick-icon">📧</div>
+              <b>Send Email</b>
+              <small>Email management</small>
+            </button>
+
+            <button class="quick-item">
+              <div class="quick-icon">💸</div>
+              <b>Spend Add</b>
+              <small>Record expenses</small>
+            </button>
+
+            <button class="quick-item" id="quickAccount">
+              <div class="quick-icon">👤</div>
+              <b>My Account</b>
+              <small>View account information</small>
+            </button>
+          </div>
+        </div>
+
+        <div class="section-card">
+          <div class="section-title">System Status</div>
+          <p class="section-desc" id="systemStatus">
+            Login and profile verification completed successfully.
+            Customer and financial statistics will be connected in the next step.
+          </p>
+        </div>
+      </section>
+
+      <!-- MY ACCOUNT PAGE -->
+      <section id="accountPage" class="hidden">
+        <div class="page-heading">
+          <div>
+            <h1>My Account</h1>
+            <p>Your account and permission information</p>
+          </div>
+        </div>
+
+        <div class="profile-grid">
+          <div class="profile-summary">
+            <div class="big-avatar" id="accountAvatar">U</div>
+            <h2 id="accountName">User</h2>
+            <p style="font-size:12px;color:var(--muted);margin-top:7px" id="accountEmail"></p>
+            <span class="role-badge" id="accountRole">USER</span>
+          </div>
+
+          <div class="profile-details">
+            <div class="section-title">Profile Information</div>
+            <div class="detail-row">
+              <span>Email Address</span>
+              <span id="detailEmail"></span>
+            </div>
+            <div class="detail-row">
+              <span>User ID</span>
+              <span id="detailId"></span>
+            </div>
+            <div class="detail-row">
+              <span>Account Role</span>
+              <span id="detailRole"></span>
+            </div>
+            <div class="detail-row">
+              <span>Account Status</span>
+              <span id="detailStatus"></span>
+            </div>
+            <div class="detail-row">
+              <span>Access Level</span>
+              <span id="detailAccess"></span>
+            </div>
+          </div>
+        </div>
+
+        <button class="btn full" style="max-width:200px" id="accountLogout">
+          Sign Out
+        </button>
+      </section>
+
+      <div class="page-footer">© ONE ONLINE | Management System</div>
+    </div>
+  </main>
+</div>
 
 <script>
-
-/* ====================================
-   ONE ONLINE DATABASE CONFIGURATION
-==================================== */
+/* =====================================
+   SUPABASE CONFIGURATION
+===================================== */
 
 const SUPABASE_URL =
   "https://hcxolagfqzpycrsoigch.supabase.co";
@@ -359,479 +615,404 @@ const SUPABASE_URL =
 const SUPABASE_KEY =
   "sb_publishable_LQtGMu4GZZ6XpXm6VBhzAw_dr2y4gwn";
 
-
-/* ====================================
-   INITIALIZATION
-==================================== */
-
-const loginSection = document.getElementById("loginSection");
-const forgotSection = document.getElementById("forgotSection");
-const updateSection = document.getElementById("updateSection");
-const profileSection = document.getElementById("profileSection");
-
-const loginMessage = document.getElementById("loginMessage");
-const resetMessage = document.getElementById("resetMessage");
-const updateMessage = document.getElementById("updateMessage");
-const profileMessage = document.getElementById("profileMessage");
-
 let db = null;
 let recoveryMode = false;
+let currentUser = null;
+let currentProfile = null;
 
+/* =====================================
+   HELPERS
+===================================== */
 
-function hideAll() {
-  loginSection.style.display = "none";
-  forgotSection.style.display = "none";
-  updateSection.style.display = "none";
-  profileSection.style.display = "none";
+const $ = id => document.getElementById(id);
+
+function showAuth(section){
+  ["loginSection","forgotSection","updateSection"].forEach(id=>{
+    $(id).classList.add("hidden");
+  });
+  $(section).classList.remove("hidden");
+  $("authWrap").style.display = "grid";
+  $("appSection").style.display = "none";
 }
 
-function showSection(section) {
-  hideAll();
-  section.style.display = "block";
-}
-
-function message(element, text, type) {
+function showMessage(element,text,type){
   element.textContent = text;
   element.className = "message " + type;
 }
 
-function clearMessages() {
-  [loginMessage, resetMessage, updateMessage, profileMessage]
-    .forEach(el => {
-      el.textContent = "";
-      el.className = "message";
-    });
-}
-
-function formatRole(role) {
+function formatRole(role){
   return String(role || "guest")
-    .replaceAll("_", " ")
+    .replaceAll("_"," ")
     .toUpperCase();
 }
 
-
-/* ====================================
-   PROFILE LOADING
-==================================== */
-
-async function loadProfile(user) {
-
-  showSection(profileSection);
-
-  message(
-    profileMessage,
-    "Checking account permissions...",
-    "info"
-  );
-
-  const { data, error } = await db
-    .from("profiles")
-    .select("id, role, status, permissions")
-    .eq("id", user.id)
-    .maybeSingle();
-
-  if (error) {
-
-    throw new Error(
-      "PROFILE DATABASE ERROR\n" +
-      "Code: " + (error.code || "Unknown") + "\n" +
-      "Message: " + error.message + "\n" +
-      "Details: " + (error.details || "None") + "\n" +
-      "Hint: " + (error.hint || "None")
-    );
-
-  }
-
-  if (!data) {
-
-    throw new Error(
-      "PROFILE ROW NOT FOUND\n" +
-      "Logged-in User ID: " + user.id + "\n" +
-      "Database: " + SUPABASE_URL + "\n" +
-      "Table: public.profiles\n" +
-      "Check the profile ID and SELECT permissions."
-    );
-
-  }
-
-  if (String(data.status).toLowerCase() !== "active") {
-
-    await db.auth.signOut();
-
-    throw new Error(
-      "Your account is inactive. Contact Super Admin."
-    );
-
-  }
-
-  document.getElementById("userName").textContent =
-    user.user_metadata?.full_name || user.email || "User";
-
-  document.getElementById("avatar").textContent =
-    (user.email || "U").charAt(0).toUpperCase();
-
-  document.getElementById("userEmail").textContent =
-    user.email || "";
-
-  document.getElementById("userId").textContent =
-    user.id;
-
-  document.getElementById("userRole").textContent =
-    formatRole(data.role);
-
-  document.getElementById("userRoleText").textContent =
-    data.role;
-
-  document.getElementById("userStatus").textContent =
-    data.status;
-
-  document.getElementById("userAccess").textContent =
-    data.role === "super_admin"
-      ? "Full Administration"
-      : "Permission Based";
-
-  window.ONE_ONLINE_USER = {
-    id: user.id,
-    email: user.email,
-    role: data.role,
-    status: data.status,
-    permissions: data.permissions
-  };
-
-  message(
-    profileMessage,
-    "Login successful. Profile verified.",
-    "success"
-  );
-
+function clearAuthMessages(){
+  ["loginMessage","resetMessage","updateMessage"].forEach(id=>{
+    $(id).textContent="";
+    $(id).className="message";
+  });
 }
 
+/* =====================================
+   PAGE NAVIGATION
+===================================== */
 
-/* ====================================
+function openPage(page){
+  $("dashboardPage").classList.toggle("hidden",page!=="dashboard");
+  $("accountPage").classList.toggle("hidden",page!=="account");
+
+  $("topTitle").textContent =
+    page==="account" ? "My Account" : "Dashboard";
+
+  document.querySelectorAll(".nav-link").forEach(btn=>{
+    btn.classList.toggle("active",btn.dataset.page===page);
+  });
+
+  closeMobileMenu();
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+document.querySelectorAll(".nav-link").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    openPage(btn.dataset.page);
+  });
+});
+
+$("topAccount").addEventListener("click",()=>openPage("account"));
+$("quickAccount").addEventListener("click",()=>openPage("account"));
+
+/* =====================================
+   MOBILE SIDEBAR
+===================================== */
+
+function closeMobileMenu(){
+  $("sidebar").classList.remove("open");
+  $("overlay").classList.remove("show");
+}
+
+$("menuButton").addEventListener("click",()=>{
+  $("sidebar").classList.toggle("open");
+  $("overlay").classList.toggle("show");
+});
+
+$("overlay").addEventListener("click",closeMobileMenu);
+
+/* =====================================
+   PROFILE VERIFICATION
+===================================== */
+
+async function loadProfile(user){
+
+  const {data,error} = await db
+    .from("profiles")
+    .select("id, role, status, permissions")
+    .eq("id",user.id)
+    .maybeSingle();
+
+  if(error){
+    throw new Error(
+      "PROFILE DATABASE ERROR\n"+
+      "Code: "+(error.code||"Unknown")+"\n"+
+      "Message: "+error.message+"\n"+
+      "Details: "+(error.details||"None")+"\n"+
+      "Hint: "+(error.hint||"None")
+    );
+  }
+
+  if(!data){
+    throw new Error(
+      "PROFILE NOT FOUND. User ID: "+user.id
+    );
+  }
+
+  if(String(data.status).toLowerCase()!=="active"){
+    await db.auth.signOut();
+    throw new Error("Your account is inactive. Contact Super Admin.");
+  }
+
+  currentUser=user;
+  currentProfile=data;
+
+  const name =
+    user.user_metadata?.full_name ||
+    user.user_metadata?.name ||
+    user.email ||
+    "User";
+
+  const role=formatRole(data.role);
+  const initial=(name.charAt(0)||"U").toUpperCase();
+
+  $("sideName").textContent=name;
+  $("sideRole").textContent=role;
+  $("sideAvatar").textContent=initial;
+
+  $("topName").textContent=name;
+  $("topRole").textContent=role;
+  $("topAvatar").textContent=initial;
+
+  $("welcomeRole").textContent=role;
+
+  $("accountName").textContent=name;
+  $("accountEmail").textContent=user.email||"";
+  $("accountAvatar").textContent=initial;
+  $("accountRole").textContent=role;
+
+  $("detailEmail").textContent=user.email||"";
+  $("detailId").textContent=user.id;
+  $("detailRole").textContent=data.role;
+  $("detailStatus").textContent=data.status;
+  $("detailAccess").textContent=
+    data.role==="super_admin" ? "Full Administration" : "Permission Based";
+
+  window.ONE_ONLINE_USER={
+    id:user.id,
+    email:user.email,
+    role:data.role,
+    status:data.status,
+    permissions:data.permissions
+  };
+
+  $("authWrap").style.display="none";
+  $("appSection").style.display="block";
+
+  openPage("dashboard");
+}
+
+/* =====================================
    LOGIN
-==================================== */
+===================================== */
 
-document.getElementById("loginForm")
-.addEventListener("submit", async function(e) {
-
+$("loginForm").addEventListener("submit",async e=>{
   e.preventDefault();
+  clearAuthMessages();
 
-  clearMessages();
+  const button=$("loginButton");
+  button.disabled=true;
+  button.textContent="Signing In...";
 
-  const button = document.getElementById("loginButton");
+  try{
+    const email=$("email").value.trim();
+    const password=$("password").value;
 
-  button.disabled = true;
-  button.textContent = "Signing In...";
-
-  const email =
-    document.getElementById("email").value.trim();
-
-  const password =
-    document.getElementById("password").value;
-
-  try {
-
-    const { data, error } = await db.auth.signInWithPassword({
-      email,
-      password
+    const {data,error}=await db.auth.signInWithPassword({
+      email,password
     });
 
-    if (error) throw error;
+    if(error) throw error;
 
     await loadProfile(data.user);
 
-  } catch (error) {
-
-    showSection(loginSection);
-
-    message(
-      loginMessage,
-      error.message,
-      "error"
-    );
-
-  } finally {
-
-    button.disabled = false;
-    button.textContent = "Sign In";
-
+  }catch(error){
+    showAuth("loginSection");
+    showMessage($("loginMessage"),error.message,"error");
+  }finally{
+    button.disabled=false;
+    button.textContent="Sign In";
   }
-
 });
 
-
-/* ====================================
+/* =====================================
    SESSION CHECK
-==================================== */
+===================================== */
 
-async function checkSession() {
+async function checkSession(){
+  const {data,error}=await db.auth.getSession();
+  if(error) throw error;
 
-  const { data, error } = await db.auth.getSession();
-
-  if (error) throw error;
-
-  if (data.session) {
-
+  if(data.session){
     await loadProfile(data.session.user);
-
-  } else {
-
-    showSection(loginSection);
-
+  }else{
+    showAuth("loginSection");
   }
-
 }
 
-
-/* ====================================
+/* =====================================
    FORGOT PASSWORD
-==================================== */
+===================================== */
 
-document.getElementById("forgotButton")
-.addEventListener("click", function() {
-
-  clearMessages();
-  showSection(forgotSection);
-
-  document.getElementById("resetEmail").value =
-    document.getElementById("email").value;
-
+$("forgotButton").addEventListener("click",()=>{
+  clearAuthMessages();
+  $("resetEmail").value=$("email").value;
+  showAuth("forgotSection");
 });
 
-
-document.getElementById("backLoginButton")
-.addEventListener("click", function() {
-
-  clearMessages();
-  showSection(loginSection);
-
+$("backLoginButton").addEventListener("click",()=>{
+  clearAuthMessages();
+  showAuth("loginSection");
 });
 
+$("sendResetButton").addEventListener("click",async()=>{
+  const button=$("sendResetButton");
+  const email=$("resetEmail").value.trim();
 
-document.getElementById("sendResetButton")
-.addEventListener("click", async function() {
-
-  const button = this;
-
-  const email =
-    document.getElementById("resetEmail").value.trim();
-
-  if (!email) {
-    message(resetMessage, "Please enter your email.", "error");
+  if(!email){
+    showMessage($("resetMessage"),"Please enter your email.","error");
     return;
   }
 
-  button.disabled = true;
-  button.textContent = "Sending...";
+  button.disabled=true;
+  button.textContent="Sending...";
 
-  try {
+  try{
+    const redirectUrl=window.location.origin+window.location.pathname;
 
-    const redirectUrl =
-      window.location.origin + window.location.pathname;
+    const {error}=await db.auth.resetPasswordForEmail(email,{
+      redirectTo:redirectUrl
+    });
 
-    const { error } = await db.auth.resetPasswordForEmail(
-      email,
-      {
-        redirectTo: redirectUrl
-      }
-    );
+    if(error) throw error;
 
-    if (error) throw error;
-
-    message(
-      resetMessage,
+    showMessage(
+      $("resetMessage"),
       "Password reset email sent. Check your inbox.",
       "success"
     );
 
-  } catch (error) {
-
-    message(resetMessage, error.message, "error");
-
-  } finally {
-
-    button.disabled = false;
-    button.textContent = "Send Reset Email";
-
+  }catch(error){
+    showMessage($("resetMessage"),error.message,"error");
+  }finally{
+    button.disabled=false;
+    button.textContent="Send Reset Email";
   }
-
 });
 
+/* =====================================
+   UPDATE PASSWORD
+===================================== */
 
-/* ====================================
-   PASSWORD RECOVERY
-==================================== */
+$("updatePasswordButton").addEventListener("click",async()=>{
+  const button=$("updatePasswordButton");
+  const password=$("newPassword").value;
+  const confirm=$("confirmPassword").value;
 
-document.getElementById("updatePasswordButton")
-.addEventListener("click", async function() {
-
-  const button = this;
-
-  const password =
-    document.getElementById("newPassword").value;
-
-  const confirm =
-    document.getElementById("confirmPassword").value;
-
-  if (password.length < 8) {
-    message(
-      updateMessage,
-      "Password must contain at least 8 characters.",
-      "error"
-    );
+  if(password.length<8){
+    showMessage($("updateMessage"),
+      "Password must contain at least 8 characters.","error");
     return;
   }
 
-  if (password !== confirm) {
-    message(
-      updateMessage,
-      "Passwords do not match.",
-      "error"
-    );
+  if(password!==confirm){
+    showMessage($("updateMessage"),
+      "Passwords do not match.","error");
     return;
   }
 
-  button.disabled = true;
-  button.textContent = "Updating...";
+  button.disabled=true;
+  button.textContent="Updating...";
 
-  try {
+  try{
+    const {error}=await db.auth.updateUser({password});
+    if(error) throw error;
 
-    const { error } = await db.auth.updateUser({
-      password: password
-    });
+    recoveryMode=false;
 
-    if (error) throw error;
-
-    recoveryMode = false;
-
-    message(
-      updateMessage,
+    showMessage($("updateMessage"),
       "Password updated successfully. Please sign in again.",
-      "success"
-    );
+      "success");
 
     await db.auth.signOut();
 
-    setTimeout(() => {
-      showSection(loginSection);
-    }, 1800);
+    setTimeout(()=>showAuth("loginSection"),1800);
 
-  } catch (error) {
-
-    message(updateMessage, error.message, "error");
-
-  } finally {
-
-    button.disabled = false;
-    button.textContent = "Update Password";
-
+  }catch(error){
+    showMessage($("updateMessage"),error.message,"error");
+  }finally{
+    button.disabled=false;
+    button.textContent="Update Password";
   }
-
 });
 
-
-/* ====================================
+/* =====================================
    AUTH EVENTS
-==================================== */
+===================================== */
 
-function setupAuthEvents() {
-
-  db.auth.onAuthStateChange((event, session) => {
-
-    if (event === "PASSWORD_RECOVERY") {
-
-      recoveryMode = true;
-      showSection(updateSection);
-
+function setupAuthEvents(){
+  db.auth.onAuthStateChange((event,session)=>{
+    if(event==="PASSWORD_RECOVERY"){
+      recoveryMode=true;
+      showAuth("updateSection");
     }
 
-    if (event === "SIGNED_OUT" && !recoveryMode) {
-
-      window.ONE_ONLINE_USER = null;
-      showSection(loginSection);
-
+    if(event==="SIGNED_OUT" && !recoveryMode){
+      currentUser=null;
+      currentProfile=null;
+      window.ONE_ONLINE_USER=null;
+      showAuth("loginSection");
     }
-
   });
-
 }
 
-
-/* ====================================
+/* =====================================
    LOGOUT
-==================================== */
+===================================== */
 
-document.getElementById("logoutButton")
-.addEventListener("click", async function() {
+async function logout(button){
+  button.disabled=true;
+  button.textContent="Signing Out...";
 
-  const button = this;
+  try{
+    const {error}=await db.auth.signOut();
+    if(error) throw error;
 
-  button.disabled = true;
-  button.textContent = "Signing Out...";
+    currentUser=null;
+    currentProfile=null;
+    window.ONE_ONLINE_USER=null;
+    $("loginForm").reset();
+    showAuth("loginSection");
 
-  try {
-
-    const { error } = await db.auth.signOut();
-
-    if (error) throw error;
-
-    window.ONE_ONLINE_USER = null;
-
-    document.getElementById("loginForm").reset();
-
-    showSection(loginSection);
-
-  } catch (error) {
-
-    message(profileMessage, error.message, "error");
-
-  } finally {
-
-    button.disabled = false;
-    button.textContent = "Sign Out";
-
+  }catch(error){
+    alert("Logout Error: "+error.message);
+  }finally{
+    button.disabled=false;
+    button.textContent="Sign Out";
   }
+}
 
+$("sideLogout").addEventListener("click",function(){
+  logout(this);
 });
 
+$("accountLogout").addEventListener("click",function(){
+  logout(this);
+});
 
-/* ====================================
+/* =====================================
    START SYSTEM
-==================================== */
+===================================== */
 
-async function startSystem() {
-
-  try {
-
-    if (!window.supabase) {
+async function startSystem(){
+  try{
+    if(!window.supabase){
       throw new Error("Supabase library failed to load.");
     }
 
-    db = window.supabase.createClient(
+    db=window.supabase.createClient(
       SUPABASE_URL,
       SUPABASE_KEY
     );
 
     setupAuthEvents();
 
+    // Supabase recovery link support
+    const params=new URLSearchParams(window.location.search);
+    if(params.get("type")==="recovery"){
+      recoveryMode=true;
+      showAuth("updateSection");
+    }
+
     await checkSession();
 
-  } catch (error) {
-
-    showSection(loginSection);
-
-    message(
-      loginMessage,
-      "SYSTEM ERROR: " + error.message,
+  }catch(error){
+    showAuth("loginSection");
+    showMessage(
+      $("loginMessage"),
+      "SYSTEM ERROR: "+error.message,
       "error"
     );
-
   }
-
 }
 
 startSystem();
-
 </script>
 
 </body>
