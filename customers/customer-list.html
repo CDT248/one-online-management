@@ -4,280 +4,217 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Customer List | ONE ONLINE</title>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-
+<title>Total Customer | ONE ONLINE</title>
 <style>
 :root{
-  --bg:#f4f6fb;
-  --card:#ffffff;
-  --text:#172033;
-  --muted:#748096;
-  --border:#e5e9f1;
-  --primary:#087f5b;
-  --primary-soft:#e6f5ef;
-  --navy:#172b4d;
-  --input:#ffffff;
-  --shadow:0 5px 22px rgba(20,35,60,.06);
+  --bg:#f4f6fa;--panel:#fff;--panel2:#f8fafc;--text:#172033;
+  --muted:#718096;--border:#e3e8ef;--primary:#087f5b;
+  --primary2:#066b4d;--danger:#dc3545;--warning:#d97706;
+  --success:#138a58;--shadow:0 5px 22px rgba(20,35,60,.07);
 }
-body.dark{
-  --bg:#101827;
-  --card:#192538;
-  --text:#edf3fc;
-  --muted:#a1aec2;
-  --border:#304056;
-  --primary:#20b486;
-  --primary-soft:#153d35;
-  --navy:#233b60;
-  --input:#172438;
-  --shadow:0 5px 22px rgba(0,0,0,.18);
+body[data-theme="dark"]{
+  --bg:#101722;--panel:#182332;--panel2:#202d3d;--text:#edf3fa;
+  --muted:#a5b2c2;--border:#304052;--primary:#20b889;
+  --primary2:#159a70;--danger:#ff6675;--warning:#f5b84b;
+  --success:#35c98b;--shadow:0 5px 22px rgba(0,0,0,.22);
 }
-body.funny{
-  --bg:#fff0f8;
-  --card:#ffffff;
-  --text:#54204c;
-  --muted:#9b6b94;
-  --border:#f1cce7;
-  --primary:#bd3d9e;
-  --primary-soft:#fce4f5;
-  --navy:#713b89;
-  --input:#ffffff;
+body[data-theme="funny"]{
+  --bg:#fff2fb;--panel:#fff;--panel2:#fff7fd;--text:#392044;
+  --muted:#896b91;--border:#efd7f0;--primary:#a33bc1;
+  --primary2:#8629a4;--danger:#e44d82;--warning:#d68a20;
+  --success:#269b72;--shadow:0 5px 22px rgba(120,40,130,.09);
 }
 *{box-sizing:border-box}
 body{
-  margin:0;
-  padding:20px;
-  font-family:Arial,Helvetica,sans-serif;
-  background:var(--bg);
-  color:var(--text);
-  transition:.2s;
+  margin:0;padding:22px;background:var(--bg);color:var(--text);
+  font-family:Inter,Arial,sans-serif;transition:.2s;
 }
-button,input,select,textarea{font:inherit}
-button{cursor:pointer}
-.container{max-width:1600px;margin:auto}
-.top{
-  display:flex;align-items:center;justify-content:space-between;
-  gap:15px;margin-bottom:20px;flex-wrap:wrap
+.page{max-width:1600px;margin:auto}
+.header{
+  display:flex;justify-content:space-between;align-items:center;
+  gap:15px;flex-wrap:wrap;margin-bottom:18px
 }
-.heading h2{margin:0;font-size:24px;font-weight:800}
+.heading h2{margin:0;font-size:23px;font-weight:800}
 .heading p{margin:6px 0 0;color:var(--muted);font-size:13px}
-.stats{
-  display:grid;grid-template-columns:repeat(4,minmax(130px,1fr));
-  gap:13px;margin-bottom:18px
+.header-right{display:flex;gap:9px;align-items:center;flex-wrap:wrap}
+.total-pill{
+  padding:10px 15px;border:1px solid var(--border);
+  background:var(--panel);border-radius:10px;font-size:13px;
+  font-weight:700
 }
-.stat{
-  background:var(--card);border:1px solid var(--border);
-  border-radius:13px;padding:17px;box-shadow:var(--shadow)
-}
-.stat small{color:var(--muted);font-size:12px}
-.stat strong{display:block;font-size:25px;margin-top:8px}
-.stat i{float:right;color:var(--primary);font-size:20px}
-.panel{
-  background:var(--card);border:1px solid var(--border);
-  border-radius:14px;box-shadow:var(--shadow);overflow:hidden
-}
+.total-pill strong{color:var(--primary);font-size:17px;margin-left:5px}
 .toolbar{
-  padding:16px;display:flex;justify-content:space-between;
-  align-items:center;gap:12px;flex-wrap:wrap;
-  border-bottom:1px solid var(--border)
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  background:var(--panel);border:1px solid var(--border);
+  border-radius:13px;padding:14px;margin-bottom:15px;
+  box-shadow:var(--shadow)
 }
-.toolbar-left,.toolbar-right{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
-.search{
-  display:flex;align-items:center;gap:9px;
-  border:1px solid var(--border);border-radius:9px;
-  background:var(--input);padding:0 12px;min-width:260px
+.search-wrap{display:flex;gap:8px;flex:1;min-width:220px}
+input,select,textarea{
+  width:100%;padding:10px 12px;border:1px solid var(--border);
+  border-radius:8px;background:var(--panel);color:var(--text);
+  outline:none;font:inherit;font-size:13px
 }
-.search input{
-  border:0;outline:0;background:transparent;color:var(--text);
-  padding:11px 0;width:100%
+input:focus,select:focus,textarea:focus{
+  border-color:var(--primary);box-shadow:0 0 0 3px rgba(8,127,91,.10)
 }
-select,input,textarea{
-  color:var(--text);background:var(--input);
-  border:1px solid var(--border);border-radius:8px;padding:10px
+.search-wrap input{min-width:100px}
+button{
+  border:0;border-radius:8px;padding:10px 13px;
+  font-size:12px;font-weight:700;cursor:pointer;
+  transition:.15s;white-space:nowrap
 }
-.btn{
-  border:0;border-radius:8px;padding:10px 14px;
-  font-size:13px;font-weight:700;display:inline-flex;
-  align-items:center;justify-content:center;gap:7px
-}
+button:disabled{opacity:.55;cursor:not-allowed}
 .btn-primary{background:var(--primary);color:white}
-.btn-light{background:var(--primary-soft);color:var(--primary)}
-.btn-danger{background:#fee9e9;color:#c03939}
-.btn-warning{background:#fff3d7;color:#9b6900}
-.btn-secondary{background:var(--border);color:var(--text)}
-.btn:disabled{opacity:.5;cursor:not-allowed}
-.table-wrap{width:100%;overflow-x:auto}
-table{width:100%;border-collapse:collapse;min-width:1120px}
-thead{background:var(--navy);color:white}
+.btn-primary:hover{background:var(--primary2)}
+.btn-light{background:var(--panel2);color:var(--text);border:1px solid var(--border)}
+.btn-danger{background:rgba(220,53,69,.12);color:var(--danger)}
+.btn-success{background:rgba(19,138,88,.13);color:var(--success)}
+.btn-warning{background:rgba(217,119,6,.13);color:var(--warning)}
+.filter-select{width:auto;min-width:140px}
+.table-box{
+  background:var(--panel);border:1px solid var(--border);
+  border-radius:13px;overflow:hidden;box-shadow:var(--shadow)
+}
+.table-top{
+  display:flex;justify-content:space-between;align-items:center;
+  gap:10px;padding:14px 16px;border-bottom:1px solid var(--border);
+  flex-wrap:wrap
+}
+.table-top strong{font-size:14px}
+.table-top span{font-size:12px;color:var(--muted)}
+.table-scroll{width:100%;overflow-x:auto}
+table{width:100%;min-width:1120px;border-collapse:collapse}
+thead{background:var(--panel2)}
 th{
-  text-align:left;padding:15px 12px;font-size:11px;
-  letter-spacing:.4px;text-transform:uppercase;white-space:nowrap
+  text-align:left;padding:14px 12px;font-size:11px;
+  text-transform:uppercase;letter-spacing:.4px;color:var(--muted);
+  white-space:nowrap;border-bottom:1px solid var(--border)
 }
 td{
-  padding:13px 12px;border-bottom:1px solid var(--border);
-  font-size:12px;white-space:nowrap
+  padding:13px 12px;font-size:12px;border-bottom:1px solid var(--border);
+  white-space:nowrap;vertical-align:middle
 }
-tbody tr:hover{background:var(--primary-soft)}
-.serial{
-  background:var(--primary-soft);color:var(--primary);
-  padding:5px 8px;border-radius:6px;font-weight:800
-}
-.name{font-weight:700}
-.sub{display:block;color:var(--muted);font-size:11px;margin-top:4px}
-.money{font-weight:800;color:var(--primary)}
+tbody tr:hover{background:var(--panel2)}
+tbody tr:last-child td{border-bottom:0}
+.serial{font-weight:800;color:var(--muted)}
+.customer-name{font-weight:750;color:var(--text)}
+.customer-email{color:var(--muted)}
+.bill{font-weight:800;color:var(--primary)}
+.date{color:var(--muted)}
+.actions{display:flex;gap:5px;align-items:center}
+.action-btn{padding:7px 9px;font-size:11px}
 .status{
   display:inline-block;padding:5px 8px;border-radius:20px;
-  font-size:10px;font-weight:800;text-transform:uppercase
+  font-size:10px;font-weight:800
 }
-.status.active,.status.collected{background:#dcfce7;color:#15803d}
-.status.due,.status.inactive{background:#fff0d5;color:#a16207}
-.status.deleted{background:#fee2e2;color:#b91c1c}
-.actions{display:flex;gap:5px;align-items:center}
-.action{
-  width:29px;height:29px;border:0;border-radius:7px;
-  display:inline-flex;align-items:center;justify-content:center;
-  background:var(--primary-soft);color:var(--primary)
+.status-active{background:rgba(19,138,88,.13);color:var(--success)}
+.status-due{background:rgba(217,119,6,.13);color:var(--warning)}
+.status-inactive{background:rgba(120,130,145,.15);color:var(--muted)}
+.empty,.loading{
+  padding:45px 15px;text-align:center;color:var(--muted);font-size:13px
 }
-.action.red{background:#fee9e9;color:#c03939}
-.action.yellow{background:#fff3d7;color:#9b6900}
-.action:hover{filter:brightness(.94)}
-.empty{text-align:center;padding:45px;color:var(--muted)}
-.footer{
+.pagination{
   display:flex;justify-content:space-between;align-items:center;
-  padding:14px 16px;gap:10px;flex-wrap:wrap;
-  color:var(--muted);font-size:12px
+  gap:10px;padding:13px 16px;border-top:1px solid var(--border);
+  flex-wrap:wrap
 }
-.pages{display:flex;gap:6px}
-.pages button{
-  border:1px solid var(--border);background:var(--card);
-  color:var(--text);padding:7px 11px;border-radius:7px
+.pagination-info{font-size:12px;color:var(--muted)}
+.page-buttons{display:flex;gap:5px}
+.page-buttons button{padding:7px 11px}
+.page-buttons button.active{background:var(--primary);color:white}
+.message{
+  display:none;margin-bottom:13px;padding:11px 14px;border-radius:9px;
+  font-size:13px;font-weight:650
 }
-.pages button.active{background:var(--primary);color:white}
-.overlay{
-  position:fixed;inset:0;background:rgba(4,12,25,.68);
-  display:none;align-items:center;justify-content:center;
-  z-index:1000;padding:15px
+.message.show{display:block}
+.message.success{background:rgba(19,138,88,.13);color:var(--success)}
+.message.error{background:rgba(220,53,69,.13);color:var(--danger)}
+.modal-backdrop{
+  display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);
+  z-index:1000;align-items:center;justify-content:center;padding:15px
 }
-.overlay.show{display:flex}
+.modal-backdrop.show{display:flex}
 .modal{
-  width:100%;max-width:530px;max-height:90vh;overflow:auto;
-  background:var(--card);border:1px solid var(--border);
-  border-radius:15px;padding:22px;color:var(--text);
-  box-shadow:0 20px 70px rgba(0,0,0,.25)
+  width:100%;max-width:560px;max-height:90vh;overflow-y:auto;
+  background:var(--panel);color:var(--text);border:1px solid var(--border);
+  border-radius:15px;box-shadow:0 20px 70px rgba(0,0,0,.3)
 }
 .modal-head{
-  display:flex;justify-content:space-between;align-items:center;
-  margin-bottom:18px
+  padding:17px 20px;border-bottom:1px solid var(--border);
+  display:flex;justify-content:space-between;align-items:center
 }
-.modal-head h3{margin:0;font-size:19px}
-.close{
-  border:0;background:var(--border);color:var(--text);
-  width:32px;height:32px;border-radius:8px
-}
+.modal-head h3{margin:0;font-size:17px}
+.close-btn{background:var(--panel2);color:var(--text);font-size:18px;padding:5px 10px}
+.modal-body{padding:19px 20px}
 .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px}
-.field{display:flex;flex-direction:column;gap:6px}
+.field label{
+  display:block;font-size:11px;font-weight:750;color:var(--muted);
+  margin-bottom:6px
+}
 .field.full{grid-column:1/-1}
-.field label{font-size:12px;font-weight:700;color:var(--muted)}
-.field input,.field textarea,.field select{width:100%;min-width:0}
-.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:20px}
-.notice{
-  background:var(--primary-soft);padding:12px;border-radius:8px;
-  font-size:12px;color:var(--text);line-height:1.6;margin-bottom:14px
+.modal-foot{
+  display:flex;justify-content:flex-end;gap:8px;padding:14px 20px;
+  border-top:1px solid var(--border)
 }
-.loader{text-align:center;padding:40px;color:var(--muted)}
-.toast{
-  position:fixed;right:20px;bottom:20px;z-index:2000;
-  padding:13px 18px;border-radius:9px;background:#172b4d;
-  color:white;font-size:13px;box-shadow:var(--shadow);
-  display:none;max-width:calc(100% - 40px)
-}
-.toast.show{display:block}
-@media(max-width:850px){
+@media(max-width:650px){
   body{padding:12px}
-  .stats{grid-template-columns:repeat(2,1fr)}
-  .heading h2{font-size:21px}
-  .toolbar{align-items:stretch}
-  .toolbar-left,.toolbar-right{width:100%}
-  .search{min-width:0;flex:1}
-}
-@media(max-width:500px){
-  .stats{gap:8px}
-  .stat{padding:12px}
-  .stat strong{font-size:21px}
+  .heading h2{font-size:20px}
+  .toolbar{padding:10px}
+  .search-wrap{flex-basis:100%}
+  .filter-select{flex:1}
   .form-grid{grid-template-columns:1fr}
   .field.full{grid-column:auto}
-  .modal{padding:16px}
+  .modal-backdrop{padding:8px}
 }
 </style>
 </head>
-
 <body>
-<div class="container">
+<div class="page">
 
-  <div class="top">
+  <div class="header">
     <div class="heading">
-      <h2><i class="fa-solid fa-users"></i> Customer List</h2>
-      <p>ONE ONLINE · Customer Management</p>
+      <h2>👥 Total Customer</h2>
+      <p>Manage all customers, billing and customer activities.</p>
     </div>
-    <button class="btn btn-primary" onclick="loadCustomers()">
-      <i class="fa-solid fa-rotate"></i> Refresh
-    </button>
-  </div>
-
-  <div class="stats">
-    <div class="stat">
-      <i class="fa-solid fa-users"></i>
-      <small>Total Customers</small>
-      <strong id="totalCount">0</strong>
-    </div>
-    <div class="stat">
-      <i class="fa-solid fa-circle-check"></i>
-      <small>Active Customers</small>
-      <strong id="activeCount">0</strong>
-    </div>
-    <div class="stat">
-      <i class="fa-solid fa-clock"></i>
-      <small>Due Customers</small>
-      <strong id="dueCount">0</strong>
-    </div>
-    <div class="stat">
-      <i class="fa-solid fa-wallet"></i>
-      <small>Monthly Bill</small>
-      <strong id="billTotal">৳0</strong>
+    <div class="header-right">
+      <div class="total-pill">Total Customers <strong id="totalCount">0</strong></div>
+      <button class="btn-primary" onclick="loadCustomers()">↻ Refresh</button>
     </div>
   </div>
 
-  <div class="panel">
-    <div class="toolbar">
-      <div class="toolbar-left">
-        <span style="font-size:12px;color:var(--muted)">Show</span>
-        <select id="pageSize" onchange="changePageSize()">
-          <option value="25">25</option>
-          <option value="50">50</option>
-          <option value="100">100</option>
-          <option value="all">All</option>
-        </select>
-        <span style="font-size:12px;color:var(--muted)">entries</span>
-      </div>
+  <div id="message" class="message"></div>
 
-      <div class="toolbar-right">
-        <select id="statusFilter" onchange="applyFilters()">
-          <option value="all">All Status</option>
-          <option value="active">Active</option>
-          <option value="inactive">Inactive</option>
-          <option value="due">Due</option>
-          <option value="collected">Collected</option>
-        </select>
-        <div class="search">
-          <i class="fa-solid fa-magnifying-glass" style="color:var(--muted)"></i>
-          <input id="searchInput" placeholder="Search name, IP, mobile, email..." oninput="applyFilters()">
-        </div>
-      </div>
+  <div class="toolbar">
+    <div class="search-wrap">
+      <input id="searchInput" type="search"
+        placeholder="Search by name, IP, mobile or email..."
+        onkeydown="if(event.key==='Enter') applyFilters()">
+      <button class="btn-primary" onclick="applyFilters()">Search</button>
     </div>
 
-    <div class="table-wrap">
+    <select id="statusFilter" class="filter-select" onchange="applyFilters()">
+      <option value="all">All Customers</option>
+      <option value="active">Active</option>
+      <option value="due">Due</option>
+      <option value="inactive">Inactive</option>
+    </select>
+
+    <select id="pageSize" class="filter-select" onchange="changePageSize()">
+      <option value="25">25 Per Page</option>
+      <option value="50">50 Per Page</option>
+      <option value="100">100 Per Page</option>
+      <option value="all">Show All</option>
+    </select>
+  </div>
+
+  <div class="table-box">
+    <div class="table-top">
+      <strong>Customer List</strong>
+      <span id="resultCount">Loading customer records...</span>
+    </div>
+
+    <div class="table-scroll">
       <table>
         <thead>
           <tr>
@@ -293,888 +230,489 @@ tbody tr:hover{background:var(--primary-soft)}
           </tr>
         </thead>
         <tbody id="customerRows">
-          <tr><td colspan="9" class="loader">
-            <i class="fa-solid fa-spinner fa-spin"></i> Loading customers...
-          </td></tr>
+          <tr><td colspan="9" class="loading">Loading customers...</td></tr>
         </tbody>
       </table>
     </div>
 
-    <div class="footer">
-      <span id="showingText">Showing 0 entries</span>
-      <div class="pages" id="pagination"></div>
+    <div class="pagination">
+      <div class="pagination-info" id="paginationInfo">Showing 0 customers</div>
+      <div class="page-buttons" id="pageButtons"></div>
     </div>
   </div>
 </div>
 
-<!-- EDIT MODAL -->
-<div class="overlay" id="editModal">
+<!-- EDIT CUSTOMER MODAL -->
+<div class="modal-backdrop" id="editModal">
   <div class="modal">
     <div class="modal-head">
-      <h3><i class="fa-solid fa-pen"></i> Edit Customer</h3>
-      <button class="close" onclick="closeModal('editModal')">✕</button>
+      <h3>Edit Customer</h3>
+      <button class="close-btn" onclick="closeModal('editModal')">×</button>
     </div>
-    <form id="editForm" onsubmit="saveEdit(event)">
-      <input type="hidden" id="editId">
-      <div class="form-grid">
-        <div class="field">
-          <label>Customer Name</label>
-          <input id="editName" required>
+    <div class="modal-body">
+      <form id="editForm">
+        <input type="hidden" id="editId">
+        <div class="form-grid">
+          <div class="field">
+            <label>Customer Name</label>
+            <input id="editName" required>
+          </div>
+          <div class="field">
+            <label>Mobile Number</label>
+            <input id="editPhone">
+          </div>
+          <div class="field">
+            <label>IP Address</label>
+            <input id="editIP">
+          </div>
+          <div class="field">
+            <label>Email</label>
+            <input id="editEmail" type="email">
+          </div>
+          <div class="field">
+            <label>Customer Bill</label>
+            <input id="editBill" type="number" min="0">
+          </div>
+          <div class="field">
+            <label>Billing Date</label>
+            <input id="editBillingDate" type="date">
+          </div>
+          <div class="field">
+            <label>Area</label>
+            <input id="editArea">
+          </div>
+          <div class="field">
+            <label>Status</label>
+            <select id="editStatus">
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
+              <option value="due">Due</option>
+            </select>
+          </div>
+          <div class="field full">
+            <label>Address</label>
+            <textarea id="editAddress" rows="2"></textarea>
+          </div>
         </div>
-        <div class="field">
-          <label>Mobile Number</label>
-          <input id="editPhone">
-        </div>
-        <div class="field">
-          <label>IP Address</label>
-          <input id="editIP">
-        </div>
-        <div class="field">
-          <label>Email</label>
-          <input id="editEmail" type="email">
-        </div>
-        <div class="field">
-          <label>Customer Bill</label>
-          <input id="editBill" type="number" min="0" step="0.01">
-        </div>
-        <div class="field">
-          <label>Internet Bill</label>
-          <input id="editIPBill" type="number" min="0" step="0.01">
-        </div>
-        <div class="field">
-          <label>Billing Date</label>
-          <input id="editDate" type="date">
-        </div>
-        <div class="field">
-          <label>Status</label>
-          <select id="editStatus">
-            <option value="active">Active</option>
-            <option value="inactive">Inactive</option>
-          </select>
-        </div>
-      </div>
-      <div class="modal-actions">
-        <button type="button" class="btn btn-secondary" onclick="closeModal('editModal')">Cancel</button>
-        <button type="submit" class="btn btn-primary" id="editSaveBtn">Save Changes</button>
-      </div>
-    </form>
-  </div>
-</div>
-
-<!-- COLLECT MODAL -->
-<div class="overlay" id="collectModal">
-  <div class="modal">
-    <div class="modal-head">
-      <h3><i class="fa-solid fa-wallet"></i> Collect Payment</h3>
-      <button class="close" onclick="closeModal('collectModal')">✕</button>
+      </form>
     </div>
-    <div class="notice" id="collectInfo"></div>
-    <div class="form-grid">
-      <div class="field">
-        <label>Collected Amount (৳)</label>
-        <input id="collectAmount" type="number" min="0" step="0.01">
-      </div>
-      <div class="field">
-        <label>Payment Note</label>
-        <input id="collectNote" placeholder="Optional">
-      </div>
-    </div>
-    <div class="modal-actions">
-      <button class="btn btn-secondary" onclick="closeModal('collectModal')">Cancel</button>
-      <button class="btn btn-primary" id="collectConfirm" onclick="confirmCollect()">Confirm Collect</button>
-    </div>
-  </div>
-</div>
-
-<!-- RENEW MODAL -->
-<div class="overlay" id="renewModal">
-  <div class="modal">
-    <div class="modal-head">
-      <h3><i class="fa-solid fa-arrows-rotate"></i> Renew Customer</h3>
-      <button class="close" onclick="closeModal('renewModal')">✕</button>
-    </div>
-    <div class="notice" id="renewInfo"></div>
-    <div class="field">
-      <label>New Billing Date</label>
-      <input type="date" id="renewDate">
-    </div>
-    <div class="modal-actions">
-      <button class="btn btn-secondary" onclick="closeModal('renewModal')">Cancel</button>
-      <button class="btn btn-primary" onclick="confirmRenew()">Confirm Renew</button>
+    <div class="modal-foot">
+      <button class="btn-light" onclick="closeModal('editModal')">Cancel</button>
+      <button class="btn-primary" id="saveEditBtn" onclick="saveEdit()">Save Changes</button>
     </div>
   </div>
 </div>
 
 <!-- ADD DUE MODAL -->
-<div class="overlay" id="dueModal">
+<div class="modal-backdrop" id="dueModal">
   <div class="modal">
     <div class="modal-head">
-      <h3><i class="fa-solid fa-circle-plus"></i> Add Due</h3>
-      <button class="close" onclick="closeModal('dueModal')">✕</button>
+      <h3>Add Customer Due</h3>
+      <button class="close-btn" onclick="closeModal('dueModal')">×</button>
     </div>
-    <div class="notice" id="dueInfo"></div>
-    <div class="form-grid">
-      <div class="field">
-        <label>Due Amount (৳)</label>
-        <input type="number" id="dueAmount" min="0.01" step="0.01" required>
-      </div>
-      <div class="field">
-        <label>Due Date</label>
-        <input type="date" id="dueDate">
-      </div>
-      <div class="field full">
-        <label>Due Reason</label>
-        <textarea id="dueReason" rows="3" placeholder="Write due reason..."></textarea>
+    <div class="modal-body">
+      <input type="hidden" id="dueCustomerId">
+      <div class="form-grid">
+        <div class="field">
+          <label>Customer Name</label>
+          <input id="dueCustomerName" disabled>
+        </div>
+        <div class="field">
+          <label>Due Amount</label>
+          <input id="dueAmount" type="number" min="1" placeholder="Enter amount">
+        </div>
+        <div class="field full">
+          <label>Due Reason</label>
+          <textarea id="dueReason" rows="3" placeholder="Write due reason..."></textarea>
+        </div>
       </div>
     </div>
-    <div class="modal-actions">
-      <button class="btn btn-secondary" onclick="closeModal('dueModal')">Cancel</button>
-      <button class="btn btn-primary" onclick="confirmAddDue()">Save Due</button>
+    <div class="modal-foot">
+      <button class="btn-light" onclick="closeModal('dueModal')">Cancel</button>
+      <button class="btn-primary" id="saveDueBtn" onclick="saveDue()">Save Due</button>
     </div>
   </div>
 </div>
 
-<div class="toast" id="toast"></div>
-
 <script>
-/* ==========================================
-   ONE ONLINE - CUSTOMER LIST
-   Supabase Configuration
-========================================== */
+/* =========================================================
+   ONE ONLINE - GOOGLE SHEETS CUSTOMER LIST
+   ========================================================= */
 
-const SUPABASE_URL = "https://zkiaeynsgviqjyilfphc.supabase.co";
-const SUPABASE_KEY = "sb_publishable_Hzou3f71h7aOVVDpnsL2yg_m_JMyuvP";
+const API_URL =
+  "https://script.google.com/macros/s/AKfycbxrhL_45Ey9QHICYzpNdsYRapqRZv36fzyEORs02MCnlAuju8yF-s5bDOfxY_l5qNrG/exec";
 
-const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-let currentUser = null;
-let currentProfile = null;
-let customers = [];
+let allCustomers = [];
 let filteredCustomers = [];
 let currentPage = 1;
 let pageSize = 25;
-let selectedCustomer = null;
 let busy = false;
 
-/* ==========================================
-   COMMON FUNCTIONS
-========================================== */
-
-function toast(message){
-  const el = document.getElementById("toast");
-  el.textContent = message;
-  el.classList.add("show");
-  setTimeout(()=>el.classList.remove("show"),3500);
+/* ---------- THEME SYNC ---------- */
+function applyTheme(){
+  let theme = "light";
+  try {
+    theme = localStorage.getItem("one_online_theme") || "light";
+  } catch(e){}
+  if(!["light","dark","funny"].includes(theme)) theme = "light";
+  document.body.setAttribute("data-theme",theme);
 }
+applyTheme();
+window.addEventListener("storage",e=>{
+  if(e.key==="one_online_theme") applyTheme();
+});
+window.addEventListener("focus",applyTheme);
+document.addEventListener("visibilitychange",()=>{
+  if(!document.hidden) applyTheme();
+});
 
-function money(value){
-  return "৳" + Number(value || 0).toLocaleString("en-BD",{
-    maximumFractionDigits:2
-  });
-}
-
-function escapeHTML(value){
-  return String(value ?? "").replace(/[&<>"']/g, c => ({
-    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+/* ---------- HELPERS ---------- */
+function esc(value){
+  return String(value ?? "").replace(/[&<>"']/g,c=>({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
   }[c]));
 }
-
-function localDate(date){
-  if(!date) return "";
-  const d = new Date(date);
-  if(Number.isNaN(d.getTime())) return String(date).slice(0,10);
-  return d.toLocaleDateString("en-GB",{
-    day:"2-digit",month:"short",year:"numeric"
-  });
+function number(value){
+  const n = Number(value);
+  return Number.isFinite(n) ? n : 0;
 }
-
-function todayISO(){
-  const d = new Date();
-  const y = d.getFullYear();
-  const m = String(d.getMonth()+1).padStart(2,"0");
-  const day = String(d.getDate()).padStart(2,"0");
-  return `${y}-${m}-${day}`;
+function showMessage(message,type="success"){
+  const box=document.getElementById("message");
+  box.textContent=message;
+  box.className="message show "+type;
+  window.clearTimeout(showMessage.timer);
+  showMessage.timer=window.setTimeout(()=>box.className="message",5000);
 }
-
-/* Add one calendar month, preserving end-of-month behavior.
-   Example: Jan 31 -> Feb 28/29; Mar 31 -> Apr 30. */
-function addOneMonth(dateValue){
-  const parts = String(dateValue || todayISO()).slice(0,10).split("-").map(Number);
-  const year = parts[0], month = parts[1]-1, day = parts[2];
-  const targetFirst = new Date(year,month+1,1);
-  const lastDay = new Date(
-    targetFirst.getFullYear(),targetFirst.getMonth()+1,0
-  ).getDate();
-  const result = new Date(
-    targetFirst.getFullYear(),targetFirst.getMonth(),
-    Math.min(day,lastDay)
-  );
-  return [
-    result.getFullYear(),
-    String(result.getMonth()+1).padStart(2,"0"),
-    String(result.getDate()).padStart(2,"0")
-  ].join("-");
-}
-
-function closeModal(id){
-  document.getElementById(id).classList.remove("show");
-}
-
-function openModal(id){
-  document.getElementById(id).classList.add("show");
-}
-
-function monthlyBill(c){
-  return Number(c.bill_amount || 0) + Number(c.ip_bill_amount || 0);
-}
-
-function isSuperAdmin(){
-  return currentProfile?.role === "super_admin" &&
-         currentProfile?.status === "active";
-}
-
-/* Permission is checked using the existing has_permission SQL function. */
-async function hasPermission(permission){
-  if(isSuperAdmin()) return true;
-
-  const {data,error} = await db.rpc("has_permission",{
-    permission_name:permission
-  });
-
-  if(error){
-    console.warn("Permission check:",error.message);
-    return false;
+function getValue(obj,...keys){
+  for(const key of keys){
+    if(obj && obj[key] !== undefined && obj[key] !== null) return obj[key];
   }
-  return data === true;
+  return "";
+}
+function customerId(c){
+  return String(getValue(c,"id","customerId","customer_id","code","customerCode","si"));
+}
+function customerName(c){
+  return getValue(c,"name","customerName","customer_name","Customer Name");
+}
+function customerStatus(c){
+  const raw=String(getValue(c,"status","renewStatus","renew_status","renew")||"active").toLowerCase();
+  if(raw.includes("inactive") || raw==="off" || raw==="false") return "inactive";
+  if(raw.includes("due")) return "due";
+  return "active";
+}
+function formatDate(value){
+  if(!value) return "—";
+  const d=new Date(value);
+  if(Number.isNaN(d.getTime())) return esc(value);
+  return d.toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"});
+}
+function dateInput(value){
+  if(!value) return "";
+  const d=new Date(value);
+  if(Number.isNaN(d.getTime())) return String(value).slice(0,10);
+  return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
 }
 
-/* ==========================================
-   AUTHENTICATION
-========================================== */
-
-async function initialize(){
-  try{
-    const {data:{session},error} = await db.auth.getSession();
-    if(error) throw error;
-
-    if(!session){
-      document.getElementById("customerRows").innerHTML =
-        `<tr><td colspan="9" class="empty">Please login from the main dashboard.</td></tr>`;
-      return;
-    }
-
-    currentUser = session.user;
-
-    const {data:profile,error:profileError} = await db
-      .from("profiles")
-      .select("*")
-      .eq("id",currentUser.id)
-      .single();
-
-    if(profileError) throw profileError;
-    currentProfile = profile;
-
-    if(profile.status !== "active"){
-      throw new Error("Your account is inactive.");
-    }
-
-    const allowed = await hasPermission("customers.view");
-    if(!allowed){
-      throw new Error("You do not have permission to view customers.");
-    }
-
-    await loadCustomers();
-
-  }catch(error){
-    console.error(error);
-    document.getElementById("customerRows").innerHTML =
-      `<tr><td colspan="9" class="empty">${escapeHTML(error.message)}</td></tr>`;
-    toast(error.message);
+/* ---------- API ---------- */
+async function apiGet(action){
+  const url=API_URL+"?action="+encodeURIComponent(action)+"&t="+Date.now();
+  const response=await fetch(url,{method:"GET",redirect:"follow"});
+  if(!response.ok) throw new Error("Server error: "+response.status);
+  const result=await response.json();
+  if(result.success===false || result.ok===false){
+    throw new Error(result.message || result.error || "Request failed");
   }
+  return result;
+}
+async function apiPost(action,data){
+  const response=await fetch(API_URL,{
+    method:"POST",
+    redirect:"follow",
+    headers:{"Content-Type":"text/plain;charset=utf-8"},
+    body:JSON.stringify({action,data})
+  });
+  if(!response.ok) throw new Error("Server error: "+response.status);
+  const result=await response.json();
+  if(result.success===false || result.ok===false){
+    throw new Error(result.message || result.error || "Request failed");
+  }
+  return result;
 }
 
-/* ==========================================
-   LOAD CUSTOMER DATA
-========================================== */
-
+/* ---------- LOAD CUSTOMERS ---------- */
 async function loadCustomers(){
-  const tbody = document.getElementById("customerRows");
-  tbody.innerHTML = `<tr><td colspan="9" class="loader">
-    <i class="fa-solid fa-spinner fa-spin"></i> Loading...
-  </td></tr>`;
+  if(busy) return;
+  busy=true;
+  document.getElementById("customerRows").innerHTML=
+    '<tr><td colspan="9" class="loading">Loading customers...</td></tr>';
 
   try{
-    const {data,error} = await db
-      .from("customers")
-      .select(`
-        id,customer_code,name,phone,ip,email,
-        bill_amount,ip_bill_amount,billing_date,
-        created_at,status,collect_status,renew_status,
-        deleted_at,area,address,reason
-      `)
-      .is("deleted_at",null)
-      .order("created_at",{ascending:true});
+    const result=await apiGet("getCustomers");
+    let rows =
+      Array.isArray(result) ? result :
+      result.customers || result.data || result.records || [];
 
-    if(error) throw error;
-
-    customers = data || [];
-    updateStats();
+    if(!Array.isArray(rows)) rows=[];
+    allCustomers=rows.filter(c=>!c.deletedAt && !c.deleted_at && !c.deleted);
+    document.getElementById("totalCount").textContent=allCustomers.length;
     applyFilters();
-
   }catch(error){
-    console.error(error);
-    tbody.innerHTML =
-      `<tr><td colspan="9" class="empty">Failed to load: ${escapeHTML(error.message)}</td></tr>`;
-    toast("Customer loading failed: "+error.message);
+    document.getElementById("customerRows").innerHTML=
+      '<tr><td colspan="9" class="empty">Could not load customers. '+esc(error.message)+'</td></tr>';
+    document.getElementById("resultCount").textContent="Loading failed";
+    showMessage("Customer loading failed: "+error.message,"error");
+  }finally{
+    busy=false;
   }
 }
 
-function updateStats(){
-  const active = customers.filter(c=>c.status==="active").length;
-  const due = customers.filter(c=>
-    String(c.collect_status || "").toLowerCase() !== "collected"
-  ).length;
-  const totalBill = customers.reduce((sum,c)=>sum+monthlyBill(c),0);
-
-  document.getElementById("totalCount").textContent = customers.length;
-  document.getElementById("activeCount").textContent = active;
-  document.getElementById("dueCount").textContent = due;
-  document.getElementById("billTotal").textContent = money(totalBill);
-}
-
-/* ==========================================
-   SEARCH AND PAGINATION
-========================================== */
-
+/* ---------- SEARCH / FILTER ---------- */
 function applyFilters(){
-  const term = document.getElementById("searchInput").value.toLowerCase().trim();
-  const status = document.getElementById("statusFilter").value;
+  const q=document.getElementById("searchInput").value.trim().toLowerCase();
+  const status=document.getElementById("statusFilter").value;
 
-  filteredCustomers = customers.filter(c=>{
-    const text = [
-      c.customer_code,c.name,c.phone,c.ip,c.email,c.area
+  filteredCustomers=allCustomers.filter(c=>{
+    const searchable=[
+      customerName(c),
+      getValue(c,"ip","IP"),
+      getValue(c,"phone","mobile","mobileNumber","Mobile Number"),
+      getValue(c,"email","customerEmail","Email"),
+      getValue(c,"area","Area")
     ].join(" ").toLowerCase();
 
-    if(term && !text.includes(term)) return false;
-
-    if(status==="active" && c.status!=="active") return false;
-    if(status==="inactive" && c.status!=="inactive") return false;
-    if(status==="due" && String(c.collect_status||"").toLowerCase()==="collected") return false;
-    if(status==="collected" && String(c.collect_status||"").toLowerCase()!=="collected") return false;
-
-    return true;
+    const matchSearch=!q || searchable.includes(q);
+    const matchStatus=status==="all" || customerStatus(c)===status;
+    return matchSearch && matchStatus;
   });
 
   currentPage=1;
   renderTable();
 }
-
 function changePageSize(){
-  const value = document.getElementById("pageSize").value;
-  pageSize = value==="all" ? Math.max(filteredCustomers.length,1) : Number(value);
+  const value=document.getElementById("pageSize").value;
+  pageSize=value==="all" ? "all" : Number(value);
   currentPage=1;
   renderTable();
 }
 
+/* ---------- RENDER TABLE ---------- */
 function renderTable(){
-  const tbody = document.getElementById("customerRows");
-  const total = filteredCustomers.length;
-  const start = (currentPage-1)*pageSize;
-  const end = Math.min(start+pageSize,total);
-  const rows = filteredCustomers.slice(start,end);
+  const tbody=document.getElementById("customerRows");
+  const total=filteredCustomers.length;
+  const perPage=pageSize==="all" ? Math.max(total,1) : pageSize;
+  const pages=Math.max(1,Math.ceil(total/perPage));
+  if(currentPage>pages) currentPage=pages;
 
-  if(!rows.length){
-    tbody.innerHTML = `<tr><td colspan="9" class="empty">
-      <i class="fa-solid fa-folder-open"></i><br><br>No customers found
-    </td></tr>`;
+  const start=(currentPage-1)*perPage;
+  const visible=filteredCustomers.slice(start,start+perPage);
+
+  document.getElementById("resultCount").textContent=
+    total+" matching customer(s)";
+
+  if(!visible.length){
+    tbody.innerHTML='<tr><td colspan="9" class="empty">No customer found.</td></tr>';
   }else{
-    tbody.innerHTML = rows.map((c,index)=>{
-      const serial = start+index+1;
-      const bill = monthlyBill(c);
-      const collected = String(c.collect_status||"").toLowerCase()==="collected";
-      const status = c.status || "active";
+    tbody.innerHTML=visible.map((c,index)=>{
+      const id=customerId(c);
+      const name=customerName(c);
+      const ip=getValue(c,"ip","IP");
+      const phone=getValue(c,"phone","mobile","mobileNumber","Mobile Number");
+      const email=getValue(c,"email","customerEmail","Email");
+      const bill=getValue(c,"customerBill","customer_bill","bill","Customer Bill");
+      const billingDate=getValue(c,"billingDate","billing_date","Billing Date");
+      const created=getValue(c,"createDate","createdAt","created_at","creationDate","Creation Date");
+      const status=customerStatus(c);
 
-      return `
-      <tr>
-        <td><span class="serial">${String(serial).padStart(2,"0")}</span></td>
-        <td>${escapeHTML(c.ip || "—")}</td>
-        <td>
-          <span class="name">${escapeHTML(c.name)}</span>
-          <span class="sub">${escapeHTML(c.customer_code || "")}</span>
-        </td>
-        <td>${escapeHTML(c.phone || "—")}</td>
-        <td>${escapeHTML(c.email || "—")}</td>
-        <td><span class="money">${money(bill)}</span></td>
-        <td>${localDate(c.billing_date) || "—"}</td>
-        <td>${localDate(c.created_at) || "—"}</td>
+      const badge=status==="active"
+        ? '<span class="status status-active">ACTIVE</span>'
+        : status==="due"
+        ? '<span class="status status-due">DUE</span>'
+        : '<span class="status status-inactive">INACTIVE</span>';
+
+      return `<tr>
+        <td class="serial">${start+index+1}</td>
+        <td>${esc(ip||"—")}</td>
+        <td><span class="customer-name">${esc(name||"Unnamed")}</span><br>${badge}</td>
+        <td>${esc(phone||"—")}</td>
+        <td class="customer-email">${esc(email||"—")}</td>
+        <td class="bill">৳${number(bill).toLocaleString("en-BD")}</td>
+        <td class="date">${formatDate(billingDate)}</td>
+        <td class="date">${formatDate(created)}</td>
         <td>
           <div class="actions">
-            <button class="action" title="Edit" onclick="openEdit('${c.id}')">
-              <i class="fa-solid fa-pen"></i>
-            </button>
-            <button class="action" title="Collect" onclick="openCollect('${c.id}')">
-              <i class="fa-solid fa-wallet"></i>
-            </button>
-            <button class="action" title="Renew" onclick="openRenew('${c.id}')">
-              <i class="fa-solid fa-rotate"></i>
-            </button>
-            <button class="action yellow" title="Add Due" onclick="openDue('${c.id}')">
-              <i class="fa-solid fa-circle-plus"></i>
-            </button>
-            <button class="action red" title="Delete" onclick="deleteCustomer('${c.id}')">
-              <i class="fa-solid fa-trash"></i>
-            </button>
+            <button class="btn-light action-btn" onclick="openEdit('${esc(id)}')">Edit</button>
+            <button class="btn-success action-btn" onclick="collectCustomer('${esc(id)}')">Collect</button>
+            <button class="btn-warning action-btn" onclick="renewCustomer('${esc(id)}')">Renew</button>
+            <button class="btn-danger action-btn" onclick="deleteCustomer('${esc(id)}')">Delete</button>
+            <button class="btn-primary action-btn" onclick="openDue('${esc(id)}')">Add Due</button>
           </div>
-          <span class="sub"><span class="status ${escapeHTML(status)}">${escapeHTML(status)}</span>
-          <span class="status ${collected?"collected":"due"}">${collected?"Collected":"Due"}</span></span>
         </td>
       </tr>`;
     }).join("");
   }
 
-  document.getElementById("showingText").textContent =
-    total ? `Showing ${start+1} to ${end} of ${total} entries` : "Showing 0 entries";
+  const first=total ? start+1 : 0;
+  const last=Math.min(start+perPage,total);
+  document.getElementById("paginationInfo").textContent=
+    `Showing ${first}–${last} of ${total} customers`;
 
-  renderPagination();
+  renderPagination(pages);
 }
-
-function renderPagination(){
-  const pages = Math.ceil(filteredCustomers.length/pageSize);
-  const el = document.getElementById("pagination");
-
-  if(pages<=1){el.innerHTML="";return;}
-
-  let html = `<button onclick="goPage(${currentPage-1})" ${currentPage===1?"disabled":""}>‹</button>`;
-
-  let first = Math.max(1,currentPage-2);
-  let last = Math.min(pages,first+4);
-  first = Math.max(1,last-4);
-
-  for(let p=first;p<=last;p++){
-    html += `<button class="${p===currentPage?"active":""}" onclick="goPage(${p})">${p}</button>`;
+function renderPagination(pages){
+  const box=document.getElementById("pageButtons");
+  if(pages<=1){box.innerHTML="";return;}
+  let html=`<button class="btn-light" ${currentPage===1?"disabled":""}
+    onclick="goPage(${currentPage-1})">‹</button>`;
+  let from=Math.max(1,currentPage-2);
+  let to=Math.min(pages,from+4);
+  from=Math.max(1,to-4);
+  for(let i=from;i<=to;i++){
+    html+=`<button class="${i===currentPage?"active":"btn-light"}"
+      onclick="goPage(${i})">${i}</button>`;
   }
-
-  html += `<button onclick="goPage(${currentPage+1})" ${currentPage===pages?"disabled":""}>›</button>`;
-  el.innerHTML=html;
+  html+=`<button class="btn-light" ${currentPage===pages?"disabled":""}
+    onclick="goPage(${currentPage+1})">›</button>`;
+  box.innerHTML=html;
 }
-
 function goPage(page){
-  const pages=Math.ceil(filteredCustomers.length/pageSize);
-  if(page<1 || page>pages) return;
   currentPage=page;
   renderTable();
 }
 
-/* ==========================================
-   HISTORY LOGGER
-========================================== */
-
-async function writeHistory(customer,action,description,oldData,newData){
-  const payload = {
-    customer_id:customer.id,
-    customer_name:customer.name || "",
-    action:action,
-    description:description,
-    old_data:oldData || {},
-    new_data:newData || {},
-    performed_by:currentUser.id
-  };
-
-  const {error} = await db.from("customer_history").insert(payload);
-  if(error){
-    console.error("History insert failed:",error);
-    throw new Error("History save failed: "+error.message);
-  }
+/* ---------- EDIT ---------- */
+function findCustomer(id){
+  return allCustomers.find(c=>customerId(c)===String(id));
 }
-
-/* ==========================================
-   EDIT CUSTOMER
-========================================== */
-
-async function openEdit(id){
-  if(!(await hasPermission("customers.edit"))){
-    toast("You do not have edit permission.");
-    return;
-  }
-
-  const c=customers.find(x=>x.id===id);
-  if(!c) return;
-
-  selectedCustomer=c;
-
-  document.getElementById("editId").value=c.id;
-  document.getElementById("editName").value=c.name||"";
-  document.getElementById("editPhone").value=c.phone||"";
-  document.getElementById("editIP").value=c.ip||"";
-  document.getElementById("editEmail").value=c.email||"";
-  document.getElementById("editBill").value=c.bill_amount||0;
-  document.getElementById("editIPBill").value=c.ip_bill_amount||0;
-  document.getElementById("editDate").value=c.billing_date||"";
-  document.getElementById("editStatus").value=c.status||"active";
-
+function openEdit(id){
+  const c=findCustomer(id);
+  if(!c){showMessage("Customer not found.","error");return;}
+  document.getElementById("editId").value=id;
+  document.getElementById("editName").value=customerName(c)||"";
+  document.getElementById("editPhone").value=getValue(c,"phone","mobile","mobileNumber")||"";
+  document.getElementById("editIP").value=getValue(c,"ip","IP")||"";
+  document.getElementById("editEmail").value=getValue(c,"email","customerEmail")||"";
+  document.getElementById("editBill").value=getValue(c,"customerBill","customer_bill","bill")||0;
+  document.getElementById("editBillingDate").value=dateInput(getValue(c,"billingDate","billing_date"));
+  document.getElementById("editArea").value=getValue(c,"area","Area")||"";
+  document.getElementById("editAddress").value=getValue(c,"address","Address")||"";
+  document.getElementById("editStatus").value=customerStatus(c);
   openModal("editModal");
 }
-
-async function saveEdit(event){
-  event.preventDefault();
-  if(busy) return;
-
-  const c=selectedCustomer;
-  if(!c) return;
-
-  const updates={
+async function saveEdit(){
+  const id=document.getElementById("editId").value;
+  const data={
+    id,
     name:document.getElementById("editName").value.trim(),
     phone:document.getElementById("editPhone").value.trim(),
     ip:document.getElementById("editIP").value.trim(),
-    email:document.getElementById("editEmail").value.trim() || null,
-    bill_amount:Number(document.getElementById("editBill").value||0),
-    ip_bill_amount:Number(document.getElementById("editIPBill").value||0),
-    billing_date:document.getElementById("editDate").value || null,
-    status:document.getElementById("editStatus").value,
-    updated_at:new Date().toISOString()
+    email:document.getElementById("editEmail").value.trim(),
+    customerBill:number(document.getElementById("editBill").value),
+    billingDate:document.getElementById("editBillingDate").value,
+    area:document.getElementById("editArea").value.trim(),
+    address:document.getElementById("editAddress").value.trim(),
+    status:document.getElementById("editStatus").value
   };
-
-  busy=true;
-  const btn=document.getElementById("editSaveBtn");
-  btn.disabled=true;
-  btn.textContent="Saving...";
-
-  try{
-    const {error}=await db.from("customers").update(updates).eq("id",c.id);
-    if(error) throw error;
-
-    await writeHistory(c,"EDIT","Customer information updated.",
-      {
-        name:c.name,phone:c.phone,ip:c.ip,email:c.email,
-        bill_amount:c.bill_amount,ip_bill_amount:c.ip_bill_amount,
-        billing_date:c.billing_date,status:c.status
-      },updates
-    );
-
+  if(!data.name){showMessage("Customer name is required.","error");return;}
+  await runAction("saveEditBtn","Saving...",async()=>{
+    await apiPost("updateCustomer",data);
     closeModal("editModal");
-    toast("Customer updated successfully.");
+    showMessage("Customer updated successfully.");
     await loadCustomers();
-
-  }catch(error){
-    toast(error.message);
-  }finally{
-    busy=false;btn.disabled=false;btn.textContent="Save Changes";
-  }
+  });
 }
 
-/* ==========================================
-   COLLECT
-   Billing Date advances by one calendar month.
-========================================== */
+/* ---------- COLLECT ---------- */
+async function collectCustomer(id){
+  const c=findCustomer(id);
+  if(!c)return;
+  const name=customerName(c)||"this customer";
+  if(!confirm(`Collect payment from ${name}?\n\nBilling date will advance by one calendar month and the action will be recorded in Customer History.`))return;
 
-function openCollect(id){
-  const c=customers.find(x=>x.id===id);
-  if(!c) return;
-
-  selectedCustomer=c;
-  const amount=monthlyBill(c);
-  const oldDate=c.billing_date || todayISO();
-  const nextDate=addOneMonth(oldDate);
-
-  document.getElementById("collectInfo").innerHTML =
-    `<b>${escapeHTML(c.name)}</b><br>
-     Monthly Bill: <b>${money(amount)}</b><br>
-     Current Billing Date: <b>${localDate(oldDate)}</b><br>
-     New Billing Date: <b>${localDate(nextDate)}</b>`;
-
-  document.getElementById("collectAmount").value=amount;
-  document.getElementById("collectNote").value="";
-  openModal("collectModal");
-}
-
-async function confirmCollect(){
-  if(busy || !selectedCustomer) return;
-
-  if(!(await hasPermission("billing.manage"))){
-    toast("You do not have billing permission.");
-    return;
-  }
-
-  const c=selectedCustomer;
-  const amount=Number(document.getElementById("collectAmount").value||0);
-  const note=document.getElementById("collectNote").value.trim();
-
-  if(amount<0){
-    toast("Invalid amount.");
-    return;
-  }
-
-  const oldDate=c.billing_date || todayISO();
-  const newDate=addOneMonth(oldDate);
-
-  busy=true;
-  const btn=document.getElementById("collectConfirm");
-  btn.disabled=true;btn.textContent="Processing...";
-
-  try{
-    const updates={
-      billing_date:newDate,
-      collect_status:"collected",
-      renew_status:"active",
-      updated_at:new Date().toISOString()
-    };
-
-    const {error}=await db.from("customers").update(updates).eq("id",c.id);
-    if(error) throw error;
-
-    await writeHistory(c,"COLLECT",
-      `Payment collected: ${money(amount)}. Billing date advanced from ${oldDate} to ${newDate}. ${note}`,
-      {
-        billing_date:c.billing_date,
-        collect_status:c.collect_status,
-        renew_status:c.renew_status
-      },
-      {
-        amount:amount,
-        note:note,
-        billing_date:newDate,
-        collect_status:"collected",
-        renew_status:"active"
-      }
-    );
-
-    closeModal("collectModal");
-    toast("Collect successful. Billing date advanced by one month.");
+  await runAction(null,null,async()=>{
+    await apiPost("collectCustomer",{
+      id,
+      amount:number(getValue(c,"customerBill","customer_bill","bill")),
+      oldBillingDate:getValue(c,"billingDate","billing_date")
+    });
+    showMessage("Payment collected. Billing date updated.");
     await loadCustomers();
-
-  }catch(error){
-    toast(error.message);
-  }finally{
-    busy=false;btn.disabled=false;btn.textContent="Confirm Collect";
-  }
+  });
 }
 
-/* ==========================================
-   RENEW
-========================================== */
+/* ---------- RENEW ---------- */
+async function renewCustomer(id){
+  const c=findCustomer(id);
+  if(!c)return;
+  if(!confirm(`Renew customer: ${customerName(c)}?`))return;
 
-function openRenew(id){
-  const c=customers.find(x=>x.id===id);
-  if(!c) return;
-
-  selectedCustomer=c;
-  const next=addOneMonth(c.billing_date||todayISO());
-
-  document.getElementById("renewInfo").innerHTML=
-    `<b>${escapeHTML(c.name)}</b><br>
-     Current Billing Date: ${localDate(c.billing_date)}<br>
-     Suggested Next Date: ${localDate(next)}`;
-
-  document.getElementById("renewDate").value=next;
-  openModal("renewModal");
-}
-
-async function confirmRenew(){
-  if(busy || !selectedCustomer) return;
-
-  if(!(await hasPermission("billing.manage"))){
-    toast("You do not have billing permission.");
-    return;
-  }
-
-  const c=selectedCustomer;
-  const newDate=document.getElementById("renewDate").value;
-
-  if(!newDate){toast("Select a billing date.");return;}
-
-  busy=true;
-
-  try{
-    const updates={
-      billing_date:newDate,
-      renew_status:"active",
-      updated_at:new Date().toISOString()
-    };
-
-    const {error}=await db.from("customers").update(updates).eq("id",c.id);
-    if(error) throw error;
-
-    await writeHistory(c,"RENEW",
-      `Customer renewed. Billing date changed to ${newDate}.`,
-      {billing_date:c.billing_date,renew_status:c.renew_status},
-      updates
-    );
-
-    closeModal("renewModal");
-    toast("Customer renewed successfully.");
+  await runAction(null,null,async()=>{
+    await apiPost("renewCustomer",{id});
+    showMessage("Customer renewed successfully.");
     await loadCustomers();
-
-  }catch(error){
-    toast(error.message);
-  }finally{busy=false;}
+  });
 }
 
-/* ==========================================
-   ADD DUE
-========================================== */
+/* ---------- DELETE ---------- */
+async function deleteCustomer(id){
+  const c=findCustomer(id);
+  if(!c)return;
+  if(!confirm(`Delete ${customerName(c)}?\n\nThe customer should be moved to Deleted Customer, not permanently erased.`))return;
 
+  await runAction(null,null,async()=>{
+    await apiPost("deleteCustomer",{id});
+    showMessage("Customer moved to deleted records.");
+    await loadCustomers();
+  });
+}
+
+/* ---------- ADD DUE ---------- */
 function openDue(id){
-  const c=customers.find(x=>x.id===id);
-  if(!c) return;
-
-  selectedCustomer=c;
-  document.getElementById("dueInfo").innerHTML=
-    `Customer: <b>${escapeHTML(c.name)}</b><br>
-     Current Monthly Bill: <b>${money(monthlyBill(c))}</b>`;
-
+  const c=findCustomer(id);
+  if(!c)return;
+  document.getElementById("dueCustomerId").value=id;
+  document.getElementById("dueCustomerName").value=customerName(c)||"";
   document.getElementById("dueAmount").value="";
-  document.getElementById("dueDate").value=todayISO();
   document.getElementById("dueReason").value="";
   openModal("dueModal");
 }
-
-async function confirmAddDue(){
-  if(busy || !selectedCustomer) return;
-
-  if(!(await hasPermission("billing.manage"))){
-    toast("You do not have billing permission.");
-    return;
-  }
-
-  const c=selectedCustomer;
-  const amount=Number(document.getElementById("dueAmount").value||0);
-  const dueDate=document.getElementById("dueDate").value||todayISO();
-  const reason=document.getElementById("dueReason").value.trim();
-
-  if(amount<=0){toast("Enter a valid due amount.");return;}
-
-  busy=true;
-
-  try{
-    const duePayload={
-      id:c.id,
-      customer_name:c.name,
-      due_amount:amount,
-      due_from:dueDate,
-      billing_date:dueDate,
-      bill_trigger:true,
-      due_reason:reason,
-      status:"due",
-      created_by:currentUser.id
-    };
-
-    const {error}=await db.from("due_entries").insert(duePayload);
-    if(error) throw error;
-
-    await writeHistory(c,"ADD_DUE",
-      `New due added: ${money(amount)}. Reason: ${reason}`,
-      {},
-      {due_amount:amount,due_date:dueDate,due_reason:reason}
-    );
-
+async function saveDue(){
+  const data={
+    id:document.getElementById("dueCustomerId").value,
+    amount:number(document.getElementById("dueAmount").value),
+    reason:document.getElementById("dueReason").value.trim()
+  };
+  if(data.amount<=0){showMessage("Enter a valid due amount.","error");return;}
+  await runAction("saveDueBtn","Saving...",async()=>{
+    await apiPost("addDue",data);
     closeModal("dueModal");
-    toast("Due added successfully.");
+    showMessage("Due entry saved successfully.");
     await loadCustomers();
-
-  }catch(error){
-    toast(error.message);
-  }finally{busy=false;}
+  });
 }
 
-/* ==========================================
-   DELETE CUSTOMER
-   Soft delete: customer remains recoverable.
-========================================== */
-
-async function deleteCustomer(id){
-  if(!(await hasPermission("customers.delete"))){
-    toast("You do not have delete permission.");
-    return;
-  }
-
-  const c=customers.find(x=>x.id===id);
-  if(!c) return;
-
-  if(!confirm(`Are you sure you want to delete ${c.name}?`)) return;
-
-  if(busy) return;
-  busy=true;
-
+/* ---------- MODAL / ACTION HELPER ---------- */
+function openModal(id){document.getElementById(id).classList.add("show");}
+function closeModal(id){document.getElementById(id).classList.remove("show");}
+document.querySelectorAll(".modal-backdrop").forEach(el=>{
+  el.addEventListener("click",e=>{
+    if(e.target===el)el.classList.remove("show");
+  });
+});
+async function runAction(buttonId,loadingText,callback){
+  const btn=buttonId?document.getElementById(buttonId):null;
+  if(btn){btn.disabled=true;btn.textContent=loadingText;}
   try{
-    const now=new Date().toISOString();
-
-    const {error}=await db.from("customers").update({
-      status:"deleted",
-      deleted_at:now,
-      updated_at:now
-    }).eq("id",id);
-
-    if(error) throw error;
-
-    await writeHistory(c,"DELETE",
-      "Customer moved to Deleted Customers.",
-      {status:c.status,deleted_at:c.deleted_at},
-      {status:"deleted",deleted_at:now}
-    );
-
-    toast("Customer moved to Deleted Customers.");
-    await loadCustomers();
-
+    await callback();
   }catch(error){
-    toast(error.message);
-  }finally{busy=false;}
-}
-
-/* ==========================================
-   INDEX THEME SYNC
-========================================== */
-
-function syncParentTheme(){
-  try{
-    const parentDoc=window.parent.document;
-    const body=parentDoc.body;
-    const html=parentDoc.documentElement;
-
-    const classes=[
-      body.className,
-      html.className
-    ].join(" ").toLowerCase();
-
-    const theme=(
-      body.getAttribute("data-theme") ||
-      html.getAttribute("data-theme") ||
-      body.dataset.theme ||
-      html.dataset.theme ||
-      ""
-    ).toLowerCase();
-
-    document.body.classList.toggle(
-      "dark",
-      classes.includes("dark") || theme.includes("dark")
-    );
-
-    document.body.classList.toggle(
-      "funny",
-      classes.includes("funny") || theme.includes("funny")
-    );
-  }catch(error){
-    console.log("Parent theme unavailable.");
+    showMessage(error.message || "Action failed.","error");
+  }finally{
+    if(btn){btn.disabled=false;btn.textContent=buttonId==="saveEditBtn"?"Save Changes":"Save Due";}
   }
 }
 
-syncParentTheme();
-
-try{
-  const observer=new MutationObserver(syncParentTheme);
-  observer.observe(window.parent.document.documentElement,{
-    attributes:true,attributeFilter:["class","data-theme"]
-  });
-  observer.observe(window.parent.document.body,{
-    attributes:true,attributeFilter:["class","data-theme"]
-  });
-}catch(error){}
-
-/* ==========================================
-   START
-========================================== */
-
-initialize();
-
+/* ---------- START ---------- */
+loadCustomers();
 </script>
 </body>
 </html>
