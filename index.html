@@ -13,759 +13,315 @@
 
 <style>
 :root{
-  --bg:#0b1220;
-  --panel:#111c2e;
-  --panel2:#17243a;
-  --border:#26364d;
-  --text:#edf4ff;
-  --muted:#91a2ba;
-  --primary:#10b981;
-  --primary2:#059669;
-  --danger:#ef4444;
-  --input:#0b1627;
-  --shadow:0 15px 45px rgba(0,0,0,.22);
+ --bg:#0b1220;
+ --panel:#111c2e;
+ --panel2:#17243a;
+ --border:#26364d;
+ --text:#edf4ff;
+ --muted:#91a2ba;
+ --primary:#10b981;
+ --input:#0b1627;
+ --shadow:0 15px 45px rgba(0,0,0,.25);
 }
-
 *{box-sizing:border-box}
-
-body{
-  margin:0;
-  font-family:Inter,Arial,sans-serif;
-  background:var(--bg);
-  color:var(--text);
-}
-
+body{margin:0;font-family:Inter,Arial,sans-serif;background:var(--bg);color:var(--text)}
 button,input{font:inherit}
 button{cursor:pointer}
 .hidden{display:none!important}
 .muted{color:var(--muted)}
 .small{font-size:12px}
-
-.brand{
-  display:flex;
-  align-items:center;
-  gap:11px;
-  font-size:19px;
-  font-weight:800;
-  letter-spacing:.3px;
-  white-space:nowrap;
-}
-
-.brand-icon{
-  width:42px;
-  height:42px;
-  border-radius:12px;
-  display:grid;
-  place-items:center;
-  color:white;
-  background:linear-gradient(135deg,#10b981,#047857);
-  box-shadow:0 7px 20px #05966930;
-  flex-shrink:0;
-}
-
-.btn{
-  border:0;
-  border-radius:9px;
-  padding:12px 17px;
-  font-weight:700;
-  transition:.2s;
-}
-
-.btn-primary{
-  background:var(--primary);
-  color:#04251b;
-}
-
-.btn-primary:hover{background:#34d399}
-
-.btn-secondary{
-  background:var(--panel2);
-  color:var(--text);
-  border:1px solid var(--border);
-}
-
-.btn-danger{
-  background:#ef444420;
-  color:#fca5a5;
-  border:1px solid #ef444455;
-}
-
-.btn:disabled{
-  opacity:.55;
-  cursor:not-allowed;
-}
-
-.field{margin-bottom:17px}
-
-.field label{
-  display:block;
-  font-size:13px;
-  font-weight:600;
-  margin-bottom:8px;
-  color:#c7d5e8;
-}
-
-.field input{
-  width:100%;
-  height:45px;
-  border-radius:9px;
-  background:var(--input);
-  border:1px solid var(--border);
-  color:var(--text);
-  padding:0 13px;
-  outline:none;
-  transition:.2s;
-}
-
-.field input:focus{
-  border-color:var(--primary);
-  box-shadow:0 0 0 3px #10b98120;
-}
-
-.auth-wrap{
-  min-height:100vh;
-  display:grid;
-  place-items:center;
-  padding:22px;
-  background:
-    radial-gradient(ellipse at 15% 10%,#064e3b45,transparent 45%),
-    radial-gradient(ellipse at 90% 90%,#1e3a8a25,transparent 45%),
-    var(--bg);
-}
-
-.auth-card{
-  width:min(100%,430px);
-  padding:34px;
-  background:var(--panel);
-  border:1px solid var(--border);
-  border-radius:19px;
-  box-shadow:var(--shadow);
-}
-
-.auth-card .brand{
-  justify-content:center;
-  margin-bottom:30px;
-}
-
-.auth-title{
-  text-align:center;
-  font-size:24px;
-  font-weight:800;
-  margin:0 0 8px;
-}
-
-.auth-desc{
-  text-align:center;
-  color:var(--muted);
-  font-size:13px;
-  margin:0 0 25px;
-  line-height:1.7;
-}
-
-.auth-links{
-  display:flex;
-  justify-content:space-between;
-  gap:10px;
-  margin-top:18px;
-  font-size:12px;
-}
-
 a{color:#34d399;text-decoration:none}
 a:hover{text-decoration:underline}
 
-.notice{
-  font-size:13px;
-  padding:12px;
-  border-radius:9px;
-  margin-bottom:16px;
-  line-height:1.6;
+.brand{
+ display:flex;align-items:center;gap:11px;
+ font-size:19px;font-weight:800;letter-spacing:.3px;
+ white-space:nowrap;
+}
+.brand-icon{
+ width:42px;height:42px;border-radius:12px;
+ display:grid;place-items:center;color:white;
+ background:linear-gradient(135deg,#10b981,#047857);
+ box-shadow:0 7px 20px #05966930;flex-shrink:0;
+}
+.brand-toggle{
+ display:flex;align-items:center;gap:11px;
+ width:100%;padding:0 7px 24px;
+ border:0;background:transparent;color:var(--text);
+ text-align:left;border-radius:10px;
+}
+.brand-toggle:hover .brand-icon{
+ box-shadow:0 0 0 4px #10b98120,0 7px 20px #05966930;
 }
 
-.notice.error{
-  background:#7f1d1d40;
-  border:1px solid #ef444455;
-  color:#fca5a5;
+.btn{
+ border:0;border-radius:9px;padding:12px 17px;
+ font-weight:700;transition:.2s;
 }
+.btn-primary{background:var(--primary);color:#04251b}
+.btn-primary:hover{background:#34d399}
+.btn-secondary{background:var(--panel2);color:var(--text);border:1px solid var(--border)}
+.btn-danger{background:#ef444420;color:#fca5a5;border:1px solid #ef444455}
+.btn:disabled{opacity:.55;cursor:not-allowed}
 
-.notice.success{
-  background:#065f4633;
-  border:1px solid #10b98155;
-  color:#6ee7b7;
+.field{margin-bottom:17px}
+.field label{
+ display:block;font-size:13px;font-weight:600;
+ margin-bottom:8px;color:#c7d5e8;
 }
+.field input{
+ width:100%;height:45px;border-radius:9px;
+ background:var(--input);border:1px solid var(--border);
+ color:var(--text);padding:0 13px;outline:none;transition:.2s;
+}
+.field input:focus{border-color:var(--primary);box-shadow:0 0 0 3px #10b98120}
 
+.auth-wrap{
+ min-height:100vh;display:grid;place-items:center;padding:22px;
+ background:
+ radial-gradient(ellipse at 15% 10%,#064e3b45,transparent 45%),
+ radial-gradient(ellipse at 90% 90%,#1e3a8a25,transparent 45%),var(--bg);
+}
+.auth-card{
+ width:min(100%,430px);padding:34px;background:var(--panel);
+ border:1px solid var(--border);border-radius:19px;box-shadow:var(--shadow);
+}
+.auth-card .brand{justify-content:center;margin-bottom:30px}
+.auth-title{text-align:center;font-size:24px;font-weight:800;margin:0 0 8px}
+.auth-desc{text-align:center;color:var(--muted);font-size:13px;margin:0 0 25px;line-height:1.7}
+.auth-links{display:flex;justify-content:space-between;gap:10px;margin-top:18px;font-size:12px}
 .auth-card .btn{width:100%}
+.notice{font-size:13px;padding:12px;border-radius:9px;margin-bottom:16px;line-height:1.6}
+.notice.error{background:#7f1d1d40;border:1px solid #ef444455;color:#fca5a5}
+.notice.success{background:#065f4633;border:1px solid #10b98155;color:#6ee7b7}
 
-/* APPLICATION */
-
+/* APP */
 #app{min-height:100vh}
-
 .sidebar{
-  position:fixed;
-  inset:0 auto 0 0;
-  width:260px;
-  background:#0e192a;
-  border-right:1px solid var(--border);
-  display:flex;
-  flex-direction:column;
-  padding:20px 14px;
-  z-index:30;
-  overflow-x:hidden;
-  overflow-y:auto;
-  transition:width .25s ease,transform .25s ease;
-  scrollbar-width:thin;
+ position:fixed;inset:0 auto 0 0;width:260px;
+ background:#0e192a;border-right:1px solid var(--border);
+ display:flex;flex-direction:column;padding:20px 14px;
+ z-index:30;overflow-x:hidden;overflow-y:auto;
+ transition:width .25s ease,transform .25s ease;
+ scrollbar-width:thin;
 }
-
-.sidebar .brand{
-  padding:0 7px 24px;
-  min-height:65px;
-}
-
 .nav-label{
-  font-size:10px;
-  letter-spacing:1.5px;
-  font-weight:800;
-  color:#657994;
-  padding:13px 12px 8px;
-  white-space:nowrap;
+ font-size:10px;letter-spacing:1.5px;font-weight:800;
+ color:#657994;padding:13px 12px 8px;white-space:nowrap;
 }
-
 .nav-link{
-  display:flex;
-  align-items:center;
-  gap:12px;
-  width:100%;
-  min-height:44px;
-  padding:11px 12px;
-  border:1px solid transparent;
-  border-radius:9px;
-  color:#a9bad0;
-  background:transparent;
-  text-align:left;
-  font-size:13px;
-  font-weight:600;
-  margin-bottom:4px;
-  white-space:nowrap;
-  transition:.2s;
-  position:relative;
+ display:flex;align-items:center;gap:12px;width:100%;
+ min-height:44px;padding:11px 12px;
+ border:1px solid transparent;border-radius:9px;
+ color:#a9bad0;background:transparent;text-align:left;
+ font-size:13px;font-weight:600;margin-bottom:4px;
+ white-space:nowrap;transition:.2s;position:relative;
 }
+.nav-link i{width:20px;min-width:20px;text-align:center;font-size:15px}
+.nav-link:hover{background:#ffffff0b;color:#fff}
+.nav-link.active{background:#10b98118;color:#34d399;border-color:#10b98125}
 
-.nav-link i{
-  width:20px;
-  min-width:20px;
-  text-align:center;
-  font-size:15px;
-}
-
-.nav-link:hover{
-  background:#ffffff0b;
-  color:#fff;
-}
-
-.nav-link.active{
-  background:#10b98118;
-  color:#34d399;
-  border-color:#10b98125;
-}
-
-.sidebar-bottom{
-  margin-top:auto;
-  border-top:1px solid var(--border);
-  padding-top:14px;
-}
-
-.sidebar-user{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  padding:10px 8px;
-  min-width:0;
-}
-
+.sidebar-bottom{margin-top:auto;border-top:1px solid var(--border);padding-top:14px}
+.sidebar-user{display:flex;align-items:center;gap:10px;padding:10px 8px;min-width:0}
 .avatar{
-  width:38px;
-  height:38px;
-  border-radius:50%;
-  object-fit:cover;
-  background:#1e334b;
-  border:1px solid #36506d;
-  flex-shrink:0;
-  display:grid;
-  place-items:center;
-  color:#b9c9dc;
-  font-weight:800;
-  overflow:hidden;
+ width:38px;height:38px;border-radius:50%;object-fit:cover;
+ background:#1e334b;border:1px solid #36506d;flex-shrink:0;
+ display:grid;place-items:center;color:#b9c9dc;font-weight:800;overflow:hidden;
 }
+.avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.user-info{min-width:0;flex:1}
+.user-info strong{display:block;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.user-info span{display:block;color:var(--muted);font-size:10px;margin-top:4px}
 
-.avatar img{
-  width:100%;
-  height:100%;
-  object-fit:cover;
-  border-radius:50%;
-}
-
-.user-info{
-  min-width:0;
-  flex:1;
-}
-
-.user-info strong{
-  display:block;
-  font-size:12px;
-  overflow:hidden;
-  text-overflow:ellipsis;
-  white-space:nowrap;
-}
-
-.user-info span{
-  display:block;
-  color:var(--muted);
-  font-size:10px;
-  margin-top:4px;
-}
-
-.main{
-  margin-left:260px;
-  min-height:100vh;
-  transition:margin-left .25s ease;
-}
-
+.main{margin-left:260px;min-height:100vh;transition:margin-left .25s ease}
 .topbar{
-  height:70px;
-  border-bottom:1px solid var(--border);
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:0 27px;
-  background:#0d1727ed;
-  position:sticky;
-  top:0;
-  z-index:10;
-  backdrop-filter:blur(15px);
+ height:70px;border-bottom:1px solid var(--border);
+ display:flex;align-items:center;justify-content:space-between;
+ padding:0 27px;background:#0d1727ed;position:sticky;top:0;
+ z-index:20;backdrop-filter:blur(15px);
 }
-
-.topbar h2{
-  font-size:16px;
-  margin:0;
-  font-weight:700;
-}
-
-.top-actions{
-  display:flex;
-  align-items:center;
-  gap:12px;
-}
-
-.icon-btn{
-  width:39px;
-  height:39px;
-  border-radius:9px;
-  border:1px solid var(--border);
-  background:var(--panel);
-  color:var(--text);
-  display:grid;
-  place-items:center;
-  transition:.2s;
-}
-
-.icon-btn:hover{
-  border-color:var(--primary);
-  color:#34d399;
-}
-
-.menu-btn{display:grid}
-
-.content{
-  padding:27px;
-  max-width:1500px;
-  margin:auto;
-}
-
-.welcome{
-  padding:26px;
-  border-radius:14px;
-  background:linear-gradient(115deg,#073e32,#0d2937 65%,#172b42);
-  border:1px solid #1c644e;
-  margin-bottom:24px;
-}
-
-.welcome h1{
-  font-size:24px;
-  margin:0 0 9px;
-}
-
-.welcome p{
-  font-size:13px;
-  color:#c1e9dc;
-  margin:0;
-  line-height:1.7;
-}
-
-.section-title{
-  font-size:15px;
-  font-weight:800;
-  margin:25px 0 14px;
-}
-
-.stats{
-  display:grid;
-  grid-template-columns:repeat(4,minmax(0,1fr));
-  gap:14px;
-}
-
-.stat{
-  background:var(--panel);
-  border:1px solid var(--border);
-  padding:18px;
-  border-radius:12px;
-  min-height:130px;
-  transition:.2s;
-}
-
-.stat:hover{
-  border-color:#405570;
-  transform:translateY(-2px);
-}
-
-.stat-icon{
-  width:36px;
-  height:36px;
-  border-radius:9px;
-  display:grid;
-  place-items:center;
-  background:#10b9811b;
-  color:#34d399;
-  margin-bottom:13px;
-}
-
-.stat strong{
-  font-size:20px;
-  display:block;
-  font-variant-numeric:tabular-nums;
-}
-
-.stat span{
-  font-size:11px;
-  color:var(--muted);
-  display:block;
-  margin-top:6px;
-}
-
-.stat .stat-status{
-  font-size:10px;
-  color:#6ee7b7;
-  margin-top:9px;
-}
-
-.quick-grid{
-  display:grid;
-  grid-template-columns:repeat(3,minmax(0,1fr));
-  gap:13px;
-}
-
-.quick{
-  border:1px solid var(--border);
-  background:var(--panel);
-  border-radius:12px;
-  padding:18px;
-  text-align:left;
-  color:var(--text);
-  transition:.2s;
-}
-
-.quick:hover{
-  border-color:var(--primary);
-  transform:translateY(-2px);
-}
-
-.quick i{
-  color:#34d399;
-  font-size:18px;
-  margin-bottom:12px;
-}
-
-.quick strong{
-  display:block;
-  font-size:13px;
-}
-
-.quick span{
-  font-size:11px;
-  color:var(--muted);
-  display:block;
-  margin-top:6px;
-}
-
-.page-card{
-  background:var(--panel);
-  border:1px solid var(--border);
-  border-radius:13px;
-  padding:23px;
-  margin-bottom:17px;
-}
-
-.page-card h3{
-  font-size:15px;
-  margin:0 0 17px;
-}
-
-.profile-head{
-  display:flex;
-  align-items:center;
-  gap:18px;
-  margin-bottom:22px;
-}
-
-.profile-big{
-  width:85px;
-  height:85px;
-  border-radius:50%;
-  object-fit:cover;
-  background:#1e334b;
-  border:2px solid #10b981;
-}
-
-.profile-details h3{
-  margin:0 0 7px;
-  font-size:18px;
-}
-
-.profile-details p{
-  margin:0;
-  color:var(--muted);
-  font-size:12px;
-}
-
-.form-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:0 17px;
-}
-
-.form-actions{
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-}
-
+.topbar h2{font-size:16px;margin:0;font-weight:700}
+.top-actions{display:flex;align-items:center;gap:12px;position:relative}
 .role-tag{
-  display:inline-block;
-  background:#10b98120;
-  color:#6ee7b7;
-  padding:6px 10px;
-  border-radius:20px;
-  font-size:10px;
-  font-weight:800;
-  letter-spacing:.4px;
+ display:inline-block;background:#10b98120;color:#6ee7b7;
+ padding:6px 10px;border-radius:20px;font-size:10px;font-weight:800;
+ letter-spacing:.4px;
 }
 
-.overlay{
-  display:none;
-  position:fixed;
-  inset:0;
-  background:#0009;
-  z-index:25;
+/* PROFILE DROPDOWN */
+.profile-menu-wrap{position:relative}
+.profile-trigger{
+ display:flex;align-items:center;gap:8px;
+ background:transparent;border:0;padding:3px;
+ border-radius:30px;color:var(--text);
 }
+.profile-trigger:hover{background:#ffffff0a}
+.profile-trigger .avatar{width:40px;height:40px}
+.profile-trigger .profile-chevron{font-size:11px;color:var(--muted);padding-right:5px}
+.profile-dropdown{
+ position:absolute;right:0;top:53px;width:225px;
+ background:#17243a;border:1px solid #34445c;
+ border-radius:12px;padding:9px;box-shadow:var(--shadow);
+ z-index:60;display:none;
+}
+.profile-dropdown.show{display:block;animation:dropIn .15s ease}
+@keyframes dropIn{
+ from{opacity:0;transform:translateY(-5px)}
+ to{opacity:1;transform:translateY(0)}
+}
+.dropdown-user{
+ display:flex;align-items:center;gap:10px;
+ padding:10px 9px 13px;border-bottom:1px solid var(--border);
+ margin-bottom:7px;min-width:0;
+}
+.dropdown-user .avatar{width:36px;height:36px}
+.dropdown-user-info{min-width:0}
+.dropdown-user-info strong{
+ display:block;font-size:12px;white-space:nowrap;
+ overflow:hidden;text-overflow:ellipsis;
+}
+.dropdown-user-info span{display:block;font-size:10px;color:var(--muted);margin-top:4px}
+.dropdown-item{
+ display:flex;align-items:center;gap:11px;width:100%;
+ padding:11px 10px;border:0;border-radius:8px;
+ background:transparent;color:#cbd5e1;text-align:left;
+ font-size:12px;font-weight:600;
+}
+.dropdown-item i{width:17px;text-align:center;color:#91a2ba}
+.dropdown-item:hover{background:#ffffff0b;color:#fff}
+.dropdown-item.logout{color:#fca5a5}
+.dropdown-item.logout i{color:#f87171}
+.dropdown-divider{height:1px;background:var(--border);margin:6px 0}
 
+.content{padding:27px;max-width:1500px;margin:auto}
+.welcome{
+ padding:26px;border-radius:14px;
+ background:linear-gradient(115deg,#073e32,#0d2937 65%,#172b42);
+ border:1px solid #1c644e;margin-bottom:24px;
+}
+.welcome h1{font-size:24px;margin:0 0 9px}
+.welcome p{font-size:13px;color:#c1e9dc;margin:0;line-height:1.7}
+.section-title{font-size:15px;font-weight:800;margin:25px 0 14px}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.stat{
+ background:var(--panel);border:1px solid var(--border);
+ padding:18px;border-radius:12px;min-height:130px;transition:.2s;
+}
+.stat:hover{border-color:#405570;transform:translateY(-2px)}
+.stat-icon{
+ width:36px;height:36px;border-radius:9px;
+ display:grid;place-items:center;background:#10b9811b;
+ color:#34d399;margin-bottom:13px;
+}
+.stat strong{font-size:20px;display:block;font-variant-numeric:tabular-nums}
+.stat span{font-size:11px;color:var(--muted);display:block;margin-top:6px}
+.stat .stat-status{font-size:10px;color:#6ee7b7;margin-top:9px}
+.quick-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}
+.quick{
+ border:1px solid var(--border);background:var(--panel);
+ border-radius:12px;padding:18px;text-align:left;color:var(--text);transition:.2s;
+}
+.quick:hover{border-color:var(--primary);transform:translateY(-2px)}
+.quick i{color:#34d399;font-size:18px;margin-bottom:12px}
+.quick strong{display:block;font-size:13px}
+.quick span{font-size:11px;color:var(--muted);display:block;margin-top:6px}
+.page-card{
+ background:var(--panel);border:1px solid var(--border);
+ border-radius:13px;padding:23px;margin-bottom:17px;
+}
+.page-card h3{font-size:15px;margin:0 0 17px}
+.profile-head{display:flex;align-items:center;gap:18px;margin-bottom:22px}
+.profile-big{
+ width:85px;height:85px;border-radius:50%;object-fit:cover;
+ background:#1e334b;border:2px solid #10b981;
+}
+.profile-details h3{margin:0 0 7px;font-size:18px}
+.profile-details p{margin:0;color:var(--muted);font-size:12px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 17px}
+.form-actions{display:flex;gap:10px;flex-wrap:wrap}
+
+.overlay{display:none;position:fixed;inset:0;background:#0009;z-index:25}
 #toast{
-  position:fixed;
-  right:20px;
-  bottom:20px;
-  z-index:100;
-  max-width:min(380px,calc(100% - 40px));
-  background:#17243a;
-  border:1px solid var(--border);
-  border-radius:11px;
-  padding:14px 18px;
-  font-size:13px;
-  box-shadow:var(--shadow);
-  display:none;
+ position:fixed;right:20px;bottom:20px;z-index:100;
+ max-width:min(380px,calc(100% - 40px));
+ background:#17243a;border:1px solid var(--border);
+ border-radius:11px;padding:14px 18px;font-size:13px;
+ box-shadow:var(--shadow);display:none;
+}
+#toast.error{border-color:#ef4444;color:#fca5a5}
+#toast.success{border-color:#10b981;color:#6ee7b7}
+.footer-note{font-size:11px;color:#657994;text-align:center;margin-top:28px}
+
+/* COLLAPSED SIDEBAR */
+body.sidebar-collapsed .sidebar{width:76px;padding-left:10px;padding-right:10px}
+body.sidebar-collapsed .main{margin-left:76px}
+body.sidebar-collapsed .brand-toggle{justify-content:center;padding-left:0;padding-right:0}
+body.sidebar-collapsed .brand-toggle .brand-text,
+body.sidebar-collapsed .nav-label,
+body.sidebar-collapsed .sidebar-user .user-info{display:none}
+body.sidebar-collapsed .nav-link{justify-content:center;padding:11px 0;gap:0;font-size:0}
+body.sidebar-collapsed .nav-link i{font-size:16px;width:auto;min-width:0}
+body.sidebar-collapsed .sidebar-user{justify-content:center;padding:10px 0}
+body.sidebar-collapsed .nav-link:hover::after{
+ content:attr(data-tooltip);position:absolute;left:62px;top:50%;
+ transform:translateY(-50%);background:#202d42;color:#fff;
+ border:1px solid #35445c;padding:8px 12px;border-radius:7px;
+ font-size:12px;white-space:nowrap;z-index:100;pointer-events:none;
+ box-shadow:0 8px 25px #0005;
 }
 
-#toast.error{
-  border-color:#ef4444;
-  color:#fca5a5;
-}
-
-#toast.success{
-  border-color:#10b981;
-  color:#6ee7b7;
-}
-
-.footer-note{
-  font-size:11px;
-  color:#657994;
-  text-align:center;
-  margin-top:28px;
-}
-
-/* DESKTOP COLLAPSED SIDEBAR */
-
-body.sidebar-collapsed .sidebar{
-  width:76px;
-  padding-left:10px;
-  padding-right:10px;
-}
-
-body.sidebar-collapsed .main{
-  margin-left:76px;
-}
-
-body.sidebar-collapsed .sidebar .brand{
-  justify-content:center;
-  padding-left:0;
-  padding-right:0;
-}
-
-body.sidebar-collapsed .sidebar .brand span,
-body.sidebar-collapsed .sidebar .nav-label,
-body.sidebar-collapsed .sidebar .user-info{
-  display:none;
-}
-
-body.sidebar-collapsed .sidebar .nav-link{
-  justify-content:center;
-  padding:11px 0;
-  gap:0;
-  font-size:0;
-}
-
-body.sidebar-collapsed .sidebar .nav-link i{
-  font-size:16px;
-  width:auto;
-  min-width:0;
-}
-
-body.sidebar-collapsed .sidebar .sidebar-user{
-  justify-content:center;
-  padding:10px 0;
-}
-
-body.sidebar-collapsed .sidebar .nav-link:hover::after{
-  content:attr(data-tooltip);
-  position:absolute;
-  left:62px;
-  top:50%;
-  transform:translateY(-50%);
-  background:#202d42;
-  color:#fff;
-  border:1px solid #35445c;
-  padding:8px 12px;
-  border-radius:7px;
-  font-size:12px;
-  white-space:nowrap;
-  z-index:100;
-  pointer-events:none;
-  box-shadow:0 8px 25px #0005;
-}
-
-body.sidebar-collapsed .sidebar #logoutButton:hover::after{
-  content:"Logout";
-}
-
-/* RESPONSIVE */
-
+/* MOBILE */
 @media(max-width:1050px){
-  .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
-
 @media(max-width:700px){
-  .sidebar{
-    width:260px;
-    transform:translateX(-100%);
-    transition:transform .25s ease;
-    z-index:30;
-  }
-
-  .sidebar.open{transform:translateX(0)}
-
-  .overlay.show{display:block}
-
-  .main{margin-left:0!important}
-
-  body.sidebar-collapsed .sidebar{
-    width:260px;
-  }
-
-  body.sidebar-collapsed .sidebar .brand{
-    justify-content:flex-start;
-    padding-left:7px;
-    padding-right:7px;
-  }
-
-  body.sidebar-collapsed .sidebar .brand span,
-  body.sidebar-collapsed .sidebar .nav-label,
-  body.sidebar-collapsed .sidebar .user-info{
-    display:block;
-  }
-
-  body.sidebar-collapsed .sidebar .nav-link{
-    justify-content:flex-start;
-    font-size:13px;
-    padding:11px 12px;
-    gap:12px;
-  }
-
-  body.sidebar-collapsed .sidebar .nav-link i{
-    font-size:15px;
-    width:20px;
-    min-width:20px;
-  }
-
-  body.sidebar-collapsed .sidebar .sidebar-user{
-    justify-content:flex-start;
-    padding:10px 8px;
-  }
-
-  body.sidebar-collapsed .sidebar .nav-link:hover::after{
-    display:none;
-  }
-
-  .topbar{
-    height:64px;
-    padding:0 14px;
-  }
-
-  .content{padding:18px 14px}
-
-  .welcome{padding:21px}
-
-  .welcome h1{font-size:21px}
-
-  .quick-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
-
-  .auth-card{padding:25px 20px}
-
-  .form-grid{grid-template-columns:1fr}
-
-  .profile-head{align-items:flex-start}
+ .sidebar{width:260px;transform:translateX(-100%);transition:transform .25s ease}
+ .sidebar.open{transform:translateX(0)}
+ .overlay.show{display:block}
+ .main{margin-left:0!important}
+ body.sidebar-collapsed .sidebar{width:260px}
+ body.sidebar-collapsed .brand-toggle{justify-content:flex-start;padding-left:7px}
+ body.sidebar-collapsed .brand-toggle .brand-text,
+ body.sidebar-collapsed .nav-label,
+ body.sidebar-collapsed .sidebar-user .user-info{display:block}
+ body.sidebar-collapsed .nav-link{
+  justify-content:flex-start;font-size:13px;padding:11px 12px;gap:12px;
+ }
+ body.sidebar-collapsed .nav-link i{font-size:15px;width:20px;min-width:20px}
+ body.sidebar-collapsed .sidebar-user{justify-content:flex-start;padding:10px 8px}
+ body.sidebar-collapsed .nav-link:hover::after{display:none}
+ .topbar{height:64px;padding:0 14px}
+ .content{padding:18px 14px}
+ .welcome{padding:21px}
+ .welcome h1{font-size:21px}
+ .quick-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .auth-card{padding:25px 20px}
+ .form-grid{grid-template-columns:1fr}
+ .profile-head{align-items:flex-start}
+ .role-tag{font-size:9px}
 }
-
 @media(max-width:380px){
-  .stats{grid-template-columns:1fr 1fr;gap:9px}
-  .stat{padding:13px}
-  .quick-grid{grid-template-columns:1fr}
+ .stats{grid-template-columns:1fr 1fr;gap:9px}
+ .stat{padding:13px}
+ .quick-grid{grid-template-columns:1fr}
+ .top-actions{gap:5px}
 }
 </style>
 </head>
 
 <body>
 
-<!-- LOGIN SCREEN -->
-
+<!-- LOGIN -->
 <section id="loginScreen" class="auth-wrap">
  <div class="auth-card">
-
   <div class="brand">
-   <div class="brand-icon">
-    <i class="fa-solid fa-network-wired"></i>
-   </div>
+   <div class="brand-icon"><i class="fa-solid fa-network-wired"></i></div>
    <span>ONE ONLINE</span>
   </div>
 
   <div id="loginForm">
    <h1 class="auth-title">Welcome Back</h1>
    <p class="auth-desc">Sign in to your management account</p>
-
    <div id="loginMessage"></div>
 
    <form id="signInForm">
@@ -773,17 +329,14 @@ body.sidebar-collapsed .sidebar #logoutButton:hover::after{
      <label>Email Address</label>
      <input id="loginEmail" type="email" placeholder="Enter your email" required autocomplete="username">
     </div>
-
     <div class="field">
      <label>Password</label>
      <input id="loginPassword" type="password" placeholder="Enter your password" required autocomplete="current-password">
     </div>
-
     <button class="btn btn-primary" id="loginButton" type="submit">
      <i class="fa-solid fa-right-to-bracket"></i> Sign In
     </button>
    </form>
-
    <div class="auth-links">
     <a href="#" id="forgotLink">Forgot Password?</a>
     <span class="muted">Secure Login</span>
@@ -793,45 +346,31 @@ body.sidebar-collapsed .sidebar #logoutButton:hover::after{
   <div id="forgotForm" class="hidden">
    <h1 class="auth-title">Reset Password</h1>
    <p class="auth-desc">Enter your registered email address. We will send a recovery link.</p>
-
    <div id="forgotMessage"></div>
-
    <form id="forgotEmailForm">
     <div class="field">
      <label>Email Address</label>
      <input id="forgotEmail" type="email" required placeholder="Your account email">
     </div>
-
-    <button class="btn btn-primary" id="forgotButton" type="submit">
-     Send Recovery Link
-    </button>
+    <button class="btn btn-primary" id="forgotButton" type="submit">Send Recovery Link</button>
    </form>
-
-   <div class="auth-links">
-    <a href="#" id="backLogin">Back to Login</a>
-   </div>
+   <div class="auth-links"><a href="#" id="backLogin">Back to Login</a></div>
   </div>
 
   <div id="recoveryForm" class="hidden">
    <h1 class="auth-title">Set New Password</h1>
    <p class="auth-desc">Choose a new password for your account.</p>
-
    <div id="recoveryMessage"></div>
-
    <form id="newPasswordForm">
     <div class="field">
      <label>New Password</label>
      <input id="recoveryPassword" type="password" minlength="8" required placeholder="Minimum 8 characters">
     </div>
-
     <div class="field">
      <label>Confirm Password</label>
      <input id="recoveryConfirm" type="password" minlength="8" required placeholder="Confirm new password">
     </div>
-
-    <button class="btn btn-primary" id="recoveryButton" type="submit">
-     Update Password
-    </button>
+    <button class="btn btn-primary" id="recoveryButton" type="submit">Update Password</button>
    </form>
   </div>
 
@@ -839,86 +378,93 @@ body.sidebar-collapsed .sidebar #logoutButton:hover::after{
  </div>
 </section>
 
-
 <!-- APPLICATION -->
-
 <section id="app" class="hidden">
-
  <div class="overlay" id="overlay"></div>
 
  <aside class="sidebar" id="sidebar">
 
-  <div class="brand">
-   <div class="brand-icon">
-    <i class="fa-solid fa-network-wired"></i>
-   </div>
-   <span>ONE ONLINE</span>
-  </div>
+  <!-- CLICK LOGO TO COLLAPSE / EXPAND -->
+  <button class="brand-toggle" id="brandToggle" type="button" title="Toggle Sidebar" aria-label="Toggle Sidebar">
+   <div class="brand-icon"><i class="fa-solid fa-network-wired"></i></div>
+   <span class="brand-text">ONE ONLINE</span>
+  </button>
 
   <div class="nav-label">MAIN MENU</div>
 
   <button class="nav-link active" data-page="dashboard" data-tooltip="Dashboard">
-   <i class="fa-solid fa-house"></i>
-   <span>Dashboard</span>
+   <i class="fa-solid fa-house"></i><span>Dashboard</span>
   </button>
 
   <div class="nav-label">ACCOUNT</div>
 
   <button class="nav-link" data-page="account" data-tooltip="My Account">
-   <i class="fa-solid fa-user-circle"></i>
-   <span>My Account</span>
+   <i class="fa-solid fa-user-circle"></i><span>My Account</span>
   </button>
 
   <button class="nav-link hidden" id="manageAdminsNav" data-page="admins" data-tooltip="Manage Admins">
-   <i class="fa-solid fa-users-gear"></i>
-   <span>Manage Admins</span>
+   <i class="fa-solid fa-users-gear"></i><span>Manage Admins</span>
   </button>
 
   <div class="sidebar-bottom">
-
    <div class="sidebar-user">
     <div class="avatar" id="sideAvatar">O</div>
-
     <div class="user-info">
      <strong id="sideName">User</strong>
      <span id="sideRole">Account</span>
     </div>
    </div>
-
-   <button class="nav-link" id="logoutButton" data-tooltip="Logout">
-    <i class="fa-solid fa-right-from-bracket"></i>
-    <span>Logout</span>
-   </button>
-
   </div>
  </aside>
-
 
  <main class="main">
 
   <header class="topbar">
-
    <div style="display:flex;align-items:center;gap:13px">
-
-    <button class="icon-btn menu-btn" id="menuButton" title="Toggle Sidebar" aria-label="Toggle Sidebar">
-     <i class="fa-solid fa-bars" id="menuIcon"></i>
-    </button>
-
     <h2 id="pageTitle">Dashboard</h2>
    </div>
 
    <div class="top-actions">
     <span class="role-tag" id="topRole">SUPER ADMIN</span>
-    <div class="avatar" id="topAvatar">O</div>
+
+    <!-- PROFILE BUTTON -->
+    <div class="profile-menu-wrap" id="profileMenuWrap">
+     <button class="profile-trigger" id="profileTrigger" type="button" aria-label="Open Profile Menu" aria-expanded="false">
+      <div class="avatar" id="topAvatar">O</div>
+      <i class="fa-solid fa-chevron-down profile-chevron"></i>
+     </button>
+
+     <!-- PROFILE DROPDOWN -->
+     <div class="profile-dropdown" id="profileDropdown">
+
+      <div class="dropdown-user">
+       <div class="avatar" id="dropdownAvatar">O</div>
+       <div class="dropdown-user-info">
+        <strong id="dropdownName">User</strong>
+        <span id="dropdownEmail">Account</span>
+       </div>
+      </div>
+
+      <button class="dropdown-item" id="myAccountMenu" type="button">
+       <i class="fa-solid fa-user"></i>
+       My Account
+      </button>
+
+      <div class="dropdown-divider"></div>
+
+      <button class="dropdown-item logout" id="dropdownLogout" type="button">
+       <i class="fa-solid fa-right-from-bracket"></i>
+       Logout
+      </button>
+
+     </div>
+    </div>
    </div>
-
   </header>
-
 
   <div class="content">
 
    <!-- DASHBOARD -->
-
    <div id="dashboardPage">
 
     <div class="welcome">
@@ -928,56 +474,44 @@ body.sidebar-collapsed .sidebar #logoutButton:hover::after{
 
     <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
      <div class="section-title" style="margin:10px 0 14px">System Overview</div>
-
      <button class="btn btn-secondary" id="refreshDashboardButton" style="padding:9px 13px;font-size:12px">
       <i class="fa-solid fa-rotate"></i> Refresh
      </button>
     </div>
 
     <div class="stats">
-
      <div class="stat">
-      <div class="stat-icon">
-       <i class="fa-solid fa-users"></i>
-      </div>
+      <div class="stat-icon"><i class="fa-solid fa-users"></i></div>
       <strong id="totalCustomers">—</strong>
       <span>Total Customers</span>
       <span class="stat-status" id="customersStatus">Loading...</span>
      </div>
 
      <div class="stat">
-      <div class="stat-icon">
-       <i class="fa-solid fa-clock"></i>
-      </div>
+      <div class="stat-icon"><i class="fa-solid fa-clock"></i></div>
       <strong id="totalDueEntries">—</strong>
       <span>Due Entries</span>
       <span class="stat-status" id="dueStatus">Loading...</span>
      </div>
 
      <div class="stat">
-      <div class="stat-icon">
-       <i class="fa-solid fa-wallet"></i>
-      </div>
+      <div class="stat-icon"><i class="fa-solid fa-wallet"></i></div>
       <strong id="totalPayments">—</strong>
       <span>Payment Records</span>
       <span class="stat-status" id="paymentsStatus">Loading...</span>
      </div>
 
      <div class="stat">
-      <div class="stat-icon">
-       <i class="fa-solid fa-money-bill-transfer"></i>
-      </div>
+      <div class="stat-icon"><i class="fa-solid fa-money-bill-transfer"></i></div>
       <strong id="totalSpends">—</strong>
       <span>Spend Records</span>
       <span class="stat-status" id="spendsStatus">Loading...</span>
      </div>
-
     </div>
 
     <div class="section-title">Quick Access</div>
 
     <div class="quick-grid">
-
      <button class="quick" data-page="account">
       <i class="fa-solid fa-user-gear"></i>
       <strong>My Account</strong>
@@ -995,150 +529,96 @@ body.sidebar-collapsed .sidebar #logoutButton:hover::after{
       <strong>Manage Admins</strong>
       <span>Manage system accounts</span>
      </button>
-
     </div>
 
-    <div class="footer-note">
-     ONE ONLINE • Management System V2.0
-    </div>
-
+    <div class="footer-note">ONE ONLINE • Management System V2.0</div>
    </div>
 
-
    <!-- MY ACCOUNT -->
-
    <div id="accountPage" class="hidden">
 
     <div class="page-card">
-
      <h3>My Profile</h3>
 
      <div class="profile-head">
-
       <img class="profile-big" id="profileAvatar" alt="Profile Picture">
-
       <div class="profile-details">
        <h3 id="profileName">User</h3>
        <p id="profileEmail">—</p>
-       <p style="margin-top:8px">
-        <span class="role-tag" id="profileRole">GUEST</span>
-       </p>
+       <p style="margin-top:8px"><span class="role-tag" id="profileRole">GUEST</span></p>
       </div>
-
      </div>
 
      <div class="form-actions">
-
       <label class="btn btn-primary" for="avatarInput">
        <i class="fa-solid fa-camera"></i> Upload Picture
       </label>
-
       <input id="avatarInput" type="file" accept="image/jpeg,image/png,image/webp" class="hidden">
-
       <button class="btn btn-secondary" id="removeAvatarButton" type="button">
        <i class="fa-solid fa-trash"></i> Remove Picture
       </button>
-
      </div>
 
-     <p class="muted small" style="margin-top:13px">
-      JPG, PNG or WEBP • Maximum 5 MB
-     </p>
-
+     <p class="muted small" style="margin-top:13px">JPG, PNG or WEBP • Maximum 5 MB</p>
     </div>
 
-
     <div class="page-card">
-
      <h3>Personal Information</h3>
 
      <form id="profileForm">
-
       <div class="form-grid">
-
        <div class="field">
         <label>Full Name</label>
         <input id="profileNameInput" maxlength="100" placeholder="Your full name">
        </div>
-
        <div class="field">
         <label>Email Address</label>
         <input id="profileEmailInput" disabled>
        </div>
-
        <div class="field">
         <label>Phone Number</label>
         <input id="profilePhoneInput" maxlength="30" placeholder="Phone number">
        </div>
-
        <div class="field">
         <label>Account Role</label>
         <input id="profileRoleInput" disabled>
        </div>
-
       </div>
-
-      <button class="btn btn-primary" id="saveProfileButton" type="submit">
-       Save Profile
-      </button>
-
+      <button class="btn btn-primary" id="saveProfileButton" type="submit">Save Profile</button>
      </form>
-
     </div>
 
-
     <div class="page-card">
-
      <h3>Change Password</h3>
 
      <form id="changePasswordForm">
-
       <div class="form-grid">
-
        <div class="field">
         <label>Current Password</label>
         <input id="currentPassword" type="password" required autocomplete="current-password">
        </div>
-
        <div class="field">
         <label>New Password</label>
         <input id="newPassword" type="password" minlength="8" required autocomplete="new-password">
        </div>
-
        <div class="field">
         <label>Confirm New Password</label>
         <input id="confirmPassword" type="password" minlength="8" required autocomplete="new-password">
        </div>
-
       </div>
-
-      <button class="btn btn-primary" id="changePasswordButton" type="submit">
-       Update Password
-      </button>
-
+      <button class="btn btn-primary" id="changePasswordButton" type="submit">Update Password</button>
      </form>
-
     </div>
 
    </div>
 
-
    <!-- ADMIN PAGE -->
-
    <div id="adminsPage" class="hidden">
-
     <div class="page-card">
      <h3><i class="fa-solid fa-users-gear"></i> Manage Admins</h3>
-
-     <p class="muted">
-      The secure Admin Management module will be connected in the next setup phase.
-     </p>
-
-     <p class="muted small">
-      Account creation, role assignment, permissions and account status will be managed here.
-     </p>
+     <p class="muted">The secure Admin Management module will be connected in the next setup phase.</p>
+     <p class="muted small">Account creation, role assignment, permissions and account status will be managed here.</p>
     </div>
-
    </div>
 
   </div>
@@ -1147,1144 +627,823 @@ body.sidebar-collapsed .sidebar #logoutButton:hover::after{
 
 <div id="toast"></div>
 
-
 <script>
-/* =========================================
-   ONE ONLINE V2 — SUPABASE CONFIG
-========================================= */
+/* SUPABASE CONFIG */
 
-const SUPABASE_URL = "https://zkiaeynsgviqjyilfphc.supabase.co";
+const SUPABASE_URL="https://zkiaeynsgviqjyilfphc.supabase.co";
+const SUPABASE_KEY="sb_publishable_Hzou3f71h7aOVVDpnsL2yg_m_JMyuvP";
 
-const SUPABASE_KEY = "sb_publishable_Hzou3f71h7aOVVDpnsL2yg_m_JMyuvP";
-
-const db = window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_KEY,
-  {
-    auth:{
-      persistSession:true,
-      autoRefreshToken:true,
-      detectSessionInUrl:true
-    }
+const db=window.supabase.createClient(
+ SUPABASE_URL,
+ SUPABASE_KEY,
+ {
+  auth:{
+   persistSession:true,
+   autoRefreshToken:true,
+   detectSessionInUrl:true
   }
+ }
 );
 
-let currentUser = null;
-let currentProfile = null;
-let currentSession = null;
-let toastTimer = null;
-let profileLoading = false;
+let currentUser=null;
+let currentProfile=null;
+let currentSession=null;
+let toastTimer=null;
+let profileLoading=false;
 
-const $ = id => document.getElementById(id);
+const $=id=>document.getElementById(id);
 
+/* CLEAN TRACKING PARAMETER */
 
-/* =========================================
-   CLEAN URL
-   Remove only unwanted utm_source parameter.
-   Keep Supabase recovery tokens and other
-   authentication parameters untouched.
-========================================= */
+(function(){
+ try{
+  const url=new URL(window.location.href);
 
-(function cleanTrackingParameter(){
-  try{
-    const url = new URL(window.location.href);
+  if(url.searchParams.has("utm_source")){
+   url.searchParams.delete("utm_source");
 
-    if(url.searchParams.has("utm_source")){
-      url.searchParams.delete("utm_source");
+   const query=url.searchParams.toString();
 
-      const query = url.searchParams.toString();
-
-      const cleanURL =
-        url.pathname +
-        (query ? "?" + query : "") +
-        url.hash;
-
-      window.history.replaceState(
-        window.history.state,
-        document.title,
-        cleanURL
-      );
-    }
-  }catch(error){
-    console.warn("URL cleanup skipped:",error);
+   window.history.replaceState(
+    window.history.state,
+    document.title,
+    url.pathname+(query?"?"+query:"")+url.hash
+   );
   }
+ }catch(error){
+  console.warn(error);
+ }
 })();
 
-
-/* =========================================
-   GENERAL FUNCTIONS
-========================================= */
+/* GENERAL */
 
 function toast(message,type="success"){
-  const el = $("toast");
-
-  el.textContent = message;
-  el.className = type;
-  el.style.display = "block";
-
-  clearTimeout(toastTimer);
-
-  toastTimer = setTimeout(()=>{
-    el.style.display = "none";
-  },4000);
+ const el=$("toast");
+ el.textContent=message;
+ el.className=type;
+ el.style.display="block";
+ clearTimeout(toastTimer);
+ toastTimer=setTimeout(()=>el.style.display="none",4000);
 }
 
 function setMessage(id,message,type="error"){
-  $(id).innerHTML = "";
-
-  const div = document.createElement("div");
-  div.className = "notice " + type;
-  div.textContent = message;
-
-  $(id).appendChild(div);
+ $(id).innerHTML="";
+ const div=document.createElement("div");
+ div.className="notice "+type;
+ div.textContent=message;
+ $(id).appendChild(div);
 }
 
-function clearMessage(id){
-  $(id).innerHTML = "";
-}
+function clearMessage(id){$(id).innerHTML=""}
 
 function roleLabel(role){
-  return String(role || "guest")
-    .replaceAll("_"," ")
-    .toUpperCase();
+ return String(role||"guest").replaceAll("_"," ").toUpperCase();
 }
 
 function showLoginForm(name){
-  ["loginForm","forgotForm","recoveryForm"].forEach(id=>{
-    $(id).classList.add("hidden");
-  });
-
-  $(name).classList.remove("hidden");
+ ["loginForm","forgotForm","recoveryForm"].forEach(id=>{
+  $(id).classList.add("hidden");
+ });
+ $(name).classList.remove("hidden");
 }
 
 function showLogin(){
-  $("app").classList.add("hidden");
-  $("loginScreen").classList.remove("hidden");
-
-  closeSidebar();
-  showLoginForm("loginForm");
+ $("app").classList.add("hidden");
+ $("loginScreen").classList.remove("hidden");
+ closeSidebar();
+ closeProfileDropdown();
+ showLoginForm("loginForm");
 }
 
-
-/* =========================================
-   AVATAR
-========================================= */
+/* AVATAR */
 
 function avatarHTML(url,fallback){
-  if(url){
-    const img = document.createElement("img");
+ if(url){
+  const img=document.createElement("img");
+  img.src=url;
+  img.alt="Profile";
+  img.onerror=()=>{
+   const parent=img.parentElement;
+   if(!parent)return;
+   parent.innerHTML="";
+   const span=document.createElement("span");
+   span.textContent=(fallback||"U").charAt(0).toUpperCase();
+   parent.appendChild(span);
+  };
+  return img;
+ }
 
-    img.src = url;
-    img.alt = "Profile";
-
-    img.onerror = ()=>{
-      const parent = img.parentElement;
-
-      if(!parent) return;
-
-      parent.innerHTML = "";
-
-      const span = document.createElement("span");
-      span.textContent = (fallback || "U").charAt(0).toUpperCase();
-
-      parent.appendChild(span);
-    };
-
-    return img;
-  }
-
-  const span = document.createElement("span");
-  span.textContent = (fallback || "U").charAt(0).toUpperCase();
-
-  return span;
+ const span=document.createElement("span");
+ span.textContent=(fallback||"U").charAt(0).toUpperCase();
+ return span;
 }
 
 function setAvatar(element,url,fallback){
-  element.innerHTML = "";
-  element.appendChild(avatarHTML(url,fallback));
+ element.innerHTML="";
+ element.appendChild(avatarHTML(url,fallback));
 }
 
-
-/* =========================================
-   SIDEBAR
-========================================= */
+/* SIDEBAR LOGO TOGGLE */
 
 function closeSidebar(){
-  $("sidebar").classList.remove("open");
-  $("overlay").classList.remove("show");
+ $("sidebar").classList.remove("open");
+ $("overlay").classList.remove("show");
 }
 
 function toggleSidebar(){
+ if(window.innerWidth<=700){
+  $("sidebar").classList.toggle("open");
+  $("overlay").classList.toggle(
+   "show",
+   $("sidebar").classList.contains("open")
+  );
+ }else{
+  document.body.classList.toggle("sidebar-collapsed");
 
-  if(window.innerWidth <= 700){
-
-    $("sidebar").classList.toggle("open");
-
-    $("overlay").classList.toggle(
-      "show",
-      $("sidebar").classList.contains("open")
-    );
-
-  }else{
-
-    document.body.classList.toggle("sidebar-collapsed");
-
-    try{
-      localStorage.setItem(
-        "one_online_sidebar_collapsed",
-        document.body.classList.contains("sidebar-collapsed")
-          ? "1"
-          : "0"
-      );
-    }catch(error){
-      console.warn(error);
-    }
-  }
+  try{
+   localStorage.setItem(
+    "one_online_sidebar_collapsed",
+    document.body.classList.contains("sidebar-collapsed")?"1":"0"
+   );
+  }catch(error){}
+ }
 }
 
 function restoreSidebarPreference(){
-  if(window.innerWidth > 700){
-    try{
-      if(localStorage.getItem("one_online_sidebar_collapsed")==="1"){
-        document.body.classList.add("sidebar-collapsed");
-      }
-    }catch(error){
-      console.warn(error);
-    }
-  }
+ if(window.innerWidth>700){
+  try{
+   if(localStorage.getItem("one_online_sidebar_collapsed")==="1"){
+    document.body.classList.add("sidebar-collapsed");
+   }
+  }catch(error){}
+ }
 }
 
+/* PROFILE DROPDOWN */
 
-/* =========================================
-   NAVIGATION
-========================================= */
+function openProfileDropdown(){
+ $("profileDropdown").classList.add("show");
+ $("profileTrigger").setAttribute("aria-expanded","true");
+}
+
+function closeProfileDropdown(){
+ $("profileDropdown").classList.remove("show");
+ $("profileTrigger").setAttribute("aria-expanded","false");
+}
+
+function toggleProfileDropdown(){
+ const isOpen=$("profileDropdown").classList.contains("show");
+
+ if(isOpen){
+  closeProfileDropdown();
+ }else{
+  openProfileDropdown();
+ }
+}
+
+/* NAVIGATION */
 
 function navigate(page){
 
-  if(page==="admins" && currentProfile?.role!=="super_admin"){
-    toast("Only Super Admin can access this page.","error");
-    return;
-  }
+ if(page==="admins"&&currentProfile?.role!=="super_admin"){
+  toast("Only Super Admin can access this page.","error");
+  return;
+ }
 
-  const pages = ["dashboard","account","admins"];
+ ["dashboard","account","admins"].forEach(p=>{
+  $(p+"Page").classList.toggle("hidden",p!==page);
+ });
 
-  pages.forEach(p=>{
-    $(p+"Page").classList.toggle("hidden",p!==page);
-  });
+ document.querySelectorAll(".nav-link[data-page]").forEach(btn=>{
+  btn.classList.toggle("active",btn.dataset.page===page);
+ });
 
-  document.querySelectorAll(".nav-link[data-page]").forEach(btn=>{
-    btn.classList.toggle(
-      "active",
-      btn.dataset.page===page
-    );
-  });
+ const titles={
+  dashboard:"Dashboard",
+  account:"My Account",
+  admins:"Manage Admins"
+ };
 
-  const titles = {
-    dashboard:"Dashboard",
-    account:"My Account",
-    admins:"Manage Admins"
-  };
+ $("pageTitle").textContent=titles[page]||"Dashboard";
 
-  $("pageTitle").textContent = titles[page] || "Dashboard";
+ closeSidebar();
+ closeProfileDropdown();
 
-  closeSidebar();
+ window.scrollTo({top:0,behavior:"smooth"});
 
-  window.scrollTo({
-    top:0,
-    behavior:"smooth"
-  });
-
-  if(page==="dashboard"){
-    loadDashboard();
-  }
+ if(page==="dashboard")loadDashboard();
 }
 
-
-/* =========================================
-   PROFILE DATABASE
-========================================= */
+/* PROFILE */
 
 async function loadProfile(user){
 
-  const {data,error} = await db
-    .from("profiles")
-    .select("id,full_name,email,phone,avatar_url,role,status,permissions")
-    .eq("id",user.id)
-    .maybeSingle();
+ const {data,error}=await db
+  .from("profiles")
+  .select("id,full_name,email,phone,avatar_url,role,status,permissions")
+  .eq("id",user.id)
+  .maybeSingle();
 
-  if(error){
-    throw new Error("Profile database error: "+error.message);
-  }
+ if(error)throw new Error("Profile database error: "+error.message);
+ if(!data)throw new Error("Your profile does not exist.");
+ if(data.status!=="active")throw new Error("Your account is inactive. Contact the Super Admin.");
 
-  if(!data){
-    throw new Error("Your profile does not exist.");
-  }
+ currentUser=user;
+ currentProfile=data;
 
-  if(data.status!=="active"){
-    throw new Error("Your account is inactive. Contact the Super Admin.");
-  }
-
-  currentUser = user;
-  currentProfile = data;
-
-  renderApplication();
+ renderApplication();
 }
-
-
-/* =========================================
-   RENDER APPLICATION
-========================================= */
 
 function renderApplication(){
 
-  const p = currentProfile;
+ const p=currentProfile;
+ const name=p.full_name||currentUser.email||"User";
+ const email=currentUser.email||p.email||"";
 
-  const name =
-    p.full_name ||
-    currentUser.email ||
-    "User";
+ $("welcomeName").textContent="Welcome, "+name;
+ $("sideName").textContent=name;
+ $("sideRole").textContent=roleLabel(p.role);
+ $("topRole").textContent=roleLabel(p.role);
 
-  const email =
-    currentUser.email ||
-    p.email ||
-    "";
+ $("profileName").textContent=name;
+ $("profileEmail").textContent=email;
+ $("profileRole").textContent=roleLabel(p.role);
 
-  $("welcomeName").textContent = "Welcome, "+name;
+ $("profileNameInput").value=p.full_name||"";
+ $("profileEmailInput").value=email;
+ $("profilePhoneInput").value=p.phone||"";
+ $("profileRoleInput").value=roleLabel(p.role);
 
-  $("sideName").textContent = name;
-  $("sideRole").textContent = roleLabel(p.role);
+ $("dropdownName").textContent=name;
+ $("dropdownEmail").textContent=email;
 
-  $("topRole").textContent = roleLabel(p.role);
+ setAvatar($("sideAvatar"),p.avatar_url,name);
+ setAvatar($("topAvatar"),p.avatar_url,name);
+ setAvatar($("dropdownAvatar"),p.avatar_url,name);
 
-  $("profileRole").textContent = roleLabel(p.role);
-  $("profileName").textContent = name;
-  $("profileEmail").textContent = email;
+ $("profileAvatar").src=
+  p.avatar_url||
+  "https://placehold.co/150x150/17243a/ffffff?text=Profile";
 
-  $("profileNameInput").value = p.full_name || "";
-  $("profileEmailInput").value = email;
-  $("profilePhoneInput").value = p.phone || "";
-  $("profileRoleInput").value = roleLabel(p.role);
+ const isSuper=p.role==="super_admin";
 
-  setAvatar($("sideAvatar"),p.avatar_url,name);
-  setAvatar($("topAvatar"),p.avatar_url,name);
+ $("manageAdminsNav").classList.toggle("hidden",!isSuper);
+ $("quickAdmins").classList.toggle("hidden",!isSuper);
 
-  $("profileAvatar").src =
-    p.avatar_url ||
-    "https://placehold.co/150x150/17243a/ffffff?text=Profile";
+ $("loginScreen").classList.add("hidden");
+ $("app").classList.remove("hidden");
 
-  const isSuper = p.role==="super_admin";
-
-  $("manageAdminsNav").classList.toggle("hidden",!isSuper);
-  $("quickAdmins").classList.toggle("hidden",!isSuper);
-
-  $("loginScreen").classList.add("hidden");
-  $("app").classList.remove("hidden");
-
-  restoreSidebarPreference();
-
-  navigate("dashboard");
+ restoreSidebarPreference();
+ navigate("dashboard");
 }
 
-
-/* =========================================
-   SESSION VERIFICATION
-========================================= */
+/* SESSION */
 
 async function verifySession(session){
 
-  if(!session?.user){
-    currentSession = null;
-    currentUser = null;
-    currentProfile = null;
+ if(!session?.user){
+  currentSession=null;
+  currentUser=null;
+  currentProfile=null;
+  showLogin();
+  return;
+ }
 
-    showLogin();
-    return;
-  }
+ if(profileLoading)return;
 
-  if(profileLoading) return;
+ profileLoading=true;
+ currentSession=session;
 
-  profileLoading = true;
-  currentSession = session;
+ try{
+  await loadProfile(session.user);
+ }catch(error){
+  console.error(error);
 
-  try{
-    await loadProfile(session.user);
+  currentUser=null;
+  currentProfile=null;
+  currentSession=null;
 
-  }catch(error){
+  await db.auth.signOut();
+  showLogin();
 
-    console.error(error);
-
-    currentUser = null;
-    currentProfile = null;
-    currentSession = null;
-
-    await db.auth.signOut();
-
-    showLogin();
-
-    setMessage(
-      "loginMessage",
-      error.message || "Account verification failed."
-    );
-
-  }finally{
-    profileLoading = false;
-  }
+  setMessage("loginMessage",error.message||"Account verification failed.");
+ }finally{
+  profileLoading=false;
+ }
 }
 
-
-/* =========================================
-   DASHBOARD — REAL DATABASE COUNTS
-========================================= */
+/* DASHBOARD */
 
 function setStat(id,statusId,value,status){
-  $(id).textContent = value;
-  $(statusId).textContent = status;
+ $(id).textContent=value;
+ $(statusId).textContent=status;
 }
 
 async function loadDashboard(){
 
-  if(!currentUser) return;
+ if(!currentUser)return;
 
-  const statList = [
-    {
-      table:"customers",
-      value:"totalCustomers",
-      status:"customersStatus"
-    },
-    {
-      table:"due_entries",
-      value:"totalDueEntries",
-      status:"dueStatus"
-    },
-    {
-      table:"payments",
-      value:"totalPayments",
-      status:"paymentsStatus"
-    },
-    {
-      table:"spends",
-      value:"totalSpends",
-      status:"spendsStatus"
-    }
-  ];
+ const list=[
+  {table:"customers",value:"totalCustomers",status:"customersStatus"},
+  {table:"due_entries",value:"totalDueEntries",status:"dueStatus"},
+  {table:"payments",value:"totalPayments",status:"paymentsStatus"},
+  {table:"spends",value:"totalSpends",status:"spendsStatus"}
+ ];
 
-  statList.forEach(item=>{
-    setStat(item.value,item.status,"...","Loading");
-  });
+ list.forEach(x=>setStat(x.value,x.status,"...","Loading"));
 
-  const results = await Promise.all(
-    statList.map(async item=>{
+ const results=await Promise.all(list.map(async item=>{
+  try{
+   const {count,error}=await db
+    .from(item.table)
+    .select("*",{count:"exact",head:true});
 
-      try{
+   if(error)throw error;
 
-        const {count,error} = await db
-          .from(item.table)
-          .select("*",{count:"exact",head:true});
+   return {...item,count:count??0,error:null};
+  }catch(error){
+   console.error(item.table,error);
+   return {...item,count:null,error:error.message};
+  }
+ }));
 
-        if(error) throw error;
-
-        return {
-          ...item,
-          count:count ?? 0,
-          error:null
-        };
-
-      }catch(error){
-
-        console.error(
-          "Dashboard table error:",
-          item.table,
-          error
-        );
-
-        return {
-          ...item,
-          count:null,
-          error:error.message
-        };
-      }
-    })
-  );
-
-  results.forEach(result=>{
-
-    if(result.error){
-
-      setStat(
-        result.value,
-        result.status,
-        "—",
-        "Unavailable"
-      );
-
-    }else{
-
-      setStat(
-        result.value,
-        result.status,
-        Number(result.count).toLocaleString(),
-        "Live Database"
-      );
-    }
-  });
+ results.forEach(result=>{
+  if(result.error){
+   setStat(result.value,result.status,"—","Unavailable");
+  }else{
+   setStat(
+    result.value,
+    result.status,
+    Number(result.count).toLocaleString(),
+    "Live Database"
+   );
+  }
+ });
 }
 
-
-/* =========================================
-   LOGIN
-========================================= */
+/* LOGIN */
 
 $("signInForm").addEventListener("submit",async e=>{
+ e.preventDefault();
+ clearMessage("loginMessage");
 
-  e.preventDefault();
+ const email=$("loginEmail").value.trim();
+ const password=$("loginPassword").value;
+ const button=$("loginButton");
 
-  clearMessage("loginMessage");
+ button.disabled=true;
+ button.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Signing in...';
 
-  const email = $("loginEmail").value.trim();
-  const password = $("loginPassword").value;
-
-  const button = $("loginButton");
-
-  button.disabled = true;
-  button.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Signing in...';
-
-  try{
-
-    const {data,error} = await db.auth.signInWithPassword({
-      email,
-      password
-    });
-
-    if(error) throw error;
-
-    if(!data.user) throw new Error("Login failed.");
-
-    await verifySession(data.session);
-
-  }catch(error){
-
-    setMessage(
-      "loginMessage",
-      error.message || "Unable to sign in."
-    );
-
-  }finally{
-
-    button.disabled = false;
-
-    button.innerHTML =
-      '<i class="fa-solid fa-right-to-bracket"></i> Sign In';
-  }
+ try{
+  const {data,error}=await db.auth.signInWithPassword({email,password});
+  if(error)throw error;
+  if(!data.user)throw new Error("Login failed.");
+  await verifySession(data.session);
+ }catch(error){
+  setMessage("loginMessage",error.message||"Unable to sign in.");
+ }finally{
+  button.disabled=false;
+  button.innerHTML='<i class="fa-solid fa-right-to-bracket"></i> Sign In';
+ }
 });
 
-
-/* =========================================
-   FORGOT PASSWORD
-========================================= */
+/* FORGOT PASSWORD */
 
 $("forgotLink").addEventListener("click",e=>{
-
-  e.preventDefault();
-
-  clearMessage("forgotMessage");
-
-  showLoginForm("forgotForm");
+ e.preventDefault();
+ clearMessage("forgotMessage");
+ showLoginForm("forgotForm");
 });
 
 $("backLogin").addEventListener("click",e=>{
-
-  e.preventDefault();
-
-  clearMessage("loginMessage");
-
-  showLoginForm("loginForm");
+ e.preventDefault();
+ showLoginForm("loginForm");
 });
 
 $("forgotEmailForm").addEventListener("submit",async e=>{
+ e.preventDefault();
 
-  e.preventDefault();
+ const button=$("forgotButton");
+ const email=$("forgotEmail").value.trim();
 
-  const button = $("forgotButton");
-  const email = $("forgotEmail").value.trim();
+ button.disabled=true;
+ button.textContent="Sending...";
 
-  button.disabled = true;
-  button.textContent = "Sending...";
+ try{
+  const redirectTo=window.location.origin+window.location.pathname;
 
-  try{
+  const {error}=await db.auth.resetPasswordForEmail(email,{redirectTo});
+  if(error)throw error;
 
-    const redirectTo =
-      window.location.origin +
-      window.location.pathname;
-
-    const {error} = await db.auth.resetPasswordForEmail(
-      email,
-      {redirectTo}
-    );
-
-    if(error) throw error;
-
-    setMessage(
-      "forgotMessage",
-      "If the account exists, a password recovery email has been sent. Check your inbox.",
-      "success"
-    );
-
-  }catch(error){
-
-    setMessage("forgotMessage",error.message);
-
-  }finally{
-
-    button.disabled = false;
-    button.textContent = "Send Recovery Link";
-  }
+  setMessage(
+   "forgotMessage",
+   "If the account exists, a password recovery email has been sent. Check your inbox.",
+   "success"
+  );
+ }catch(error){
+  setMessage("forgotMessage",error.message);
+ }finally{
+  button.disabled=false;
+  button.textContent="Send Recovery Link";
+ }
 });
 
-
-/* =========================================
-   PASSWORD RECOVERY
-========================================= */
+/* RECOVERY */
 
 async function updateRecoveryPassword(){
 
-  const password = $("recoveryPassword").value;
-  const confirm = $("recoveryConfirm").value;
+ const password=$("recoveryPassword").value;
+ const confirm=$("recoveryConfirm").value;
 
-  if(password.length<8){
-    setMessage(
-      "recoveryMessage",
-      "Password must be at least 8 characters."
-    );
-    return;
-  }
+ if(password.length<8){
+  setMessage("recoveryMessage","Password must be at least 8 characters.");
+  return;
+ }
 
-  if(password!==confirm){
-    setMessage(
-      "recoveryMessage",
-      "Passwords do not match."
-    );
-    return;
-  }
+ if(password!==confirm){
+  setMessage("recoveryMessage","Passwords do not match.");
+  return;
+ }
 
-  const button = $("recoveryButton");
+ const button=$("recoveryButton");
+ button.disabled=true;
+ button.textContent="Updating...";
 
-  button.disabled = true;
-  button.textContent = "Updating...";
+ try{
+  const {error}=await db.auth.updateUser({password});
+  if(error)throw error;
 
-  try{
+  setMessage(
+   "recoveryMessage",
+   "Password updated successfully. Please sign in with your new password.",
+   "success"
+  );
 
-    const {error} = await db.auth.updateUser({
-      password
-    });
+  await db.auth.signOut();
 
-    if(error) throw error;
+  setTimeout(()=>{
+   window.history.replaceState({},document.title,window.location.pathname);
+   showLogin();
+  },1800);
 
-    setMessage(
-      "recoveryMessage",
-      "Password updated successfully. Please sign in with your new password.",
-      "success"
-    );
-
-    await db.auth.signOut();
-
-    setTimeout(()=>{
-
-      const cleanURL =
-        window.location.origin +
-        window.location.pathname;
-
-      window.history.replaceState(
-        {},
-        document.title,
-        cleanURL
-      );
-
-      showLogin();
-
-    },1800);
-
-  }catch(error){
-
-    setMessage(
-      "recoveryMessage",
-      error.message
-    );
-
-  }finally{
-
-    button.disabled = false;
-    button.textContent = "Update Password";
-  }
+ }catch(error){
+  setMessage("recoveryMessage",error.message);
+ }finally{
+  button.disabled=false;
+  button.textContent="Update Password";
+ }
 }
 
 $("newPasswordForm").addEventListener("submit",async e=>{
-
-  e.preventDefault();
-
-  await updateRecoveryPassword();
+ e.preventDefault();
+ await updateRecoveryPassword();
 });
 
-
-/* =========================================
-   PROFILE UPDATE
-========================================= */
+/* PROFILE UPDATE */
 
 $("profileForm").addEventListener("submit",async e=>{
+ e.preventDefault();
 
-  e.preventDefault();
+ const button=$("saveProfileButton");
+ button.disabled=true;
+ button.textContent="Saving...";
 
-  const button = $("saveProfileButton");
+ try{
+  const updates={
+   full_name:$("profileNameInput").value.trim(),
+   phone:$("profilePhoneInput").value.trim(),
+   updated_at:new Date().toISOString()
+  };
 
-  button.disabled = true;
-  button.textContent = "Saving...";
+  const {error}=await db
+   .from("profiles")
+   .update(updates)
+   .eq("id",currentUser.id);
 
-  try{
+  if(error)throw error;
 
-    const updates = {
-      full_name:$("profileNameInput").value.trim(),
-      phone:$("profilePhoneInput").value.trim(),
-      updated_at:new Date().toISOString()
-    };
+  currentProfile={...currentProfile,...updates};
+  renderApplication();
+  navigate("account");
+  toast("Profile updated successfully.");
 
-    const {error} = await db
-      .from("profiles")
-      .update(updates)
-      .eq("id",currentUser.id);
-
-    if(error) throw error;
-
-    currentProfile = {
-      ...currentProfile,
-      ...updates
-    };
-
-    renderApplication();
-    navigate("account");
-
-    toast("Profile updated successfully.");
-
-  }catch(error){
-
-    toast(
-      error.message || "Unable to update profile.",
-      "error"
-    );
-
-  }finally{
-
-    button.disabled = false;
-    button.textContent = "Save Profile";
-  }
+ }catch(error){
+  toast(error.message||"Unable to update profile.","error");
+ }finally{
+  button.disabled=false;
+  button.textContent="Save Profile";
+ }
 });
 
-
-/* =========================================
-   PROFILE PICTURE
-========================================= */
+/* PROFILE PICTURE */
 
 function oldAvatarPath(url){
+ if(!url)return null;
 
-  if(!url) return null;
+ const marker="/profile-photos/";
+ const index=url.indexOf(marker);
 
-  const marker = "/profile-photos/";
-  const index = url.indexOf(marker);
+ if(index<0)return null;
 
-  if(index<0) return null;
-
-  try{
-
-    return decodeURIComponent(
-      url.substring(index+marker.length).split("?")[0]
-    );
-
-  }catch{
-    return null;
-  }
+ try{
+  return decodeURIComponent(url.substring(index+marker.length).split("?")[0]);
+ }catch{
+  return null;
+ }
 }
-
 
 $("avatarInput").addEventListener("change",async e=>{
 
-  const file = e.target.files?.[0];
+ const file=e.target.files?.[0];
+ if(!file)return;
 
-  if(!file) return;
+ if(!["image/jpeg","image/png","image/webp"].includes(file.type)){
+  toast("Only JPG, PNG and WEBP images are supported.","error");
+  e.target.value="";
+  return;
+ }
 
-  if(!["image/jpeg","image/png","image/webp"].includes(file.type)){
+ if(file.size>5*1024*1024){
+  toast("Image must be smaller than 5 MB.","error");
+  e.target.value="";
+  return;
+ }
 
-    toast(
-      "Only JPG, PNG and WEBP images are supported.",
-      "error"
-    );
+ try{
+  const extension=
+   file.type==="image/png"?"png":
+   file.type==="image/webp"?"webp":"jpg";
 
-    e.target.value = "";
-    return;
-  }
+  const path=currentUser.id+"/avatar."+extension;
 
-  if(file.size>5*1024*1024){
+  const {error:uploadError}=await db.storage
+   .from("profile-photos")
+   .upload(path,file,{
+    upsert:true,
+    contentType:file.type,
+    cacheControl:"3600"
+   });
 
-    toast(
-      "Image must be smaller than 5 MB.",
-      "error"
-    );
+  if(uploadError)throw uploadError;
 
-    e.target.value = "";
-    return;
-  }
+  const {data}=db.storage
+   .from("profile-photos")
+   .getPublicUrl(path);
 
-  try{
+  const avatarUrl=data.publicUrl+"?v="+Date.now();
 
-    const extension =
-      file.type==="image/png" ? "png" :
-      file.type==="image/webp" ? "webp" : "jpg";
+  const {error:updateError}=await db
+   .from("profiles")
+   .update({
+    avatar_url:avatarUrl,
+    updated_at:new Date().toISOString()
+   })
+   .eq("id",currentUser.id);
 
-    const path =
-      currentUser.id +
-      "/avatar." +
-      extension;
+  if(updateError)throw updateError;
 
-    const {error:uploadError} = await db.storage
-      .from("profile-photos")
-      .upload(path,file,{
-        upsert:true,
-        contentType:file.type,
-        cacheControl:"3600"
-      });
+  currentProfile.avatar_url=avatarUrl;
+  renderApplication();
+  navigate("account");
+  toast("Profile picture uploaded successfully.");
 
-    if(uploadError) throw uploadError;
-
-    const {data} = db.storage
-      .from("profile-photos")
-      .getPublicUrl(path);
-
-    const avatarUrl =
-      data.publicUrl +
-      "?v=" +
-      Date.now();
-
-    const {error:updateError} = await db
-      .from("profiles")
-      .update({
-        avatar_url:avatarUrl,
-        updated_at:new Date().toISOString()
-      })
-      .eq("id",currentUser.id);
-
-    if(updateError) throw updateError;
-
-    currentProfile.avatar_url = avatarUrl;
-
-    renderApplication();
-    navigate("account");
-
-    toast("Profile picture uploaded successfully.");
-
-  }catch(error){
-
-    toast(
-      error.message || "Picture upload failed.",
-      "error"
-    );
-
-  }finally{
-
-    e.target.value = "";
-  }
+ }catch(error){
+  toast(error.message||"Picture upload failed.","error");
+ }finally{
+  e.target.value="";
+ }
 });
 
-
-/* =========================================
-   REMOVE PROFILE PICTURE
-========================================= */
+/* REMOVE PICTURE */
 
 $("removeAvatarButton").addEventListener("click",async()=>{
 
-  if(!currentProfile?.avatar_url){
+ if(!currentProfile?.avatar_url){
+  toast("No profile picture to remove.","error");
+  return;
+ }
 
-    toast(
-      "No profile picture to remove.",
-      "error"
-    );
+ if(!confirm("Are you sure you want to remove your profile picture?"))return;
 
-    return;
+ try{
+  const path=oldAvatarPath(currentProfile.avatar_url);
+
+  if(path){
+   const {error}=await db.storage
+    .from("profile-photos")
+    .remove([path]);
+
+   if(error)throw error;
   }
 
-  if(!confirm("Are you sure you want to remove your profile picture?")){
-    return;
-  }
+  const {error:updateError}=await db
+   .from("profiles")
+   .update({
+    avatar_url:null,
+    updated_at:new Date().toISOString()
+   })
+   .eq("id",currentUser.id);
 
-  try{
+  if(updateError)throw updateError;
 
-    const path = oldAvatarPath(currentProfile.avatar_url);
+  currentProfile.avatar_url=null;
+  renderApplication();
+  navigate("account");
+  toast("Profile picture removed.");
 
-    if(path){
-
-      const {error} = await db.storage
-        .from("profile-photos")
-        .remove([path]);
-
-      if(error) throw error;
-    }
-
-    const {error:updateError} = await db
-      .from("profiles")
-      .update({
-        avatar_url:null,
-        updated_at:new Date().toISOString()
-      })
-      .eq("id",currentUser.id);
-
-    if(updateError) throw updateError;
-
-    currentProfile.avatar_url = null;
-
-    renderApplication();
-    navigate("account");
-
-    toast("Profile picture removed.");
-
-  }catch(error){
-
-    toast(
-      error.message || "Unable to remove picture.",
-      "error"
-    );
-  }
+ }catch(error){
+  toast(error.message||"Unable to remove picture.","error");
+ }
 });
 
-
-/* =========================================
-   CHANGE PASSWORD
-========================================= */
+/* CHANGE PASSWORD */
 
 $("changePasswordForm").addEventListener("submit",async e=>{
+ e.preventDefault();
 
-  e.preventDefault();
+ const currentPassword=$("currentPassword").value;
+ const newPassword=$("newPassword").value;
+ const confirmPassword=$("confirmPassword").value;
+ const button=$("changePasswordButton");
 
-  const currentPassword = $("currentPassword").value;
-  const newPassword = $("newPassword").value;
-  const confirmPassword = $("confirmPassword").value;
+ if(newPassword.length<8){
+  toast("New password must contain at least 8 characters.","error");
+  return;
+ }
 
-  const button = $("changePasswordButton");
+ if(newPassword!==confirmPassword){
+  toast("New passwords do not match.","error");
+  return;
+ }
 
-  if(newPassword.length<8){
+ if(newPassword===currentPassword){
+  toast("New password must be different from current password.","error");
+  return;
+ }
 
-    toast(
-      "New password must contain at least 8 characters.",
-      "error"
-    );
+ button.disabled=true;
+ button.textContent="Updating...";
 
-    return;
-  }
-
-  if(newPassword!==confirmPassword){
-
-    toast(
-      "New passwords do not match.",
-      "error"
-    );
-
-    return;
-  }
-
-  if(newPassword===currentPassword){
-
-    toast(
-      "New password must be different from current password.",
-      "error"
-    );
-
-    return;
-  }
-
-  button.disabled = true;
-  button.textContent = "Updating...";
-
-  try{
-
-    const {error:verifyError} = await db.auth.signInWithPassword({
-      email:currentUser.email,
-      password:currentPassword
-    });
-
-    if(verifyError){
-      throw new Error("Current password is incorrect.");
-    }
-
-    const {error} = await db.auth.updateUser({
-      password:newPassword
-    });
-
-    if(error) throw error;
-
-    $("changePasswordForm").reset();
-
-    toast("Password changed successfully.");
-
-  }catch(error){
-
-    toast(
-      error.message || "Password update failed.",
-      "error"
-    );
-
-  }finally{
-
-    button.disabled = false;
-    button.textContent = "Update Password";
-  }
-});
-
-
-/* =========================================
-   NAVIGATION EVENTS
-========================================= */
-
-document.querySelectorAll("[data-page]").forEach(btn=>{
-
-  btn.addEventListener("click",()=>{
-    navigate(btn.dataset.page);
+ try{
+  const {error:verifyError}=await db.auth.signInWithPassword({
+   email:currentUser.email,
+   password:currentPassword
   });
 
+  if(verifyError)throw new Error("Current password is incorrect.");
+
+  const {error}=await db.auth.updateUser({password:newPassword});
+  if(error)throw error;
+
+  $("changePasswordForm").reset();
+  toast("Password changed successfully.");
+
+ }catch(error){
+  toast(error.message||"Password update failed.","error");
+ }finally{
+  button.disabled=false;
+  button.textContent="Update Password";
+ }
 });
 
-$("menuButton").addEventListener("click",toggleSidebar);
+/* NAVIGATION EVENTS */
 
+document.querySelectorAll("[data-page]").forEach(btn=>{
+ btn.addEventListener("click",()=>navigate(btn.dataset.page));
+});
+
+/* LOGO CLICK TOGGLE */
+$("brandToggle").addEventListener("click",toggleSidebar);
+
+/* MOBILE OVERLAY */
 $("overlay").addEventListener("click",closeSidebar);
 
+/* PROFILE DROPDOWN CLICK */
+$("profileTrigger").addEventListener("click",e=>{
+ e.stopPropagation();
+ toggleProfileDropdown();
+});
+
+/* OUTSIDE CLICK CLOSE */
+document.addEventListener("click",e=>{
+ if(!$("profileMenuWrap").contains(e.target)){
+  closeProfileDropdown();
+ }
+});
+
+/* ESCAPE CLOSE */
+document.addEventListener("keydown",e=>{
+ if(e.key==="Escape"){
+  closeProfileDropdown();
+  closeSidebar();
+ }
+});
+
+/* MY ACCOUNT FROM PROFILE MENU */
+$("myAccountMenu").addEventListener("click",()=>{
+ navigate("account");
+});
+
+/* LOGOUT FUNCTION */
+async function performLogout(){
+
+ if(!confirm("Are you sure you want to logout?"))return;
+
+ const {error}=await db.auth.signOut();
+
+ if(error){
+  toast(error.message,"error");
+  return;
+ }
+
+ currentUser=null;
+ currentProfile=null;
+ currentSession=null;
+
+ closeProfileDropdown();
+ showLogin();
+
+ toast("Logged out successfully.");
+}
+
+$("dropdownLogout").addEventListener("click",performLogout);
+
+/* DASHBOARD REFRESH */
 $("refreshDashboardButton").addEventListener("click",async()=>{
 
-  const button = $("refreshDashboardButton");
+ const button=$("refreshDashboardButton");
 
-  button.disabled = true;
-  button.innerHTML =
-    '<i class="fa-solid fa-spinner fa-spin"></i> Refreshing';
+ button.disabled=true;
+ button.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Refreshing';
 
-  await loadDashboard();
+ await loadDashboard();
 
-  button.disabled = false;
-  button.innerHTML =
-    '<i class="fa-solid fa-rotate"></i> Refresh';
+ button.disabled=false;
+ button.innerHTML='<i class="fa-solid fa-rotate"></i> Refresh';
 
-  toast("Dashboard refreshed.");
+ toast("Dashboard refreshed.");
 });
 
-
-/* =========================================
-   LOGOUT
-========================================= */
-
-$("logoutButton").addEventListener("click",async()=>{
-
-  if(!confirm("Are you sure you want to logout?")){
-    return;
-  }
-
-  const {error} = await db.auth.signOut();
-
-  if(error){
-
-    toast(error.message,"error");
-    return;
-  }
-
-  currentUser = null;
-  currentProfile = null;
-  currentSession = null;
-
-  showLogin();
-
-  toast("Logged out successfully.");
-});
-
-
-/* =========================================
-   AUTH STATE
-========================================= */
+/* AUTH STATE */
 
 db.auth.onAuthStateChange((event,session)=>{
 
-  if(event==="PASSWORD_RECOVERY"){
+ if(event==="PASSWORD_RECOVERY"){
+  $("loginScreen").classList.remove("hidden");
+  $("app").classList.add("hidden");
+  showLoginForm("recoveryForm");
+  return;
+ }
 
-    $("loginScreen").classList.remove("hidden");
-    $("app").classList.add("hidden");
+ if(event==="SIGNED_OUT"){
+  currentUser=null;
+  currentProfile=null;
+  currentSession=null;
+  showLogin();
+  return;
+ }
 
-    showLoginForm("recoveryForm");
-
-    return;
+ if(event==="SIGNED_IN"||event==="TOKEN_REFRESHED"){
+  if(
+   session?.user&&
+   session.user.id!==currentUser?.id&&
+   !profileLoading
+  ){
+   setTimeout(()=>verifySession(session),0);
   }
-
-  if(event==="SIGNED_OUT"){
-
-    currentUser = null;
-    currentProfile = null;
-    currentSession = null;
-
-    showLogin();
-
-    return;
-  }
-
-  if(event==="SIGNED_IN" || event==="TOKEN_REFRESHED"){
-
-    if(
-      session?.user &&
-      session.user.id!==currentUser?.id &&
-      !profileLoading
-    ){
-
-      setTimeout(()=>{
-        verifySession(session);
-      },0);
-    }
-  }
+ }
 });
 
-
-/* =========================================
-   INITIALIZE APPLICATION
-========================================= */
+/* INITIALIZE */
 
 (async function initialize(){
 
-  try{
+ try{
+  const {data,error}=await db.auth.getSession();
+  if(error)throw error;
 
-    const {data,error} = await db.auth.getSession();
+  const hash=window.location.hash;
 
-    if(error) throw error;
+  const isRecovery=
+   hash.includes("type=recovery")||
+   new URLSearchParams(window.location.search).get("type")==="recovery";
 
-    const hash = window.location.hash;
-
-    const isRecovery =
-      hash.includes("type=recovery") ||
-      new URLSearchParams(window.location.search)
-        .get("type")==="recovery";
-
-    if(isRecovery){
-
-      showLoginForm("recoveryForm");
-      return;
-    }
-
-    if(data.session){
-
-      await verifySession(data.session);
-
-    }else{
-
-      showLogin();
-    }
-
-  }catch(error){
-
-    console.error(error);
-
-    showLogin();
-
-    setMessage(
-      "loginMessage",
-      "Unable to initialize login: "+error.message
-    );
+  if(isRecovery){
+   showLoginForm("recoveryForm");
+   return;
   }
+
+  if(data.session){
+   await verifySession(data.session);
+  }else{
+   showLogin();
+  }
+
+ }catch(error){
+  console.error(error);
+  showLogin();
+  setMessage("loginMessage","Unable to initialize login: "+error.message);
+ }
 
 })();
 </script>
