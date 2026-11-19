@@ -1,0 +1,1180 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Customer List | ONE ONLINE</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+<style>
+:root{
+  --bg:#f4f6fb;
+  --card:#ffffff;
+  --text:#172033;
+  --muted:#748096;
+  --border:#e5e9f1;
+  --primary:#087f5b;
+  --primary-soft:#e6f5ef;
+  --navy:#172b4d;
+  --input:#ffffff;
+  --shadow:0 5px 22px rgba(20,35,60,.06);
+}
+body.dark{
+  --bg:#101827;
+  --card:#192538;
+  --text:#edf3fc;
+  --muted:#a1aec2;
+  --border:#304056;
+  --primary:#20b486;
+  --primary-soft:#153d35;
+  --navy:#233b60;
+  --input:#172438;
+  --shadow:0 5px 22px rgba(0,0,0,.18);
+}
+body.funny{
+  --bg:#fff0f8;
+  --card:#ffffff;
+  --text:#54204c;
+  --muted:#9b6b94;
+  --border:#f1cce7;
+  --primary:#bd3d9e;
+  --primary-soft:#fce4f5;
+  --navy:#713b89;
+  --input:#ffffff;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  padding:20px;
+  font-family:Arial,Helvetica,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  transition:.2s;
+}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+.container{max-width:1600px;margin:auto}
+.top{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:15px;margin-bottom:20px;flex-wrap:wrap
+}
+.heading h2{margin:0;font-size:24px;font-weight:800}
+.heading p{margin:6px 0 0;color:var(--muted);font-size:13px}
+.stats{
+  display:grid;grid-template-columns:repeat(4,minmax(130px,1fr));
+  gap:13px;margin-bottom:18px
+}
+.stat{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:13px;padding:17px;box-shadow:var(--shadow)
+}
+.stat small{color:var(--muted);font-size:12px}
+.stat strong{display:block;font-size:25px;margin-top:8px}
+.stat i{float:right;color:var(--primary);font-size:20px}
+.panel{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:14px;box-shadow:var(--shadow);overflow:hidden
+}
+.toolbar{
+  padding:16px;display:flex;justify-content:space-between;
+  align-items:center;gap:12px;flex-wrap:wrap;
+  border-bottom:1px solid var(--border)
+}
+.toolbar-left,.toolbar-right{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.search{
+  display:flex;align-items:center;gap:9px;
+  border:1px solid var(--border);border-radius:9px;
+  background:var(--input);padding:0 12px;min-width:260px
+}
+.search input{
+  border:0;outline:0;background:transparent;color:var(--text);
+  padding:11px 0;width:100%
+}
+select,input,textarea{
+  color:var(--text);background:var(--input);
+  border:1px solid var(--border);border-radius:8px;padding:10px
+}
+.btn{
+  border:0;border-radius:8px;padding:10px 14px;
+  font-size:13px;font-weight:700;display:inline-flex;
+  align-items:center;justify-content:center;gap:7px
+}
+.btn-primary{background:var(--primary);color:white}
+.btn-light{background:var(--primary-soft);color:var(--primary)}
+.btn-danger{background:#fee9e9;color:#c03939}
+.btn-warning{background:#fff3d7;color:#9b6900}
+.btn-secondary{background:var(--border);color:var(--text)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.table-wrap{width:100%;overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:1120px}
+thead{background:var(--navy);color:white}
+th{
+  text-align:left;padding:15px 12px;font-size:11px;
+  letter-spacing:.4px;text-transform:uppercase;white-space:nowrap
+}
+td{
+  padding:13px 12px;border-bottom:1px solid var(--border);
+  font-size:12px;white-space:nowrap
+}
+tbody tr:hover{background:var(--primary-soft)}
+.serial{
+  background:var(--primary-soft);color:var(--primary);
+  padding:5px 8px;border-radius:6px;font-weight:800
+}
+.name{font-weight:700}
+.sub{display:block;color:var(--muted);font-size:11px;margin-top:4px}
+.money{font-weight:800;color:var(--primary)}
+.status{
+  display:inline-block;padding:5px 8px;border-radius:20px;
+  font-size:10px;font-weight:800;text-transform:uppercase
+}
+.status.active,.status.collected{background:#dcfce7;color:#15803d}
+.status.due,.status.inactive{background:#fff0d5;color:#a16207}
+.status.deleted{background:#fee2e2;color:#b91c1c}
+.actions{display:flex;gap:5px;align-items:center}
+.action{
+  width:29px;height:29px;border:0;border-radius:7px;
+  display:inline-flex;align-items:center;justify-content:center;
+  background:var(--primary-soft);color:var(--primary)
+}
+.action.red{background:#fee9e9;color:#c03939}
+.action.yellow{background:#fff3d7;color:#9b6900}
+.action:hover{filter:brightness(.94)}
+.empty{text-align:center;padding:45px;color:var(--muted)}
+.footer{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:14px 16px;gap:10px;flex-wrap:wrap;
+  color:var(--muted);font-size:12px
+}
+.pages{display:flex;gap:6px}
+.pages button{
+  border:1px solid var(--border);background:var(--card);
+  color:var(--text);padding:7px 11px;border-radius:7px
+}
+.pages button.active{background:var(--primary);color:white}
+.overlay{
+  position:fixed;inset:0;background:rgba(4,12,25,.68);
+  display:none;align-items:center;justify-content:center;
+  z-index:1000;padding:15px
+}
+.overlay.show{display:flex}
+.modal{
+  width:100%;max-width:530px;max-height:90vh;overflow:auto;
+  background:var(--card);border:1px solid var(--border);
+  border-radius:15px;padding:22px;color:var(--text);
+  box-shadow:0 20px 70px rgba(0,0,0,.25)
+}
+.modal-head{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-bottom:18px
+}
+.modal-head h3{margin:0;font-size:19px}
+.close{
+  border:0;background:var(--border);color:var(--text);
+  width:32px;height:32px;border-radius:8px
+}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+.field{display:flex;flex-direction:column;gap:6px}
+.field.full{grid-column:1/-1}
+.field label{font-size:12px;font-weight:700;color:var(--muted)}
+.field input,.field textarea,.field select{width:100%;min-width:0}
+.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:20px}
+.notice{
+  background:var(--primary-soft);padding:12px;border-radius:8px;
+  font-size:12px;color:var(--text);line-height:1.6;margin-bottom:14px
+}
+.loader{text-align:center;padding:40px;color:var(--muted)}
+.toast{
+  position:fixed;right:20px;bottom:20px;z-index:2000;
+  padding:13px 18px;border-radius:9px;background:#172b4d;
+  color:white;font-size:13px;box-shadow:var(--shadow);
+  display:none;max-width:calc(100% - 40px)
+}
+.toast.show{display:block}
+@media(max-width:850px){
+  body{padding:12px}
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .heading h2{font-size:21px}
+  .toolbar{align-items:stretch}
+  .toolbar-left,.toolbar-right{width:100%}
+  .search{min-width:0;flex:1}
+}
+@media(max-width:500px){
+  .stats{gap:8px}
+  .stat{padding:12px}
+  .stat strong{font-size:21px}
+  .form-grid{grid-template-columns:1fr}
+  .field.full{grid-column:auto}
+  .modal{padding:16px}
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+  <div class="top">
+    <div class="heading">
+      <h2><i class="fa-solid fa-users"></i> Customer List</h2>
+      <p>ONE ONLINE · Customer Management</p>
+    </div>
+    <button class="btn btn-primary" onclick="loadCustomers()">
+      <i class="fa-solid fa-rotate"></i> Refresh
+    </button>
+  </div>
+
+  <div class="stats">
+    <div class="stat">
+      <i class="fa-solid fa-users"></i>
+      <small>Total Customers</small>
+      <strong id="totalCount">0</strong>
+    </div>
+    <div class="stat">
+      <i class="fa-solid fa-circle-check"></i>
+      <small>Active Customers</small>
+      <strong id="activeCount">0</strong>
+    </div>
+    <div class="stat">
+      <i class="fa-solid fa-clock"></i>
+      <small>Due Customers</small>
+      <strong id="dueCount">0</strong>
+    </div>
+    <div class="stat">
+      <i class="fa-solid fa-wallet"></i>
+      <small>Monthly Bill</small>
+      <strong id="billTotal">৳0</strong>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="toolbar">
+      <div class="toolbar-left">
+        <span style="font-size:12px;color:var(--muted)">Show</span>
+        <select id="pageSize" onchange="changePageSize()">
+          <option value="25">25</option>
+          <option value="50">50</option>
+          <option value="100">100</option>
+          <option value="all">All</option>
+        </select>
+        <span style="font-size:12px;color:var(--muted)">entries</span>
+      </div>
+
+      <div class="toolbar-right">
+        <select id="statusFilter" onchange="applyFilters()">
+          <option value="all">All Status</option>
+          <option value="active">Active</option>
+          <option value="inactive">Inactive</option>
+          <option value="due">Due</option>
+          <option value="collected">Collected</option>
+        </select>
+        <div class="search">
+          <i class="fa-solid fa-magnifying-glass" style="color:var(--muted)"></i>
+          <input id="searchInput" placeholder="Search name, IP, mobile, email..." oninput="applyFilters()">
+        </div>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Serial</th>
+            <th>IP</th>
+            <th>Name</th>
+            <th>Mobile Number</th>
+            <th>Email</th>
+            <th>Bill</th>
+            <th>Billing Date</th>
+            <th>Creation Date</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="customerRows">
+          <tr><td colspan="9" class="loader">
+            <i class="fa-solid fa-spinner fa-spin"></i> Loading customers...
+          </td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="footer">
+      <span id="showingText">Showing 0 entries</span>
+      <div class="pages" id="pagination"></div>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT MODAL -->
+<div class="overlay" id="editModal">
+  <div class="modal">
+    <div class="modal-head">
+      <h3><i class="fa-solid fa-pen"></i> Edit Customer</h3>
+      <button class="close" onclick="closeModal('editModal')">✕</button>
+    </div>
+    <form id="editForm" onsubmit="saveEdit(event)">
+      <input type="hidden" id="editId">
+      <div class="form-grid">
+        <div class="field">
+          <label>Customer Name</label>
+          <input id="editName" required>
+        </div>
+        <div class="field">
+          <label>Mobile Number</label>
+          <input id="editPhone">
+        </div>
+        <div class="field">
+          <label>IP Address</label>
+          <input id="editIP">
+        </div>
+        <div class="field">
+          <label>Email</label>
+          <input id="editEmail" type="email">
+        </div>
+        <div class="field">
+          <label>Customer Bill</label>
+          <input id="editBill" type="number" min="0" step="0.01">
+        </div>
+        <div class="field">
+          <label>Internet Bill</label>
+          <input id="editIPBill" type="number" min="0" step="0.01">
+        </div>
+        <div class="field">
+          <label>Billing Date</label>
+          <input id="editDate" type="date">
+        </div>
+        <div class="field">
+          <label>Status</label>
+          <select id="editStatus">
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-secondary" onclick="closeModal('editModal')">Cancel</button>
+        <button type="submit" class="btn btn-primary" id="editSaveBtn">Save Changes</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- COLLECT MODAL -->
+<div class="overlay" id="collectModal">
+  <div class="modal">
+    <div class="modal-head">
+      <h3><i class="fa-solid fa-wallet"></i> Collect Payment</h3>
+      <button class="close" onclick="closeModal('collectModal')">✕</button>
+    </div>
+    <div class="notice" id="collectInfo"></div>
+    <div class="form-grid">
+      <div class="field">
+        <label>Collected Amount (৳)</label>
+        <input id="collectAmount" type="number" min="0" step="0.01">
+      </div>
+      <div class="field">
+        <label>Payment Note</label>
+        <input id="collectNote" placeholder="Optional">
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeModal('collectModal')">Cancel</button>
+      <button class="btn btn-primary" id="collectConfirm" onclick="confirmCollect()">Confirm Collect</button>
+    </div>
+  </div>
+</div>
+
+<!-- RENEW MODAL -->
+<div class="overlay" id="renewModal">
+  <div class="modal">
+    <div class="modal-head">
+      <h3><i class="fa-solid fa-arrows-rotate"></i> Renew Customer</h3>
+      <button class="close" onclick="closeModal('renewModal')">✕</button>
+    </div>
+    <div class="notice" id="renewInfo"></div>
+    <div class="field">
+      <label>New Billing Date</label>
+      <input type="date" id="renewDate">
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeModal('renewModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="confirmRenew()">Confirm Renew</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD DUE MODAL -->
+<div class="overlay" id="dueModal">
+  <div class="modal">
+    <div class="modal-head">
+      <h3><i class="fa-solid fa-circle-plus"></i> Add Due</h3>
+      <button class="close" onclick="closeModal('dueModal')">✕</button>
+    </div>
+    <div class="notice" id="dueInfo"></div>
+    <div class="form-grid">
+      <div class="field">
+        <label>Due Amount (৳)</label>
+        <input type="number" id="dueAmount" min="0.01" step="0.01" required>
+      </div>
+      <div class="field">
+        <label>Due Date</label>
+        <input type="date" id="dueDate">
+      </div>
+      <div class="field full">
+        <label>Due Reason</label>
+        <textarea id="dueReason" rows="3" placeholder="Write due reason..."></textarea>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeModal('dueModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="confirmAddDue()">Save Due</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ==========================================
+   ONE ONLINE - CUSTOMER LIST
+   Supabase Configuration
+========================================== */
+
+const SUPABASE_URL = "https://zkiaeynsgviqjyilfphc.supabase.co";
+const SUPABASE_KEY = "sb_publishable_Hzou3f71h7aOVVDpnsL2yg_m_JMyuvP";
+
+const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+let currentUser = null;
+let currentProfile = null;
+let customers = [];
+let filteredCustomers = [];
+let currentPage = 1;
+let pageSize = 25;
+let selectedCustomer = null;
+let busy = false;
+
+/* ==========================================
+   COMMON FUNCTIONS
+========================================== */
+
+function toast(message){
+  const el = document.getElementById("toast");
+  el.textContent = message;
+  el.classList.add("show");
+  setTimeout(()=>el.classList.remove("show"),3500);
+}
+
+function money(value){
+  return "৳" + Number(value || 0).toLocaleString("en-BD",{
+    maximumFractionDigits:2
+  });
+}
+
+function escapeHTML(value){
+  return String(value ?? "").replace(/[&<>"']/g, c => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  }[c]));
+}
+
+function localDate(date){
+  if(!date) return "";
+  const d = new Date(date);
+  if(Number.isNaN(d.getTime())) return String(date).slice(0,10);
+  return d.toLocaleDateString("en-GB",{
+    day:"2-digit",month:"short",year:"numeric"
+  });
+}
+
+function todayISO(){
+  const d = new Date();
+  const y = d.getFullYear();
+  const m = String(d.getMonth()+1).padStart(2,"0");
+  const day = String(d.getDate()).padStart(2,"0");
+  return `${y}-${m}-${day}`;
+}
+
+/* Add one calendar month, preserving end-of-month behavior.
+   Example: Jan 31 -> Feb 28/29; Mar 31 -> Apr 30. */
+function addOneMonth(dateValue){
+  const parts = String(dateValue || todayISO()).slice(0,10).split("-").map(Number);
+  const year = parts[0], month = parts[1]-1, day = parts[2];
+  const targetFirst = new Date(year,month+1,1);
+  const lastDay = new Date(
+    targetFirst.getFullYear(),targetFirst.getMonth()+1,0
+  ).getDate();
+  const result = new Date(
+    targetFirst.getFullYear(),targetFirst.getMonth(),
+    Math.min(day,lastDay)
+  );
+  return [
+    result.getFullYear(),
+    String(result.getMonth()+1).padStart(2,"0"),
+    String(result.getDate()).padStart(2,"0")
+  ].join("-");
+}
+
+function closeModal(id){
+  document.getElementById(id).classList.remove("show");
+}
+
+function openModal(id){
+  document.getElementById(id).classList.add("show");
+}
+
+function monthlyBill(c){
+  return Number(c.bill_amount || 0) + Number(c.ip_bill_amount || 0);
+}
+
+function isSuperAdmin(){
+  return currentProfile?.role === "super_admin" &&
+         currentProfile?.status === "active";
+}
+
+/* Permission is checked using the existing has_permission SQL function. */
+async function hasPermission(permission){
+  if(isSuperAdmin()) return true;
+
+  const {data,error} = await db.rpc("has_permission",{
+    permission_name:permission
+  });
+
+  if(error){
+    console.warn("Permission check:",error.message);
+    return false;
+  }
+  return data === true;
+}
+
+/* ==========================================
+   AUTHENTICATION
+========================================== */
+
+async function initialize(){
+  try{
+    const {data:{session},error} = await db.auth.getSession();
+    if(error) throw error;
+
+    if(!session){
+      document.getElementById("customerRows").innerHTML =
+        `<tr><td colspan="9" class="empty">Please login from the main dashboard.</td></tr>`;
+      return;
+    }
+
+    currentUser = session.user;
+
+    const {data:profile,error:profileError} = await db
+      .from("profiles")
+      .select("*")
+      .eq("id",currentUser.id)
+      .single();
+
+    if(profileError) throw profileError;
+    currentProfile = profile;
+
+    if(profile.status !== "active"){
+      throw new Error("Your account is inactive.");
+    }
+
+    const allowed = await hasPermission("customers.view");
+    if(!allowed){
+      throw new Error("You do not have permission to view customers.");
+    }
+
+    await loadCustomers();
+
+  }catch(error){
+    console.error(error);
+    document.getElementById("customerRows").innerHTML =
+      `<tr><td colspan="9" class="empty">${escapeHTML(error.message)}</td></tr>`;
+    toast(error.message);
+  }
+}
+
+/* ==========================================
+   LOAD CUSTOMER DATA
+========================================== */
+
+async function loadCustomers(){
+  const tbody = document.getElementById("customerRows");
+  tbody.innerHTML = `<tr><td colspan="9" class="loader">
+    <i class="fa-solid fa-spinner fa-spin"></i> Loading...
+  </td></tr>`;
+
+  try{
+    const {data,error} = await db
+      .from("customers")
+      .select(`
+        id,customer_code,name,phone,ip,email,
+        bill_amount,ip_bill_amount,billing_date,
+        created_at,status,collect_status,renew_status,
+        deleted_at,area,address,reason
+      `)
+      .is("deleted_at",null)
+      .order("created_at",{ascending:true});
+
+    if(error) throw error;
+
+    customers = data || [];
+    updateStats();
+    applyFilters();
+
+  }catch(error){
+    console.error(error);
+    tbody.innerHTML =
+      `<tr><td colspan="9" class="empty">Failed to load: ${escapeHTML(error.message)}</td></tr>`;
+    toast("Customer loading failed: "+error.message);
+  }
+}
+
+function updateStats(){
+  const active = customers.filter(c=>c.status==="active").length;
+  const due = customers.filter(c=>
+    String(c.collect_status || "").toLowerCase() !== "collected"
+  ).length;
+  const totalBill = customers.reduce((sum,c)=>sum+monthlyBill(c),0);
+
+  document.getElementById("totalCount").textContent = customers.length;
+  document.getElementById("activeCount").textContent = active;
+  document.getElementById("dueCount").textContent = due;
+  document.getElementById("billTotal").textContent = money(totalBill);
+}
+
+/* ==========================================
+   SEARCH AND PAGINATION
+========================================== */
+
+function applyFilters(){
+  const term = document.getElementById("searchInput").value.toLowerCase().trim();
+  const status = document.getElementById("statusFilter").value;
+
+  filteredCustomers = customers.filter(c=>{
+    const text = [
+      c.customer_code,c.name,c.phone,c.ip,c.email,c.area
+    ].join(" ").toLowerCase();
+
+    if(term && !text.includes(term)) return false;
+
+    if(status==="active" && c.status!=="active") return false;
+    if(status==="inactive" && c.status!=="inactive") return false;
+    if(status==="due" && String(c.collect_status||"").toLowerCase()==="collected") return false;
+    if(status==="collected" && String(c.collect_status||"").toLowerCase()!=="collected") return false;
+
+    return true;
+  });
+
+  currentPage=1;
+  renderTable();
+}
+
+function changePageSize(){
+  const value = document.getElementById("pageSize").value;
+  pageSize = value==="all" ? Math.max(filteredCustomers.length,1) : Number(value);
+  currentPage=1;
+  renderTable();
+}
+
+function renderTable(){
+  const tbody = document.getElementById("customerRows");
+  const total = filteredCustomers.length;
+  const start = (currentPage-1)*pageSize;
+  const end = Math.min(start+pageSize,total);
+  const rows = filteredCustomers.slice(start,end);
+
+  if(!rows.length){
+    tbody.innerHTML = `<tr><td colspan="9" class="empty">
+      <i class="fa-solid fa-folder-open"></i><br><br>No customers found
+    </td></tr>`;
+  }else{
+    tbody.innerHTML = rows.map((c,index)=>{
+      const serial = start+index+1;
+      const bill = monthlyBill(c);
+      const collected = String(c.collect_status||"").toLowerCase()==="collected";
+      const status = c.status || "active";
+
+      return `
+      <tr>
+        <td><span class="serial">${String(serial).padStart(2,"0")}</span></td>
+        <td>${escapeHTML(c.ip || "—")}</td>
+        <td>
+          <span class="name">${escapeHTML(c.name)}</span>
+          <span class="sub">${escapeHTML(c.customer_code || "")}</span>
+        </td>
+        <td>${escapeHTML(c.phone || "—")}</td>
+        <td>${escapeHTML(c.email || "—")}</td>
+        <td><span class="money">${money(bill)}</span></td>
+        <td>${localDate(c.billing_date) || "—"}</td>
+        <td>${localDate(c.created_at) || "—"}</td>
+        <td>
+          <div class="actions">
+            <button class="action" title="Edit" onclick="openEdit('${c.id}')">
+              <i class="fa-solid fa-pen"></i>
+            </button>
+            <button class="action" title="Collect" onclick="openCollect('${c.id}')">
+              <i class="fa-solid fa-wallet"></i>
+            </button>
+            <button class="action" title="Renew" onclick="openRenew('${c.id}')">
+              <i class="fa-solid fa-rotate"></i>
+            </button>
+            <button class="action yellow" title="Add Due" onclick="openDue('${c.id}')">
+              <i class="fa-solid fa-circle-plus"></i>
+            </button>
+            <button class="action red" title="Delete" onclick="deleteCustomer('${c.id}')">
+              <i class="fa-solid fa-trash"></i>
+            </button>
+          </div>
+          <span class="sub"><span class="status ${escapeHTML(status)}">${escapeHTML(status)}</span>
+          <span class="status ${collected?"collected":"due"}">${collected?"Collected":"Due"}</span></span>
+        </td>
+      </tr>`;
+    }).join("");
+  }
+
+  document.getElementById("showingText").textContent =
+    total ? `Showing ${start+1} to ${end} of ${total} entries` : "Showing 0 entries";
+
+  renderPagination();
+}
+
+function renderPagination(){
+  const pages = Math.ceil(filteredCustomers.length/pageSize);
+  const el = document.getElementById("pagination");
+
+  if(pages<=1){el.innerHTML="";return;}
+
+  let html = `<button onclick="goPage(${currentPage-1})" ${currentPage===1?"disabled":""}>‹</button>`;
+
+  let first = Math.max(1,currentPage-2);
+  let last = Math.min(pages,first+4);
+  first = Math.max(1,last-4);
+
+  for(let p=first;p<=last;p++){
+    html += `<button class="${p===currentPage?"active":""}" onclick="goPage(${p})">${p}</button>`;
+  }
+
+  html += `<button onclick="goPage(${currentPage+1})" ${currentPage===pages?"disabled":""}>›</button>`;
+  el.innerHTML=html;
+}
+
+function goPage(page){
+  const pages=Math.ceil(filteredCustomers.length/pageSize);
+  if(page<1 || page>pages) return;
+  currentPage=page;
+  renderTable();
+}
+
+/* ==========================================
+   HISTORY LOGGER
+========================================== */
+
+async function writeHistory(customer,action,description,oldData,newData){
+  const payload = {
+    customer_id:customer.id,
+    customer_name:customer.name || "",
+    action:action,
+    description:description,
+    old_data:oldData || {},
+    new_data:newData || {},
+    performed_by:currentUser.id
+  };
+
+  const {error} = await db.from("customer_history").insert(payload);
+  if(error){
+    console.error("History insert failed:",error);
+    throw new Error("History save failed: "+error.message);
+  }
+}
+
+/* ==========================================
+   EDIT CUSTOMER
+========================================== */
+
+async function openEdit(id){
+  if(!(await hasPermission("customers.edit"))){
+    toast("You do not have edit permission.");
+    return;
+  }
+
+  const c=customers.find(x=>x.id===id);
+  if(!c) return;
+
+  selectedCustomer=c;
+
+  document.getElementById("editId").value=c.id;
+  document.getElementById("editName").value=c.name||"";
+  document.getElementById("editPhone").value=c.phone||"";
+  document.getElementById("editIP").value=c.ip||"";
+  document.getElementById("editEmail").value=c.email||"";
+  document.getElementById("editBill").value=c.bill_amount||0;
+  document.getElementById("editIPBill").value=c.ip_bill_amount||0;
+  document.getElementById("editDate").value=c.billing_date||"";
+  document.getElementById("editStatus").value=c.status||"active";
+
+  openModal("editModal");
+}
+
+async function saveEdit(event){
+  event.preventDefault();
+  if(busy) return;
+
+  const c=selectedCustomer;
+  if(!c) return;
+
+  const updates={
+    name:document.getElementById("editName").value.trim(),
+    phone:document.getElementById("editPhone").value.trim(),
+    ip:document.getElementById("editIP").value.trim(),
+    email:document.getElementById("editEmail").value.trim() || null,
+    bill_amount:Number(document.getElementById("editBill").value||0),
+    ip_bill_amount:Number(document.getElementById("editIPBill").value||0),
+    billing_date:document.getElementById("editDate").value || null,
+    status:document.getElementById("editStatus").value,
+    updated_at:new Date().toISOString()
+  };
+
+  busy=true;
+  const btn=document.getElementById("editSaveBtn");
+  btn.disabled=true;
+  btn.textContent="Saving...";
+
+  try{
+    const {error}=await db.from("customers").update(updates).eq("id",c.id);
+    if(error) throw error;
+
+    await writeHistory(c,"EDIT","Customer information updated.",
+      {
+        name:c.name,phone:c.phone,ip:c.ip,email:c.email,
+        bill_amount:c.bill_amount,ip_bill_amount:c.ip_bill_amount,
+        billing_date:c.billing_date,status:c.status
+      },updates
+    );
+
+    closeModal("editModal");
+    toast("Customer updated successfully.");
+    await loadCustomers();
+
+  }catch(error){
+    toast(error.message);
+  }finally{
+    busy=false;btn.disabled=false;btn.textContent="Save Changes";
+  }
+}
+
+/* ==========================================
+   COLLECT
+   Billing Date advances by one calendar month.
+========================================== */
+
+function openCollect(id){
+  const c=customers.find(x=>x.id===id);
+  if(!c) return;
+
+  selectedCustomer=c;
+  const amount=monthlyBill(c);
+  const oldDate=c.billing_date || todayISO();
+  const nextDate=addOneMonth(oldDate);
+
+  document.getElementById("collectInfo").innerHTML =
+    `<b>${escapeHTML(c.name)}</b><br>
+     Monthly Bill: <b>${money(amount)}</b><br>
+     Current Billing Date: <b>${localDate(oldDate)}</b><br>
+     New Billing Date: <b>${localDate(nextDate)}</b>`;
+
+  document.getElementById("collectAmount").value=amount;
+  document.getElementById("collectNote").value="";
+  openModal("collectModal");
+}
+
+async function confirmCollect(){
+  if(busy || !selectedCustomer) return;
+
+  if(!(await hasPermission("billing.manage"))){
+    toast("You do not have billing permission.");
+    return;
+  }
+
+  const c=selectedCustomer;
+  const amount=Number(document.getElementById("collectAmount").value||0);
+  const note=document.getElementById("collectNote").value.trim();
+
+  if(amount<0){
+    toast("Invalid amount.");
+    return;
+  }
+
+  const oldDate=c.billing_date || todayISO();
+  const newDate=addOneMonth(oldDate);
+
+  busy=true;
+  const btn=document.getElementById("collectConfirm");
+  btn.disabled=true;btn.textContent="Processing...";
+
+  try{
+    const updates={
+      billing_date:newDate,
+      collect_status:"collected",
+      renew_status:"active",
+      updated_at:new Date().toISOString()
+    };
+
+    const {error}=await db.from("customers").update(updates).eq("id",c.id);
+    if(error) throw error;
+
+    await writeHistory(c,"COLLECT",
+      `Payment collected: ${money(amount)}. Billing date advanced from ${oldDate} to ${newDate}. ${note}`,
+      {
+        billing_date:c.billing_date,
+        collect_status:c.collect_status,
+        renew_status:c.renew_status
+      },
+      {
+        amount:amount,
+        note:note,
+        billing_date:newDate,
+        collect_status:"collected",
+        renew_status:"active"
+      }
+    );
+
+    closeModal("collectModal");
+    toast("Collect successful. Billing date advanced by one month.");
+    await loadCustomers();
+
+  }catch(error){
+    toast(error.message);
+  }finally{
+    busy=false;btn.disabled=false;btn.textContent="Confirm Collect";
+  }
+}
+
+/* ==========================================
+   RENEW
+========================================== */
+
+function openRenew(id){
+  const c=customers.find(x=>x.id===id);
+  if(!c) return;
+
+  selectedCustomer=c;
+  const next=addOneMonth(c.billing_date||todayISO());
+
+  document.getElementById("renewInfo").innerHTML=
+    `<b>${escapeHTML(c.name)}</b><br>
+     Current Billing Date: ${localDate(c.billing_date)}<br>
+     Suggested Next Date: ${localDate(next)}`;
+
+  document.getElementById("renewDate").value=next;
+  openModal("renewModal");
+}
+
+async function confirmRenew(){
+  if(busy || !selectedCustomer) return;
+
+  if(!(await hasPermission("billing.manage"))){
+    toast("You do not have billing permission.");
+    return;
+  }
+
+  const c=selectedCustomer;
+  const newDate=document.getElementById("renewDate").value;
+
+  if(!newDate){toast("Select a billing date.");return;}
+
+  busy=true;
+
+  try{
+    const updates={
+      billing_date:newDate,
+      renew_status:"active",
+      updated_at:new Date().toISOString()
+    };
+
+    const {error}=await db.from("customers").update(updates).eq("id",c.id);
+    if(error) throw error;
+
+    await writeHistory(c,"RENEW",
+      `Customer renewed. Billing date changed to ${newDate}.`,
+      {billing_date:c.billing_date,renew_status:c.renew_status},
+      updates
+    );
+
+    closeModal("renewModal");
+    toast("Customer renewed successfully.");
+    await loadCustomers();
+
+  }catch(error){
+    toast(error.message);
+  }finally{busy=false;}
+}
+
+/* ==========================================
+   ADD DUE
+========================================== */
+
+function openDue(id){
+  const c=customers.find(x=>x.id===id);
+  if(!c) return;
+
+  selectedCustomer=c;
+  document.getElementById("dueInfo").innerHTML=
+    `Customer: <b>${escapeHTML(c.name)}</b><br>
+     Current Monthly Bill: <b>${money(monthlyBill(c))}</b>`;
+
+  document.getElementById("dueAmount").value="";
+  document.getElementById("dueDate").value=todayISO();
+  document.getElementById("dueReason").value="";
+  openModal("dueModal");
+}
+
+async function confirmAddDue(){
+  if(busy || !selectedCustomer) return;
+
+  if(!(await hasPermission("billing.manage"))){
+    toast("You do not have billing permission.");
+    return;
+  }
+
+  const c=selectedCustomer;
+  const amount=Number(document.getElementById("dueAmount").value||0);
+  const dueDate=document.getElementById("dueDate").value||todayISO();
+  const reason=document.getElementById("dueReason").value.trim();
+
+  if(amount<=0){toast("Enter a valid due amount.");return;}
+
+  busy=true;
+
+  try{
+    const duePayload={
+      id:c.id,
+      customer_name:c.name,
+      due_amount:amount,
+      due_from:dueDate,
+      billing_date:dueDate,
+      bill_trigger:true,
+      due_reason:reason,
+      status:"due",
+      created_by:currentUser.id
+    };
+
+    const {error}=await db.from("due_entries").insert(duePayload);
+    if(error) throw error;
+
+    await writeHistory(c,"ADD_DUE",
+      `New due added: ${money(amount)}. Reason: ${reason}`,
+      {},
+      {due_amount:amount,due_date:dueDate,due_reason:reason}
+    );
+
+    closeModal("dueModal");
+    toast("Due added successfully.");
+    await loadCustomers();
+
+  }catch(error){
+    toast(error.message);
+  }finally{busy=false;}
+}
+
+/* ==========================================
+   DELETE CUSTOMER
+   Soft delete: customer remains recoverable.
+========================================== */
+
+async function deleteCustomer(id){
+  if(!(await hasPermission("customers.delete"))){
+    toast("You do not have delete permission.");
+    return;
+  }
+
+  const c=customers.find(x=>x.id===id);
+  if(!c) return;
+
+  if(!confirm(`Are you sure you want to delete ${c.name}?`)) return;
+
+  if(busy) return;
+  busy=true;
+
+  try{
+    const now=new Date().toISOString();
+
+    const {error}=await db.from("customers").update({
+      status:"deleted",
+      deleted_at:now,
+      updated_at:now
+    }).eq("id",id);
+
+    if(error) throw error;
+
+    await writeHistory(c,"DELETE",
+      "Customer moved to Deleted Customers.",
+      {status:c.status,deleted_at:c.deleted_at},
+      {status:"deleted",deleted_at:now}
+    );
+
+    toast("Customer moved to Deleted Customers.");
+    await loadCustomers();
+
+  }catch(error){
+    toast(error.message);
+  }finally{busy=false;}
+}
+
+/* ==========================================
+   INDEX THEME SYNC
+========================================== */
+
+function syncParentTheme(){
+  try{
+    const parentDoc=window.parent.document;
+    const body=parentDoc.body;
+    const html=parentDoc.documentElement;
+
+    const classes=[
+      body.className,
+      html.className
+    ].join(" ").toLowerCase();
+
+    const theme=(
+      body.getAttribute("data-theme") ||
+      html.getAttribute("data-theme") ||
+      body.dataset.theme ||
+      html.dataset.theme ||
+      ""
+    ).toLowerCase();
+
+    document.body.classList.toggle(
+      "dark",
+      classes.includes("dark") || theme.includes("dark")
+    );
+
+    document.body.classList.toggle(
+      "funny",
+      classes.includes("funny") || theme.includes("funny")
+    );
+  }catch(error){
+    console.log("Parent theme unavailable.");
+  }
+}
+
+syncParentTheme();
+
+try{
+  const observer=new MutationObserver(syncParentTheme);
+  observer.observe(window.parent.document.documentElement,{
+    attributes:true,attributeFilter:["class","data-theme"]
+  });
+  observer.observe(window.parent.document.body,{
+    attributes:true,attributeFilter:["class","data-theme"]
+  });
+}catch(error){}
+
+/* ==========================================
+   START
+========================================== */
+
+initialize();
+
+</script>
+</body>
+</html>
