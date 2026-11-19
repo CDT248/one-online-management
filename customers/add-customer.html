@@ -1,0 +1,924 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Add Customer | ONE ONLINE</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+<style>
+:root{
+  --bg:#f4f6fa;
+  --card:#ffffff;
+  --text:#172033;
+  --muted:#718096;
+  --border:#e5eaf1;
+  --primary:#087f5b;
+  --primary2:#099268;
+  --input:#ffffff;
+  --soft:#e8f5ef;
+  --danger:#dc3545;
+  --shadow:0 5px 22px rgba(20,35,55,.055);
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  padding:22px;
+  background:var(--bg);
+  color:var(--text);
+  font-family:Inter,Arial,sans-serif;
+}
+body.dark{
+  --bg:#101722;
+  --card:#192433;
+  --text:#edf2f7;
+  --muted:#9baabd;
+  --border:#2b394b;
+  --input:#111d2b;
+  --soft:#153a30;
+  --shadow:0 5px 22px rgba(0,0,0,.16);
+}
+.container{max-width:1100px;margin:auto}
+.top{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:15px;margin-bottom:22px;flex-wrap:wrap
+}
+.top h1{font-size:24px;margin:0 0 6px}
+.top p{margin:0;color:var(--muted);font-size:13px}
+.card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:15px;
+  padding:22px;
+  margin-bottom:18px;
+  box-shadow:var(--shadow);
+}
+.section-title{
+  display:flex;align-items:center;gap:11px;
+  font-size:16px;font-weight:750;margin:0 0 20px;
+}
+.section-title i{
+  width:36px;height:36px;border-radius:10px;
+  background:var(--soft);color:var(--primary);
+  display:grid;place-items:center;
+}
+.grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:17px;
+}
+.field{min-width:0}
+.field.full{grid-column:1/-1}
+label{
+  display:block;font-size:12px;font-weight:700;
+  margin-bottom:8px;color:var(--muted)
+}
+input,select,textarea{
+  width:100%;min-width:0;
+  padding:12px 13px;
+  border:1px solid var(--border);
+  border-radius:9px;
+  background:var(--input);
+  color:var(--text);
+  font-size:13px;outline:none;
+  font-family:inherit;
+  transition:.2s;
+}
+input:focus,select:focus,textarea:focus{
+  border-color:var(--primary);
+  box-shadow:0 0 0 3px rgba(8,127,91,.10)
+}
+textarea{min-height:85px;resize:vertical}
+input::placeholder,textarea::placeholder{color:var(--muted)}
+.total-box{
+  background:var(--soft);
+  border:1px solid rgba(8,127,91,.18);
+  border-radius:12px;padding:16px;
+  display:flex;justify-content:space-between;align-items:center;
+  gap:12px;flex-wrap:wrap;margin-top:17px;
+}
+.total-box span{font-size:12px;color:var(--muted)}
+.total-box strong{font-size:25px;color:var(--primary)}
+.switch-row{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:15px 0;border-bottom:1px solid var(--border);gap:15px
+}
+.switch-row:last-child{border-bottom:0}
+.switch-info strong{font-size:13px;display:block}
+.switch-info small{font-size:11px;color:var(--muted);display:block;margin-top:4px}
+.switch{position:relative;width:46px;height:25px;flex-shrink:0}
+.switch input{display:none}
+.slider{
+  position:absolute;inset:0;border-radius:30px;
+  background:#aab3bf;cursor:pointer;transition:.2s
+}
+.slider:before{
+  content:"";position:absolute;width:19px;height:19px;
+  left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s
+}
+.switch input:checked + .slider{background:var(--primary)}
+.switch input:checked + .slider:before{transform:translateX(21px)}
+.product{
+  border:1px solid var(--border);border-radius:12px;
+  padding:17px;margin-bottom:13px;
+  background:var(--input)
+}
+.product-head{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:15px;gap:10px
+}
+.product-head strong{font-size:13px}
+.remove-btn{
+  border:0;background:#fff0f0;color:var(--danger);
+  padding:8px 11px;border-radius:7px;cursor:pointer
+}
+.btn{
+  border:0;border-radius:9px;padding:12px 17px;
+  font-size:13px;font-weight:700;cursor:pointer;
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  transition:.2s
+}
+.btn-primary{background:var(--primary);color:#fff}
+.btn-primary:hover{background:var(--primary2)}
+.btn-outline{
+  background:transparent;color:var(--primary);
+  border:1px dashed var(--primary)
+}
+.btn-light{background:var(--soft);color:var(--primary)}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.actions{
+  display:flex;justify-content:flex-end;gap:10px;
+  flex-wrap:wrap
+}
+.create-info{
+  background:var(--bg);border:1px solid var(--border);
+  padding:14px;border-radius:10px;
+  display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap
+}
+.create-info small{color:var(--muted)}
+.alert{
+  display:none;padding:13px 15px;border-radius:9px;
+  margin-bottom:16px;font-size:13px;line-height:1.6
+}
+.alert.error{display:block;background:#fff0f0;color:#b42332}
+.alert.success{display:block;background:#e9f8ef;color:#137547}
+#loading{
+  position:fixed;inset:0;background:rgba(10,20,30,.55);
+  z-index:99;display:none;align-items:center;justify-content:center;
+  color:white;text-align:center
+}
+.loader{
+  width:35px;height:35px;border:4px solid #ffffff55;
+  border-top-color:white;border-radius:50%;
+  animation:spin .8s linear infinite;margin:0 auto 12px
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media(max-width:650px){
+  body{padding:13px}
+  .card{padding:16px}
+  .grid{grid-template-columns:1fr}
+  .field.full{grid-column:auto}
+  .top h1{font-size:21px}
+  .actions .btn{flex:1}
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+  <div class="top">
+    <div>
+      <h1><i class="fa-solid fa-user-plus" style="color:var(--primary)"></i> Add Customer</h1>
+      <p>Create a new customer profile in ONE ONLINE</p>
+    </div>
+    <button class="btn btn-light" type="button" onclick="toggleTheme()">
+      <i class="fa-solid fa-moon"></i> Theme
+    </button>
+  </div>
+
+  <div id="message" class="alert"></div>
+
+  <form id="customerForm">
+
+    <!-- CUSTOMER INFORMATION -->
+    <section class="card">
+      <h2 class="section-title">
+        <i class="fa-solid fa-user"></i>
+        01. Customer Information
+      </h2>
+
+      <div class="grid">
+        <div class="field">
+          <label>Customer Name *</label>
+          <input id="name" required maxlength="150"
+            placeholder="Enter customer name">
+        </div>
+
+        <div class="field">
+          <label>Mobile Number *</label>
+          <input id="phone" required maxlength="30"
+            placeholder="01XXXXXXXXX">
+        </div>
+
+        <div class="field">
+          <label>Alternative Mobile</label>
+          <input id="altPhone" maxlength="30"
+            placeholder="Optional">
+        </div>
+
+        <div class="field">
+          <label>IP Address *</label>
+          <input id="ip" required maxlength="100"
+            placeholder="Example: 192.168.1.10">
+        </div>
+
+        <div class="field">
+          <label>Customer Gmail</label>
+          <input id="email" type="email"
+            placeholder="customer@gmail.com">
+        </div>
+
+        <div class="field">
+          <label>Area / Zone</label>
+          <input id="area" placeholder="Enter area">
+        </div>
+
+        <div class="field full">
+          <label>Full Address</label>
+          <textarea id="address"
+            placeholder="Enter full customer address"></textarea>
+        </div>
+
+        <div class="field full">
+          <label>Google Map Location / Link</label>
+          <input id="location" placeholder="Paste Google Maps link">
+        </div>
+      </div>
+    </section>
+
+    <!-- BILLING -->
+    <section class="card">
+      <h2 class="section-title">
+        <i class="fa-solid fa-file-invoice-dollar"></i>
+        02. Billing Information
+      </h2>
+
+      <div class="grid">
+        <div class="field">
+          <label>Customer Bill (৳)</label>
+          <input id="customerBill" type="number"
+            min="0" step="0.01" value="0">
+        </div>
+
+        <div class="field">
+          <label>Internet Bill (৳)</label>
+          <input id="internetBill" type="number"
+            min="0" step="0.01" value="0">
+        </div>
+
+        <div class="field">
+          <label>Due Amount (৳)</label>
+          <input id="dueAmount" type="number"
+            min="0" step="0.01" value="0">
+        </div>
+
+        <div class="field">
+          <label>Billing Date</label>
+          <input id="billingDate" type="date">
+        </div>
+
+        <div class="field full">
+          <label>Due Reason</label>
+          <textarea id="dueReason"
+            placeholder="Enter due reason (if any)"></textarea>
+        </div>
+      </div>
+
+      <div class="total-box">
+        <div>
+          <span>TOTAL MONTHLY BILL</span><br>
+          <strong id="totalBill">৳ 0.00</strong>
+        </div>
+        <div style="text-align:right">
+          <span>Customer Bill + Internet Bill</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- AUTOMATION -->
+    <section class="card">
+      <h2 class="section-title">
+        <i class="fa-solid fa-gears"></i>
+        03. Billing Automation
+      </h2>
+
+      <div class="switch-row">
+        <div class="switch-info">
+          <strong>Bill Trigger</strong>
+          <small>Control customer bill automation</small>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="billTrigger" checked>
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div class="switch-row">
+        <div class="switch-info">
+          <strong>IP Bill Trigger</strong>
+          <small>Control internet/IP bill automation</small>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="ipBillTrigger" checked>
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div class="switch-row">
+        <div class="switch-info">
+          <strong>Auto Mail</strong>
+          <small>Enable or disable automatic customer emails</small>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="autoMail" checked>
+          <span class="slider"></span>
+        </label>
+      </div>
+    </section>
+
+    <!-- PRODUCTS -->
+    <section class="card">
+      <h2 class="section-title">
+        <i class="fa-solid fa-box"></i>
+        04. Product Information
+      </h2>
+
+      <div id="products"></div>
+
+      <button class="btn btn-outline" type="button"
+        onclick="addProduct()">
+        <i class="fa-solid fa-plus"></i> Add Another Product
+      </button>
+    </section>
+
+    <!-- CONNECTION -->
+    <section class="card">
+      <h2 class="section-title">
+        <i class="fa-solid fa-network-wired"></i>
+        05. Connection & Status
+      </h2>
+
+      <div class="grid">
+        <div class="field">
+          <label>Connection Date</label>
+          <input id="connectionDate" type="date">
+        </div>
+
+        <div class="field">
+          <label>Customer Status</label>
+          <select id="status">
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+          </select>
+        </div>
+
+        <div class="field full">
+          <label>Additional Notes</label>
+          <textarea id="notes"
+            placeholder="Optional customer notes"></textarea>
+        </div>
+      </div>
+
+      <div class="create-info">
+        <div>
+          <small>CREATE DATE</small><br>
+          <strong>Automatically generated by database</strong>
+        </div>
+        <i class="fa-solid fa-calendar-check"
+          style="color:var(--primary);font-size:22px"></i>
+      </div>
+    </section>
+
+    <div class="card">
+      <div class="actions">
+        <button class="btn btn-light" type="reset">
+          <i class="fa-solid fa-rotate-left"></i> Reset Form
+        </button>
+        <button class="btn btn-primary" id="saveBtn" type="submit">
+          <i class="fa-solid fa-floppy-disk"></i>
+          Save Customer
+        </button>
+      </div>
+    </div>
+
+  </form>
+</div>
+
+<div id="loading">
+  <div>
+    <div class="loader"></div>
+    <strong id="loadingText">Saving customer...</strong>
+  </div>
+</div>
+
+<script>
+/* =====================================================
+   ONE ONLINE V2 — ADD CUSTOMER
+   Supabase configuration
+===================================================== */
+
+const SUPABASE_URL =
+  "https://zkiaeynsgviqjyilfphc.supabase.co";
+
+const SUPABASE_KEY =
+  "sb_publishable_Hzou3f71h7aOVVDpnsL2yg_m_JMyuvP";
+
+const db = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
+
+let currentUser = null;
+let productCounter = 0;
+
+/* =====================================================
+   THEME
+===================================================== */
+
+function toggleTheme(){
+  document.body.classList.toggle("dark");
+  localStorage.setItem(
+    "one_online_theme",
+    document.body.classList.contains("dark") ? "dark" : "light"
+  );
+}
+
+(function(){
+  const theme = localStorage.getItem("one_online_theme");
+  if(theme === "dark"){
+    document.body.classList.add("dark");
+  }
+})();
+
+/* =====================================================
+   AUTHENTICATION & PERMISSION
+===================================================== */
+
+async function initialize(){
+
+  try{
+    const {data:{session},error} =
+      await db.auth.getSession();
+
+    if(error) throw error;
+
+    if(!session){
+      showMessage(
+        "Login session পাওয়া যায়নি। Dashboard থেকে আবার Login করো।",
+        "error"
+      );
+      document.getElementById("saveBtn").disabled = true;
+      return;
+    }
+
+    currentUser = session.user;
+
+    const {data:profile,error:profileError} =
+      await db.from("profiles")
+      .select("id,role,status")
+      .eq("id",currentUser.id)
+      .single();
+
+    if(profileError) throw profileError;
+
+    if(!profile || profile.status !== "active"){
+      throw new Error("Your account is inactive.");
+    }
+
+    const {data:allowed,error:permissionError} =
+      await db.rpc("has_permission",{
+        permission_name:"customers.manage"
+      });
+
+    if(permissionError) throw permissionError;
+
+    if(!allowed && profile.role !== "super_admin"){
+      throw new Error("You do not have permission to add customers.");
+    }
+
+    addProduct();
+
+  }catch(error){
+    showMessage(error.message || "Authentication failed.","error");
+    document.getElementById("saveBtn").disabled = true;
+  }
+}
+
+/* =====================================================
+   MESSAGE & LOADING
+===================================================== */
+
+function showMessage(message,type){
+  const el = document.getElementById("message");
+  el.className = "alert " + type;
+  el.textContent = message;
+  el.style.display = "block";
+  el.scrollIntoView({behavior:"smooth",block:"center"});
+}
+
+function setLoading(active,text="Saving customer..."){
+  document.getElementById("loading").style.display =
+    active ? "flex" : "none";
+
+  document.getElementById("loadingText").textContent = text;
+  document.getElementById("saveBtn").disabled = active;
+}
+
+/* =====================================================
+   BILL CALCULATION
+===================================================== */
+
+function calculateTotal(){
+  const customer =
+    Number(document.getElementById("customerBill").value || 0);
+
+  const internet =
+    Number(document.getElementById("internetBill").value || 0);
+
+  document.getElementById("totalBill").textContent =
+    "৳ " + (customer + internet).toFixed(2);
+}
+
+document.getElementById("customerBill")
+  .addEventListener("input",calculateTotal);
+
+document.getElementById("internetBill")
+  .addEventListener("input",calculateTotal);
+
+/* =====================================================
+   MULTIPLE PRODUCTS
+===================================================== */
+
+function addProduct(){
+
+  productCounter++;
+
+  const id = productCounter;
+
+  const wrapper = document.createElement("div");
+  wrapper.className = "product";
+  wrapper.id = "product-" + id;
+
+  wrapper.innerHTML = `
+    <div class="product-head">
+      <strong><i class="fa-solid fa-box"
+        style="color:var(--primary)"></i>
+        Product ${id}</strong>
+
+      <button type="button" class="remove-btn"
+        onclick="removeProduct(${id})">
+        <i class="fa-solid fa-trash"></i> Remove
+      </button>
+    </div>
+
+    <div class="grid">
+      <div class="field">
+        <label>Product Type *</label>
+        <select class="p-type">
+          <option value="router">Router</option>
+          <option value="onu">ONU</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Product Name / Model</label>
+        <input class="p-name" placeholder="Example: TP-Link">
+      </div>
+
+      <div class="field">
+        <label>Serial Number</label>
+        <input class="p-serial" placeholder="Serial number">
+      </div>
+
+      <div class="field">
+        <label>MAC Address</label>
+        <input class="p-mac" placeholder="MAC address">
+      </div>
+
+      <div class="field">
+        <label>Product Price (৳)</label>
+        <input class="p-price" type="number"
+          min="0" step="0.01" value="0">
+      </div>
+
+      <div class="field">
+        <label>Product Note</label>
+        <input class="p-note" placeholder="Optional note">
+      </div>
+    </div>
+  `;
+
+  document.getElementById("products").appendChild(wrapper);
+}
+
+function removeProduct(id){
+  const el = document.getElementById("product-" + id);
+  if(el) el.remove();
+}
+
+function collectProducts(){
+
+  const elements =
+    document.querySelectorAll("#products .product");
+
+  const result = [];
+
+  elements.forEach(el=>{
+
+    const type = el.querySelector(".p-type").value;
+    const name = el.querySelector(".p-name").value.trim();
+    const serial = el.querySelector(".p-serial").value.trim();
+    const mac = el.querySelector(".p-mac").value.trim();
+    const price = Number(el.querySelector(".p-price").value || 0);
+    const note = el.querySelector(".p-note").value.trim();
+
+    if(!name && !serial && !mac && price === 0 && !note){
+      return;
+    }
+
+    result.push({
+      product_type:type,
+      product_name:name || null,
+      serial_number:serial || null,
+      mac_address:mac || null,
+      product_price:price,
+      product_note:note || null
+    });
+  });
+
+  return result;
+}
+
+/* =====================================================
+   CUSTOMER CODE
+===================================================== */
+
+function generateCustomerCode(){
+  const date = new Date();
+  const y = date.getFullYear();
+  const m = String(date.getMonth()+1).padStart(2,"0");
+  const d = String(date.getDate()).padStart(2,"0");
+  const random = Math.random().toString(36)
+    .substring(2,7).toUpperCase();
+
+  return `CUS-${y}${m}${d}-${random}`;
+}
+
+/* =====================================================
+   SAVE CUSTOMER
+===================================================== */
+
+document.getElementById("customerForm")
+.addEventListener("submit",async function(event){
+
+  event.preventDefault();
+
+  if(!currentUser){
+    showMessage("Please login first.","error");
+    return;
+  }
+
+  const name =
+    document.getElementById("name").value.trim();
+
+  const phone =
+    document.getElementById("phone").value.trim();
+
+  const ip =
+    document.getElementById("ip").value.trim();
+
+  if(!name || !phone || !ip){
+    showMessage("Name, Mobile Number এবং IP Address দিতে হবে.","error");
+    return;
+  }
+
+  const customerBill =
+    Number(document.getElementById("customerBill").value || 0);
+
+  const internetBill =
+    Number(document.getElementById("internetBill").value || 0);
+
+  const dueAmount =
+    Number(document.getElementById("dueAmount").value || 0);
+
+  if(customerBill < 0 || internetBill < 0 || dueAmount < 0){
+    showMessage("Bill এবং Due negative হতে পারবে না.","error");
+    return;
+  }
+
+  const email =
+    document.getElementById("email").value.trim();
+
+  const products = collectProducts();
+
+  setLoading(true);
+
+  let insertedCustomer = null;
+
+  try{
+
+    /* Check duplicate IP */
+    const {data:duplicate,error:duplicateError} =
+      await db.from("customers")
+      .select("id,name,ip")
+      .eq("ip",ip)
+      .is("deleted_at",null)
+      .limit(1);
+
+    if(duplicateError) throw duplicateError;
+
+    if(duplicate && duplicate.length){
+      const confirmDuplicate = confirm(
+        "এই IP Address আগে থেকেই আছে: " +
+        duplicate[0].name +
+        "\nতবুও কি Customer Add করতে চাও?"
+      );
+
+      if(!confirmDuplicate){
+        setLoading(false);
+        return;
+      }
+    }
+
+    /* Customer record */
+    const customerData = {
+      customer_code:generateCustomerCode(),
+      name:name,
+      phone:phone,
+      ip:ip,
+      reason:null,
+      area:document.getElementById("area").value.trim() || null,
+      address:document.getElementById("address").value.trim() || null,
+      location:document.getElementById("location").value.trim() || null,
+      email:email || null,
+
+      bill_amount:customerBill,
+      ip_bill_amount:internetBill,
+
+      billing_date:
+        document.getElementById("billingDate").value || null,
+
+      bill_trigger:
+        document.getElementById("billTrigger").checked,
+
+      ip_bill_trigger:
+        document.getElementById("ipBillTrigger").checked,
+
+      auto_mail:
+        document.getElementById("autoMail").checked,
+
+      collect_status:"due",
+      renew_status:"active",
+
+      onu:products
+        .filter(p=>p.product_type==="onu")
+        .map(p=>p.product_name || p.serial_number || "ONU")
+        .join(", ") || null,
+
+      fiber:null,
+
+      notes:document.getElementById("notes").value.trim() || null,
+
+      connection_date:
+        document.getElementById("connectionDate").value || null,
+
+      status:document.getElementById("status").value,
+
+      created_by:currentUser.id
+    };
+
+    const {data:customer,error:customerError} =
+      await db.from("customers")
+      .insert(customerData)
+      .select()
+      .single();
+
+    if(customerError) throw customerError;
+
+    insertedCustomer = customer;
+
+    /* Save multiple products */
+    if(products.length){
+
+      const productRows = products.map(p=>({
+        ...p,
+        customer_id:customer.id
+      }));
+
+      const {error:productError} =
+        await db.from("customer_products")
+        .insert(productRows);
+
+      if(productError) throw productError;
+    }
+
+    /* Save due entry */
+    if(dueAmount > 0){
+
+      const {error:dueError} =
+        await db.from("due_entries")
+        .insert({
+          customer_id:customer.id,
+          customer_name:name,
+          due_amount:dueAmount,
+          due_from:
+            document.getElementById("billingDate").value || null,
+          billing_date:
+            document.getElementById("billingDate").value || null,
+          bill_trigger:
+            document.getElementById("billTrigger").checked,
+          due_reason:
+            document.getElementById("dueReason").value.trim() || null,
+          status:"due",
+          created_by:currentUser.id
+        });
+
+      if(dueError) throw dueError;
+    }
+
+    /* Save customer history */
+    const {error:historyError} =
+      await db.from("customer_history")
+      .insert({
+        customer_id:customer.id,
+        customer_name:name,
+        action:"created",
+        description:"New customer created",
+        old_data:null,
+        new_data:{
+          customer_code:customer.customer_code,
+          name:name,
+          phone:phone,
+          ip:ip,
+          customer_bill:customerBill,
+          internet_bill:internetBill,
+          total_bill:customerBill+internetBill,
+          due_amount:dueAmount,
+          product_count:products.length
+        },
+        performed_by:currentUser.id
+      });
+
+    if(historyError) throw historyError;
+
+    showMessage(
+      "Customer successfully created! Customer Code: " +
+      customer.customer_code,
+      "success"
+    );
+
+    document.getElementById("customerForm").reset();
+    document.getElementById("products").innerHTML = "";
+    productCounter = 0;
+    addProduct();
+    calculateTotal();
+
+    document.getElementById("message").scrollIntoView({
+      behavior:"smooth",
+      block:"center"
+    });
+
+  }catch(error){
+
+    console.error("Add Customer Error:",error);
+
+    let message = error.message || "Unable to save customer.";
+
+    if(insertedCustomer){
+      message =
+        "Customer record তৈরি হয়েছে, কিন্তু পরের ধাপের কোনো তথ্য Save হয়নি। " +
+        "Customer ID: " + insertedCustomer.id +
+        ". Error: " + message;
+    }
+
+    showMessage(message,"error");
+
+  }finally{
+    setLoading(false);
+  }
+
+});
+
+/* =====================================================
+   INITIALIZE
+===================================================== */
+
+initialize();
+</script>
+
+</body>
+</html>
