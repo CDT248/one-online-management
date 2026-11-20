@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -80,6 +79,7 @@ padding:14px 16px;box-shadow:var(--shadow)
 .stat small{color:var(--muted);font-weight:650}
 .stat strong{display:block;font-size:21px;margin-top:2px}
 
+/* SEARCH AND FILTER BAR */
 .toolbar{
 display:flex;align-items:center;gap:9px;flex-wrap:wrap;
 padding:12px;background:var(--panel);border:1px solid var(--line);
@@ -96,8 +96,12 @@ padding:9px 10px;outline:none;font:inherit
 .toolbar .filter{width:145px}
 .count{color:var(--muted);font-size:11px}
 
-/* FILTER BAR HIDE / SHOW */
+/* COMPLETE FILTER BAR HIDE / SHOW */
 #customerToolbar{
+display:flex;
+align-items:center;
+gap:9px;
+flex-wrap:wrap;
 transition:opacity .2s ease,transform .2s ease;
 }
 
@@ -106,10 +110,14 @@ display:none!important;
 }
 
 #filterToggleBtn{
-min-width:112px;
+display:inline-flex;
+align-items:center;
+justify-content:center;
+min-width:115px;
 white-space:nowrap;
 }
 
+/* TABLE */
 .table-shell{
 background:var(--panel);border:1px solid var(--line);
 border-radius:12px;overflow:hidden;box-shadow:var(--shadow)
@@ -295,6 +303,7 @@ color:var(--text);border:1px solid var(--line)
 
 .pagebuttons button:disabled{opacity:.35;cursor:not-allowed}
 
+/* MODALS */
 .modal{
 position:fixed;inset:0;background:rgba(3,10,20,.76);
 display:none;align-items:center;justify-content:center;
@@ -512,7 +521,6 @@ background:color-mix(in srgb,var(--primary) 10%,var(--panel2))!important
 
 /* CARD VISIBILITY */
 .stat.card-hidden{display:none!important}
-
 .stats{grid-template-columns:repeat(auto-fit,minmax(180px,1fr))}
 
 /* CARD SETTINGS POPUP */
@@ -535,6 +543,7 @@ color:var(--muted);font-size:11px;
 margin-top:12px;line-height:1.6
 }
 
+/* RESPONSIVE */
 @media(max-width:1600px){
 .wrap{padding:10px 12px}
 .top{gap:8px;margin-bottom:10px;align-items:center}
@@ -563,9 +572,16 @@ tbody td:before{display:none!important}
 @media(max-width:700px){
 .wrap{padding:8px}
 .top{align-items:flex-start}
-.top .actions{width:100%}
-.top .actions button{flex:1}
-#filterToggleBtn{flex:1 1 100%}
+.top .actions{
+display:grid;
+grid-template-columns:repeat(2,minmax(0,1fr));
+width:100%;
+}
+.top .actions button{
+width:100%;
+min-width:0;
+}
+#filterToggleBtn{grid-column:auto}
 .stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
 .stat{padding:8px}
 .stat strong{font-size:16px}
@@ -606,9 +622,9 @@ table{min-width:1287px!important}
 
 <div class="actions">
 <button type="button" class="card-settings-btn" onclick="openCardSettings()">⚙ Cards</button>
-<button type="button" class="secondary" id="filterToggleBtn" onclick="toggleFilterBar()">⌕ Hide Filters</button>
-<button class="secondary" onclick="loadCustomers()">↻ Refresh</button>
-<button onclick="location.href='add-customer.html'">＋ Add Customer</button>
+<button type="button" class="secondary" id="filterToggleBtn" onclick="toggleFilterBar()" aria-controls="customerToolbar" aria-expanded="true">⌕ Hide Filters</button>
+<button type="button" class="secondary" onclick="loadCustomers()">↻ Refresh</button>
+<button type="button" onclick="location.href='add-customer.html'">＋ Add Customer</button>
 </div>
 </header>
 
@@ -621,7 +637,9 @@ table{min-width:1287px!important}
 <div class="stat" id="statCardOutstanding"><small>Total Outstanding</small><strong id="amountStat">৳—</strong></div>
 </section>
 
+<!-- COMPLETE SEARCH AND FILTER FORM -->
 <section class="toolbar" id="customerToolbar">
+
 <div class="search">
 <input id="searchInput" placeholder="Search name, phone, IP, area, email..." oninput="renderCustomers()">
 </div>
@@ -645,7 +663,10 @@ table{min-width:1287px!important}
 </select>
 
 <select class="filter" id="pageSize" onchange="changePageSize()">
-<option>25</option><option>50</option><option>100</option><option>200</option>
+<option>25</option>
+<option>50</option>
+<option>100</option>
+<option>200</option>
 </select>
 
 <div class="count" id="resultCount">Loading customers...</div>
@@ -679,19 +700,20 @@ table{min-width:1287px!important}
 <!-- DETAILS / HISTORY MODAL -->
 <div class="modal" id="detailsModal" onclick="backdropClose(event,'detailsModal')">
 <div class="dialog">
-<div class="dhead"><h2 id="detailsTitle">Customer Details</h2><button class="secondary" onclick="closeModal('detailsModal')">✕</button></div>
+<div class="dhead"><h2 id="detailsTitle">Customer Details</h2><button type="button" class="secondary" onclick="closeModal('detailsModal')">✕</button></div>
 <div class="dbody" id="detailsBody"></div>
-<div class="dfoot"><button class="secondary" onclick="closeModal('detailsModal')">Close</button></div>
+<div class="dfoot"><button type="button" class="secondary" onclick="closeModal('detailsModal')">Close</button></div>
 </div>
 </div>
 
 <!-- EDIT MODAL -->
 <div class="modal" id="editModal" onclick="backdropClose(event,'editModal')">
 <div class="dialog">
-<div class="dhead"><h2>Edit Customer</h2><button class="secondary" onclick="closeModal('editModal')">✕</button></div>
+<div class="dhead"><h2>Edit Customer</h2><button type="button" class="secondary" onclick="closeModal('editModal')">✕</button></div>
 <form id="editForm">
 <div class="dbody">
 <input type="hidden" id="e_id">
+
 <div class="section">CUSTOMER INFORMATION</div>
 <div class="formgrid">
 <div class="field"><label>Customer Name *</label><input id="e_name" required></div>
@@ -730,7 +752,7 @@ table{min-width:1287px!important}
 <!-- COLLECT PAYMENT MODAL -->
 <div class="modal" id="paymentModal" onclick="backdropClose(event,'paymentModal')">
 <div class="dialog small">
-<div class="dhead"><h2>Collect Payment</h2><button class="secondary" onclick="closeModal('paymentModal')">✕</button></div>
+<div class="dhead"><h2>Collect Payment</h2><button type="button" class="secondary" onclick="closeModal('paymentModal')">✕</button></div>
 <form id="paymentForm">
 <div class="dbody">
 <input type="hidden" id="p_id">
@@ -811,40 +833,45 @@ function applyFilterBarSettings(){
 
 function toggleFilterBar(){
   const toolbar = document.getElementById("customerToolbar");
-  const button = document.getElementById("filterToggleBtn");
-
-  if(!toolbar || !button) return;
+  if(!toolbar) return;
 
   const isHidden = !toolbar.classList.contains("filter-bar-hidden");
 
   toolbar.classList.toggle("filter-bar-hidden",isHidden);
 
-  button.textContent = isHidden ? "⌕ Show Filters" : "⌕ Hide Filters";
-  button.setAttribute("aria-expanded",String(!isHidden));
-
   try{
     localStorage.setItem(FILTER_BAR_KEY,isHidden ? "true" : "false");
   }catch(error){}
+
+  applyFilterBarSettings();
 }
 
 /* ===== THEME SYSTEM ===== */
 function applyTheme(){
   let theme = "light";
-  try{theme = localStorage.getItem("one_online_theme") || "light";}catch(e){}
-  document.body.dataset.theme = ["light","dark","funny"].includes(theme) ? theme : "light";
+  try{
+    theme = localStorage.getItem("one_online_theme") || "light";
+  }catch(e){}
+
+  document.body.dataset.theme =
+    ["light","dark","funny"].includes(theme) ? theme : "light";
 }
+
 applyTheme();
 
 window.addEventListener("storage",e=>{
   if(e.key==="one_online_theme")applyTheme();
 });
+
 window.addEventListener("focus",applyTheme);
+
 document.addEventListener("visibilitychange",()=>{
   if(!document.hidden)applyTheme();
 });
 
 /* ===== DASHBOARD CARD SHOW / HIDE SETTINGS ===== */
 const CARD_SETTINGS_KEY = "one_online_customer_card_settings";
+
 const CARD_SETTINGS = [
   {key:"total",element:"statCardTotal",input:"showCardTotal"},
   {key:"active",element:"statCardActive",input:"showCardActive"},
@@ -854,18 +881,23 @@ const CARD_SETTINGS = [
 
 function getCardSettings(){
   const defaults={total:true,active:true,due:true,outstanding:true};
+
   try{
     const saved=JSON.parse(localStorage.getItem(CARD_SETTINGS_KEY)||"{}");
     return {...defaults,...saved};
-  }catch(e){return defaults;}
+  }catch(e){
+    return defaults;
+  }
 }
 
 function applyCardSettings(){
   const settings=getCardSettings();
+
   CARD_SETTINGS.forEach(card=>{
     const visible=settings[card.key]!==false;
     const element=document.getElementById(card.element);
     const input=document.getElementById(card.input);
+
     if(element)element.classList.toggle("card-hidden",!visible);
     if(input)input.checked=visible;
   });
@@ -878,29 +910,50 @@ function openCardSettings(){
 
 function updateCardSettings(){
   const settings={};
+
   CARD_SETTINGS.forEach(card=>{
     const input=document.getElementById(card.input);
     settings[card.key]=input?input.checked:true;
   });
-  try{localStorage.setItem(CARD_SETTINGS_KEY,JSON.stringify(settings));}catch(e){}
+
+  try{
+    localStorage.setItem(CARD_SETTINGS_KEY,JSON.stringify(settings));
+  }catch(e){}
+
   applyCardSettings();
 }
 
 function resetCardSettings(){
-  const defaults={total:true,active:true,due:true,outstanding:true};
-  try{localStorage.setItem(CARD_SETTINGS_KEY,JSON.stringify(defaults));}catch(e){}
+  const defaults={
+    total:true,
+    active:true,
+    due:true,
+    outstanding:true
+  };
+
+  try{
+    localStorage.setItem(CARD_SETTINGS_KEY,JSON.stringify(defaults));
+  }catch(e){}
+
   applyCardSettings();
 }
+
 applyCardSettings();
 
 /* ===== API ===== */
 async function apiGet(action,params={}){
   const url=new URL(API_URL);
   url.searchParams.set("action",action);
-  Object.entries(params).forEach(([k,v])=>url.searchParams.set(k,v));
+
+  Object.entries(params).forEach(([k,v])=>{
+    url.searchParams.set(k,v);
+  });
+
   const res=await fetch(url.toString());
   const data=await res.json();
+
   if(!data.success)throw new Error(data.message||"API request failed");
+
   return data;
 }
 
@@ -910,13 +963,18 @@ async function apiPost(action,data){
     headers:{"Content-Type":"text/plain;charset=utf-8"},
     body:JSON.stringify({action,data})
   });
+
   const result=await res.json();
+
   if(!result.success)throw new Error(result.message||"API request failed");
+
   return result;
 }
 
 function money(n){
-  return "৳"+Number(n||0).toLocaleString("en-BD",{maximumFractionDigits:2});
+  return "৳"+Number(n||0).toLocaleString("en-BD",{
+    maximumFractionDigits:2
+  });
 }
 
 function boolValue(v){
@@ -925,7 +983,11 @@ function boolValue(v){
 
 function esc(v){
   return String(v??"").replace(/[&<>"']/g,c=>({
-    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+    "&":"&amp;",
+    "<":"&lt;",
+    ">":"&gt;",
+    '"':"&quot;",
+    "'":"&#39;"
   }[c]));
 }
 
@@ -933,44 +995,62 @@ function showNotice(message,type="ok"){
   const el=document.getElementById("notice");
   el.textContent=message;
   el.className="notice "+type;
+
   window.scrollTo({top:0,behavior:"smooth"});
-  setTimeout(()=>{el.className="notice";},5000);
+
+  setTimeout(()=>{
+    el.className="notice";
+  },5000);
 }
 
 /* ===== LOAD CUSTOMERS ===== */
 async function loadCustomers(){
   const grid=document.getElementById("customerGrid");
+
   grid.innerHTML='<tr><td colspan="10" class="loading">Loading customer records...</td></tr>';
 
   try{
     const data=await apiGet("getCustomers");
+
     customers=data.customers||[];
     currentPage=1;
+
     updateStats();
     populateAreas();
     renderCustomers();
+
   }catch(err){
     grid.innerHTML='<tr><td colspan="10" class="empty">Could not load customers: '+esc(err.message)+' <button type="button" onclick="loadCustomers()">Try Again</button></td></tr>';
+
     showNotice(err.message,"err");
   }
 }
 
 function dateOnly(value){
   if(!value)return null;
+
   const m=String(value).match(/^(\d{4})-(\d{2})-(\d{2})/);
+
   if(!m)return null;
+
   return new Date(Number(m[1]),Number(m[2])-1,Number(m[3]));
 }
 
 function billingState(c){
   if(String(c.status||"active").toLowerCase()!=="active")return "inactive";
+
   const billDate=dateOnly(c.billingDate);
+
   if(!billDate)return "active";
+
   const today=new Date();
   today.setHours(0,0,0,0);
+
   const diff=Math.round((billDate-today)/86400000);
+
   if(diff<=0)return "due";
   if(diff<=3)return "upcoming";
+
   return "active";
 }
 
@@ -978,23 +1058,34 @@ function billingState(c){
 function updateStats(){
   const active=customers.filter(c=>billingState(c)==="active");
   const due=customers.filter(c=>billingState(c)==="due");
-  const totalDue=customers.reduce((s,c)=>s+Number(c.dueAmount||0),0);
+
+  const totalDue=customers.reduce((s,c)=>{
+    return s+Number(c.dueAmount||0);
+  },0);
+
   document.getElementById("totalStat").textContent=customers.length;
   document.getElementById("activeStat").textContent=active.length;
   document.getElementById("dueStat").textContent=due.length;
   document.getElementById("amountStat").textContent=money(totalDue);
+
   applyCardSettings();
 }
 
 function populateAreas(){
   const select=document.getElementById("areaFilter");
   const old=select.value;
-  const areas=[...new Set(customers.map(c=>c.area).filter(Boolean))].sort();
+
+  const areas=[...new Set(
+    customers.map(c=>c.area).filter(Boolean)
+  )].sort();
+
   select.innerHTML='<option value="all">All Areas</option>'+
     areas.map(a=>'<option value="'+esc(a)+'">'+esc(a)+'</option>').join("");
+
   select.value=areas.includes(old)?old:"all";
 }
 
+/* ===== PAGINATION ===== */
 let currentPage=1;
 let pageSize=25;
 let filteredCustomers=[];
@@ -1018,26 +1109,42 @@ function renderCustomers(){
   const area=document.getElementById("areaFilter").value;
 
   filteredCustomers=customers.filter(c=>{
-    const hay=[c.id,c.customerId,c.customerCode,c.name,c.phone,c.altPhone,c.ip,c.area,c.email,c.address].join(" ").toLowerCase();
+    const hay=[
+      c.id,c.customerId,c.customerCode,c.name,c.phone,
+      c.altPhone,c.ip,c.area,c.email,c.address
+    ].join(" ").toLowerCase();
+
     const state=billingState(c);
+
     return (!q||hay.includes(q)) &&
       (status==="all"||state===status) &&
-      (due==="all"||(due==="due"&&Number(c.dueAmount||0)>0)||(due==="clear"&&Number(c.dueAmount||0)<=0)) &&
+      (
+        due==="all"||
+        (due==="due"&&Number(c.dueAmount||0)>0)||
+        (due==="clear"&&Number(c.dueAmount||0)<=0)
+      ) &&
       (area==="all"||c.area===area);
   });
 
   const total=filteredCustomers.length;
   const pages=Math.max(1,Math.ceil(total/pageSize));
+
   currentPage=Math.min(currentPage,pages);
+
   const from=(currentPage-1)*pageSize;
   const list=filteredCustomers.slice(from,from+pageSize);
 
-  document.getElementById("resultCount").textContent="Showing "+(total?from+1:0)+"–"+Math.min(from+pageSize,total)+" of "+total;
-  document.getElementById("pageInfo").textContent="Page "+currentPage+" of "+pages+" · "+total.toLocaleString()+" customers";
+  document.getElementById("resultCount").textContent=
+    "Showing "+(total?from+1:0)+"–"+Math.min(from+pageSize,total)+" of "+total;
+
+  document.getElementById("pageInfo").textContent=
+    "Page "+currentPage+" of "+pages+" · "+total.toLocaleString()+" customers";
+
   document.getElementById("prevPage").disabled=currentPage<=1;
   document.getElementById("nextPage").disabled=currentPage>=pages;
 
   const body=document.getElementById("customerGrid");
+
   if(!list.length){
     body.innerHTML='<tr><td colspan="10" class="empty">No customer found for this search or filter.</td></tr>';
     return;
@@ -1045,10 +1152,21 @@ function renderCustomers(){
 
   body.innerHTML=list.map((c,i)=>{
     const state=billingState(c);
-    const badge={active:"Active",upcoming:"Upcoming",due:"Due",inactive:"Inactive"}[state];
+
+    const badge={
+      active:"Active",
+      upcoming:"Upcoming",
+      due:"Due",
+      inactive:"Inactive"
+    }[state];
+
     const id=esc(c.id);
     const profit=Number(c.customerBill||0)-Number(c.internetBill||0);
-    const productText=(c.products||[]).map(p=>p.productName||p.model||p.productType).filter(Boolean).join(", ");
+
+    const productText=(c.products||[])
+      .map(p=>p.productName||p.model||p.productType)
+      .filter(Boolean)
+      .join(", ");
 
     return `<tr>
       <td class="sl">${String(from+i+1).padStart(2,"0")}</td>
@@ -1073,36 +1191,61 @@ function renderCustomers(){
     </tr>`;
   }).join("");
 
-  const mobileLabels=["SL","STATUS","IP ADDRESS","NAME & CONTACT","PACKAGE & BILL","EXPIRY & DUE","INTERNET BILL","AREA & LOCATION","EMAIL / PRODUCTS","ACTIONS"];
+  const mobileLabels=[
+    "SL","STATUS","IP ADDRESS","NAME & CONTACT",
+    "PACKAGE & BILL","EXPIRY & DUE","INTERNET BILL",
+    "AREA & LOCATION","EMAIL / PRODUCTS","ACTIONS"
+  ];
+
   body.querySelectorAll("tr").forEach(row=>{
     row.querySelectorAll("td").forEach((cell,index)=>{
-      if(mobileLabels[index])cell.setAttribute("data-label",mobileLabels[index]);
+      if(mobileLabels[index]){
+        cell.setAttribute("data-label",mobileLabels[index]);
+      }
     });
   });
 }
 
 /* ===== MODAL FUNCTIONS ===== */
-function openModal(id){document.getElementById(id).classList.add("show");}
-function closeModal(id){document.getElementById(id).classList.remove("show");}
-function backdropClose(e,id){if(e.target.id===id)closeModal(id);}
-function byId(id){return customers.find(c=>String(c.id)===String(id));}
+function openModal(id){
+  document.getElementById(id).classList.add("show");
+}
+
+function closeModal(id){
+  document.getElementById(id).classList.remove("show");
+}
+
+function backdropClose(e,id){
+  if(e.target.id===id)closeModal(id);
+}
+
+function byId(id){
+  return customers.find(c=>String(c.id)===String(id));
+}
 
 /* ===== CUSTOM CONFIRMATION SYSTEM ===== */
 let confirmResolver=null;
 
 function customConfirm(message,title="Please Confirm",buttonText="Confirm"){
   return new Promise(resolve=>{
-    if(confirmResolver){confirmResolver(false);confirmResolver=null;}
+    if(confirmResolver){
+      confirmResolver(false);
+      confirmResolver=null;
+    }
+
     confirmResolver=resolve;
+
     document.getElementById("confirmTitle").textContent=title;
     document.getElementById("confirmMessage").textContent=message;
     document.getElementById("confirmYes").textContent=buttonText;
+
     openModal("confirmModal");
   });
 }
 
 function resolveConfirm(result){
   closeModal("confirmModal");
+
   if(confirmResolver){
     const resolve=confirmResolver;
     confirmResolver=null;
@@ -1115,18 +1258,34 @@ async function viewDetails(id){
   try{
     const d=await apiGet("getCustomerDetails",{id});
     const c=d.customer;
+
     currentCustomer=c;
-    document.getElementById("detailsTitle").textContent=c.name+" · Customer Details";
+
+    document.getElementById("detailsTitle").textContent=
+      c.name+" · Customer Details";
 
     const fields=[
-      ["Mobile",c.phone],["Alternative Mobile",c.altPhone],["IP Address",c.ip],
-      ["Area / Zone",c.area],["Email",c.email],["Address",c.address],["Map Link",c.mapLink],
-      ["Customer Bill",money(c.customerBill)],["Internet Bill",money(c.internetBill)],
-      ["Due Amount",money(c.dueAmount)],["Due Reason",c.dueReason],["Billing Date",c.billingDate],
-      ["Connection Date",c.connectionDate],["Internet Bill Due Date",c.internetBillDueDate],
-      ["Internet Bill Last Renewed",c.internetBillLastRenewedAt],["Customer Status",c.status],
-      ["Bill Trigger",String(c.billTrigger)],["IP Bill Trigger",String(c.ipBillTrigger)],
-      ["Auto Mail",String(c.autoMail)],["Created At",c.createdAt],["Notes",c.notes]
+      ["Mobile",c.phone],
+      ["Alternative Mobile",c.altPhone],
+      ["IP Address",c.ip],
+      ["Area / Zone",c.area],
+      ["Email",c.email],
+      ["Address",c.address],
+      ["Map Link",c.mapLink],
+      ["Customer Bill",money(c.customerBill)],
+      ["Internet Bill",money(c.internetBill)],
+      ["Due Amount",money(c.dueAmount)],
+      ["Due Reason",c.dueReason],
+      ["Billing Date",c.billingDate],
+      ["Connection Date",c.connectionDate],
+      ["Internet Bill Due Date",c.internetBillDueDate],
+      ["Internet Bill Last Renewed",c.internetBillLastRenewedAt],
+      ["Customer Status",c.status],
+      ["Bill Trigger",String(c.billTrigger)],
+      ["IP Bill Trigger",String(c.ipBillTrigger)],
+      ["Auto Mail",String(c.autoMail)],
+      ["Created At",c.createdAt],
+      ["Notes",c.notes]
     ];
 
     let out='<div class="section">CUSTOMER INFORMATION</div><div class="detailgrid">'+
@@ -1134,93 +1293,158 @@ async function viewDetails(id){
       '</div>';
 
     out+='<div class="section">PRODUCT INFORMATION</div>';
+
     out+=(d.products||[]).length
       ?(d.products||[]).map(p=>`<div class="productrow"><b>${esc(p.productName||p.productType||"Product")}</b><div class="sub">Type: ${esc(p.productType||"—")} · Model: ${esc(p.model||"—")} · Serial: ${esc(p.serial||"—")} · MAC: ${esc(p.mac||"—")} · Price: ${money(p.price)}</div></div>`).join("")
       :'<div class="sub">No product information recorded.</div>';
 
     out+='<div class="section">PAYMENT HISTORY</div>';
+
     out+=(d.payments||[]).length
       ?(d.payments||[]).map(p=>`<div class="productrow"><b>${money(p.amount)} · ${esc(p.method||"Cash")}</b><div class="sub">Date: ${esc(p.paymentDate||p.createdAt||"—")} · Remaining Due: ${money(p.remainingDue)} · ${esc(p.note||"")}</div></div>`).join("")
       :'<div class="sub">No payment records.</div>';
 
     out+='<div class="section">COLLECTION HISTORY</div>';
+
     out+=(d.collectionHistory||[]).length
       ?(d.collectionHistory||[]).map(x=>`<div class="productrow"><b>${money(x.collectAmount)} · ${esc(x.paymentMethod||"Cash")}</b><div class="sub">IP: ${esc(x.ipAddress||"—")} · Collected: ${esc(x.collectDate||"—")} · Billing: ${esc(x.previousBillingDate||"—")} → ${esc(x.nextBillingDate||"—")} · Remaining Due: ${money(x.remainingDue)}</div></div>`).join("")
       :'<div class="sub">No collection history.</div>';
 
     out+='<div class="section">INTERNET BILL RENEW HISTORY</div>';
+
     out+=(d.internetBillHistory||[]).length
       ?(d.internetBillHistory||[]).map(x=>`<div class="productrow"><b>${money(x.internetBillAmount)} · Internet Bill Renewed</b><div class="sub">IP: ${esc(x.ipAddress||"—")} · Renewed: ${esc(x.renewalDate||"—")} · Office Due Date: ${esc(x.previousInternetDueDate||"—")} → ${esc(x.nextInternetDueDate||"—")} · By: ${esc(x.renewedBy||"System")}</div></div>`).join("")
       :'<div class="sub">No Internet Bill renewal history.</div>';
 
     out+='<div class="section">CUSTOMER ACTIVITY HISTORY</div><div class="timeline">';
+
     out+=(d.history||[]).length
       ?(d.history||[]).map(h=>`<div class="event"><b>${esc(h.action)}</b><p>${esc(h.description)}</p><small>${esc(h.createdAt)} · ${esc(h.performedBy||"System")}</small></div>`).join("")
       :'<div class="sub">No history records.</div>';
+
     out+='</div>';
 
     document.getElementById("detailsBody").innerHTML=out;
+
     openModal("detailsModal");
-  }catch(err){showNotice(err.message,"err");}
+
+  }catch(err){
+    showNotice(err.message,"err");
+  }
 }
 
 /* ===== EDIT CUSTOMER ===== */
 function openEdit(id){
   const c=byId(id);
   if(!c)return;
-  const set=(key,val)=>{document.getElementById("e_"+key).value=val??"";};
-  ["id","name","phone","altPhone","ip","area","email","address","mapLink","customerBill","internetBill","dueAmount","billingDate","internetBillDueDate","dueReason","status","notes"].forEach(k=>set(k,c[k]));
+
+  const set=(key,val)=>{
+    document.getElementById("e_"+key).value=val??"";
+  };
+
+  [
+    "id","name","phone","altPhone","ip","area","email",
+    "address","mapLink","customerBill","internetBill",
+    "dueAmount","billingDate","internetBillDueDate",
+    "dueReason","status","notes"
+  ].forEach(k=>set(k,c[k]));
+
   set("billTrigger",String(boolValue(c.billTrigger)));
   set("ipBillTrigger",String(boolValue(c.ipBillTrigger)));
   set("autoMail",String(boolValue(c.autoMail)));
+
   openModal("editModal");
 }
 
 document.getElementById("editForm").addEventListener("submit",async e=>{
   e.preventDefault();
+
   const btn=document.getElementById("saveEditBtn");
-  btn.disabled=true;btn.textContent="Saving...";
+
+  btn.disabled=true;
+  btn.textContent="Saving...";
+
   const val=id=>document.getElementById("e_"+id).value;
 
   const data={
-    id:val("id"),name:val("name"),phone:val("phone"),altPhone:val("altPhone"),
-    ip:val("ip"),area:val("area"),email:val("email"),address:val("address"),
-    mapLink:val("mapLink"),customerBill:val("customerBill"),internetBill:val("internetBill"),
-    dueAmount:val("dueAmount"),billingDate:val("billingDate"),
-    dueReason:val("dueReason"),status:val("status"),billTrigger:val("billTrigger"),
-    ipBillTrigger:val("ipBillTrigger"),autoMail:val("autoMail"),notes:val("notes"),
+    id:val("id"),
+    name:val("name"),
+    phone:val("phone"),
+    altPhone:val("altPhone"),
+    ip:val("ip"),
+    area:val("area"),
+    email:val("email"),
+    address:val("address"),
+    mapLink:val("mapLink"),
+    customerBill:val("customerBill"),
+    internetBill:val("internetBill"),
+    dueAmount:val("dueAmount"),
+    billingDate:val("billingDate"),
+    dueReason:val("dueReason"),
+    status:val("status"),
+    billTrigger:val("billTrigger"),
+    ipBillTrigger:val("ipBillTrigger"),
+    autoMail:val("autoMail"),
+    notes:val("notes"),
     performedBy:"ONE ONLINE"
   };
 
-  if(val("internetBillDueDate"))data.internetBillDueDate=val("internetBillDueDate");
+  if(val("internetBillDueDate")){
+    data.internetBillDueDate=val("internetBillDueDate");
+  }
 
   try{
     const r=await apiPost("updateCustomer",data);
-    closeModal("editModal");showNotice(r.message);await loadCustomers();
-  }catch(err){showNotice(err.message,"err");}
-  finally{btn.disabled=false;btn.textContent="Save Changes";}
+
+    closeModal("editModal");
+    showNotice(r.message);
+
+    await loadCustomers();
+
+  }catch(err){
+    showNotice(err.message,"err");
+
+  }finally{
+    btn.disabled=false;
+    btn.textContent="Save Changes";
+  }
 });
 
 /* ===== PAYMENT ===== */
 function openPayment(id,mode="bill"){
   const c=byId(id);
   if(!c)return;
+
   if(mode==="due"&&Number(c.dueAmount)<=0){
-    showNotice("This customer has no outstanding due amount.","err");return;
+    showNotice("This customer has no outstanding due amount.","err");
+    return;
   }
+
   document.getElementById("p_id").value=id;
-  document.querySelector("#paymentModal .dhead h2").textContent=mode==="due"?"Due Payment":"Collect Customer Bill";
-  document.getElementById("paymentCustomer").textContent=c.name+" · Customer Bill: "+money(c.customerBill)+" · Current Due: "+money(c.dueAmount);
-  document.getElementById("p_amount").value=mode==="due"?Number(c.dueAmount):Number(c.customerBill);
+
+  document.querySelector("#paymentModal .dhead h2").textContent=
+    mode==="due"?"Due Payment":"Collect Customer Bill";
+
+  document.getElementById("paymentCustomer").textContent=
+    c.name+" · Customer Bill: "+money(c.customerBill)+" · Current Due: "+money(c.dueAmount);
+
+  document.getElementById("p_amount").value=
+    mode==="due"?Number(c.dueAmount):Number(c.customerBill);
+
   document.getElementById("p_amount").dataset.mode=mode;
   document.getElementById("p_note").value="";
+
   openModal("paymentModal");
 }
 
 document.getElementById("paymentForm").addEventListener("submit",async e=>{
   e.preventDefault();
+
   const btn=document.getElementById("collectBtn");
-  btn.disabled=true;btn.textContent="Processing...";
+
+  btn.disabled=true;
+  btn.textContent="Processing...";
+
   const data={
     id:document.getElementById("p_id").value,
     amount:document.getElementById("p_amount").value,
@@ -1231,53 +1455,93 @@ document.getElementById("paymentForm").addEventListener("submit",async e=>{
 
   try{
     const r=await apiPost("collectPayment",data);
+
     closeModal("paymentModal");
-    showNotice(r.message+" · Remaining due: "+money(r.remainingDue)+" · New billing date: "+r.billingDate);
+
+    showNotice(
+      r.message+
+      " · Remaining due: "+money(r.remainingDue)+
+      " · New billing date: "+r.billingDate
+    );
+
     await loadCustomers();
-  }catch(err){showNotice(err.message,"err");}
-  finally{btn.disabled=false;btn.textContent="Confirm Collect";}
+
+  }catch(err){
+    showNotice(err.message,"err");
+
+  }finally{
+    btn.disabled=false;
+    btn.textContent="Confirm Collect";
+  }
 });
 
 /* ===== INTERNET BILL RENEW ===== */
 async function renewInternetBill(id){
   const c=byId(id);
   if(!c)return;
+
   const current=c.internetBillDueDate||c.billingDate||"Not set";
+
   const confirmed=await customConfirm(
     `Renew Internet Bill for ${c.name}?\n\nOffice Internet Bill: ${money(c.internetBill)}\nCurrent Internet Due Date: ${current}\n\nOnly the Internet Bill cycle will move forward by one month.\nCustomer Billing Date, Customer Due and Payments will NOT change.`,
-    "Internet Bill Renewal","Yes, Renew"
+    "Internet Bill Renewal",
+    "Yes, Renew"
   );
+
   if(!confirmed)return;
 
   try{
     const r=await apiPost("renewInternetBill",{
-      id,renewedBy:"ONE ONLINE",note:"Internet Bill cycle renewed from Customer Card"
+      id,
+      renewedBy:"ONE ONLINE",
+      note:"Internet Bill cycle renewed from Customer Card"
     });
-    showNotice(r.message+" · Office Internet Bill: "+money(r.internetBillAmount)+" · Next Internet Due Date: "+r.nextInternetDueDate);
+
+    showNotice(
+      r.message+
+      " · Office Internet Bill: "+money(r.internetBillAmount)+
+      " · Next Internet Due Date: "+r.nextInternetDueDate
+    );
+
     await loadCustomers();
-  }catch(err){showNotice(err.message,"err");}
+
+  }catch(err){
+    showNotice(err.message,"err");
+  }
 }
 
 /* ===== DELETE CUSTOMER ===== */
 async function removeCustomer(id){
   const c=byId(id);
   if(!c)return;
+
   const confirmed=await customConfirm(
     `Delete ${c.name}?\n\nThis will move the customer out of the active list.\nHistory and payment records will remain.`,
-    "Delete Customer","Yes, Delete"
+    "Delete Customer",
+    "Yes, Delete"
   );
+
   if(!confirmed)return;
 
   try{
-    const r=await apiPost("deleteCustomer",{id,performedBy:"ONE ONLINE"});
+    const r=await apiPost("deleteCustomer",{
+      id,
+      performedBy:"ONE ONLINE"
+    });
+
     showNotice(r.message);
+
     await loadCustomers();
-  }catch(err){showNotice(err.message,"err");}
+
+  }catch(err){
+    showNotice(err.message,"err");
+  }
 }
 
 /* ===== START ===== */
 applyFilterBarSettings();
 loadCustomers();
+
 </script>
 </body>
 </html>
