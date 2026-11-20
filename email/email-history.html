@@ -1,10 +1,11 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Under Construction | Coming Soon</title>
+<meta name="theme-color" content="#080b18">
+
+<title>One Online | Smart E-Billing System</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -20,6 +21,19 @@
 :root {
     --primary: #8b5cf6;
     --secondary: #06b6d4;
+}
+
+/* Hide Scrollbar */
+html {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
 }
 
 body {
@@ -54,6 +68,7 @@ body {
     opacity: .3;
     z-index: -1;
     animation: float 8s infinite alternate;
+    pointer-events: none;
 }
 
 .glow.one {
@@ -73,7 +88,7 @@ body {
     to { transform: translate(70px,-50px); }
 }
 
-/* Main */
+/* Main Container */
 .container {
     width: 100%;
     max-width: 1050px;
@@ -81,13 +96,13 @@ body {
     text-align: center;
 }
 
-/* Logo section */
+/* Brand Logo */
 .logo-area {
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 17px;
-    margin-bottom: 35px;
+    margin-bottom: 30px;
 }
 
 .logo-box {
@@ -109,7 +124,7 @@ body {
 }
 
 .brand-name {
-    font-size: 25px;
+    font-size: 27px;
     font-weight: 900;
     letter-spacing: 2px;
 }
@@ -118,7 +133,16 @@ body {
     color: #a78bfa;
 }
 
-/* Badge */
+/* Brand Subtitle */
+.brand-subtitle {
+    color: #94a3b8;
+    font-size: 10px;
+    letter-spacing: 3px;
+    font-weight: 700;
+    margin-top: 6px;
+}
+
+/* Status */
 .status {
     display: inline-flex;
     align-items: center;
@@ -147,12 +171,12 @@ body {
     50% { opacity: .2; }
 }
 
-/* Heading */
+/* Main Heading */
 h1 {
-    font-size: clamp(37px, 7vw, 76px);
-    line-height: 1.12;
+    font-size: clamp(35px, 6.5vw, 70px);
+    line-height: 1.13;
     font-weight: 900;
-    letter-spacing: -3px;
+    letter-spacing: -2.5px;
     margin-bottom: 20px;
 }
 
@@ -168,19 +192,20 @@ h1 .gradient {
     to { background-position: 200%; }
 }
 
+/* Description */
 .description {
-    max-width: 650px;
+    max-width: 690px;
     margin: 0 auto;
-    font-size: 15px;
+    font-size: 14px;
     color: #a5b4cc;
     line-height: 1.9;
 }
 
-/* Construction animation */
+/* Construction Animation */
 .construction {
-    margin: 40px auto;
+    margin: 35px auto;
     width: 180px;
-    height: 130px;
+    height: 120px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -188,7 +213,7 @@ h1 .gradient {
 }
 
 .construction i {
-    font-size: 90px;
+    font-size: 85px;
     color: #c4b5fd;
     filter: drop-shadow(0 0 25px #8b5cf6);
     animation: tool 2s ease-in-out infinite;
@@ -202,7 +227,7 @@ h1 .gradient {
 /* Progress */
 .progress-section {
     max-width: 440px;
-    margin: 35px auto;
+    margin: 30px auto;
 }
 
 .progress-info {
@@ -227,16 +252,47 @@ h1 .gradient {
     border-radius: 50px;
     background: linear-gradient(90deg,#8b5cf6,#22d3ee);
     box-shadow: 0 0 15px #22d3ee;
-    animation: progress 4s ease forwards;
 }
 
-@keyframes progress {
-    to { width: 72%; }
+/* Features */
+.features {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin: 28px auto;
+    max-width: 800px;
 }
 
-/* Logo collection */
+.feature {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 12px 16px;
+    border: 1px solid #ffffff15;
+    background: #ffffff08;
+    border-radius: 12px;
+    color: #cbd5e1;
+    font-size: 11px;
+    font-weight: 600;
+    transition: .3s;
+}
+
+.feature i {
+    color: #a78bfa;
+    font-size: 15px;
+}
+
+.feature:hover {
+    background: #8b5cf622;
+    border-color: #8b5cf6;
+    transform: translateY(-4px);
+}
+
+/* Logo Collection */
 .logo-title {
-    margin-top: 45px;
+    margin-top: 35px;
     margin-bottom: 20px;
     color: #64748b;
     font-size: 10px;
@@ -273,9 +329,17 @@ h1 .gradient {
     box-shadow: 0 5px 25px #8b5cf633;
 }
 
+/* Clock */
+.clock {
+    color: #94a3b8;
+    margin-top: 22px;
+    font-size: 12px;
+    letter-spacing: 1px;
+}
+
 /* Footer */
 footer {
-    margin-top: 45px;
+    margin-top: 30px;
     color: #64748b;
     font-size: 11px;
     line-height: 2;
@@ -285,39 +349,121 @@ footer strong {
     color: #c4b5fd;
 }
 
-/* Clock */
-.clock {
-    color: #94a3b8;
-    margin-top: 20px;
-    font-size: 12px;
-    letter-spacing: 1px;
-}
-
+/* Mobile Responsive */
 @media(max-width:600px) {
     .container {
-        padding: 35px 18px;
+        padding: 30px 17px;
     }
 
-    h1 {
-        letter-spacing: -1.5px;
-    }
-
-    .description {
-        font-size: 13px;
+    .logo-area {
+        gap: 12px;
+        margin-bottom: 25px;
     }
 
     .logo-box {
         width: 55px;
         height: 55px;
         font-size: 24px;
+        border-radius: 16px;
     }
 
     .brand-name {
-        font-size: 20px;
+        font-size: 23px;
+    }
+
+    .brand-subtitle {
+        font-size: 8px;
+        letter-spacing: 2px;
+    }
+
+    .status {
+        font-size: 9px;
+        padding: 9px 14px;
+        letter-spacing: 1px;
+        margin-bottom: 20px;
+    }
+
+    h1 {
+        font-size: clamp(30px, 8vw, 46px);
+        letter-spacing: -1.5px;
+    }
+
+    .description {
+        font-size: 12px;
+        line-height: 1.8;
     }
 
     .construction {
+        width: 130px;
+        height: 90px;
+        margin: 23px auto;
+    }
+
+    .construction i {
+        font-size: 65px;
+    }
+
+    .progress-section {
         margin: 25px auto;
+    }
+
+    .features {
+        gap: 9px;
+        margin: 20px auto;
+    }
+
+    .feature {
+        padding: 10px 12px;
+        font-size: 10px;
+    }
+
+    .logo-title {
+        font-size: 8px;
+        letter-spacing: 2px;
+        margin-top: 25px;
+    }
+
+    .logo-list {
+        gap: 9px;
+    }
+
+    .logo-item {
+        width: 40px;
+        height: 40px;
+        font-size: 16px;
+    }
+
+    .clock {
+        font-size: 10px;
+    }
+
+    footer {
+        font-size: 10px;
+    }
+}
+
+/* Small Phones */
+@media(max-width:360px) {
+    .container {
+        padding: 22px 12px;
+    }
+
+    h1 {
+        font-size: 28px;
+    }
+
+    .description {
+        font-size: 11px;
+    }
+
+    .feature {
+        font-size: 9px;
+        padding: 9px;
+    }
+
+    .logo-item {
+        width: 35px;
+        height: 35px;
     }
 }
 </style>
@@ -333,32 +479,42 @@ footer strong {
 
     <!-- BRAND LOGO -->
     <div class="logo-area">
+
         <div class="logo-box">
             <i class="fa-solid fa-cube"></i>
         </div>
 
-        <div class="brand-name">
-            YOUR<span>BRAND</span>
+        <div>
+            <div class="brand-name">
+                ONE <span>ONLINE</span>
+            </div>
+
+            <div class="brand-subtitle">
+                SMART BUSINESS SOLUTIONS
+            </div>
         </div>
+
     </div>
 
     <!-- STATUS -->
     <div class="status">
         <span class="dot"></span>
-        WEBSITE UNDER DEVELOPMENT
+        SYSTEM UNDER DEVELOPMENT
     </div>
 
     <!-- MAIN TITLE -->
     <h1>
-        SORRY USER!<br>
-        <span class="gradient">THIS SITE IS</span><br>
-        UNDER CONSTRUCTION
+        SMART BILLING<br>
+        <span class="gradient">SYSTEM IS</span><br>
+        COMING SOON
     </h1>
 
+    <!-- DESCRIPTION -->
     <p class="description">
-        We are currently working hard to build something amazing for you.
-        Our website is getting a brand-new look with exciting features
-        and a better experience. Thank you for your patience!
+        We are building a smarter and more efficient billing experience
+        for your business. Manage invoices, track payments, organize
+        customers and simplify your daily business operations — all
+        in one powerful platform. Something amazing is on its way!
     </p>
 
     <!-- CONSTRUCTION ICON -->
@@ -368,6 +524,7 @@ footer strong {
 
     <!-- PROGRESS BAR -->
     <div class="progress-section">
+
         <div class="progress-info">
             <span>DEVELOPMENT PROGRESS</span>
             <span id="percentage">0%</span>
@@ -376,23 +533,87 @@ footer strong {
         <div class="progress-bar">
             <div class="progress-fill" id="progress"></div>
         </div>
+
     </div>
 
-    <!-- MULTIPLE LOGOS -->
+    <!-- BILLING FEATURES -->
+    <div class="features">
+
+        <div class="feature">
+            <i class="fa-solid fa-file-invoice"></i>
+            Smart Invoicing
+        </div>
+
+        <div class="feature">
+            <i class="fa-solid fa-credit-card"></i>
+            Payment Tracking
+        </div>
+
+        <div class="feature">
+            <i class="fa-solid fa-users"></i>
+            Customer Management
+        </div>
+
+        <div class="feature">
+            <i class="fa-solid fa-chart-line"></i>
+            Business Reports
+        </div>
+
+        <div class="feature">
+            <i class="fa-solid fa-shield-halved"></i>
+            Secure Management
+        </div>
+
+        <div class="feature">
+            <i class="fa-solid fa-bolt"></i>
+            Fast & Easy Billing
+        </div>
+
+    </div>
+
+    <!-- TECHNOLOGY LOGOS -->
     <div class="logo-title">
         POWERED BY CREATIVITY & TECHNOLOGY
     </div>
 
     <div class="logo-list">
-        <div class="logo-item"><i class="fa-brands fa-html5"></i></div>
-        <div class="logo-item"><i class="fa-brands fa-css3-alt"></i></div>
-        <div class="logo-item"><i class="fa-brands fa-js"></i></div>
-        <div class="logo-item"><i class="fa-brands fa-react"></i></div>
-        <div class="logo-item"><i class="fa-brands fa-node-js"></i></div>
-        <div class="logo-item"><i class="fa-brands fa-github"></i></div>
-        <div class="logo-item"><i class="fa-brands fa-google"></i></div>
-        <div class="logo-item"><i class="fa-solid fa-cloud"></i></div>
-        <div class="logo-item"><i class="fa-solid fa-code"></i></div>
+
+        <div class="logo-item">
+            <i class="fa-brands fa-html5"></i>
+        </div>
+
+        <div class="logo-item">
+            <i class="fa-brands fa-css3-alt"></i>
+        </div>
+
+        <div class="logo-item">
+            <i class="fa-brands fa-js"></i>
+        </div>
+
+        <div class="logo-item">
+            <i class="fa-brands fa-react"></i>
+        </div>
+
+        <div class="logo-item">
+            <i class="fa-brands fa-node-js"></i>
+        </div>
+
+        <div class="logo-item">
+            <i class="fa-brands fa-github"></i>
+        </div>
+
+        <div class="logo-item">
+            <i class="fa-brands fa-google"></i>
+        </div>
+
+        <div class="logo-item">
+            <i class="fa-solid fa-cloud"></i>
+        </div>
+
+        <div class="logo-item">
+            <i class="fa-solid fa-code"></i>
+        </div>
+
     </div>
 
     <!-- LIVE CLOCK -->
@@ -400,36 +621,55 @@ footer strong {
 
     <!-- FOOTER -->
     <footer>
-        © <span id="year"></span> <strong>One Online </strong>. All Rights Reserved.<br>
-        Made with Shemanto Islam <i class="fa-solid fa-heart" style="color:#f472b6"></i>
-        for something extraordinary.
+        © <span id="year"></span>
+        <strong>One Online</strong>. All Rights Reserved.<br>
+
+        Developed with care by
+        <strong>Shemanto Islam</strong>
+
+        <i class="fa-solid fa-heart" style="color:#f472b6"></i>
+
+        <br>
+        Smart Solutions. Smarter Business.
     </footer>
 
 </main>
 
 <script>
-// Live progress animation
+
+// Development Progress Animation
 let progress = 0;
 
 const progressElement = document.getElementById("progress");
 const percentageElement = document.getElementById("percentage");
 
 const progressInterval = setInterval(() => {
+
     if (progress < 72) {
+
         progress++;
+
         progressElement.style.width = progress + "%";
+
         percentageElement.textContent = progress + "%";
+
     } else {
+
         clearInterval(progressInterval);
+
     }
+
 }, 45);
 
-// Live date and time
+
+// Live Date & Time
 function updateClock() {
+
     const now = new Date();
 
     document.getElementById("clock").textContent =
         now.toLocaleString("en-US", {
+
             weekday: "long",
             year: "numeric",
             month: "long",
@@ -437,13 +677,17 @@ function updateClock() {
             hour: "2-digit",
             minute: "2-digit",
             second: "2-digit"
+
         });
+
 }
 
 updateClock();
+
 setInterval(updateClock, 1000);
 
-// Current year
+
+// Current Year
 document.getElementById("year").textContent =
     new Date().getFullYear();
 
