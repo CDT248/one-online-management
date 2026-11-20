@@ -32,14 +32,18 @@ body[data-theme="funny"]{
 }
 
 *{box-sizing:border-box}
-html{width:100%;overflow-x:hidden}
+html,body{width:100%;min-height:100%;margin:0;overflow-x:hidden}
 body{
-margin:0;width:100%;min-height:100vh;overflow-x:hidden;
 background:var(--bg);color:var(--text);
 font:13px/1.45 Inter,system-ui,Arial,sans-serif
 }
-.wrap{max-width:1800px;margin:auto;padding:18px 20px}
-.top{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-bottom:16px;flex-wrap:wrap}
+.wrap{
+width:100%;max-width:1800px;margin:auto;padding:18px 20px
+}
+.top{
+display:flex;justify-content:space-between;align-items:center;
+gap:14px;margin-bottom:16px;flex-wrap:wrap
+}
 h1{font-size:22px;margin:0 0 3px;font-weight:850;letter-spacing:-.4px}
 .sub{color:var(--muted);font-size:12px}
 .actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
@@ -82,33 +86,35 @@ padding:9px 10px;outline:none;font:inherit;max-width:100%
 .count{color:var(--muted);font-size:11px}
 .card-hidden{display:none!important}
 
+/* TABLE - FULL WIDTH, NO OUTER BOX */
 .table-shell{
-width:100%;background:transparent!important;border:0!important;
+width:100%;max-width:100%;margin:0;padding:0;
+background:transparent!important;border:0!important;
 border-radius:0!important;box-shadow:none!important;
-overflow:visible!important;padding:0!important;margin:0!important
+overflow:visible!important
 }
 .table-scroll{
-width:100%;overflow:auto;max-height:calc(100vh - 265px);
-min-height:180px;background:transparent!important;
-border:0!important;border-radius:0!important;box-shadow:none!important
+width:100%;max-width:100%;
+overflow:auto;max-height:calc(100vh - 265px);
+min-height:180px;
+background:transparent!important;
+border:0!important;border-radius:0!important;
+box-shadow:none!important;
+scrollbar-width:thin;
+scrollbar-color:var(--muted) transparent
 }
 table{
-display:table!important;width:100%;min-width:1287px;
-border-collapse:collapse;border-spacing:0;table-layout:fixed;font-size:11px
+width:100%;min-width:1287px;
+border-collapse:collapse;border-spacing:0;
+table-layout:fixed;font-size:11px
 }
-thead{display:table-header-group!important}
-thead tr{display:table-row!important}
 thead th{
-display:table-cell!important;position:sticky;top:0;z-index:3;
-background:var(--panel2)!important;color:var(--text)!important;
-padding:9px 8px;border:1px solid var(--line)!important;
+position:sticky;top:0;z-index:3;
+background:var(--panel2);color:var(--text);
+padding:9px 8px;border:1px solid var(--line);
 text-align:left;font-size:10px;letter-spacing:.2px
 }
-tbody{display:table-row-group!important;width:auto!important}
-tbody tr{
-display:table-row!important;background:var(--panel);
-box-shadow:none;border:0;border-radius:0;overflow:visible
-}
+tbody tr{background:var(--panel)}
 tbody tr:nth-child(even) td{
 background:color-mix(in srgb,var(--muted) 8%,var(--panel))
 }
@@ -116,13 +122,12 @@ tbody tr:hover td{
 background:color-mix(in srgb,var(--primary) 10%,var(--panel))
 }
 tbody td{
-display:table-cell!important;position:static!important;
-padding:8px 7px!important;border:1px solid var(--line)!important;
+padding:8px 7px;border:1px solid var(--line);
 vertical-align:middle;min-width:0;font-size:10px;
 line-height:1.35;overflow-wrap:anywhere
 }
 tbody td:before{display:none!important;content:none!important}
-tbody td:nth-child(1){width:42px;text-align:center}
+
 thead th:nth-child(1){width:42px}
 thead th:nth-child(2){width:75px}
 thead th:nth-child(3){width:105px}
@@ -157,15 +162,22 @@ justify-content:center;background:rgba(255,255,255,.2)
 .mini.duepay{background:linear-gradient(135deg,#e6a52d,#bd7108)}
 .mini.renew{background:linear-gradient(135deg,#4b9cf5,#2468c9)}
 .mini.delete{background:linear-gradient(135deg,#f06b7b,#c9364d)}
-body[data-theme="funny"] .mini.info{background:linear-gradient(135deg,#a46ac5,#7442a0)}
+body[data-theme="funny"] .mini.info{
+background:linear-gradient(135deg,#a46ac5,#7442a0)
+}
 
 .sl{font-weight:800;color:var(--muted);width:36px}
-.namecell strong{display:block;font-size:11px;color:var(--primary);max-width:none}
+.namecell strong{
+display:block;font-size:11px;color:var(--primary);max-width:none
+}
 .namecell span,.mutedline,.area span{
 display:block;color:var(--muted);font-size:9px;overflow-wrap:anywhere
 }
 .ipcell{font-family:ui-monospace,monospace;font-size:10px;white-space:normal}
-.money{font-weight:800;white-space:nowrap;font-variant-numeric:tabular-nums;font-size:10px}
+.money{
+font-weight:800;white-space:nowrap;
+font-variant-numeric:tabular-nums;font-size:10px
+}
 .money.income{color:var(--green)}
 .money.due{color:var(--red)}
 .money.cost{color:var(--orange)}
@@ -174,7 +186,9 @@ display:inline-flex;align-items:center;gap:5px;border-radius:20px;
 padding:2px 5px;font-size:8px;font-weight:850;text-transform:uppercase;
 background:var(--panel2);border:1px solid var(--line);white-space:nowrap
 }
-.status:before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.status:before{
+content:"";width:6px;height:6px;border-radius:50%;background:currentColor
+}
 .status.active{color:var(--green)}
 .status.due{color:var(--red)}
 .status.upcoming{color:var(--orange)}
@@ -190,8 +204,9 @@ background:var(--panel2);border:1px solid var(--line);white-space:nowrap
 .pagination{
 display:flex;align-items:center;justify-content:space-between;
 gap:10px;padding:12px 8px;border-top:1px solid var(--line);
-color:var(--muted);font-size:11px;background:transparent!important;
-border-radius:0!important;box-shadow:none!important
+color:var(--muted);font-size:11px;
+background:transparent!important;border-radius:0!important;
+box-shadow:none!important
 }
 .pagebuttons{display:flex;gap:5px}
 .pagebuttons button{
@@ -301,149 +316,168 @@ h1{font-size:19px}
 .table-scroll{max-height:calc(100vh - 250px);min-height:160px}
 }
 
-/* ==========================================
-   MOBILE RESPONSIVE CUSTOMER LIST
-   No customer card boxes / no horizontal scroll
-   ========================================== */
+/* MOBILE: KEEP THE SAME PC TABLE */
 @media(max-width:700px){
-
-html,body{width:100%;overflow-x:hidden}
-.wrap{width:100%;max-width:100%;padding:9px!important}
-
-.top{align-items:flex-start;gap:10px;margin-bottom:12px}
+html,body{
+width:100%;max-width:100%;overflow-x:hidden
+}
+.wrap{
+width:100%;max-width:100%;padding:9px 0!important;
+margin:0
+}
+.top{
+padding:0 10px;align-items:flex-start;
+gap:9px;margin-bottom:12px
+}
 .top>div:first-child{width:100%}
-h1{font-size:20px}
-.top .actions{width:100%;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
-.top .actions button{width:100%;min-width:0;padding:10px 6px;font-size:11px}
+h1{font-size:19px}
+.top .actions{
+width:100%;display:grid;
+grid-template-columns:repeat(2,minmax(0,1fr));gap:7px
+}
+.top .actions button{
+width:100%;min-width:0;padding:10px 5px;font-size:11px
+}
 .top .actions .card-settings-btn{grid-column:1/-1}
 
-.stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-bottom:10px}
-.stat{padding:9px 10px;border-radius:9px;min-width:0}
+#notice{margin-left:9px;margin-right:9px}
+
+.stats{
+padding:0 9px;
+grid-template-columns:repeat(2,minmax(0,1fr));
+gap:7px;margin-bottom:10px
+}
+.stat{padding:9px 10px;border-radius:8px;min-width:0}
 .stat strong{font-size:17px;overflow-wrap:anywhere}
 .stat small{font-size:10px}
 
 .toolbar{
+margin:0 9px 10px;
 display:flex;flex-wrap:wrap;gap:7px;
-padding:9px;margin-bottom:10px;border-radius:9px
+padding:9px;border-radius:8px
 }
 .toolbar .search{width:100%;flex:1 1 100%;margin:0}
-.toolbar .search input{width:100%;min-height:40px;font-size:12px}
-.toolbar .filter{flex:1 1 calc(50% - 5px);width:auto;min-width:0;min-height:38px;font-size:11px}
+.toolbar .search input{width:100%;min-height:39px;font-size:12px}
+.toolbar .filter{
+flex:1 1 calc(50% - 5px);width:auto;
+min-width:0;min-height:38px;font-size:11px
+}
 .count{width:100%;margin:2px 0 0;font-size:10px}
 
-/* Transparent table containers */
-.table-shell,.table-scroll{
+/* No outer card, no border around the table area */
+.table-shell{
 display:block!important;width:100%!important;
-max-height:none!important;min-height:0!important;
-overflow:visible!important;padding:0!important;margin:0!important;
-background:transparent!important;border:0!important;
-border-radius:0!important;box-shadow:none!important
-}
-
-/* Table becomes a normal mobile list */
-table{
-display:block!important;width:100%!important;min-width:0!important;
-table-layout:auto!important;border:0!important;
-border-collapse:collapse!important;background:transparent!important
-}
-thead{display:none!important}
-tbody{display:block!important;width:100%!important;background:transparent!important}
-
-/* Flat customer row - no card, no background, no rounded box */
-tbody tr{
-display:block!important;width:100%!important;
-margin:0!important;padding:8px 0 12px!important;
-background:transparent!important;border:0!important;
-border-bottom:1px solid var(--line)!important;
-border-radius:0!important;box-shadow:none!important;
+max-width:100%!important;margin:0!important;padding:0!important;
+border:0!important;border-radius:0!important;
+box-shadow:none!important;background:transparent!important;
 overflow:visible!important
 }
-tbody tr:nth-child(even),tbody tr:hover{background:transparent!important}
-tbody tr:nth-child(even) td,tbody tr:hover td{background:transparent!important}
 
-/* Customer data line */
-tbody td{
-display:flex!important;width:100%!important;min-width:0!important;
-min-height:34px;align-items:flex-start!important;
-justify-content:space-between!important;gap:9px!important;
-padding:7px 2px!important;margin:0!important;
-background:transparent!important;border:0!important;
-border-bottom:1px solid color-mix(in srgb,var(--line) 65%,transparent)!important;
-font-size:11px!important;line-height:1.5!important;
-text-align:right!important;overflow-wrap:anywhere!important
-}
-
-/* Mobile field labels */
-tbody td:before{
-display:block!important;content:attr(data-label)!important;
-flex:0 0 102px!important;width:102px!important;
-color:var(--muted)!important;font-size:9px!important;
-font-weight:850!important;text-align:left!important;
-white-space:normal!important;line-height:1.5!important
-}
-
-/* Make all data fit the remaining width */
-tbody td>*{max-width:calc(100% - 108px);min-width:0}
-tbody td.namecell{align-items:flex-start!important}
-.namecell strong{font-size:12px!important;text-align:right!important;overflow-wrap:anywhere}
-.namecell span{font-size:10px!important;text-align:right!important;overflow-wrap:anywhere}
-.ipcell,.money{font-size:11px!important}
-.area{min-width:0;text-align:right!important}
-.area strong,.area span{text-align:right!important;overflow-wrap:anywhere}
-
-/* Package and billing content */
-tbody td:nth-child(5),tbody td:nth-child(6),tbody td:nth-child(7){
-flex-wrap:wrap!important
-}
-tbody td:nth-child(5)>*,tbody td:nth-child(6)>*,tbody td:nth-child(7)>*{
-text-align:right!important
-}
-
-/* Action buttons */
-tbody td.action-cell{
+/* Scroll stays inside table only */
+.table-scroll{
 display:block!important;width:100%!important;
-padding:10px 0 4px!important;text-align:left!important;
-border-bottom:0!important
+max-width:100%!important;max-height:calc(100dvh - 255px)!important;
+min-height:180px!important;overflow:auto!important;
+-webkit-overflow-scrolling:touch;
+border:0!important;border-radius:0!important;
+box-shadow:none!important;background:transparent!important
 }
-tbody td.action-cell:before{
-display:block!important;width:auto!important;
-margin:0 0 9px!important
+
+/* Same columns and rows as desktop */
+table{
+display:table!important;
+width:1287px!important;
+min-width:1287px!important;
+max-width:none!important;
+table-layout:fixed!important;
+border-collapse:collapse!important;
+font-size:10px!important
 }
-tbody td.action-cell>*{max-width:100%}
+thead{display:table-header-group!important}
+thead tr{display:table-row!important}
+thead th{
+display:table-cell!important;
+position:sticky!important;top:0!important;
+z-index:5!important;
+padding:8px 6px!important;
+font-size:9px!important;
+background:var(--panel2)!important;
+border:1px solid var(--line)!important
+}
+tbody{display:table-row-group!important;width:auto!important}
+tbody tr{
+display:table-row!important;
+width:auto!important;margin:0!important;padding:0!important;
+background:var(--panel)!important;
+border:0!important;border-radius:0!important;
+box-shadow:none!important
+}
+tbody tr:nth-child(even) td{
+background:color-mix(in srgb,var(--muted) 8%,var(--panel))!important
+}
+tbody tr:hover td{
+background:color-mix(in srgb,var(--primary) 10%,var(--panel))!important
+}
+tbody td{
+display:table-cell!important;
+width:auto!important;min-width:0!important;
+min-height:0!important;
+padding:7px 6px!important;margin:0!important;
+border:1px solid var(--line)!important;
+background:transparent;
+font-size:9px!important;
+line-height:1.35!important;
+text-align:left!important;
+vertical-align:middle!important;
+overflow-wrap:anywhere!important
+}
+tbody td:before{display:none!important;content:none!important}
+tbody td>*{max-width:none!important}
+.namecell strong{font-size:10px!important}
+.namecell span,.mutedline,.area span{font-size:8px!important}
+.money{font-size:9px!important}
+.status{font-size:7px!important;padding:2px 4px!important}
+.area{text-align:left!important}
+.area strong,.area span{text-align:left!important}
+
+/* Action buttons remain in the same desktop-style columns */
+.action-cell{
+width:250px!important;min-width:250px!important;
+text-align:center!important
+}
 .actionset{
-display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
-gap:7px!important;width:100%!important
+display:grid!important;
+grid-template-columns:repeat(3,minmax(0,1fr))!important;
+gap:4px!important;width:100%!important
 }
 .mini{
-width:100%!important;min-width:0!important;min-height:38px!important;
-padding:7px 5px!important;font-size:10px!important;
-border-radius:6px!important;white-space:normal!important
+width:100%!important;min-width:0!important;
+min-height:28px!important;padding:4px 3px!important;
+font-size:8px!important;white-space:nowrap!important;
+border-radius:4px!important
 }
-.mini .mi{flex:0 0 17px}
+.mini .mi{width:15px;height:15px;flex:0 0 15px}
 
 /* Loading and empty rows */
 tbody tr:has(td[colspan]){
-display:block!important;padding:18px 0!important;
-border:0!important;background:transparent!important
+display:table-row!important
 }
-tbody td.empty,tbody td.loading{
-display:block!important;width:100%!important;
-padding:22px 8px!important;text-align:center!important;
-border:0!important
+tbody td[colspan]{
+display:table-cell!important;text-align:center!important;
+padding:20px!important
 }
-tbody td.empty:before,tbody td.loading:before{display:none!important}
 
-/* Pagination */
+/* Pagination full width */
 .pagination{
-width:100%!important;padding:12px 2px!important;
+width:100%!important;padding:10px 9px!important;
 flex-wrap:wrap!important;gap:8px!important;
 border-top:1px solid var(--line)!important
 }
 .pagination #pageInfo{width:100%!important}
 .pagebuttons{width:100%!important}
-.pagebuttons button{flex:1!important;min-height:36px}
+.pagebuttons button{flex:1!important;min-height:35px}
 
-/* Modal and forms */
+/* Modal */
 .formgrid,.detailgrid{grid-template-columns:1fr!important;gap:10px}
 .field.full{grid-column:auto}
 .dialog{width:100%!important;max-height:95dvh;border-radius:12px}
@@ -457,14 +491,11 @@ border-top:1px solid var(--line)!important
 }
 
 @media(max-width:380px){
-.wrap{padding:7px!important}
-.top .actions{grid-template-columns:1fr 1fr}
-.toolbar .filter{flex-basis:100%}
-.stat{padding:8px}
-tbody td:before{flex-basis:88px!important;width:88px!important}
-tbody td>*{max-width:calc(100% - 94px)}
-.actionset{gap:5px!important}
-.mini{font-size:9px!important;padding:6px 3px!important}
+.wrap{padding-top:7px!important}
+.top{padding-left:8px;padding-right:8px}
+.stats{padding-left:7px;padding-right:7px}
+.toolbar{margin-left:7px;margin-right:7px}
+.mini{font-size:7px!important;padding:3px 2px!important}
 }
 </style>
 </head>
@@ -477,7 +508,6 @@ tbody td>*{max-width:calc(100% - 94px)}
 <h1>Total Customers</h1>
 <div class="sub">ONE ONLINE · Customer Management</div>
 </div>
-
 <div class="actions">
 <button type="button" class="card-settings-btn" onclick="openCardSettings()">⚙ Cards & Filters</button>
 <button type="button" class="secondary" onclick="loadCustomers()">↻ Refresh</button>
@@ -498,7 +528,6 @@ tbody td>*{max-width:calc(100% - 94px)}
 <div class="search">
 <input id="searchInput" placeholder="Search name, phone, IP, area, email..." oninput="renderCustomers()">
 </div>
-
 <select class="filter" id="statusFilter" onchange="renderCustomers()">
 <option value="all">All Status</option>
 <option value="active">Active</option>
@@ -506,21 +535,17 @@ tbody td>*{max-width:calc(100% - 94px)}
 <option value="due">Due</option>
 <option value="inactive">Inactive</option>
 </select>
-
 <select class="filter" id="dueFilter" onchange="renderCustomers()">
 <option value="all">All Billing</option>
 <option value="due">Due Only</option>
 <option value="clear">No Due</option>
 </select>
-
 <select class="filter" id="areaFilter" onchange="renderCustomers()">
 <option value="all">All Areas</option>
 </select>
-
 <select class="filter" id="pageSize" onchange="changePageSize()">
 <option>25</option><option>50</option><option>100</option><option>200</option>
 </select>
-
 <div class="count" id="resultCount">Loading customers...</div>
 </section>
 
@@ -529,15 +554,10 @@ tbody td>*{max-width:calc(100% - 94px)}
 <table>
 <thead>
 <tr>
-<th>SL.</th>
-<th>STATUS</th>
-<th>IP ADDRESS</th>
-<th>NAME & CONTACT</th>
-<th>PACKAGE & BILL</th>
-<th>EXPIRY & DUE</th>
-<th>INTERNET BILL</th>
-<th>AREA & LOCATION</th>
-<th>EMAIL / PRODUCTS</th>
+<th>SL.</th><th>STATUS</th><th>IP ADDRESS</th>
+<th>NAME & CONTACT</th><th>PACKAGE & BILL</th>
+<th>EXPIRY & DUE</th><th>INTERNET BILL</th>
+<th>AREA & LOCATION</th><th>EMAIL / PRODUCTS</th>
 <th class="action-cell">ACTIONS</th>
 </tr>
 </thead>
@@ -546,7 +566,6 @@ tbody td>*{max-width:calc(100% - 94px)}
 </tbody>
 </table>
 </div>
-
 <div class="pagination">
 <span id="pageInfo">Showing 0 customers</span>
 <div class="pagebuttons">
@@ -576,11 +595,9 @@ tbody td>*{max-width:calc(100% - 94px)}
 <h2>Edit Customer</h2>
 <button class="secondary" onclick="closeModal('editModal')">✕</button>
 </div>
-
 <form id="editForm">
 <div class="dbody">
 <input type="hidden" id="e_id">
-
 <div class="section">CUSTOMER INFORMATION</div>
 <div class="formgrid">
 <div class="field"><label>Customer Name *</label><input id="e_name" required></div>
@@ -592,7 +609,6 @@ tbody td>*{max-width:calc(100% - 94px)}
 <div class="field full"><label>Full Address</label><input id="e_address"></div>
 <div class="field full"><label>Google Map Link</label><input id="e_mapLink"></div>
 </div>
-
 <div class="section">BILLING INFORMATION</div>
 <div class="formgrid">
 <div class="field"><label>Customer Bill (৳)</label><input id="e_customerBill" type="number" min="0"></div>
@@ -601,26 +617,17 @@ tbody td>*{max-width:calc(100% - 94px)}
 <div class="field"><label>Customer Billing Date</label><input id="e_billingDate" type="date"></div>
 <div class="field"><label>Internet Bill Due Date (Office)</label><input id="e_internetBillDueDate" type="date"></div>
 <div class="field"><label>Due Reason</label><input id="e_dueReason"></div>
-<div class="field">
-<label>Customer Status</label>
-<select id="e_status"><option value="active">Active</option><option value="inactive">Inactive</option></select>
-</div>
-<div class="field">
-<label>Bill Trigger</label>
-<select id="e_billTrigger"><option value="true">ON</option><option value="false">OFF</option></select>
-</div>
-<div class="field">
-<label>IP Bill Trigger</label>
-<select id="e_ipBillTrigger"><option value="true">ON</option><option value="false">OFF</option></select>
-</div>
-<div class="field">
-<label>Auto Mail</label>
-<select id="e_autoMail"><option value="true">ON</option><option value="false">OFF</option></select>
-</div>
+<div class="field"><label>Customer Status</label>
+<select id="e_status"><option value="active">Active</option><option value="inactive">Inactive</option></select></div>
+<div class="field"><label>Bill Trigger</label>
+<select id="e_billTrigger"><option value="true">ON</option><option value="false">OFF</option></select></div>
+<div class="field"><label>IP Bill Trigger</label>
+<select id="e_ipBillTrigger"><option value="true">ON</option><option value="false">OFF</option></select></div>
+<div class="field"><label>Auto Mail</label>
+<select id="e_autoMail"><option value="true">ON</option><option value="false">OFF</option></select></div>
 <div class="field full"><label>Additional Notes</label><textarea id="e_notes" rows="3"></textarea></div>
 </div>
 </div>
-
 <div class="dfoot">
 <button type="button" class="secondary" onclick="closeModal('editModal')">Cancel</button>
 <button type="submit" id="saveEditBtn">Save Changes</button>
@@ -636,17 +643,14 @@ tbody td>*{max-width:calc(100% - 94px)}
 <h2>Collect Payment</h2>
 <button class="secondary" onclick="closeModal('paymentModal')">✕</button>
 </div>
-
 <form id="paymentForm">
 <div class="dbody">
 <input type="hidden" id="p_id">
 <div id="paymentCustomer" class="section"></div>
-
 <div class="field" style="margin-bottom:12px">
 <label>Payment Amount (৳) *</label>
 <input id="p_amount" type="number" min="1" step="0.01" required>
 </div>
-
 <div class="field" style="margin-bottom:12px">
 <label>Payment Method</label>
 <select id="p_method">
@@ -654,15 +658,12 @@ tbody td>*{max-width:calc(100% - 94px)}
 <option>Rocket</option><option>Bank</option><option>Other</option>
 </select>
 </div>
-
 <div class="field" style="margin-bottom:12px">
 <label>Payment Note</label>
 <textarea id="p_note" rows="2"></textarea>
 </div>
-
 <div class="sub">After successful collection, the billing date will move forward by one month.</div>
 </div>
-
 <div class="dfoot">
 <button type="button" class="secondary" onclick="closeModal('paymentModal')">Cancel</button>
 <button type="submit" id="collectBtn">Confirm Collect</button>
@@ -678,40 +679,23 @@ tbody td>*{max-width:calc(100% - 94px)}
 <h2>⚙ Display Settings</h2>
 <button type="button" class="secondary" onclick="closeModal('cardSettingsModal')">✕</button>
 </div>
-
 <div class="dbody">
 <div class="card-setting-list">
-<label class="card-setting-item">
-<span>Total Customers</span>
-<input type="checkbox" id="showCardTotal" onchange="updateCardSettings()">
-</label>
-
-<label class="card-setting-item">
-<span>Active</span>
-<input type="checkbox" id="showCardActive" onchange="updateCardSettings()">
-</label>
-
-<label class="card-setting-item">
-<span>Due Customers</span>
-<input type="checkbox" id="showCardDue" onchange="updateCardSettings()">
-</label>
-
-<label class="card-setting-item">
-<span>Total Outstanding</span>
-<input type="checkbox" id="showCardOutstanding" onchange="updateCardSettings()">
-</label>
-
-<label class="card-setting-item">
-<span>Search & Filter Bar</span>
-<input type="checkbox" id="showFilterBar" onchange="updateCardSettings()">
-</label>
+<label class="card-setting-item"><span>Total Customers</span>
+<input type="checkbox" id="showCardTotal" onchange="updateCardSettings()"></label>
+<label class="card-setting-item"><span>Active</span>
+<input type="checkbox" id="showCardActive" onchange="updateCardSettings()"></label>
+<label class="card-setting-item"><span>Due Customers</span>
+<input type="checkbox" id="showCardDue" onchange="updateCardSettings()"></label>
+<label class="card-setting-item"><span>Total Outstanding</span>
+<input type="checkbox" id="showCardOutstanding" onchange="updateCardSettings()"></label>
+<label class="card-setting-item"><span>Search & Filter Bar</span>
+<input type="checkbox" id="showFilterBar" onchange="updateCardSettings()"></label>
 </div>
-
 <div class="card-setting-note">
 Choose which cards and filter bar you want to display. Settings are saved automatically.
 </div>
 </div>
-
 <div class="dfoot">
 <button type="button" class="secondary" onclick="resetCardSettings()">Reset Default</button>
 <button type="button" onclick="closeModal('cardSettingsModal')">Done</button>
@@ -745,14 +729,13 @@ let currentPage=1;
 let pageSize=25;
 let filteredCustomers=[];
 
-/* ================= THEME ================= */
+/* THEME */
 function applyTheme(){
  let theme="light";
  try{theme=localStorage.getItem("one_online_theme")||"light"}catch(e){}
  document.body.dataset.theme=["light","dark","funny"].includes(theme)?theme:"light";
 }
 applyTheme();
-
 window.addEventListener("storage",e=>{
  if(e.key==="one_online_theme")applyTheme();
 });
@@ -761,9 +744,8 @@ document.addEventListener("visibilitychange",()=>{
  if(!document.hidden)applyTheme();
 });
 
-/* ================= CARD AND FILTER SETTINGS ================= */
+/* CARD AND FILTER SETTINGS */
 const CARD_SETTINGS_KEY="one_online_customer_card_settings";
-
 const CARD_SETTINGS=[
  {key:"total",element:"statCardTotal",input:"showCardTotal"},
  {key:"active",element:"statCardActive",input:"showCardActive"},
@@ -777,11 +759,8 @@ function getCardSettings(){
  try{
   const saved=JSON.parse(localStorage.getItem(CARD_SETTINGS_KEY)||"{}");
   return {...defaults,...saved};
- }catch(e){
-  return defaults;
- }
+ }catch(e){return defaults}
 }
-
 function applyCardSettings(){
  const settings=getCardSettings();
  CARD_SETTINGS.forEach(card=>{
@@ -792,47 +771,36 @@ function applyCardSettings(){
   if(input)input.checked=visible;
  });
 }
-
 function openCardSettings(){
  applyCardSettings();
  openModal("cardSettingsModal");
 }
-
 function updateCardSettings(){
  const settings={};
  CARD_SETTINGS.forEach(card=>{
   const input=document.getElementById(card.input);
   settings[card.key]=input?input.checked:true;
  });
- try{
-  localStorage.setItem(CARD_SETTINGS_KEY,JSON.stringify(settings));
- }catch(e){}
+ try{localStorage.setItem(CARD_SETTINGS_KEY,JSON.stringify(settings))}catch(e){}
  applyCardSettings();
 }
-
 function resetCardSettings(){
  const defaults={total:true,active:true,due:true,outstanding:true,filters:true};
- try{
-  localStorage.setItem(CARD_SETTINGS_KEY,JSON.stringify(defaults));
- }catch(e){}
+ try{localStorage.setItem(CARD_SETTINGS_KEY,JSON.stringify(defaults))}catch(e){}
  applyCardSettings();
 }
-
 applyCardSettings();
 
-/* ================= API ================= */
+/* API */
 async function apiGet(action,params={}){
  const url=new URL(API_URL);
  url.searchParams.set("action",action);
- Object.entries(params).forEach(([k,v])=>{
-  url.searchParams.set(k,v);
- });
+ Object.entries(params).forEach(([k,v])=>url.searchParams.set(k,v));
  const res=await fetch(url.toString());
  const data=await res.json();
  if(!data.success)throw new Error(data.message||"API request failed");
  return data;
 }
-
 async function apiPost(action,data){
  const res=await fetch(API_URL,{
   method:"POST",
@@ -844,25 +812,18 @@ async function apiPost(action,data){
  return result;
 }
 
-/* ================= HELPERS ================= */
+/* HELPERS */
 function money(n){
  return "৳"+Number(n||0).toLocaleString("en-BD",{maximumFractionDigits:2});
 }
-
 function boolValue(v){
  return v===true||["true","1","yes","on"].includes(String(v??"").toLowerCase());
 }
-
 function esc(v){
  return String(v??"").replace(/[&<>"']/g,c=>({
-  "&":"&amp;",
-  "<":"&lt;",
-  ">":"&gt;",
-  '"':"&quot;",
-  "'":"&#39;"
+  "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
  }[c]));
 }
-
 function showNotice(message,type="ok"){
  const el=document.getElementById("notice");
  el.textContent=message;
@@ -871,11 +832,10 @@ function showNotice(message,type="ok"){
  setTimeout(()=>{el.className="notice"},5000);
 }
 
-/* ================= LOAD CUSTOMERS ================= */
+/* LOAD CUSTOMERS */
 async function loadCustomers(){
  const grid=document.getElementById("customerGrid");
  grid.innerHTML='<tr><td colspan="10" class="loading">Loading customer records...</td></tr>';
-
  try{
   const data=await apiGet("getCustomers");
   customers=data.customers||[];
@@ -888,14 +848,12 @@ async function loadCustomers(){
   showNotice(err.message,"err");
  }
 }
-
 function dateOnly(value){
  if(!value)return null;
  const m=String(value).match(/^(\d{4})-(\d{2})-(\d{2})/);
  if(!m)return null;
  return new Date(Number(m[1]),Number(m[2])-1,Number(m[3]));
 }
-
 function billingState(c){
  if(String(c.status||"active").toLowerCase()!=="active")return "inactive";
  const billDate=dateOnly(c.billingDate);
@@ -907,7 +865,6 @@ function billingState(c){
  if(diff<=3)return "upcoming";
  return "active";
 }
-
 function updateStats(){
  const active=customers.filter(c=>billingState(c)==="active");
  const due=customers.filter(c=>billingState(c)==="due");
@@ -918,7 +875,6 @@ function updateStats(){
  document.getElementById("amountStat").textContent=money(totalDue);
  applyCardSettings();
 }
-
 function populateAreas(){
  const select=document.getElementById("areaFilter");
  const old=select.value;
@@ -928,19 +884,18 @@ function populateAreas(){
  select.value=areas.includes(old)?old:"all";
 }
 
-/* ================= PAGINATION ================= */
+/* PAGINATION */
 function changePage(n){
  currentPage+=n;
  renderCustomers();
 }
-
 function changePageSize(){
  pageSize=Number(document.getElementById("pageSize").value)||25;
  currentPage=1;
  renderCustomers();
 }
 
-/* ================= RENDER CUSTOMERS ================= */
+/* RENDER CUSTOMERS */
 function renderCustomers(){
  const q=document.getElementById("searchInput").value.trim().toLowerCase();
  const status=document.getElementById("statusFilter").value;
@@ -952,7 +907,6 @@ function renderCustomers(){
    c.id,c.customerId,c.customerCode,c.name,c.phone,
    c.altPhone,c.ip,c.area,c.email,c.address
   ].join(" ").toLowerCase();
-
   const state=billingState(c);
   return (!q||hay.includes(q))&&
    (status==="all"||state===status)&&
@@ -965,21 +919,17 @@ function renderCustomers(){
  const total=filteredCustomers.length;
  const pages=Math.max(1,Math.ceil(total/pageSize));
  currentPage=Math.min(currentPage,pages);
-
  const from=(currentPage-1)*pageSize;
  const list=filteredCustomers.slice(from,from+pageSize);
 
  document.getElementById("resultCount").textContent=
   "Showing "+(total?from+1:0)+"–"+Math.min(from+pageSize,total)+" of "+total;
-
  document.getElementById("pageInfo").textContent=
   "Page "+currentPage+" of "+pages+" · "+total.toLocaleString()+" customers";
-
  document.getElementById("prevPage").disabled=currentPage<=1;
  document.getElementById("nextPage").disabled=currentPage>=pages;
 
  const body=document.getElementById("customerGrid");
-
  if(!list.length){
   body.innerHTML='<tr><td colspan="10" class="empty">No customer found for this search or filter.</td></tr>';
   return;
@@ -990,7 +940,6 @@ function renderCustomers(){
   const badge={active:"Active",upcoming:"Upcoming",due:"Due",inactive:"Inactive"}[state];
   const id=esc(c.id);
   const profit=Number(c.customerBill||0)-Number(c.internetBill||0);
-
   const productText=(c.products||[])
    .map(p=>p.productName||p.model||p.productType)
    .filter(Boolean).join(", ");
@@ -1059,46 +1008,19 @@ function renderCustomers(){
    </td>
   </tr>`;
  }).join("");
-
- const mobileLabels=[
-  "SL","STATUS","IP ADDRESS","NAME & CONTACT",
-  "PACKAGE & BILL","EXPIRY & DUE","INTERNET BILL",
-  "AREA & LOCATION","EMAIL / PRODUCTS","ACTIONS"
- ];
-
- body.querySelectorAll("tr").forEach(row=>{
-  row.querySelectorAll("td").forEach((cell,index)=>{
-   if(mobileLabels[index])cell.setAttribute("data-label",mobileLabels[index]);
-  });
- });
 }
 
-/* ================= MODALS ================= */
-function openModal(id){
- document.getElementById(id).classList.add("show");
-}
+/* MODALS */
+function openModal(id){document.getElementById(id).classList.add("show")}
+function closeModal(id){document.getElementById(id).classList.remove("show")}
+function backdropClose(e,id){if(e.target.id===id)closeModal(id)}
+function byId(id){return customers.find(c=>String(c.id)===String(id))}
 
-function closeModal(id){
- document.getElementById(id).classList.remove("show");
-}
-
-function backdropClose(e,id){
- if(e.target.id===id)closeModal(id);
-}
-
-function byId(id){
- return customers.find(c=>String(c.id)===String(id));
-}
-
-/* ================= CONFIRMATION ================= */
+/* CONFIRMATION */
 let confirmResolver=null;
-
 function customConfirm(message,title="Please Confirm",buttonText="Confirm"){
  return new Promise(resolve=>{
-  if(confirmResolver){
-   confirmResolver(false);
-   confirmResolver=null;
-  }
+  if(confirmResolver){confirmResolver(false);confirmResolver=null}
   confirmResolver=resolve;
   document.getElementById("confirmTitle").textContent=title;
   document.getElementById("confirmMessage").textContent=message;
@@ -1106,7 +1028,6 @@ function customConfirm(message,title="Please Confirm",buttonText="Confirm"){
   openModal("confirmModal");
  });
 }
-
 function resolveConfirm(result){
  closeModal("confirmModal");
  if(confirmResolver){
@@ -1116,41 +1037,31 @@ function resolveConfirm(result){
  }
 }
 
-/* ================= CUSTOMER DETAILS ================= */
+/* CUSTOMER DETAILS */
 async function viewDetails(id){
  try{
   const d=await apiGet("getCustomerDetails",{id});
   const c=d.customer;
   currentCustomer=c;
-
   document.getElementById("detailsTitle").textContent=c.name+" · Customer Details";
 
   const fields=[
-   ["Mobile",c.phone],
-   ["Alternative Mobile",c.altPhone],
-   ["IP Address",c.ip],
-   ["Area / Zone",c.area],
-   ["Email",c.email],
-   ["Address",c.address],
-   ["Map Link",c.mapLink],
+   ["Mobile",c.phone],["Alternative Mobile",c.altPhone],
+   ["IP Address",c.ip],["Area / Zone",c.area],["Email",c.email],
+   ["Address",c.address],["Map Link",c.mapLink],
    ["Customer Bill",money(c.customerBill)],
-   ["Internet Bill",money(c.internetBill)],
-   ["Due Amount",money(c.dueAmount)],
-   ["Due Reason",c.dueReason],
-   ["Billing Date",c.billingDate],
+   ["Internet Bill",money(c.internetBill)],["Due Amount",money(c.dueAmount)],
+   ["Due Reason",c.dueReason],["Billing Date",c.billingDate],
    ["Connection Date",c.connectionDate],
    ["Internet Bill Due Date",c.internetBillDueDate],
    ["Internet Bill Last Renewed",c.internetBillLastRenewedAt],
-   ["Customer Status",c.status],
-   ["Bill Trigger",String(c.billTrigger)],
+   ["Customer Status",c.status],["Bill Trigger",String(c.billTrigger)],
    ["IP Bill Trigger",String(c.ipBillTrigger)],
-   ["Auto Mail",String(c.autoMail)],
-   ["Created At",c.createdAt],
+   ["Auto Mail",String(c.autoMail)],["Created At",c.createdAt],
    ["Notes",c.notes]
   ];
 
-  let out='<div class="section">CUSTOMER INFORMATION</div>'+
-   '<div class="detailgrid">'+
+  let out='<div class="section">CUSTOMER INFORMATION</div><div class="detailgrid">'+
    fields.map(x=>`<div class="detail"><small>${esc(x[0])}</small><b>${esc(x[1]||"—")}</b></div>`).join("")+
    '</div>';
 
@@ -1160,10 +1071,8 @@ async function viewDetails(id){
     `<div class="productrow">
      <b>${esc(p.productName||p.productType||"Product")}</b>
      <div class="sub">
-      Type: ${esc(p.productType||"—")} ·
-      Model: ${esc(p.model||"—")} ·
-      Serial: ${esc(p.serial||"—")} ·
-      MAC: ${esc(p.mac||"—")} ·
+      Type: ${esc(p.productType||"—")} · Model: ${esc(p.model||"—")} ·
+      Serial: ${esc(p.serial||"—")} · MAC: ${esc(p.mac||"—")} ·
       Price: ${money(p.price)}
      </div>
     </div>`).join("")
@@ -1176,8 +1085,7 @@ async function viewDetails(id){
      <b>${money(p.amount)} · ${esc(p.method||"Cash")}</b>
      <div class="sub">
       Date: ${esc(p.paymentDate||p.createdAt||"—")} ·
-      Remaining Due: ${money(p.remainingDue)} ·
-      ${esc(p.note||"")}
+      Remaining Due: ${money(p.remainingDue)} · ${esc(p.note||"")}
      </div>
     </div>`).join("")
    :'<div class="sub">No payment records.</div>';
@@ -1188,10 +1096,8 @@ async function viewDetails(id){
     `<div class="productrow">
      <b>${money(x.collectAmount)} · ${esc(x.paymentMethod||"Cash")}</b>
      <div class="sub">
-      IP: ${esc(x.ipAddress||"—")} ·
-      Collected: ${esc(x.collectDate||"—")} ·
-      Billing: ${esc(x.previousBillingDate||"—")} →
-      ${esc(x.nextBillingDate||"—")} ·
+      IP: ${esc(x.ipAddress||"—")} · Collected: ${esc(x.collectDate||"—")} ·
+      Billing: ${esc(x.previousBillingDate||"—")} → ${esc(x.nextBillingDate||"—")} ·
       Remaining Due: ${money(x.remainingDue)}
      </div>
     </div>`).join("")
@@ -1203,11 +1109,9 @@ async function viewDetails(id){
     `<div class="productrow">
      <b>${money(x.internetBillAmount)} · Internet Bill Renewed</b>
      <div class="sub">
-      IP: ${esc(x.ipAddress||"—")} ·
-      Renewed: ${esc(x.renewalDate||"—")} ·
+      IP: ${esc(x.ipAddress||"—")} · Renewed: ${esc(x.renewalDate||"—")} ·
       Office Due Date: ${esc(x.previousInternetDueDate||"—")} →
-      ${esc(x.nextInternetDueDate||"—")} ·
-      By: ${esc(x.renewedBy||"System")}
+      ${esc(x.nextInternetDueDate||"—")} · By: ${esc(x.renewedBy||"System")}
      </div>
     </div>`).join("")
    :'<div class="sub">No Internet Bill renewal history.</div>';
@@ -1225,104 +1129,66 @@ async function viewDetails(id){
 
   document.getElementById("detailsBody").innerHTML=out;
   openModal("detailsModal");
-
- }catch(err){
-  showNotice(err.message,"err");
- }
+ }catch(err){showNotice(err.message,"err")}
 }
 
-/* ================= EDIT CUSTOMER ================= */
+/* EDIT CUSTOMER */
 function openEdit(id){
  const c=byId(id);
  if(!c)return;
-
- const set=(key,val)=>{
-  document.getElementById("e_"+key).value=val??"";
- };
-
+ const set=(key,val)=>{document.getElementById("e_"+key).value=val??""};
  [
   "id","name","phone","altPhone","ip","area","email","address",
   "mapLink","customerBill","internetBill","dueAmount","billingDate",
   "internetBillDueDate","dueReason","status","notes"
  ].forEach(k=>set(k,c[k]));
-
  set("billTrigger",String(boolValue(c.billTrigger)));
  set("ipBillTrigger",String(boolValue(c.ipBillTrigger)));
  set("autoMail",String(boolValue(c.autoMail)));
-
  openModal("editModal");
 }
 
 document.getElementById("editForm").addEventListener("submit",async e=>{
  e.preventDefault();
-
  const btn=document.getElementById("saveEditBtn");
- btn.disabled=true;
- btn.textContent="Saving...";
-
+ btn.disabled=true;btn.textContent="Saving...";
  const val=id=>document.getElementById("e_"+id).value;
-
  const data={
-  id:val("id"),
-  name:val("name"),
-  phone:val("phone"),
-  altPhone:val("altPhone"),
-  ip:val("ip"),
-  area:val("area"),
-  email:val("email"),
-  address:val("address"),
-  mapLink:val("mapLink"),
-  customerBill:val("customerBill"),
-  internetBill:val("internetBill"),
-  dueAmount:val("dueAmount"),
-  billingDate:val("billingDate"),
-  dueReason:val("dueReason"),
-  status:val("status"),
-  billTrigger:val("billTrigger"),
-  ipBillTrigger:val("ipBillTrigger"),
-  autoMail:val("autoMail"),
-  notes:val("notes"),
-  performedBy:"ONE ONLINE"
+  id:val("id"),name:val("name"),phone:val("phone"),
+  altPhone:val("altPhone"),ip:val("ip"),area:val("area"),
+  email:val("email"),address:val("address"),mapLink:val("mapLink"),
+  customerBill:val("customerBill"),internetBill:val("internetBill"),
+  dueAmount:val("dueAmount"),billingDate:val("billingDate"),
+  dueReason:val("dueReason"),status:val("status"),
+  billTrigger:val("billTrigger"),ipBillTrigger:val("ipBillTrigger"),
+  autoMail:val("autoMail"),notes:val("notes"),performedBy:"ONE ONLINE"
  };
-
- if(val("internetBillDueDate")){
-  data.internetBillDueDate=val("internetBillDueDate");
- }
-
+ if(val("internetBillDueDate"))data.internetBillDueDate=val("internetBillDueDate");
  try{
   const r=await apiPost("updateCustomer",data);
   closeModal("editModal");
   showNotice(r.message);
   await loadCustomers();
- }catch(err){
-  showNotice(err.message,"err");
- }finally{
-  btn.disabled=false;
-  btn.textContent="Save Changes";
- }
+ }catch(err){showNotice(err.message,"err")}
+ finally{btn.disabled=false;btn.textContent="Save Changes"}
 });
 
-/* ================= PAYMENT ================= */
+/* PAYMENT */
 function openPayment(id,mode="bill"){
  const c=byId(id);
  if(!c)return;
-
  if(mode==="due"&&Number(c.dueAmount)<=0){
   showNotice("This customer has no outstanding due amount.","err");
   return;
  }
-
  document.getElementById("p_id").value=id;
  document.querySelector("#paymentModal .dhead h2").textContent=
   mode==="due"?"Due Payment":"Collect Customer Bill";
-
  document.getElementById("paymentCustomer").textContent=
   c.name+" · Customer Bill: "+money(c.customerBill)+
   " · Current Due: "+money(c.dueAmount);
-
  document.getElementById("p_amount").value=
   mode==="due"?Number(c.dueAmount):Number(c.customerBill);
-
  document.getElementById("p_amount").dataset.mode=mode;
  document.getElementById("p_note").value="";
  openModal("paymentModal");
@@ -1330,11 +1196,8 @@ function openPayment(id,mode="bill"){
 
 document.getElementById("paymentForm").addEventListener("submit",async e=>{
  e.preventDefault();
-
  const btn=document.getElementById("collectBtn");
- btn.disabled=true;
- btn.textContent="Processing...";
-
+ btn.disabled=true;btn.textContent="Processing...";
  const data={
   id:document.getElementById("p_id").value,
   amount:document.getElementById("p_amount").value,
@@ -1342,7 +1205,6 @@ document.getElementById("paymentForm").addEventListener("submit",async e=>{
   note:document.getElementById("p_note").value,
   collectedBy:"ONE ONLINE"
  };
-
  try{
   const r=await apiPost("collectPayment",data);
   closeModal("paymentModal");
@@ -1351,21 +1213,15 @@ document.getElementById("paymentForm").addEventListener("submit",async e=>{
    " · New billing date: "+r.billingDate
   );
   await loadCustomers();
- }catch(err){
-  showNotice(err.message,"err");
- }finally{
-  btn.disabled=false;
-  btn.textContent="Confirm Collect";
- }
+ }catch(err){showNotice(err.message,"err")}
+ finally{btn.disabled=false;btn.textContent="Confirm Collect"}
 });
 
-/* ================= INTERNET BILL RENEW ================= */
+/* INTERNET BILL RENEW */
 async function renewInternetBill(id){
  const c=byId(id);
  if(!c)return;
-
  const current=c.internetBillDueDate||c.billingDate||"Not set";
-
  const confirmed=await customConfirm(
   `Renew Internet Bill for ${c.name}?
 
@@ -1374,58 +1230,44 @@ Current Internet Due Date: ${current}
 
 Only the Internet Bill cycle will move forward by one month.
 Customer Billing Date, Customer Due and Payments will NOT change.`,
-  "Internet Bill Renewal",
-  "Yes, Renew"
+  "Internet Bill Renewal","Yes, Renew"
  );
-
  if(!confirmed)return;
-
  try{
   const r=await apiPost("renewInternetBill",{
-   id,
-   renewedBy:"ONE ONLINE",
+   id,renewedBy:"ONE ONLINE",
    note:"Internet Bill cycle renewed from Customer Card"
   });
-
   showNotice(
    r.message+" · Office Internet Bill: "+money(r.internetBillAmount)+
    " · Next Internet Due Date: "+r.nextInternetDueDate
   );
   await loadCustomers();
- }catch(err){
-  showNotice(err.message,"err");
- }
+ }catch(err){showNotice(err.message,"err")}
 }
 
-/* ================= DELETE CUSTOMER ================= */
+/* DELETE CUSTOMER */
 async function removeCustomer(id){
  const c=byId(id);
  if(!c)return;
-
  const confirmed=await customConfirm(
   `Delete ${c.name}?
 
 This will move the customer out of the active list.
 History and payment records will remain.`,
-  "Delete Customer",
-  "Yes, Delete"
+  "Delete Customer","Yes, Delete"
  );
-
  if(!confirmed)return;
-
  try{
   const r=await apiPost("deleteCustomer",{
-   id,
-   performedBy:"ONE ONLINE"
+   id,performedBy:"ONE ONLINE"
   });
   showNotice(r.message);
   await loadCustomers();
- }catch(err){
-  showNotice(err.message,"err");
- }
+ }catch(err){showNotice(err.message,"err")}
 }
 
-/* ================= START ================= */
+/* START */
 loadCustomers();
 </script>
 </body>
