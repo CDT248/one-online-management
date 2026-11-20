@@ -66,7 +66,8 @@ background:var(--panel2);border:1px solid var(--line);color:var(--text)
 button.danger{background:var(--red)}
 
 .stats{
-display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
+display:grid;
+grid-template-columns:repeat(4,minmax(0,1fr));
 gap:10px;margin-bottom:12px
 }
 
@@ -111,8 +112,8 @@ min-width:1287px;font-size:11px
 
 thead th{
 position:sticky;top:0;z-index:2;
-background:linear-gradient(180deg,var(--panel2),var(--panel));
-color:var(--muted);text-align:left;padding:13px 11px;
+background:var(--panel2);
+color:var(--text);text-align:left;padding:13px 11px;
 border-bottom:1px solid var(--line);white-space:nowrap;
 font-size:9px;text-transform:uppercase;letter-spacing:.65px
 }
@@ -396,10 +397,13 @@ thead tr{display:table-row!important}
 
 thead th{
 display:table-cell!important;position:sticky;top:0;z-index:3;
-background:#3d4b80!important;color:#fff!important;
-padding:9px 8px;border:1px solid #d7deea;
+background:var(--panel2)!important;
+color:var(--text)!important;
+padding:9px 8px;
+border:1px solid var(--line)!important;
 text-align:left;font-size:10px;letter-spacing:.2px;
-text-transform:none
+text-transform:none;
+box-shadow:inset 0 -1px 0 color-mix(in srgb,var(--primary) 12%,transparent)
 }
 
 tbody{
@@ -481,6 +485,72 @@ to{opacity:1;transform:translateY(0) scale(1)}
 
 #confirmModal .dfoot .danger{background:var(--red)}
 
+/* ===== CARD SETTINGS BUTTON ===== */
+.card-settings-btn{
+display:inline-flex;
+align-items:center;
+justify-content:center;
+gap:5px;
+padding:8px 11px;
+background:var(--panel2)!important;
+color:var(--text)!important;
+border:1px solid var(--line)!important;
+border-radius:8px;
+font-size:11px;
+font-weight:800;
+white-space:nowrap
+}
+
+.card-settings-btn:hover{
+border-color:var(--primary)!important;
+background:color-mix(in srgb,var(--primary) 10%,var(--panel2))!important
+}
+
+/* ===== CARD VISIBILITY ===== */
+.stat.card-hidden{
+display:none!important
+}
+
+.stats{
+grid-template-columns:repeat(auto-fit,minmax(180px,1fr))
+}
+
+/* ===== CARD SETTINGS POPUP ===== */
+.card-setting-list{
+display:grid;
+gap:10px
+}
+
+.card-setting-item{
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:12px;
+padding:12px;
+background:var(--panel2);
+border:1px solid var(--line);
+border-radius:9px;
+color:var(--text);
+font-size:12px;
+font-weight:750;
+cursor:pointer
+}
+
+.card-setting-item input{
+width:17px;
+height:17px;
+accent-color:var(--primary);
+cursor:pointer;
+flex-shrink:0
+}
+
+.card-setting-note{
+color:var(--muted);
+font-size:11px;
+margin-top:12px;
+line-height:1.6
+}
+
 @media(max-width:1600px){
 .wrap{padding:10px 12px}
 .top{gap:8px;margin-bottom:10px;align-items:center}
@@ -488,7 +558,7 @@ h1{font-size:19px}
 .sub{font-size:11px}
 
 .stats{
-grid-template-columns:repeat(4,minmax(0,1fr));
+grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
 gap:8px;margin-bottom:9px
 }
 
@@ -535,7 +605,8 @@ width:15px;height:15px;flex-basis:15px;font-size:9px
 .top .actions button{flex:1}
 
 .stats{
-grid-template-columns:repeat(2,minmax(0,1fr));gap:6px
+grid-template-columns:repeat(2,minmax(0,1fr));
+gap:6px
 }
 
 .stat{padding:8px}
@@ -564,6 +635,8 @@ grid-template-columns:1fr;gap:9px
 .dbody{padding:12px}
 .dhead{padding:11px 12px}
 .dfoot{padding:10px 12px}
+
+.card-setting-item{padding:11px}
 }
 
 @media(max-width:380px){
@@ -583,6 +656,10 @@ grid-template-columns:1fr;gap:9px
 </div>
 
 <div class="actions">
+<button type="button" class="card-settings-btn" onclick="openCardSettings()">
+⚙ Cards
+</button>
+
 <button class="secondary" onclick="loadCustomers()">↻ Refresh</button>
 <button onclick="location.href='add-customer.html'">＋ Add Customer</button>
 </div>
@@ -590,11 +667,28 @@ grid-template-columns:1fr;gap:9px
 
 <div id="notice" class="notice"></div>
 
-<section class="stats">
-<div class="stat"><small>Total Customers</small><strong id="totalStat">—</strong></div>
-<div class="stat"><small>Active</small><strong id="activeStat">—</strong></div>
-<div class="stat"><small>Due Customers</small><strong id="dueStat">—</strong></div>
-<div class="stat"><small>Total Outstanding</small><strong id="amountStat">৳—</strong></div>
+<section class="stats" id="customerStats">
+
+<div class="stat" id="statCardTotal">
+<small>Total Customers</small>
+<strong id="totalStat">—</strong>
+</div>
+
+<div class="stat" id="statCardActive">
+<small>Active</small>
+<strong id="activeStat">—</strong>
+</div>
+
+<div class="stat" id="statCardDue">
+<small>Due Customers</small>
+<strong id="dueStat">—</strong>
+</div>
+
+<div class="stat" id="statCardOutstanding">
+<small>Total Outstanding</small>
+<strong id="amountStat">৳—</strong>
+</div>
+
 </section>
 
 <section class="toolbar">
@@ -808,6 +902,66 @@ After successful collection, the billing date will move forward by one month.
 </div>
 </div>
 
+<!-- CARD SETTINGS MODAL -->
+<div class="modal" id="cardSettingsModal"
+onclick="backdropClose(event,'cardSettingsModal')">
+
+<div class="dialog small">
+
+<div class="dhead">
+<h2>⚙ Dashboard Card Settings</h2>
+<button type="button" class="secondary"
+onclick="closeModal('cardSettingsModal')">✕</button>
+</div>
+
+<div class="dbody">
+
+<div class="card-setting-list">
+
+<label class="card-setting-item">
+<span>Total Customers</span>
+<input type="checkbox" id="showCardTotal"
+onchange="updateCardSettings()">
+</label>
+
+<label class="card-setting-item">
+<span>Active</span>
+<input type="checkbox" id="showCardActive"
+onchange="updateCardSettings()">
+</label>
+
+<label class="card-setting-item">
+<span>Due Customers</span>
+<input type="checkbox" id="showCardDue"
+onchange="updateCardSettings()">
+</label>
+
+<label class="card-setting-item">
+<span>Total Outstanding</span>
+<input type="checkbox" id="showCardOutstanding"
+onchange="updateCardSettings()">
+</label>
+
+</div>
+
+<div class="card-setting-note">
+Select which dashboard cards you want to display.
+Your preferences will be saved automatically.
+</div>
+
+</div>
+
+<div class="dfoot">
+<button type="button" class="secondary"
+onclick="resetCardSettings()">Reset Default</button>
+
+<button type="button"
+onclick="closeModal('cardSettingsModal')">Done</button>
+</div>
+
+</div>
+</div>
+
 <!-- CUSTOM CONFIRMATION POPUP -->
 <div class="modal" id="confirmModal">
 <div class="dialog small">
@@ -833,8 +987,10 @@ const API_URL = "https://script.google.com/macros/s/AKfycbxrhL_45Ey9QHICYzpNdsYR
 let customers = [];
 let currentCustomer = null;
 
+/* ===== THEME SYSTEM ===== */
 function applyTheme(){
   let theme = "light";
+
   try{
     theme = localStorage.getItem("one_online_theme") || "light";
   }catch(e){}
@@ -855,6 +1011,100 @@ document.addEventListener("visibilitychange",()=>{
   if(!document.hidden)applyTheme();
 });
 
+/* ===== DASHBOARD CARD SHOW / HIDE SETTINGS ===== */
+
+const CARD_SETTINGS_KEY = "one_online_customer_card_settings";
+
+const CARD_SETTINGS = [
+  {key:"total",element:"statCardTotal",input:"showCardTotal"},
+  {key:"active",element:"statCardActive",input:"showCardActive"},
+  {key:"due",element:"statCardDue",input:"showCardDue"},
+  {key:"outstanding",element:"statCardOutstanding",input:"showCardOutstanding"}
+];
+
+function getCardSettings(){
+  const defaults = {
+    total:true,
+    active:true,
+    due:true,
+    outstanding:true
+  };
+
+  try{
+    const saved = JSON.parse(
+      localStorage.getItem(CARD_SETTINGS_KEY) || "{}"
+    );
+
+    return {...defaults,...saved};
+
+  }catch(e){
+    return defaults;
+  }
+}
+
+function applyCardSettings(){
+  const settings = getCardSettings();
+
+  CARD_SETTINGS.forEach(card=>{
+    const visible = settings[card.key] !== false;
+
+    const element = document.getElementById(card.element);
+    const input = document.getElementById(card.input);
+
+    if(element){
+      element.classList.toggle("card-hidden",!visible);
+    }
+
+    if(input){
+      input.checked = visible;
+    }
+  });
+}
+
+function openCardSettings(){
+  applyCardSettings();
+  openModal("cardSettingsModal");
+}
+
+function updateCardSettings(){
+  const settings = {};
+
+  CARD_SETTINGS.forEach(card=>{
+    const input = document.getElementById(card.input);
+    settings[card.key] = input ? input.checked : true;
+  });
+
+  try{
+    localStorage.setItem(
+      CARD_SETTINGS_KEY,
+      JSON.stringify(settings)
+    );
+  }catch(e){}
+
+  applyCardSettings();
+}
+
+function resetCardSettings(){
+  const defaults = {
+    total:true,
+    active:true,
+    due:true,
+    outstanding:true
+  };
+
+  try{
+    localStorage.setItem(
+      CARD_SETTINGS_KEY,
+      JSON.stringify(defaults)
+    );
+  }catch(e){}
+
+  applyCardSettings();
+}
+
+applyCardSettings();
+
+/* ===== API ===== */
 async function apiGet(action,params={}){
   const url = new URL(API_URL);
   url.searchParams.set("action",action);
@@ -922,6 +1172,7 @@ function showNotice(message,type="ok"){
   },5000);
 }
 
+/* ===== LOAD CUSTOMERS ===== */
 async function loadCustomers(){
   const grid=document.getElementById("customerGrid");
 
@@ -976,6 +1227,7 @@ function billingState(c){
   return "active";
 }
 
+/* ===== UPDATE STATS ===== */
 function updateStats(){
   const active=customers.filter(c=>billingState(c)==="active");
   const due=customers.filter(c=>billingState(c)==="due");
@@ -988,6 +1240,8 @@ function updateStats(){
   document.getElementById("activeStat").textContent=active.length;
   document.getElementById("dueStat").textContent=due.length;
   document.getElementById("amountStat").textContent=money(totalDue);
+
+  applyCardSettings();
 }
 
 function populateAreas(){
@@ -1022,6 +1276,7 @@ function changePageSize(){
   renderCustomers();
 }
 
+/* ===== RENDER CUSTOMERS ===== */
 function renderCustomers(){
   const q=document.getElementById("searchInput").value.trim().toLowerCase();
   const status=document.getElementById("statusFilter").value;
@@ -1204,6 +1459,7 @@ function renderCustomers(){
   });
 }
 
+/* ===== MODAL FUNCTIONS ===== */
 function openModal(id){
   document.getElementById(id).classList.add("show");
 }
@@ -1220,7 +1476,7 @@ function byId(id){
   return customers.find(c=>String(c.id)===String(id));
 }
 
-/* CUSTOM CONFIRMATION SYSTEM */
+/* ===== CUSTOM CONFIRMATION SYSTEM ===== */
 let confirmResolver=null;
 
 function customConfirm(
@@ -1254,6 +1510,7 @@ function resolveConfirm(result){
   }
 }
 
+/* ===== CUSTOMER DETAILS ===== */
 async function viewDetails(id){
   try{
     const d=await apiGet("getCustomerDetails",{id});
@@ -1389,6 +1646,7 @@ async function viewDetails(id){
   }
 }
 
+/* ===== EDIT CUSTOMER ===== */
 function openEdit(id){
   const c=byId(id);
   if(!c)return;
@@ -1464,6 +1722,7 @@ document.getElementById("editForm").addEventListener("submit",async e=>{
   }
 });
 
+/* ===== PAYMENT ===== */
 function openPayment(id,mode="bill"){
   const c=byId(id);
   if(!c)return;
@@ -1528,7 +1787,7 @@ document.getElementById("paymentForm").addEventListener("submit",async e=>{
   }
 });
 
-/* INTERNET BILL RENEW */
+/* ===== INTERNET BILL RENEW ===== */
 async function renewInternetBill(id){
   const c=byId(id);
   if(!c)return;
@@ -1570,7 +1829,7 @@ Customer Billing Date, Customer Due and Payments will NOT change.`,
   }
 }
 
-/* DELETE CUSTOMER */
+/* ===== DELETE CUSTOMER ===== */
 async function removeCustomer(id){
   const c=byId(id);
   if(!c)return;
@@ -1600,6 +1859,7 @@ History and payment records will remain.`,
   }
 }
 
+/* ===== START ===== */
 loadCustomers();
 </script>
 </body>
