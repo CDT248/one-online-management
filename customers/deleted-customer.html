@@ -1,0 +1,453 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Under Construction | Coming Soon</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --primary: #8b5cf6;
+    --secondary: #06b6d4;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    background: #080b18;
+    color: white;
+    overflow-x: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+/* Background */
+.background {
+    position: fixed;
+    inset: 0;
+    background:
+    radial-gradient(circle at 20% 20%, #38206c 0%, transparent 35%),
+    radial-gradient(circle at 80% 80%, #064b61 0%, transparent 35%),
+    #080b18;
+    z-index: -2;
+}
+
+.glow {
+    position: fixed;
+    width: 350px;
+    height: 350px;
+    border-radius: 50%;
+    filter: blur(100px);
+    opacity: .3;
+    z-index: -1;
+    animation: float 8s infinite alternate;
+}
+
+.glow.one {
+    background: #8b5cf6;
+    top: 5%;
+    left: 5%;
+}
+
+.glow.two {
+    background: #06b6d4;
+    bottom: 5%;
+    right: 5%;
+}
+
+@keyframes float {
+    from { transform: translate(0,0); }
+    to { transform: translate(70px,-50px); }
+}
+
+/* Main */
+.container {
+    width: 100%;
+    max-width: 1050px;
+    padding: 30px 20px;
+    text-align: center;
+}
+
+/* Logo section */
+.logo-area {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 17px;
+    margin-bottom: 35px;
+}
+
+.logo-box {
+    width: 68px;
+    height: 68px;
+    border-radius: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 30px;
+    background: linear-gradient(135deg,#8b5cf6,#06b6d4);
+    box-shadow: 0 0 35px #8b5cf655;
+    animation: logoFloat 3s ease-in-out infinite;
+}
+
+@keyframes logoFloat {
+    0%,100% { transform: translateY(0); }
+    50% { transform: translateY(-9px); }
+}
+
+.brand-name {
+    font-size: 25px;
+    font-weight: 900;
+    letter-spacing: 2px;
+}
+
+.brand-name span {
+    color: #a78bfa;
+}
+
+/* Badge */
+.status {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 10px 19px;
+    border: 1px solid #a78bfa55;
+    background: #8b5cf61c;
+    border-radius: 50px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    color: #c4b5fd;
+    margin-bottom: 25px;
+}
+
+.dot {
+    width: 8px;
+    height: 8px;
+    background: #a78bfa;
+    border-radius: 50%;
+    box-shadow: 0 0 12px #a78bfa;
+    animation: blink 1s infinite;
+}
+
+@keyframes blink {
+    50% { opacity: .2; }
+}
+
+/* Heading */
+h1 {
+    font-size: clamp(37px, 7vw, 76px);
+    line-height: 1.12;
+    font-weight: 900;
+    letter-spacing: -3px;
+    margin-bottom: 20px;
+}
+
+h1 .gradient {
+    background: linear-gradient(90deg,#a78bfa,#22d3ee,#a78bfa);
+    background-size: 200%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradient 4s linear infinite;
+}
+
+@keyframes gradient {
+    to { background-position: 200%; }
+}
+
+.description {
+    max-width: 650px;
+    margin: 0 auto;
+    font-size: 15px;
+    color: #a5b4cc;
+    line-height: 1.9;
+}
+
+/* Construction animation */
+.construction {
+    margin: 40px auto;
+    width: 180px;
+    height: 130px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.construction i {
+    font-size: 90px;
+    color: #c4b5fd;
+    filter: drop-shadow(0 0 25px #8b5cf6);
+    animation: tool 2s ease-in-out infinite;
+}
+
+@keyframes tool {
+    0%,100% { transform: rotate(-8deg) scale(1); }
+    50% { transform: rotate(8deg) scale(1.08); }
+}
+
+/* Progress */
+.progress-section {
+    max-width: 440px;
+    margin: 35px auto;
+}
+
+.progress-info {
+    display: flex;
+    justify-content: space-between;
+    color: #a5b4cc;
+    font-size: 12px;
+    margin-bottom: 12px;
+    font-weight: 700;
+}
+
+.progress-bar {
+    height: 7px;
+    background: #ffffff15;
+    border-radius: 50px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    width: 0%;
+    height: 100%;
+    border-radius: 50px;
+    background: linear-gradient(90deg,#8b5cf6,#22d3ee);
+    box-shadow: 0 0 15px #22d3ee;
+    animation: progress 4s ease forwards;
+}
+
+@keyframes progress {
+    to { width: 72%; }
+}
+
+/* Logo collection */
+.logo-title {
+    margin-top: 45px;
+    margin-bottom: 20px;
+    color: #64748b;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 4px;
+}
+
+.logo-list {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 14px;
+}
+
+.logo-item {
+    width: 48px;
+    height: 48px;
+    border-radius: 15px;
+    background: #ffffff0b;
+    border: 1px solid #ffffff15;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #b9c4d8;
+    font-size: 19px;
+    transition: .3s;
+}
+
+.logo-item:hover {
+    transform: translateY(-7px) rotate(8deg);
+    color: white;
+    border-color: #8b5cf6;
+    background: #8b5cf633;
+    box-shadow: 0 5px 25px #8b5cf633;
+}
+
+/* Footer */
+footer {
+    margin-top: 45px;
+    color: #64748b;
+    font-size: 11px;
+    line-height: 2;
+}
+
+footer strong {
+    color: #c4b5fd;
+}
+
+/* Clock */
+.clock {
+    color: #94a3b8;
+    margin-top: 20px;
+    font-size: 12px;
+    letter-spacing: 1px;
+}
+
+@media(max-width:600px) {
+    .container {
+        padding: 35px 18px;
+    }
+
+    h1 {
+        letter-spacing: -1.5px;
+    }
+
+    .description {
+        font-size: 13px;
+    }
+
+    .logo-box {
+        width: 55px;
+        height: 55px;
+        font-size: 24px;
+    }
+
+    .brand-name {
+        font-size: 20px;
+    }
+
+    .construction {
+        margin: 25px auto;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="background"></div>
+<div class="glow one"></div>
+<div class="glow two"></div>
+
+<main class="container">
+
+    <!-- BRAND LOGO -->
+    <div class="logo-area">
+        <div class="logo-box">
+            <i class="fa-solid fa-cube"></i>
+        </div>
+
+        <div class="brand-name">
+            YOUR<span>BRAND</span>
+        </div>
+    </div>
+
+    <!-- STATUS -->
+    <div class="status">
+        <span class="dot"></span>
+        WEBSITE UNDER DEVELOPMENT
+    </div>
+
+    <!-- MAIN TITLE -->
+    <h1>
+        SORRY USER!<br>
+        <span class="gradient">THIS SITE IS</span><br>
+        UNDER CONSTRUCTION
+    </h1>
+
+    <p class="description">
+        We are currently working hard to build something amazing for you.
+        Our website is getting a brand-new look with exciting features
+        and a better experience. Thank you for your patience!
+    </p>
+
+    <!-- CONSTRUCTION ICON -->
+    <div class="construction">
+        <i class="fa-solid fa-person-digging"></i>
+    </div>
+
+    <!-- PROGRESS BAR -->
+    <div class="progress-section">
+        <div class="progress-info">
+            <span>DEVELOPMENT PROGRESS</span>
+            <span id="percentage">0%</span>
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress-fill" id="progress"></div>
+        </div>
+    </div>
+
+    <!-- MULTIPLE LOGOS -->
+    <div class="logo-title">
+        POWERED BY CREATIVITY & TECHNOLOGY
+    </div>
+
+    <div class="logo-list">
+        <div class="logo-item"><i class="fa-brands fa-html5"></i></div>
+        <div class="logo-item"><i class="fa-brands fa-css3-alt"></i></div>
+        <div class="logo-item"><i class="fa-brands fa-js"></i></div>
+        <div class="logo-item"><i class="fa-brands fa-react"></i></div>
+        <div class="logo-item"><i class="fa-brands fa-node-js"></i></div>
+        <div class="logo-item"><i class="fa-brands fa-github"></i></div>
+        <div class="logo-item"><i class="fa-brands fa-google"></i></div>
+        <div class="logo-item"><i class="fa-solid fa-cloud"></i></div>
+        <div class="logo-item"><i class="fa-solid fa-code"></i></div>
+    </div>
+
+    <!-- LIVE CLOCK -->
+    <div class="clock" id="clock"></div>
+
+    <!-- FOOTER -->
+    <footer>
+        © <span id="year"></span> <strong>One Online</strong>. All Rights Reserved.<br>
+        Made with Shemanto Islam <i class="fa-solid fa-heart" style="color:#f472b6"></i>
+        for something extraordinary.
+    </footer>
+
+</main>
+
+<script>
+// Live progress animation
+let progress = 0;
+
+const progressElement = document.getElementById("progress");
+const percentageElement = document.getElementById("percentage");
+
+const progressInterval = setInterval(() => {
+    if (progress < 72) {
+        progress++;
+        progressElement.style.width = progress + "%";
+        percentageElement.textContent = progress + "%";
+    } else {
+        clearInterval(progressInterval);
+    }
+}, 45);
+
+// Live date and time
+function updateClock() {
+    const now = new Date();
+
+    document.getElementById("clock").textContent =
+        now.toLocaleString("en-US", {
+            weekday: "long",
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit"
+        });
+}
+
+updateClock();
+setInterval(updateClock, 1000);
+
+// Current year
+document.getElementById("year").textContent =
+    new Date().getFullYear();
+
+</script>
+
+</body>
+</html>
