@@ -3,2005 +3,568 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Manage Admins | ONE ONLINE</title>
-
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
 <style>
-/* ==================================================
-   ONE ONLINE - PERMANENT DARK MODE
-   Independent of parent index theme
-================================================== */
-
 :root{
-  color-scheme:dark;
-  --bg:#080f1c;
-  --panel:#111c2e;
-  --panel2:#172438;
-  --panel3:#1d2c43;
-  --text:#edf4ff;
-  --muted:#91a4bd;
-  --line:#293b53;
-  --primary:#10b981;
-  --primary-hover:#059669;
-  --danger:#f05262;
-  --warning:#f5b942;
-  --success:#10b981;
-  --shadow:0 12px 35px rgba(0,0,0,.22);
+ color-scheme:dark;
+ --bg:#080f1c;--panel:#111c2e;--panel2:#172438;
+ --text:#edf4ff;--muted:#91a4bd;--line:#293b53;
+ --primary:#10b981;--danger:#f05262;
 }
-
 *{box-sizing:border-box}
-
-html,body{
-  margin:0;
-  min-height:100%;
-  background:var(--bg)!important;
-  color:var(--text)!important;
-  font-family:Inter,Arial,sans-serif;
-  font-size:14px;
+body{margin:0;background:var(--bg);color:var(--text);font:14px Inter,Arial,sans-serif}
+.app{max-width:1450px;margin:auto;padding:24px}
+.header,.toolbar,.actions,.user-cell,.modal-head,.modal-foot{
+ display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap
 }
-
-body{
-  color-scheme:dark;
-}
-
-button,input,select{
-  font:inherit;
-}
-
-button{cursor:pointer}
-
-.app{
-  max-width:1500px;
-  margin:auto;
-  padding:26px;
-}
-
-.header{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:15px;
-  flex-wrap:wrap;
-  margin-bottom:23px;
-}
-
-.heading h1{
-  font-size:25px;
-  margin:0 0 7px;
-  font-weight:800;
-  color:var(--text);
-}
-
-.heading p{
-  margin:0;
-  color:var(--muted);
-  font-size:13px;
-  line-height:1.6;
-}
-
+.header{margin-bottom:20px}
+.header h1{margin:0 0 6px;font-size:25px}
+.muted{color:var(--muted);font-size:12px}
 .btn{
-  border:1px solid transparent;
-  border-radius:9px;
-  padding:10px 15px;
-  font-weight:700;
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  gap:7px;
-  transition:.2s;
-  white-space:nowrap;
+ border:1px solid var(--line);border-radius:8px;padding:9px 13px;
+ background:var(--panel2);color:var(--text);font-weight:700;cursor:pointer
 }
-
-.btn-primary{
-  background:var(--primary);
-  color:#04150f;
+.btn.primary{background:var(--primary);border-color:var(--primary);color:#04150f}
+.btn.danger{background:#401e2a;color:#ff9ca5}
+.btn.warn{background:#3c3018;color:#ffd27c}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.notice{display:none;padding:12px;border-radius:8px;margin:12px 0;overflow-wrap:anywhere}
+.notice.success{background:#10382e;color:#75edc3}
+.notice.error{background:#421f2a;color:#ff9ca5}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:18px 0}
+.stat,.toolbar,.table-wrap{background:var(--panel);border:1px solid var(--line);border-radius:12px}
+.stat{padding:16px}
+.stat small{color:var(--muted)}
+.stat strong{display:block;font-size:26px;margin-top:8px}
+.toolbar{padding:12px;border-radius:12px 12px 0 0}
+.toolbar input,.toolbar select,.field input,.field select{
+ background:#0b1627;color:var(--text);border:1px solid #354963;
+ border-radius:8px;padding:10px;min-height:40px
 }
-
-.btn-primary:hover{
-  background:var(--primary-hover);
-  color:#fff;
-}
-
-.btn-light{
-  background:var(--panel2);
-  color:var(--text);
-  border-color:var(--line);
-}
-
-.btn-light:hover{
-  background:var(--panel3);
-}
-
-.btn-danger{
-  background:rgba(240,82,98,.12);
-  color:#ff8792;
-  border-color:rgba(240,82,98,.3);
-}
-
-.btn-danger:hover{
-  background:rgba(240,82,98,.22);
-}
-
-.btn-warning{
-  background:rgba(245,185,66,.12);
-  color:#ffd27c;
-  border-color:rgba(245,185,66,.3);
-}
-
-.btn-sm{
-  padding:7px 10px;
-  font-size:11px;
-  border-radius:7px;
-}
-
-button:disabled{
-  opacity:.4;
-  cursor:not-allowed;
-}
-
-.stats{
-  display:grid;
-  grid-template-columns:repeat(4,minmax(0,1fr));
-  gap:15px;
-  margin-bottom:22px;
-}
-
-.stat{
-  background:var(--panel);
-  border:1px solid var(--line);
-  border-radius:13px;
-  padding:18px;
-  box-shadow:var(--shadow);
-}
-
-.stat small{
-  color:var(--muted);
-  font-weight:600;
-}
-
-.stat strong{
-  display:block;
-  font-size:27px;
-  margin-top:9px;
-  color:var(--text);
-}
-
-.toolbar{
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-  align-items:center;
-  background:var(--panel);
-  padding:15px;
-  border:1px solid var(--line);
-  border-radius:13px 13px 0 0;
-}
-
-.toolbar input,
-.toolbar select{
-  min-height:41px;
-  border:1px solid var(--line);
-  border-radius:8px;
-  padding:0 12px;
-  background:var(--panel2);
-  color:var(--text);
-  outline:none;
-}
-
-.toolbar input:focus,
-.toolbar select:focus{
-  border-color:var(--primary);
-}
-
-.toolbar select option,
-.field select option{
-  background:#172438;
-  color:#edf4ff;
-}
-
-.search{
-  flex:1;
-  min-width:180px;
-}
-
-.table-wrap{
-  overflow-x:auto;
-  background:var(--panel);
-  border:1px solid var(--line);
-  border-top:0;
-  border-radius:0 0 13px 13px;
-}
-
-table{
-  width:100%;
-  border-collapse:collapse;
-  min-width:850px;
-}
-
-th,td{
-  padding:14px 15px;
-  text-align:left;
-  border-bottom:1px solid var(--line);
-  white-space:nowrap;
-}
-
-th{
-  color:var(--muted);
-  font-size:11px;
-  text-transform:uppercase;
-  letter-spacing:.5px;
-  background:var(--panel2);
-}
-
-td{
-  font-size:13px;
-  color:var(--text);
-}
-
-tr:last-child td{border-bottom:0}
-
-tbody tr:hover{
-  background:rgba(255,255,255,.025);
-}
-
-.user-cell{
-  display:flex;
-  align-items:center;
-  gap:11px;
-}
-
+.search{flex:1;min-width:180px}
+.table-wrap{overflow:auto;border-radius:0 0 12px 12px;border-top:0}
+table{width:100%;border-collapse:collapse;min-width:780px}
+th,td{text-align:left;padding:13px;border-bottom:1px solid var(--line)}
+th{background:var(--panel2);color:var(--muted);font-size:11px;text-transform:uppercase}
+td{font-size:13px}
+.user-cell{justify-content:flex-start}
 .avatar{
-  width:39px;
-  height:39px;
-  border-radius:50%;
-  background:#123e35;
-  color:#5ee6bd;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-weight:800;
-  overflow:hidden;
-  flex-shrink:0;
+ width:38px;height:38px;border-radius:50%;background:#123e35;
+ color:#5ee6bd;display:grid;place-items:center;font-weight:800
 }
-
-.user-name{
-  font-weight:700;
-  color:var(--text);
-}
-
-.user-email{
-  font-size:11px;
-  color:var(--muted);
-  margin-top:4px;
-}
-
-.pill{
-  display:inline-block;
-  padding:5px 9px;
-  border-radius:30px;
-  font-size:11px;
-  font-weight:700;
-}
-
-.active{
-  background:rgba(16,185,129,.13);
-  color:#4adea8;
-}
-
-.inactive{
-  background:rgba(240,82,98,.13);
-  color:#ff8995;
-}
-
-.role{
-  background:rgba(91,132,255,.14);
-  color:#a8bdff;
-}
-
-.actions{
-  display:flex;
-  gap:6px;
-  align-items:center;
-}
-
-.empty,.loader{
-  text-align:center;
-  padding:40px;
-  color:var(--muted);
-}
-
-.notice{
-  padding:12px 14px;
-  border-radius:9px;
-  margin-bottom:15px;
-  display:none;
-  font-size:13px;
-  line-height:1.6;
-  overflow-wrap:anywhere;
-}
-
-.notice.error{
-  display:block;
-  background:rgba(240,82,98,.12);
-  border:1px solid rgba(240,82,98,.3);
-  color:#ff9ca5;
-}
-
-.notice.success{
-  display:block;
-  background:rgba(16,185,129,.12);
-  border:1px solid rgba(16,185,129,.3);
-  color:#5ee6bd;
-}
-
-/* ==================================================
-   MODAL - ALWAYS DARK
-================================================== */
-
+.user-name{font-weight:700}
+.user-email{font-size:11px;color:var(--muted);margin-top:3px}
+.pill{padding:5px 9px;border-radius:30px;font-size:11px;font-weight:700;background:#233657;color:#b9caff}
+.active{background:#10382e;color:#75edc3}
+.inactive{background:#421f2a;color:#ff9ca5}
+.empty{text-align:center;padding:35px;color:var(--muted)}
 .modal-backdrop{
-  display:none;
-  position:fixed;
-  inset:0;
-  z-index:9999;
-  background:rgba(0,0,0,.82);
-  padding:18px;
-  align-items:center;
-  justify-content:center;
-  overflow-y:auto;
+ display:none;position:fixed;inset:0;z-index:20;background:#000d;
+ padding:14px;align-items:center;justify-content:center;overflow:auto
 }
-
-.modal-backdrop.show{
-  display:flex;
-}
-
+.modal-backdrop.show{display:flex}
 .modal{
-  width:100%;
-  max-width:780px;
-  max-height:94vh;
-  overflow:auto;
-  background:#111c2e!important;
-  color:#edf4ff!important;
-  border:1px solid #30445e;
-  border-radius:15px;
-  box-shadow:0 25px 80px rgba(0,0,0,.65);
+ width:100%;max-width:800px;max-height:95vh;overflow:auto;
+ background:#111c2e;border:1px solid #354963;border-radius:14px;
+ box-shadow:0 25px 80px #000a
 }
-
-.modal-head{
-  padding:19px 22px;
-  border-bottom:1px solid var(--line);
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  position:sticky;
-  top:0;
-  background:#111c2e!important;
-  z-index:2;
-}
-
-.modal-head h2{
-  font-size:18px;
-  margin:0;
-  color:var(--text);
-}
-
-.close{
-  border:1px solid var(--line);
-  background:#1d2c43;
-  width:34px;
-  height:34px;
-  border-radius:8px;
-  font-size:21px;
-  color:#dce8f8;
-}
-
-.close:hover{
-  background:#30445e;
-}
-
-.modal-body{
-  padding:22px;
-  background:#111c2e!important;
-}
-
-.form-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:15px;
-}
-
-.field{
-  display:flex;
-  flex-direction:column;
-  gap:7px;
-}
-
-.field.full{
-  grid-column:1/-1;
-}
-
-.field label{
-  font-size:12px;
-  font-weight:700;
-  color:#cbd8e9;
-}
-
-.field input,
-.field select{
-  width:100%;
-  height:43px;
-  border:1px solid #354963;
-  border-radius:8px;
-  padding:0 11px;
-  background:#0b1627!important;
-  color:#edf4ff!important;
-  outline:none;
-}
-
-.field input::placeholder,
-.toolbar input::placeholder{
-  color:#71849e;
-}
-
-.field input:focus,
-.field select:focus{
-  border-color:var(--primary);
-  box-shadow:0 0 0 3px rgba(16,185,129,.1);
-}
-
-.field input:disabled{
-  opacity:.65;
-  cursor:not-allowed;
-}
-
-.help{
-  font-size:11px;
-  color:#91a4bd;
-  line-height:1.6;
-}
-
-.modal-footer{
-  padding:15px 22px;
-  border-top:1px solid var(--line);
-  display:flex;
-  justify-content:flex-end;
-  gap:9px;
-  position:sticky;
-  bottom:0;
-  background:#111c2e!important;
-  z-index:2;
-}
-
-.permission-title{
-  font-size:14px;
-  font-weight:800;
-  margin:25px 0 10px;
-  padding-bottom:10px;
-  border-bottom:1px solid var(--line);
-  color:#edf4ff;
-}
-
-.permission-grid{
-  border:1px solid #30445e;
-  border-radius:10px;
-  overflow:hidden;
-  background:#0d192a;
-}
-
+.modal-head,.modal-foot{position:sticky;background:#111c2e;padding:15px 20px;z-index:2}
+.modal-head{top:0;border-bottom:1px solid var(--line)}
+.modal-head h2{font-size:18px;margin:0}
+.modal-foot{bottom:0;border-top:1px solid var(--line);justify-content:flex-end}
+.modal-body{padding:20px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+.field{display:flex;flex-direction:column;gap:7px}
+.field.full{grid-column:1/-1}
+.field label{font-size:12px;font-weight:700;color:#cbd8e9}
+.field input,.field select{width:100%}
+.permission-title{font-weight:800;margin:24px 0 10px}
+.permission-grid{border:1px solid var(--line);border-radius:9px;overflow:hidden;background:#0d192a}
 .permission-row{
-  display:grid;
-  grid-template-columns:minmax(160px,1.5fr) repeat(4,minmax(55px,.6fr));
-  gap:8px;
-  padding:12px;
-  border-bottom:1px solid #263a53;
-  align-items:center;
-  font-size:12px;
-  color:#dce8f8;
+ display:grid;grid-template-columns:minmax(160px,1.5fr) repeat(4,minmax(55px,.6fr));
+ gap:8px;padding:11px;align-items:center;border-bottom:1px solid #263a53;font-size:12px
 }
-
-.permission-row:last-child{
-  border-bottom:0;
+.permission-row:last-child{border-bottom:0}
+.permission-row.head{background:#1b2a40;font-weight:800;color:#b8c8dc}
+.permission-row label{display:flex;align-items:center;gap:5px}
+.permission-row input{accent-color:var(--primary)}
+.note{margin-top:12px;padding:10px;background:#3c3018;color:#ffd27c;border-radius:8px;font-size:12px}
+.loading{
+ display:none;position:fixed;inset:0;z-index:30;background:#030912d9;
+ place-items:center;color:#5ee6bd;font-weight:800
 }
-
-.permission-row.header{
-  background:#1b2a40!important;
-  font-weight:800;
-  color:#aebfd4;
-}
-
-.permission-row label{
-  display:flex;
-  align-items:center;
-  gap:5px;
-  cursor:pointer;
-}
-
-.permission-row input{
-  accent-color:var(--primary);
-  width:15px;
-  height:15px;
-  cursor:pointer;
-}
-
-.permission-note{
-  background:rgba(245,185,66,.09);
-  border:1px solid rgba(245,185,66,.22);
-  color:#f5ce83;
-  padding:11px;
-  border-radius:8px;
-  font-size:12px;
-  margin-top:12px;
-  line-height:1.6;
-}
-
-.profile-preview{
-  display:flex;
-  align-items:center;
-  gap:14px;
-  margin-bottom:19px;
-  padding:13px;
-  background:#0c1728;
-  border:1px solid var(--line);
-  border-radius:10px;
-}
-
-.profile-preview .avatar{
-  width:55px;
-  height:55px;
-  font-size:18px;
-}
-
-.loading-overlay{
-  position:fixed;
-  inset:0;
-  background:rgba(3,9,18,.82);
-  backdrop-filter:blur(3px);
-  z-index:10000;
-  display:none;
-  align-items:center;
-  justify-content:center;
-  font-weight:700;
-  color:#5ee6bd;
-}
-
-.loading-overlay.show{
-  display:flex;
-}
-
-.system-note{
-  color:#f5ce83;
-  font-size:11px;
-  line-height:1.6;
-  margin-top:7px;
-}
-
-@media(max-width:850px){
-  .app{padding:18px}
-  .stats{grid-template-columns:repeat(2,1fr)}
-  .actions{flex-wrap:wrap}
-}
-
-@media(max-width:550px){
-  .app{padding:13px}
-  .heading h1{font-size:21px}
-  .stats{gap:9px}
-  .stat{padding:13px}
-  .stat strong{font-size:23px}
-  .toolbar{padding:11px}
-  .toolbar input,.toolbar select{width:100%}
-  .search{min-width:100%}
-  .form-grid{grid-template-columns:1fr}
-  .field.full{grid-column:auto}
-  .modal-backdrop{padding:8px}
-  .modal{max-height:96vh}
-  .modal-body{padding:14px}
-  .modal-head,.modal-footer{padding:14px}
-  .permission-row{
-    grid-template-columns:minmax(105px,1.2fr) repeat(4,42px);
-    gap:5px;
-    padding:10px 6px;
-    font-size:10px;
-  }
-  .permission-row input{
-    width:14px;
-    height:14px;
-  }
-  .btn{padding:9px 11px}
-  .btn-sm{padding:7px 8px}
+.loading.show{display:grid}
+@media(max-width:700px){
+ .app{padding:13px}
+ .stats{grid-template-columns:repeat(2,1fr)}
+ .form-grid{grid-template-columns:1fr}
+ .field.full{grid-column:auto}
+ .permission-row{grid-template-columns:minmax(100px,1fr) repeat(4,38px);gap:4px;padding:9px 5px;font-size:10px}
+ .permission-row input{width:13px;height:13px}
+ .toolbar>*{width:100%}
+ .search{min-width:100%}
 }
 </style>
 </head>
 
 <body>
-
 <div class="app">
 
-  <div class="header">
-    <div class="heading">
-      <h1>Manage Admins</h1>
-      <p>Manage users, roles, account status and individual permissions.</p>
-    </div>
+<header class="header">
+ <div>
+  <h1>Manage Admins</h1>
+  <div class="muted">Manage users, roles, account status and page permissions.</div>
+ </div>
+ <button class="btn primary" id="addBtn">＋ Add New User</button>
+</header>
 
-    <button class="btn btn-primary" id="addUserBtn">
-      ＋ Add New User
-    </button>
-  </div>
+<div id="notice" class="notice"></div>
 
-  <div id="notice" class="notice"></div>
+<section class="stats">
+ <div class="stat"><small>Total Users</small><strong id="total">0</strong></div>
+ <div class="stat"><small>Active Users</small><strong id="active">0</strong></div>
+ <div class="stat"><small>Inactive Users</small><strong id="inactive">0</strong></div>
+ <div class="stat"><small>Guest Users</small><strong id="guests">0</strong></div>
+</section>
 
-  <div class="stats">
-    <div class="stat">
-      <small>Total Users</small>
-      <strong id="totalUsers">0</strong>
-    </div>
-
-    <div class="stat">
-      <small>Active Users</small>
-      <strong id="activeUsers">0</strong>
-    </div>
-
-    <div class="stat">
-      <small>Inactive Users</small>
-      <strong id="inactiveUsers">0</strong>
-    </div>
-
-    <div class="stat">
-      <small>Guest Users</small>
-      <strong id="guestUsers">0</strong>
-    </div>
-  </div>
-
-  <div class="toolbar">
-    <input
-      class="search"
-      id="searchInput"
-      placeholder="Search name or email..."
-    >
-
-    <select id="roleFilter">
-      <option value="">All Roles</option>
-      <option value="system_admin">System Admin</option>
-      <option value="admin">Admin</option>
-      <option value="support">Support</option>
-      <option value="accounting">Accounting</option>
-      <option value="guest">Guest</option>
-    </select>
-
-    <select id="statusFilter">
-      <option value="">All Status</option>
-      <option value="true">Active</option>
-      <option value="false">Inactive</option>
-    </select>
-
-    <button class="btn btn-light" id="refreshBtn">
-      ↻ Refresh
-    </button>
-  </div>
-
-  <div class="table-wrap">
-    <table>
-      <thead>
-        <tr>
-          <th>User Account</th>
-          <th>Role</th>
-          <th>Status</th>
-          <th>Phone</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-
-      <tbody id="usersTable">
-        <tr>
-          <td colspan="5" class="loader">Loading users...</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
+<div class="toolbar">
+ <input id="search" class="search" placeholder="Search name or email">
+ <select id="roleFilter">
+  <option value="">All Roles</option>
+  <option>admin</option><option>support</option>
+  <option>accounting</option><option>guest</option>
+ </select>
+ <select id="statusFilter">
+  <option value="">All Status</option>
+  <option value="true">Active</option>
+  <option value="false">Inactive</option>
+ </select>
+ <button class="btn" id="refreshBtn">↻ Refresh</button>
 </div>
 
-
-<!-- ADD / EDIT USER MODAL -->
+<div class="table-wrap">
+<table>
+ <thead><tr><th>User</th><th>Role</th><th>Status</th><th>Phone</th><th>Actions</th></tr></thead>
+ <tbody id="usersTable"><tr><td colspan="5" class="empty">Loading...</td></tr></tbody>
+</table>
+</div>
+</div>
 
 <div class="modal-backdrop" id="userModal">
+<div class="modal">
+ <div class="modal-head">
+  <h2 id="modalTitle">Add User</h2>
+  <button class="btn" data-close>×</button>
+ </div>
 
-  <div class="modal">
-
-    <div class="modal-head">
-      <h2 id="userModalTitle">Add New User</h2>
-      <button class="close" data-close="userModal">×</button>
-    </div>
-
-    <div class="modal-body">
-
-      <div class="profile-preview">
-        <div class="avatar" id="modalAvatar">U</div>
-
-        <div>
-          <strong id="modalUserLabel">New User</strong>
-          <div class="help">
-            Profile picture can be updated by the user from My Account.
-          </div>
-        </div>
-      </div>
-
-      <div class="form-grid">
-
-        <div class="field">
-          <label>Full Name *</label>
-          <input id="fullName" placeholder="Enter full name">
-        </div>
-
-        <div class="field">
-          <label>Phone Number</label>
-          <input id="phone" placeholder="Enter phone number">
-        </div>
-
-        <div class="field full">
-          <label>Email Address *</label>
-          <input
-            id="email"
-            type="email"
-            placeholder="user@example.com"
-          >
-        </div>
-
-        <div class="field">
-          <label>User Role *</label>
-
-          <select id="userRole">
-            <option value="admin">Admin</option>
-            <option value="support">Support</option>
-            <option value="accounting">Accounting</option>
-            <option value="guest">Guest</option>
-          </select>
-        </div>
-
-        <div class="field" id="passwordField">
-          <label>Temporary Password *</label>
-
-          <input
-            id="temporaryPassword"
-            type="password"
-            autocomplete="new-password"
-            placeholder="Minimum 8 characters"
-          >
-
-          <span class="help">
-            User can change their password later.
-          </span>
-        </div>
-
-      </div>
-
-      <div class="permission-title">Page Permissions</div>
-
-      <div class="help" style="margin-bottom:12px">
-        Set individual access for this user.
-      </div>
-
-      <div class="permission-grid" id="permissionGrid"></div>
-
-      <div class="permission-note">
-        Guest accounts are read-only. Add, Edit and Delete permissions
-        will not be granted to Guest users.
-      </div>
-
-      <div class="system-note" id="systemNote"></div>
-
-    </div>
-
-    <div class="modal-footer">
-      <button class="btn btn-light" data-close="userModal">
-        Cancel
-      </button>
-
-      <button class="btn btn-primary" id="saveUserBtn">
-        Save User
-      </button>
-    </div>
-
+ <div class="modal-body">
+  <div class="form-grid">
+   <div class="field"><label>Full Name *</label><input id="fullName" placeholder="Full name"></div>
+   <div class="field"><label>Phone</label><input id="phone" placeholder="Phone number"></div>
+   <div class="field full"><label>Email *</label><input id="email" type="email" placeholder="user@example.com"></div>
+   <div class="field">
+    <label>Role</label>
+    <select id="userRole">
+     <option value="admin">Admin</option>
+     <option value="support">Support</option>
+     <option value="accounting">Accounting</option>
+     <option value="guest">Guest</option>
+    </select>
+   </div>
+   <div class="field" id="passwordField">
+    <label>Temporary Password *</label>
+    <input id="password" type="password" minlength="8" placeholder="At least 8 characters">
+   </div>
   </div>
+
+  <div class="permission-title">Page Permissions</div>
+  <div class="muted" style="margin-bottom:10px">View is required for Add, Edit and Delete.</div>
+  <div class="permission-grid" id="permissionGrid"></div>
+  <div class="note">Guest accounts are view-only. Add, Edit and Delete are disabled for Guest.</div>
+ </div>
+
+ <div class="modal-foot">
+  <button class="btn" data-close>Cancel</button>
+  <button class="btn primary" id="saveBtn">Save User</button>
+ </div>
+</div>
 </div>
 
-
-<div class="loading-overlay" id="loadingOverlay">
-  Please wait...
-</div>
-
+<div class="loading" id="loading">Please wait...</div>
 
 <script>
-/* ==================================================
-   1. SUPABASE CONFIG
-================================================== */
+const SUPABASE_URL="https://dmeusqzvhxixfntdqtzp.supabase.co";
+const SUPABASE_ANON_KEY="sb_publishable_OxD9SDk-ZUHrak0vBXK_yw_Oo3MH0Pn";
+const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
 
-const SUPABASE_URL =
-  "https://dmeusqzvhxixfntdqtzp.supabase.co";
-
-const SUPABASE_ANON_KEY =
-  "sb_publishable_OxD9SDk-ZUHrak0vBXK_yw_Oo3MH0Pn";
-
-const sb = window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_ANON_KEY
-);
-
-
-/* ==================================================
-   2. PAGE CONFIG
-   These keys must match index.html PAGE_CONFIG.
-================================================== */
-
-const PAGES = [
-  {key:"dashboard",name:"Dashboard"},
-  {key:"customer-list",name:"Total Customer"},
-  {key:"add-customer",name:"Add Customer"},
-  {key:"deleted-customer",name:"Deleted Customer"},
-  {key:"add-spend",name:"Spend Add"},
-  {key:"spend-list",name:"Spend History"},
-  {key:"email-settings",name:"Email Settings"},
-  {key:"email-template",name:"Email Template"},
-  {key:"email-history",name:"Email History"},
-  {key:"map-entry",name:"Map Entry"},
-  {key:"map",name:"Map"},
-  {key:"page1",name:"Page 1"},
-  {key:"page2",name:"Page 2"}
+const PAGES=[
+ {key:"dashboard",name:"Dashboard"},
+ {key:"customer-list",name:"Total Customer"},
+ {key:"add-customer",name:"Add Customer"},
+ {key:"deleted-customer",name:"Deleted Customer"},
+ {key:"add-spend",name:"Spend Add"},
+ {key:"spend-list",name:"Spend History"},
+ {key:"email-settings",name:"Email Settings"},
+ {key:"email-template",name:"Email Template"},
+ {key:"email-history",name:"Email History"},
+ {key:"map-entry",name:"Map Entry"},
+ {key:"map",name:"Map"},
+ {key:"page1",name:"Page 1"},
+ {key:"page2",name:"Page 2"}
 ];
 
-const ROLES = {
-  system_admin:"System Admin",
-  admin:"Admin",
-  support:"Support",
-  accounting:"Accounting",
-  guest:"Guest"
-};
+const $=id=>document.getElementById(id);
+let currentUser=null,users=[],editingUserId=null,permissions={};
 
-const ALLOWED_ROLES = [
-  "admin",
-  "support",
-  "accounting",
-  "guest"
-];
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({
+ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+}[c]));
 
-let currentUser = null;
-let users = [];
-let editingUserId = null;
-let editingPermissions = {};
-let noticeTimer = null;
-
-
-/* ==================================================
-   3. HELPERS
-================================================== */
-
-const $ = id => document.getElementById(id);
-
-function escapeHTML(value=""){
-  return String(value).replace(/[&<>"']/g,char=>({
-    "&":"&amp;",
-    "<":"&lt;",
-    ">":"&gt;",
-    '"':"&quot;",
-    "'":"&#039;"
-  }[char]));
+function notice(msg,type="success"){
+ const n=$("notice");n.textContent=msg;n.className="notice "+type;n.style.display="block";
+ setTimeout(()=>n.style.display="none",6500);
 }
-
-function showNotice(message,type="success"){
-  const box = $("notice");
-
-  box.textContent = message;
-  box.className = "notice " + type;
-  box.style.display = "block";
-
-  window.scrollTo({
-    top:0,
-    behavior:"smooth"
-  });
-
-  clearTimeout(noticeTimer);
-
-  noticeTimer = setTimeout(()=>{
-    box.style.display = "none";
-  },7000);
-}
-
-function setLoading(on){
-  $("loadingOverlay").classList.toggle("show",!!on);
-}
-
-function openModal(id){
-  $(id).classList.add("show");
-  document.body.style.overflow = "hidden";
-}
-
-function closeModal(id){
-  $(id).classList.remove("show");
-  document.body.style.overflow = "";
-}
-
-function roleName(role){
-  return ROLES[role] || role || "Unknown";
-}
-
-function initials(name="User"){
-  return name
-    .trim()
-    .split(/\s+/)
-    .slice(0,2)
-    .map(x=>x[0]||"")
-    .join("")
-    .toUpperCase() || "U";
-}
-
-function avatarHTML(user){
-  return `
-    <div class="avatar">
-      ${escapeHTML(initials(user.full_name || "User"))}
-    </div>
-  `;
-}
-
-
-/* ==================================================
-   4. EDGE FUNCTION CALL
-================================================== */
+function busy(v){$("loading").classList.toggle("show",v)}
+function initials(s){return String(s||"U").trim().split(/\s+/).slice(0,2).map(x=>x[0]||"").join("").toUpperCase()}
+function modal(open){$("userModal").classList.toggle("show",open);document.body.style.overflow=open?"hidden":""}
 
 async function adminAction(action,payload={}){
+ const {data:{session},error:se}=await sb.auth.getSession();
+ if(se)throw se;
+ if(!session)throw Error("Session expired. Please login again.");
 
-  const {
-    data:{session},
-    error:sessionError
-  } = await sb.auth.getSession();
+ const {data,error}=await sb.functions.invoke("admin-management",{
+  body:{action,...payload}
+ });
 
-  if(sessionError) throw sessionError;
-
-  if(!session){
-    throw new Error("Your session has expired. Please login again.");
-  }
-
-  const {data,error} = await sb.functions.invoke(
-    "admin-management",
-    {
-      body:{
-        action,
-        ...payload
-      }
-    }
-  );
-
-  if(error){
-
-    let message = error.message || "Server request failed.";
-
-    try{
-      if(error.context && typeof error.context.json === "function"){
-        const responseBody = await error.context.json();
-
-        message =
-          responseBody.message ||
-          responseBody.error ||
-          message;
-      }
-    }catch(e){}
-
-    throw new Error(message);
-  }
-
-  if(data && data.success === false){
-    throw new Error(
-      data.message || data.error || "Action failed."
-    );
-  }
-
-  return data || {};
+ if(error){
+  let message=error.message||"Function request failed";
+  try{
+   const body=await error.context.json();
+   message=body.message||body.error||message;
+  }catch{}
+  throw Error(message);
+ }
+ if(data?.success===false)throw Error(data.message||"Action failed");
+ return data||{};
 }
-
-
-/* ==================================================
-   5. AUTH CHECK
-================================================== */
 
 async function checkAccess(){
+ const {data:{session},error}=await sb.auth.getSession();
+ if(error)throw error;
+ if(!session){location.href="/";return false}
 
-  const {
-    data:{session},
-    error
-  } = await sb.auth.getSession();
+ const {data:p,error:pe}=await sb.from("profiles")
+  .select("user_id,full_name,role,is_active")
+  .eq("user_id",session.user.id).maybeSingle();
 
-  if(error) throw error;
-
-  if(!session){
-    location.href = "/one-online-management/";
-    return false;
-  }
-
-  const {data:profile,error:profileError} = await sb
-    .from("profiles")
-    .select("user_id,full_name,role,is_active")
-    .eq("user_id",session.user.id)
-    .maybeSingle();
-
-  if(profileError) throw profileError;
-
-  if(!profile || profile.is_active === false){
-
-    await sb.auth.signOut();
-
-    location.href = "/one-online-management/";
-    return false;
-  }
-
-  if(profile.role !== "system_admin"){
-
-    document.body.innerHTML = `
-      <div style="
-        max-width:600px;
-        margin:100px auto;
-        text-align:center;
-        padding:25px;
-        color:#edf4ff;
-        background:#111c2e;
-        border:1px solid #293b53;
-        border-radius:15px;
-      ">
-        <h2>Access Denied</h2>
-        <p>Only System Admin can access Manage Admins.</p>
-
-        <button
-          onclick="location.href='/one-online-management/'"
-          style="
-            padding:11px 18px;
-            border:0;
-            border-radius:8px;
-            background:#10b981;
-            color:#04150f;
-            font-weight:700;
-          "
-        >
-          Back to Dashboard
-        </button>
-      </div>
-    `;
-
-    return false;
-  }
-
-  currentUser = session.user;
-
-  return true;
+ if(pe)throw pe;
+ if(!p||p.is_active===false){
+  await sb.auth.signOut();location.href="/";return false;
+ }
+ if(String(p.role||"").trim().toLowerCase()!=="system_admin"){
+  document.body.innerHTML="<h2 style='text-align:center;margin:100px;color:white'>Access denied. System Admin only.</h2>";
+  return false;
+ }
+ currentUser=session.user;
+ return true;
 }
-
-
-/* ==================================================
-   6. LOAD USERS
-================================================== */
 
 async function loadUsers(){
-
-  $("usersTable").innerHTML = `
-    <tr>
-      <td colspan="5" class="loader">Loading users...</td>
-    </tr>
-  `;
-
-  try{
-
-    const result = await adminAction("list_users");
-
-    users = Array.isArray(result.users)
-      ? result.users
-      : Array.isArray(result.data)
-        ? result.data
-        : [];
-
-    renderUsers();
-
-  }catch(error){
-
-    $("usersTable").innerHTML = `
-      <tr>
-        <td colspan="5" class="empty">
-          ${escapeHTML(error.message)}
-        </td>
-      </tr>
-    `;
-
-    showNotice(error.message,"error");
-  }
+ $("usersTable").innerHTML='<tr><td colspan="5" class="empty">Loading users...</td></tr>';
+ try{
+  const r=await adminAction("list_users");
+  users=Array.isArray(r.users)?r.users:[];
+  renderUsers();
+ }catch(e){
+  $("usersTable").innerHTML=`<tr><td colspan="5" class="empty">${esc(e.message)}</td></tr>`;
+  notice(e.message,"error");
+ }
 }
-
-
-/* ==================================================
-   7. RENDER USERS
-================================================== */
 
 function renderUsers(){
+ const q=$("search").value.toLowerCase().trim();
+ const role=$("roleFilter").value,status=$("statusFilter").value;
 
-  const search = $("searchInput").value.toLowerCase().trim();
-  const role = $("roleFilter").value;
-  const status = $("statusFilter").value;
+ const list=users.filter(u=>
+  (!q||`${u.full_name||""} ${u.email||""} ${u.phone||""}`.toLowerCase().includes(q))&&
+  (!role||u.role===role)&&
+  (status===""||String(u.is_active!==false)===status)
+ );
 
-  const filtered = users.filter(user=>{
+ $("total").textContent=users.length;
+ $("active").textContent=users.filter(u=>u.is_active!==false).length;
+ $("inactive").textContent=users.filter(u=>u.is_active===false).length;
+ $("guests").textContent=users.filter(u=>u.role==="guest").length;
 
-    const text = `
-      ${user.full_name || ""}
-      ${user.email || ""}
-      ${user.phone || ""}
-    `.toLowerCase();
+ if(!list.length){
+  $("usersTable").innerHTML='<tr><td colspan="5" class="empty">No users found.</td></tr>';
+  return;
+ }
 
-    if(search && !text.includes(search)) return false;
+ $("usersTable").innerHTML=list.map(u=>`
+ <tr>
+  <td><div class="user-cell">
+   <div class="avatar">${esc(initials(u.full_name))}</div>
+   <div><div class="user-name">${esc(u.full_name||"Unnamed")}</div>
+   <div class="user-email">${esc(u.email)}</div></div>
+  </div></td>
+  <td><span class="pill">${esc(u.role)}</span></td>
+  <td><span class="pill ${u.is_active===false?"inactive":"active"}">${u.is_active===false?"Inactive":"Active"}</span></td>
+  <td>${esc(u.phone||"—")}</td>
+  <td><div class="actions">
+   ${u.role==="system_admin"?"Protected":`
+    <button class="btn" onclick="editUser('${esc(u.user_id)}')">Edit</button>
+    <button class="btn warn" onclick="toggleStatus('${esc(u.user_id)}')">${u.is_active===false?"Activate":"Deactivate"}</button>
+    <button class="btn" onclick="resetPassword('${esc(u.user_id)}')">Reset</button>
+    <button class="btn danger" onclick="deleteUser('${esc(u.user_id)}')">Delete</button>
+   `}
+  </div></td>
+ </tr>`).join("");
+}
 
-    if(role && user.role !== role) return false;
+/* IMPORTANT: Supports both ARRAY and OBJECT permission formats. */
+function normalizePermissionInput(input){
+ const out={};
 
-    if(
-      status !== "" &&
-      String(user.is_active !== false) !== status
-    ) return false;
-
-    return true;
+ if(Array.isArray(input)){
+  input.forEach(p=>{
+   if(!p?.page_key)return;
+   out[p.page_key]={
+    view:!!(p.view??p.can_view),
+    add:!!(p.add??p.can_add),
+    edit:!!(p.edit??p.can_edit),
+    delete:!!(p.delete??p.can_delete)
+   };
   });
+ }else if(input&&typeof input==="object"){
+  Object.entries(input).forEach(([key,p])=>{
+   out[key]={
+    view:!!(p?.view??p?.can_view),
+    add:!!(p?.add??p?.can_add),
+    edit:!!(p?.edit??p?.can_edit),
+    delete:!!(p?.delete??p?.can_delete)
+   };
+  });
+ }
+ return out;
+}
 
-  $("totalUsers").textContent = users.length;
+function buildPermissionGrid(input={}){
+ permissions=normalizePermissionInput(input);
 
-  $("activeUsers").textContent =
-    users.filter(u=>u.is_active !== false).length;
+ let html='<div class="permission-row head"><div>Page</div><div>View</div><div>Add</div><div>Edit</div><div>Delete</div></div>';
 
-  $("inactiveUsers").textContent =
-    users.filter(u=>u.is_active === false).length;
+ PAGES.forEach(page=>{
+  const p=permissions[page.key]||{};
+  html+=`<div class="permission-row">
+   <div><b>${esc(page.name)}</b></div>
+   ${["view","add","edit","delete"].map(action=>`
+    <label>
+     <input type="checkbox" data-page="${page.key}" data-action="${action}" ${p[action]?"checked":""}>
+     ${action[0].toUpperCase()}
+    </label>`).join("")}
+  </div>`;
+ });
 
-  $("guestUsers").textContent =
-    users.filter(u=>u.role === "guest").length;
+ $("permissionGrid").innerHTML=html;
 
+ $("permissionGrid").querySelectorAll("input").forEach(el=>{
+  el.addEventListener("change",()=>{
+   const page=el.dataset.page,action=el.dataset.action;
+   permissions[page]??={};
+   permissions[page][action]=el.checked;
 
-  if(!filtered.length){
+   if(action==="view"&&!el.checked){
+    ["add","edit","delete"].forEach(a=>{
+     permissions[page][a]=false;
+     const box=$("permissionGrid").querySelector(`[data-page="${page}"][data-action="${a}"]`);
+     if(box)box.checked=false;
+    });
+   }
 
-    $("usersTable").innerHTML = `
-      <tr>
-        <td colspan="5" class="empty">
-          No users found.
-        </td>
-      </tr>
-    `;
+   if(["add","edit","delete"].includes(action)&&el.checked){
+    permissions[page].view=true;
+    const box=$("permissionGrid").querySelector(`[data-page="${page}"][data-action="view"]`);
+    if(box)box.checked=true;
+   }
+  });
+ });
 
-    return;
+ applyGuest();
+}
+
+function applyGuest(){
+ const guest=$("userRole").value==="guest";
+ $("permissionGrid").querySelectorAll('input[data-action="add"],input[data-action="edit"],input[data-action="delete"]').forEach(el=>{
+  el.disabled=guest;
+  if(guest){
+   el.checked=false;
+   permissions[el.dataset.page]??={};
+   permissions[el.dataset.page][el.dataset.action]=false;
   }
-
-
-  $("usersTable").innerHTML = filtered.map(user=>{
-
-    const id = escapeHTML(user.user_id);
-
-    const isSelf = user.user_id === currentUser.id;
-    const isSystemAdmin = user.role === "system_admin";
-
-    const statusClass =
-      user.is_active === false ? "inactive" : "active";
-
-    const statusText =
-      user.is_active === false ? "Inactive" : "Active";
-
-    let actionHTML = "";
-
-    if(isSystemAdmin){
-
-      actionHTML = `
-        <span class="help">Protected Account</span>
-      `;
-
-    }else{
-
-      actionHTML = `
-        <button
-          class="btn btn-light btn-sm"
-          onclick="editUser('${id}')"
-        >
-          Edit
-        </button>
-
-        <button
-          class="btn btn-warning btn-sm"
-          onclick="toggleStatus('${id}')"
-          ${isSelf ? "disabled" : ""}
-        >
-          ${user.is_active === false ? "Activate" : "Deactivate"}
-        </button>
-
-        <button
-          class="btn btn-light btn-sm"
-          onclick="sendReset('${id}')"
-        >
-          Reset Password
-        </button>
-
-        <button
-          class="btn btn-danger btn-sm"
-          onclick="deleteUser('${id}')"
-          ${isSelf ? "disabled" : ""}
-        >
-          Delete
-        </button>
-      `;
-    }
-
-    return `
-      <tr>
-
-        <td>
-          <div class="user-cell">
-
-            ${avatarHTML(user)}
-
-            <div>
-              <div class="user-name">
-                ${escapeHTML(user.full_name || "Unnamed User")}
-              </div>
-
-              <div class="user-email">
-                ${escapeHTML(user.email || "")}
-              </div>
-            </div>
-
-          </div>
-        </td>
-
-        <td>
-          <span class="pill role">
-            ${escapeHTML(roleName(user.role))}
-          </span>
-        </td>
-
-        <td>
-          <span class="pill ${statusClass}">
-            ${statusText}
-          </span>
-        </td>
-
-        <td>
-          ${escapeHTML(user.phone || "—")}
-        </td>
-
-        <td>
-          <div class="actions">
-            ${actionHTML}
-          </div>
-        </td>
-
-      </tr>
-    `;
-
-  }).join("");
+ });
 }
-
-
-/* ==================================================
-   8. PERMISSION GRID
-================================================== */
-
-function buildPermissionGrid(permissionData={}){
-
-  editingPermissions =
-    JSON.parse(JSON.stringify(permissionData || {}));
-
-  let html = `
-    <div class="permission-row header">
-      <div>Page</div>
-      <div>View</div>
-      <div>Add</div>
-      <div>Edit</div>
-      <div>Delete</div>
-    </div>
-  `;
-
-  PAGES.forEach(page=>{
-
-    const p = editingPermissions[page.key] || {};
-
-    html += `
-      <div class="permission-row">
-
-        <div>
-          <strong>${escapeHTML(page.name)}</strong>
-        </div>
-
-        ${["view","add","edit","delete"].map(action=>`
-
-          <label>
-
-            <input
-              type="checkbox"
-              data-page="${page.key}"
-              data-action="${action}"
-              ${p[action] ? "checked" : ""}
-            >
-
-            ${action[0].toUpperCase()}
-
-          </label>
-
-        `).join("")}
-
-      </div>
-    `;
-  });
-
-  $("permissionGrid").innerHTML = html;
-
-
-  $("permissionGrid")
-    .querySelectorAll("input")
-    .forEach(input=>{
-
-      input.addEventListener("change",()=>{
-
-        const page = input.dataset.page;
-        const action = input.dataset.action;
-
-        if(!editingPermissions[page]){
-          editingPermissions[page] = {};
-        }
-
-        editingPermissions[page][action] = input.checked;
-
-        // If a page is not visible, remove its other permissions.
-        if(action === "view" && !input.checked){
-
-          ["add","edit","delete"].forEach(other=>{
-
-            editingPermissions[page][other] = false;
-
-            const otherInput = $("permissionGrid").querySelector(
-              `input[data-page="${page}"][data-action="${other}"]`
-            );
-
-            if(otherInput) otherInput.checked = false;
-
-          });
-        }
-
-        // Add/Edit/Delete require View.
-        if(
-          ["add","edit","delete"].includes(action) &&
-          input.checked
-        ){
-
-          editingPermissions[page].view = true;
-
-          const viewInput = $("permissionGrid").querySelector(
-            `input[data-page="${page}"][data-action="view"]`
-          );
-
-          if(viewInput) viewInput.checked = true;
-        }
-
-      });
-
-    });
-
-  applyGuestRestrictions();
-}
-
-
-/* ==================================================
-   9. GUEST PERMISSION RESTRICTIONS
-================================================== */
-
-function applyGuestRestrictions(){
-
-  const isGuest = $("userRole").value === "guest";
-
-  $("permissionGrid")
-    .querySelectorAll('input[data-action="add"],input[data-action="edit"],input[data-action="delete"]')
-    .forEach(input=>{
-
-      if(isGuest){
-
-        input.checked = false;
-        input.disabled = true;
-
-        const page = input.dataset.page;
-        const action = input.dataset.action;
-
-        if(!editingPermissions[page]){
-          editingPermissions[page] = {};
-        }
-
-        editingPermissions[page][action] = false;
-
-      }else{
-
-        input.disabled = false;
-      }
-
-    });
-
-}
-
 
 function getPermissionPayload(){
-
-  const result = {};
-
-  PAGES.forEach(page=>{
-
-    result[page.key] = {
-
-      view:!!editingPermissions[page.key]?.view,
-
-      add:!!editingPermissions[page.key]?.add,
-
-      edit:!!editingPermissions[page.key]?.edit,
-
-      delete:!!editingPermissions[page.key]?.delete
-
-    };
-
-  });
-
-  if($("userRole").value === "guest"){
-
-    Object.keys(result).forEach(key=>{
-
-      result[key].add = false;
-      result[key].edit = false;
-      result[key].delete = false;
-
-    });
-
-  }
-
-  return result;
+ const out={};
+ PAGES.forEach(page=>{
+  const p=permissions[page.key]||{};
+  out[page.key]={
+   view:!!p.view,
+   add:$("userRole").value==="guest"?false:!!p.add,
+   edit:$("userRole").value==="guest"?false:!!p.edit,
+   delete:$("userRole").value==="guest"?false:!!p.delete
+  };
+ });
+ return out;
 }
 
-
-/* ==================================================
-   10. ADD USER
-================================================== */
-
-function openAddUser(){
-
-  editingUserId = null;
-
-  $("userModalTitle").textContent = "Add New User";
-
-  $("fullName").value = "";
-  $("phone").value = "";
-  $("email").value = "";
-  $("email").disabled = false;
-
-  $("userRole").value = "admin";
-
-  $("temporaryPassword").value = "";
-
-  $("passwordField").style.display = "flex";
-
-  $("modalAvatar").textContent = "U";
-
-  $("modalUserLabel").textContent = "New User";
-
-  $("systemNote").textContent = "";
-
-  buildPermissionGrid({});
-
-  openModal("userModal");
+function addUser(){
+ editingUserId=null;
+ $("modalTitle").textContent="Add New User";
+ $("fullName").value="";$("phone").value="";
+ $("email").value="";$("email").disabled=false;
+ $("userRole").value="admin";$("password").value="";
+ $("passwordField").style.display="flex";
+ buildPermissionGrid({});
+ modal(true);
 }
-
-
-/* ==================================================
-   11. EDIT USER
-================================================== */
 
 async function editUser(id){
+ const user=users.find(x=>x.user_id===id);
+ if(!user||user.role==="system_admin")return;
 
-  const user = users.find(u=>u.user_id === id);
+ try{
+  busy(true);
+  editingUserId=id;
+  $("modalTitle").textContent="Edit User";
+  $("fullName").value=user.full_name||"";
+  $("phone").value=user.phone||"";
+  $("email").value=user.email||"";
+  $("email").disabled=true;
+  $("userRole").value=user.role||"guest";
+  $("password").value="";
+  $("passwordField").style.display="none";
 
-  if(!user) return;
-
-  if(user.role === "system_admin"){
-    return showNotice(
-      "System Admin account cannot be edited here.",
-      "error"
-    );
-  }
-
-  editingUserId = id;
-
-  $("userModalTitle").textContent = "Edit User";
-
-  $("fullName").value = user.full_name || "";
-  $("phone").value = user.phone || "";
-
-  $("email").value = user.email || "";
-  $("email").disabled = true;
-
-  $("userRole").value = user.role || "guest";
-
-  $("temporaryPassword").value = "";
-
-  $("passwordField").style.display = "none";
-
-  // Fixed: no nested avatar HTML.
-  $("modalAvatar").textContent =
-    initials(user.full_name || "User");
-
-  $("modalUserLabel").textContent =
-    user.full_name || user.email || "User";
-
-  $("systemNote").textContent =
-    "Email address cannot be changed from this form.";
-
-  try{
-
-    setLoading(true);
-
-    const result = await adminAction(
-      "get_user_permissions",
-      {user_id:id}
-    );
-
-    buildPermissionGrid(
-      result.permissions || {}
-    );
-
-    openModal("userModal");
-
-  }catch(error){
-
-    showNotice(error.message,"error");
-
-  }finally{
-
-    setLoading(false);
-
-  }
+  const result=await adminAction("get_user_permissions",{user_id:id});
+  buildPermissionGrid(result.permissions||[]);
+  modal(true);
+ }catch(e){
+  notice(e.message,"error");
+ }finally{
+  busy(false);
+ }
 }
-
-
-/* ==================================================
-   12. SAVE USER
-================================================== */
 
 async function saveUser(){
+ const full_name=$("fullName").value.trim();
+ const phone=$("phone").value.trim();
+ const email=$("email").value.trim().toLowerCase();
+ const role=$("userRole").value;
+ const password=$("password").value;
 
-  const full_name = $("fullName").value.trim();
+ if(!full_name)return notice("Enter full name.","error");
+ if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))return notice("Enter valid email.","error");
+ if(!editingUserId&&password.length<8)return notice("Password must be at least 8 characters.","error");
 
-  const phone = $("phone").value.trim();
+ try{
+  busy(true);$("saveBtn").disabled=true;
+  const perms=getPermissionPayload();
 
-  const email = $("email").value.trim().toLowerCase();
+  if(editingUserId){
+   await adminAction("update_user",{user_id:editingUserId,full_name,phone,role});
 
-  const role = $("userRole").value;
+   const saved=await adminAction("save_permissions",{
+    user_id:editingUserId,permissions:perms
+   });
 
-  const password = $("temporaryPassword").value;
+   const verify=await adminAction("get_user_permissions",{user_id:editingUserId});
+   if(!Array.isArray(verify.permissions)||verify.permissions.length!==(saved.saved_count??-1)){
+    throw Error("Permission verification failed after saving.");
+   }
 
-
-  if(!full_name){
-
-    return showNotice(
-      "Please enter the user's full name.",
-      "error"
-    );
-
+   notice(`User updated. ${saved.saved_count} permission records saved and verified.`);
+  }else{
+   const created=await adminAction("create_user",{
+    full_name,phone,email,password,role,permissions:perms
+   });
+   notice(`User created. ${created.saved_count??0} permission records saved.`);
   }
 
-  if(!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
-
-    return showNotice(
-      "Please enter a valid email address.",
-      "error"
-    );
-
-  }
-
-  if(!editingUserId && password.length < 8){
-
-    return showNotice(
-      "Temporary password must be at least 8 characters.",
-      "error"
-    );
-
-  }
-
-  if(!ALLOWED_ROLES.includes(role)){
-
-    return showNotice(
-      "Please select a valid user role.",
-      "error"
-    );
-
-  }
-
-  const permissions = getPermissionPayload();
-
-  try{
-
-    setLoading(true);
-
-    $("saveUserBtn").disabled = true;
-
-
-    if(editingUserId){
-
-      await adminAction("update_user",{
-
-        user_id:editingUserId,
-
-        full_name,
-
-        phone,
-
-        role
-
-      });
-
-      await adminAction("save_permissions",{
-
-        user_id:editingUserId,
-
-        permissions
-
-      });
-
-      closeModal("userModal");
-
-      showNotice(
-        "User information and permissions updated successfully."
-      );
-
-    }else{
-
-      await adminAction("create_user",{
-
-        full_name,
-
-        phone,
-
-        email,
-
-        password,
-
-        role,
-
-        permissions
-
-      });
-
-      closeModal("userModal");
-
-      showNotice(
-        "New user created successfully."
-      );
-
-    }
-
-    await loadUsers();
-
-  }catch(error){
-
-    showNotice(error.message,"error");
-
-  }finally{
-
-    setLoading(false);
-
-    $("saveUserBtn").disabled = false;
-
-  }
+  modal(false);
+  await loadUsers();
+ }catch(e){
+  notice(e.message,"error");
+ }finally{
+  busy(false);$("saveBtn").disabled=false;
+ }
 }
-
-
-/* ==================================================
-   13. ACTIVE / INACTIVE
-================================================== */
 
 async function toggleStatus(id){
+ const user=users.find(x=>x.user_id===id);
+ if(!user||id===currentUser.id)return;
+ if(!confirm(`${user.is_active===false?"Activate":"Deactivate"} ${user.email}?`))return;
 
-  const user = users.find(u=>u.user_id === id);
-
-  if(!user) return;
-
-  if(id === currentUser.id){
-
-    return showNotice(
-      "You cannot deactivate your own account.",
-      "error"
-    );
-
-  }
-
-  if(user.role === "system_admin"){
-
-    return showNotice(
-      "System Admin status cannot be changed here.",
-      "error"
-    );
-
-  }
-
-  const nextStatus = user.is_active === false;
-
-  const message = nextStatus
-    ? `Activate ${user.email}?`
-    : `Deactivate ${user.email}?`;
-
-  if(!confirm(message)) return;
-
-  try{
-
-    setLoading(true);
-
-    await adminAction("set_status",{
-
-      user_id:id,
-
-      is_active:nextStatus
-
-    });
-
-    showNotice(
-      nextStatus ? "User activated." : "User deactivated."
-    );
-
-    await loadUsers();
-
-  }catch(error){
-
-    showNotice(error.message,"error");
-
-  }finally{
-
-    setLoading(false);
-
-  }
+ try{
+  busy(true);
+  await adminAction("set_status",{user_id:id,is_active:user.is_active===false});
+  await loadUsers();notice("User status updated.");
+ }catch(e){notice(e.message,"error")}
+ finally{busy(false)}
 }
-
-
-/* ==================================================
-   14. DELETE USER
-================================================== */
 
 async function deleteUser(id){
+ const user=users.find(x=>x.user_id===id);
+ if(!user||id===currentUser.id||!confirm(`Permanently delete ${user.email}?`))return;
 
-  const user = users.find(u=>u.user_id === id);
-
-  if(!user) return;
-
-  if(id === currentUser.id){
-
-    return showNotice(
-      "You cannot delete your own account.",
-      "error"
-    );
-
-  }
-
-  if(user.role === "system_admin"){
-
-    return showNotice(
-      "System Admin account cannot be deleted here.",
-      "error"
-    );
-
-  }
-
-  const confirmed = confirm(
-    `Are you sure you want to permanently delete ${user.email}?\n\nThis action cannot be undone.`
-  );
-
-  if(!confirmed) return;
-
-  try{
-
-    setLoading(true);
-
-    await adminAction("delete_user",{
-      user_id:id
-    });
-
-    showNotice("User deleted successfully.");
-
-    await loadUsers();
-
-  }catch(error){
-
-    showNotice(error.message,"error");
-
-  }finally{
-
-    setLoading(false);
-
-  }
+ try{
+  busy(true);await adminAction("delete_user",{user_id:id});
+  await loadUsers();notice("User deleted.");
+ }catch(e){notice(e.message,"error")}
+ finally{busy(false)}
 }
 
+async function resetPassword(id){
+ const user=users.find(x=>x.user_id===id);
+ if(!user||!confirm(`Generate recovery link for ${user.email}?`))return;
 
-/* ==================================================
-   15. PASSWORD RESET
-================================================== */
-
-async function sendReset(id){
-
-  const user = users.find(u=>u.user_id === id);
-
-  if(!user) return;
-
-  if(!confirm(
-    `Generate a password recovery link for ${user.email}?`
-  )) return;
-
-  try{
-
-    setLoading(true);
-
-    const result = await adminAction(
-      "reset_password",
-      {user_id:id}
-    );
-
-    const link = result.action_link || "";
-
-    if(link){
-
-      // The deployed function generates a link; it does not email it.
-      window.prompt(
-        "Recovery link generated. Copy this link and send it securely to the user:",
-        link
-      );
-
-      showNotice(
-        "Recovery link generated. Send the copied link to the user."
-      );
-
-    }else{
-
-      showNotice(
-        result.message || "Password reset request completed."
-      );
-
-    }
-
-  }catch(error){
-
-    showNotice(error.message,"error");
-
-  }finally{
-
-    setLoading(false);
-
-  }
+ try{
+  busy(true);
+  const result=await adminAction("reset_password",{user_id:id});
+  if(result.action_link)prompt("Copy recovery link and send securely to user:",result.action_link);
+  notice("Recovery link generated.");
+ }catch(e){notice(e.message,"error")}
+ finally{busy(false)}
 }
 
+$("addBtn").onclick=addUser;
+$("saveBtn").onclick=saveUser;
+$("refreshBtn").onclick=loadUsers;
+$("search").oninput=renderUsers;
+$("roleFilter").onchange=renderUsers;
+$("statusFilter").onchange=renderUsers;
+$("userRole").onchange=applyGuest;
 
-/* ==================================================
-   16. EVENTS
-================================================== */
-
-$("addUserBtn").addEventListener(
-  "click",
-  openAddUser
-);
-
-$("saveUserBtn").addEventListener(
-  "click",
-  saveUser
-);
-
-$("refreshBtn").addEventListener(
-  "click",
-  loadUsers
-);
-
-$("searchInput").addEventListener(
-  "input",
-  renderUsers
-);
-
-$("roleFilter").addEventListener(
-  "change",
-  renderUsers
-);
-
-$("statusFilter").addEventListener(
-  "change",
-  renderUsers
-);
-
-$("userRole").addEventListener(
-  "change",
-  applyGuestRestrictions
-);
-
-
-document.querySelectorAll("[data-close]").forEach(button=>{
-
-  button.addEventListener("click",()=>{
-
-    closeModal(button.dataset.close);
-
-  });
-
-});
-
-
-document.querySelectorAll(".modal-backdrop").forEach(backdrop=>{
-
-  backdrop.addEventListener("click",event=>{
-
-    if(event.target === backdrop){
-
-      backdrop.classList.remove("show");
-
-      document.body.style.overflow = "";
-
-    }
-
-  });
-
-});
-
-
-document.addEventListener("keydown",event=>{
-
-  if(event.key === "Escape"){
-
-    document.querySelectorAll(".modal-backdrop.show")
-      .forEach(modal=>modal.classList.remove("show"));
-
-    document.body.style.overflow = "";
-
-  }
-
-});
-
-
-/* ==================================================
-   17. SESSION CHANGE
-================================================== */
+document.querySelectorAll("[data-close]").forEach(b=>b.onclick=()=>modal(false));
+$("userModal").addEventListener("click",e=>{if(e.target===$("userModal"))modal(false)});
+document.addEventListener("keydown",e=>{if(e.key==="Escape")modal(false)});
 
 sb.auth.onAuthStateChange((event,session)=>{
-
-  if(event === "SIGNED_OUT" || !session){
-
-    location.href = "/one-online-management/";
-
-  }
-
+ if(event==="SIGNED_OUT"||!session)location.href="/";
 });
 
-
-/* ==================================================
-   18. START
-================================================== */
-
-(async function init(){
-
-  try{
-
-    setLoading(true);
-
-    const allowed = await checkAccess();
-
-    if(allowed){
-
-      await loadUsers();
-
-    }
-
-  }catch(error){
-
-    showNotice(
-      error.message || "Unable to initialize page.",
-      "error"
-    );
-
-  }finally{
-
-    setLoading(false);
-
-  }
-
+(async()=>{
+ try{
+  busy(true);
+  if(await checkAccess())await loadUsers();
+ }catch(e){notice(e.message,"error")}
+ finally{busy(false)}
 })();
-
 </script>
-
 </body>
 </html>
