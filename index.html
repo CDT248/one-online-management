@@ -23,11 +23,12 @@
   --bg:#0b1220;--surface:#111c2e;--surface2:#17243a;
   --text:#edf4ff;--muted:#91a2ba;--border:#26364d;
   --primary:#10b981;--primary-soft:#123b32;--danger:#f87171;
-  --shadow:0 8px 28px rgba(0,0,0,.2);
 }
 *{box-sizing:border-box}
 body{margin:0;font-family:Inter,Arial,sans-serif;background:var(--bg);color:var(--text);font-size:14px}
-button,input{font:inherit}button{cursor:pointer}.hidden{display:none!important}
+button,input{font:inherit}
+button{cursor:pointer}
+.hidden{display:none!important}
 #app{display:none;min-height:100vh}
 
 /* LOGIN */
@@ -367,6 +368,11 @@ button,input{font:inherit}button{cursor:pointer}.hidden{display:none!important}
       <button class="nav-item" data-page="account">
         <i class="fa-solid fa-user-gear"></i><span>My Account</span>
       </button>
+
+      <!-- SYSTEM ADMIN ONLY -->
+      <button class="nav-item" data-page="manage-admins" id="manageAdminsNav" style="display:none">
+        <i class="fa-solid fa-user-shield"></i><span>Manage Admins</span>
+      </button>
     </nav>
 
     <div class="sidebar-bottom">
@@ -597,9 +603,8 @@ let userPermissions = [];
 let signedAvatarUrl = "";
 let currentPage = "dashboard";
 let authReady = false;
-let authChangeRunning = false;
 
-/* PAGE CONFIGURATION — EXISTING PATHS PRESERVED */
+/* PAGE CONFIGURATION */
 const PAGE_CONFIG = {
   "add-customer":{title:"Add Customer",file:"customers/add-customer.html"},
   "customer-list":{title:"Customer List",file:"customers/customer-list.html"},
@@ -612,7 +617,10 @@ const PAGE_CONFIG = {
   "map-entry":{title:"Map Entry",file:"map/map-entry.html"},
   "map":{title:"Map",file:"map/map.html"},
   "page1":{title:"Page 1",file:"pages/page1.html"},
-  "page2":{title:"Page 2",file:"pages/page2.html"}
+  "page2":{title:"Page 2",file:"pages/page2.html"},
+
+  /* NEW: MANAGE ADMINS */
+  "manage-admins":{title:"Manage Admins",file:"manage-admins.html"}
 };
 
 const ROLE_LABELS = {
@@ -678,6 +686,9 @@ function permissionRow(pageKey){
 function canView(pageKey){
   if(isSystemAdmin())return true;
   if(pageKey==="account" || pageKey==="dashboard")return true;
+
+  /* Manage Admins is reserved for System Admin */
+  if(pageKey==="manage-admins")return false;
 
   const row = permissionRow(pageKey);
   return !!row && row.can_view === true;
@@ -777,6 +788,12 @@ function renderProfile(){
 function applyPermissions(){
   document.querySelectorAll(".nav-item[data-page]").forEach(button=>{
     const page = button.dataset.page;
+
+    if(page==="manage-admins"){
+      button.style.display = isSystemAdmin() ? "flex" : "none";
+      return;
+    }
+
     button.style.display = canView(page) ? "flex" : "none";
   });
 
@@ -899,6 +916,18 @@ function navigate(page){
   if(!currentUser){
     $("loginScreen").classList.remove("hidden");
     $("app").style.display = "none";
+    return;
+  }
+
+  /* Extra protection for Manage Admins */
+  if(page==="manage-admins" && !isSystemAdmin()){
+    $("dashboardPage").classList.add("hidden");
+    $("accountPage").classList.add("hidden");
+    $("pageFrame").classList.add("hidden");
+    $("deniedPage").classList.remove("hidden");
+    $("topPageTitle").textContent = "Access Restricted";
+    closeMobileSidebar();
+    closeProfileDropdown();
     return;
   }
 
@@ -1267,8 +1296,6 @@ async function initializeAuth(){
 
 /* AUTH STATE CHANGES */
 sb.auth.onAuthStateChange((event,session)=>{
-  if(authChangeRunning)return;
-
   if(event==="SIGNED_OUT"){
     currentUser = null;
     currentProfile = null;
