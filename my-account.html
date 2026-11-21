@@ -1,0 +1,1502 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Account | ONE ONLINE</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+:root{
+  --bg:#f4f6fa;
+  --surface:#ffffff;
+  --surface2:#f8fafc;
+  --text:#172033;
+  --muted:#78869a;
+  --border:#e5eaf1;
+  --primary:#087f5b;
+  --primary-soft:#e7f5ef;
+  --danger:#dc3545;
+  --success:#087f5b;
+  --shadow:0 8px 28px rgba(20,35,55,.07);
+}
+
+[data-theme="dark"]{
+  --bg:#0b1220;
+  --surface:#111c2e;
+  --surface2:#17243a;
+  --text:#edf4ff;
+  --muted:#91a2ba;
+  --border:#26364d;
+  --primary:#10b981;
+  --primary-soft:#123b32;
+  --danger:#f87171;
+  --success:#10b981;
+  --shadow:0 8px 28px rgba(0,0,0,.2);
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  padding:22px;
+  font-family:Inter,Arial,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  font-size:14px;
+}
+
+button,input{font:inherit}
+button{cursor:pointer}
+.hidden{display:none!important}
+
+.container{
+  max-width:1150px;
+  margin:auto;
+}
+
+.page-heading{
+  margin-bottom:22px;
+}
+
+.page-heading h1{
+  font-size:23px;
+  margin:0 0 7px;
+  font-weight:800;
+}
+
+.page-heading p{
+  margin:0;
+  color:var(--muted);
+  line-height:1.6;
+  font-size:13px;
+}
+
+.account-layout{
+  display:grid;
+  grid-template-columns:310px minmax(0,1fr);
+  gap:18px;
+  align-items:start;
+}
+
+.panel{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:13px;
+  padding:23px;
+  box-shadow:var(--shadow);
+}
+
+.panel-title{
+  font-size:15px;
+  font-weight:800;
+  margin:0 0 19px;
+}
+
+.profile-panel{
+  text-align:center;
+}
+
+.avatar{
+  width:112px;
+  height:112px;
+  border-radius:50%;
+  margin:10px auto 16px;
+  background:var(--primary-soft);
+  color:var(--primary);
+  display:grid;
+  place-items:center;
+  font-size:32px;
+  font-weight:800;
+  overflow:hidden;
+  border:4px solid var(--surface);
+  outline:1px solid var(--border);
+}
+
+.avatar img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.profile-name{
+  font-size:17px;
+  font-weight:800;
+  margin:0 0 6px;
+  overflow-wrap:anywhere;
+}
+
+.profile-email{
+  color:var(--muted);
+  font-size:12px;
+  overflow-wrap:anywhere;
+  margin-bottom:12px;
+}
+
+.role-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:7px 12px;
+  border-radius:30px;
+  background:var(--primary-soft);
+  color:var(--primary);
+  font-size:11px;
+  font-weight:800;
+  text-transform:uppercase;
+}
+
+.avatar-actions{
+  margin-top:19px;
+  display:flex;
+  justify-content:center;
+  flex-wrap:wrap;
+  gap:8px;
+}
+
+.btn{
+  border:0;
+  border-radius:8px;
+  padding:11px 15px;
+  font-size:12px;
+  font-weight:700;
+  transition:.2s;
+}
+
+.btn-primary{
+  background:var(--primary);
+  color:white;
+}
+
+.btn-primary:hover{filter:brightness(.94)}
+
+.btn-secondary{
+  background:var(--surface2);
+  color:var(--text);
+  border:1px solid var(--border);
+}
+
+.btn-danger{
+  color:var(--danger);
+  background:transparent;
+  border:1px solid var(--border);
+}
+
+.btn:disabled{
+  opacity:.6;
+  cursor:not-allowed;
+}
+
+.upload-note{
+  font-size:11px;
+  color:var(--muted);
+  margin-top:13px;
+  line-height:1.6;
+}
+
+.info-panel{
+  margin-top:18px;
+  text-align:left;
+}
+
+.info-row{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:12px;
+  padding:11px 0;
+  border-bottom:1px solid var(--border);
+  font-size:12px;
+}
+
+.info-row:last-child{border-bottom:0}
+.info-row span{color:var(--muted)}
+.info-row strong{text-align:right;overflow-wrap:anywhere}
+
+.form-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:0 15px;
+}
+
+.field{
+  margin-bottom:16px;
+}
+
+.label{
+  display:block;
+  font-size:12px;
+  font-weight:700;
+  margin-bottom:8px;
+}
+
+.input-wrap{
+  position:relative;
+}
+
+.input{
+  width:100%;
+  height:43px;
+  padding:0 12px;
+  border:1px solid var(--border);
+  border-radius:8px;
+  background:var(--surface2);
+  color:var(--text);
+  outline:none;
+  transition:.2s;
+}
+
+.input:focus{
+  border-color:var(--primary);
+  box-shadow:0 0 0 3px var(--primary-soft);
+}
+
+.input:disabled{
+  opacity:.7;
+  cursor:not-allowed;
+}
+
+.input.has-toggle{padding-right:43px}
+
+.toggle-password{
+  position:absolute;
+  right:11px;
+  top:50%;
+  transform:translateY(-50%);
+  border:0;
+  background:transparent;
+  color:var(--muted);
+}
+
+.help-text{
+  font-size:11px;
+  color:var(--muted);
+  margin-top:6px;
+  line-height:1.5;
+}
+
+.section-divider{
+  border:0;
+  border-top:1px solid var(--border);
+  margin:23px 0;
+}
+
+.form-actions{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+.message{
+  display:none;
+  padding:11px 13px;
+  border-radius:8px;
+  font-size:12px;
+  line-height:1.5;
+  margin:0 0 15px;
+}
+
+.message.show{display:block}
+.message.success{
+  background:var(--primary-soft);
+  color:var(--success);
+}
+.message.error{
+  background:rgba(220,53,69,.09);
+  color:var(--danger);
+}
+
+.security-note{
+  padding:13px;
+  border-radius:9px;
+  background:var(--surface2);
+  border:1px solid var(--border);
+  color:var(--muted);
+  font-size:11px;
+  line-height:1.7;
+  margin-top:17px;
+}
+
+.security-note i{
+  color:var(--primary);
+  margin-right:6px;
+}
+
+.loading-screen{
+  min-height:70vh;
+  display:grid;
+  place-items:center;
+  text-align:center;
+  color:var(--muted);
+}
+
+.spinner{
+  width:35px;
+  height:35px;
+  border:3px solid var(--border);
+  border-top-color:var(--primary);
+  border-radius:50%;
+  animation:spin .8s linear infinite;
+  margin:0 auto 13px;
+}
+
+@keyframes spin{to{transform:rotate(360deg)}}
+
+@media(max-width:800px){
+  body{padding:15px}
+  .account-layout{grid-template-columns:1fr}
+  .profile-panel{max-width:none}
+}
+
+@media(max-width:520px){
+  body{padding:11px}
+  .panel{padding:17px}
+  .page-heading h1{font-size:20px}
+  .form-grid{grid-template-columns:1fr}
+  .form-actions .btn{flex:1}
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <div id="loadingScreen" class="loading-screen">
+    <div>
+      <div class="spinner"></div>
+      <strong>Loading your account...</strong>
+    </div>
+  </div>
+
+  <div id="accountApp" class="hidden">
+
+    <div class="page-heading">
+      <h1><i class="fa-solid fa-user-gear"></i> My Account</h1>
+      <p>Manage your profile information, profile picture and account password.</p>
+    </div>
+
+    <div id="globalMessage" class="message"></div>
+
+    <div class="account-layout">
+
+      <!-- LEFT PROFILE PANEL -->
+      <div>
+
+        <div class="panel profile-panel">
+
+          <h3 class="panel-title">Profile Picture</h3>
+
+          <div class="avatar" id="profileAvatar">O</div>
+
+          <h2 class="profile-name" id="displayName">ONE ONLINE</h2>
+
+          <div class="profile-email" id="displayEmail">Loading...</div>
+
+          <div class="role-badge">
+            <i class="fa-solid fa-shield-halved"></i>
+            <span id="displayRole">GUEST</span>
+          </div>
+
+          <input
+            type="file"
+            id="avatarInput"
+            accept="image/png,image/jpeg,image/webp"
+            hidden
+          >
+
+          <div class="avatar-actions">
+            <button class="btn btn-primary" id="changeAvatarBtn">
+              <i class="fa-solid fa-camera"></i>
+              Change Picture
+            </button>
+
+            <button class="btn btn-danger" id="removeAvatarBtn">
+              <i class="fa-solid fa-trash"></i>
+              Remove
+            </button>
+          </div>
+
+          <div class="upload-note">
+            JPG, PNG or WEBP<br>
+            Maximum file size: 5 MB
+          </div>
+
+        </div>
+
+        <div class="panel info-panel">
+
+          <h3 class="panel-title">Account Details</h3>
+
+          <div class="info-row">
+            <span>Account Status</span>
+            <strong id="accountStatus">Active</strong>
+          </div>
+
+          <div class="info-row">
+            <span>Account Role</span>
+            <strong id="accountRoleText">Guest</strong>
+          </div>
+
+          <div class="info-row">
+            <span>Storage</span>
+            <strong>Supabase Cloud</strong>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- RIGHT CONTENT -->
+      <div>
+
+        <!-- PROFILE INFORMATION -->
+        <div class="panel">
+
+          <h3 class="panel-title">
+            <i class="fa-solid fa-id-card"></i>
+            Personal Information
+          </h3>
+
+          <div id="profileMessage" class="message"></div>
+
+          <div class="form-grid">
+
+            <div class="field">
+              <label class="label" for="fullName">Full Name</label>
+              <input
+                class="input"
+                id="fullName"
+                type="text"
+                maxlength="100"
+                placeholder="Enter your full name"
+              >
+            </div>
+
+            <div class="field">
+              <label class="label" for="phoneNumber">Phone Number</label>
+              <input
+                class="input"
+                id="phoneNumber"
+                type="tel"
+                maxlength="25"
+                placeholder="Enter phone number"
+              >
+            </div>
+
+            <div class="field">
+              <label class="label" for="emailAddress">Login Email</label>
+              <input
+                class="input"
+                id="emailAddress"
+                type="email"
+                disabled
+              >
+              <div class="help-text">Email address is managed by the authentication system.</div>
+            </div>
+
+            <div class="field">
+              <label class="label" for="roleInput">Account Role</label>
+              <input
+                class="input"
+                id="roleInput"
+                type="text"
+                disabled
+              >
+              <div class="help-text">Only an authorized System Admin can change your role.</div>
+            </div>
+
+          </div>
+
+          <div class="form-actions">
+            <button class="btn btn-primary" id="saveProfileBtn">
+              <i class="fa-solid fa-floppy-disk"></i>
+              Save Changes
+            </button>
+          </div>
+
+        </div>
+
+        <!-- PASSWORD CHANGE -->
+        <div class="panel" style="margin-top:18px">
+
+          <h3 class="panel-title">
+            <i class="fa-solid fa-lock"></i>
+            Change Password
+          </h3>
+
+          <div id="passwordMessage" class="message"></div>
+
+          <div class="field">
+            <label class="label" for="currentPassword">Current Password</label>
+            <div class="input-wrap">
+              <input
+                class="input has-toggle"
+                id="currentPassword"
+                type="password"
+                autocomplete="current-password"
+                placeholder="Enter current password"
+              >
+              <button class="toggle-password" type="button" data-toggle="currentPassword">
+                <i class="fa-solid fa-eye"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="form-grid">
+
+            <div class="field">
+              <label class="label" for="newPassword">New Password</label>
+              <div class="input-wrap">
+                <input
+                  class="input has-toggle"
+                  id="newPassword"
+                  type="password"
+                  autocomplete="new-password"
+                  placeholder="Enter new password"
+                >
+                <button class="toggle-password" type="button" data-toggle="newPassword">
+                  <i class="fa-solid fa-eye"></i>
+                </button>
+              </div>
+              <div class="help-text">Use at least 8 characters.</div>
+            </div>
+
+            <div class="field">
+              <label class="label" for="confirmPassword">Confirm New Password</label>
+              <div class="input-wrap">
+                <input
+                  class="input has-toggle"
+                  id="confirmPassword"
+                  type="password"
+                  autocomplete="new-password"
+                  placeholder="Confirm new password"
+                >
+                <button class="toggle-password" type="button" data-toggle="confirmPassword">
+                  <i class="fa-solid fa-eye"></i>
+                </button>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="form-actions">
+            <button class="btn btn-primary" id="changePasswordBtn">
+              <i class="fa-solid fa-key"></i>
+              Update Password
+            </button>
+          </div>
+
+          <div class="security-note">
+            <i class="fa-solid fa-shield-halved"></i>
+            Your password is securely managed by Supabase Authentication.
+            It is never stored in your profile table or browser storage.
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+/* =====================================================
+   ONE ONLINE — MY ACCOUNT
+   SUPABASE PROFILE / AVATAR / PASSWORD
+===================================================== */
+
+const SUPABASE_URL =
+  "https://dmeusqzvhxixfntdqtzp.supabase.co";
+
+const SUPABASE_ANON_KEY =
+  "sb_publishable_OxD9SDk-ZUHrak0vBXK_yw_Oo3MH0Pn";
+
+const AVATAR_BUCKET = "one-online-avatars";
+
+const { createClient } = supabase;
+
+const sb = createClient(
+  SUPABASE_URL,
+  SUPABASE_ANON_KEY,
+  {
+    auth:{
+      persistSession:true,
+      autoRefreshToken:true,
+      detectSessionInUrl:true
+    }
+  }
+);
+
+const $ = id => document.getElementById(id);
+
+let currentUser = null;
+let currentProfile = null;
+let currentAvatarPath = "";
+let currentAvatarUrl = "";
+
+/* ---------------------------------
+   MESSAGE HELPERS
+--------------------------------- */
+
+function showMessage(elementId,message,type="success"){
+
+  const el = $(elementId);
+
+  el.textContent = message;
+
+  el.className = "message show " + type;
+
+}
+
+function clearMessage(elementId){
+
+  const el = $(elementId);
+
+  el.textContent = "";
+
+  el.className = "message";
+
+}
+
+function setLoading(button,loading,text){
+
+  button.disabled = loading;
+
+  if(loading){
+
+    button.dataset.originalText = button.innerHTML;
+
+    button.innerHTML =
+      '<i class="fa-solid fa-spinner fa-spin"></i> Please wait...';
+
+  }else{
+
+    button.innerHTML =
+      button.dataset.originalText || text;
+
+  }
+
+}
+
+/* ---------------------------------
+   INITIALS
+--------------------------------- */
+
+function initials(name){
+
+  return (name || "O")
+    .trim()
+    .split(/\s+/)
+    .slice(0,2)
+    .map(x => x.charAt(0))
+    .join("")
+    .toUpperCase() || "O";
+
+}
+
+/* ---------------------------------
+   AVATAR DISPLAY
+--------------------------------- */
+
+function renderAvatar(url,name){
+
+  const avatar = $("profileAvatar");
+
+  avatar.replaceChildren();
+
+  if(url){
+
+    const img = document.createElement("img");
+
+    img.src = url;
+    img.alt = "Profile Picture";
+
+    img.onerror = () => {
+      avatar.textContent = initials(name);
+    };
+
+    avatar.appendChild(img);
+
+  }else{
+
+    avatar.textContent = initials(name);
+
+  }
+
+}
+
+/* ---------------------------------
+   ROLE LABEL
+--------------------------------- */
+
+function roleLabel(role){
+
+  const roles = {
+    system_admin:"SYSTEM ADMIN",
+    admin:"ADMIN",
+    support:"SUPPORT",
+    accounting:"ACCOUNTING",
+    guest:"GUEST"
+  };
+
+  return roles[role] || "GUEST";
+
+}
+
+/* ---------------------------------
+   AUTH CHECK
+--------------------------------- */
+
+async function getAuthenticatedUser(){
+
+  const {data,error} = await sb.auth.getSession();
+
+  if(error)throw error;
+
+  const session = data.session;
+
+  if(!session || !session.user){
+
+    window.top.location.href =
+      "https://cdt248.github.io/one-online-management/";
+
+    return null;
+
+  }
+
+  return session.user;
+
+}
+
+/* ---------------------------------
+   LOAD PROFILE
+--------------------------------- */
+
+async function loadProfile(){
+
+  currentUser = await getAuthenticatedUser();
+
+  if(!currentUser)return;
+
+  const {data:profile,error} = await sb
+    .from("profiles")
+    .select("*")
+    .eq("user_id",currentUser.id)
+    .maybeSingle();
+
+  if(error){
+
+    throw new Error(
+      "Profile load failed: " + error.message
+    );
+
+  }
+
+  if(!profile){
+
+    throw new Error(
+      "Your profile was not found. Contact System Admin."
+    );
+
+  }
+
+  if(profile.is_active === false){
+
+    await sb.auth.signOut();
+
+    alert("Your account is inactive. Contact System Admin.");
+
+    window.top.location.href =
+      "https://cdt248.github.io/one-online-management/";
+
+    return;
+
+  }
+
+  currentProfile = profile;
+
+  currentAvatarPath = profile.avatar_path || "";
+
+  $("fullName").value = profile.full_name || "";
+
+  $("phoneNumber").value = profile.phone || "";
+
+  $("emailAddress").value = currentUser.email || "";
+
+  $("roleInput").value = roleLabel(profile.role);
+
+  $("displayName").textContent =
+    profile.full_name || "ONE ONLINE";
+
+  $("displayEmail").textContent =
+    currentUser.email || "";
+
+  $("displayRole").textContent =
+    roleLabel(profile.role);
+
+  $("accountRoleText").textContent =
+    roleLabel(profile.role);
+
+  $("accountStatus").textContent =
+    profile.is_active === false ? "Inactive" : "Active";
+
+  await refreshAvatar();
+
+}
+
+/* ---------------------------------
+   LOAD PRIVATE AVATAR
+--------------------------------- */
+
+async function refreshAvatar(){
+
+  if(!currentAvatarPath){
+
+    currentAvatarUrl = "";
+
+    renderAvatar("",currentProfile.full_name);
+
+    return;
+
+  }
+
+  const {data,error} = await sb.storage
+    .from(AVATAR_BUCKET)
+    .createSignedUrl(currentAvatarPath,3600);
+
+  if(error){
+
+    console.error("Avatar URL error:",error.message);
+
+    currentAvatarUrl = "";
+
+    renderAvatar("",currentProfile.full_name);
+
+    return;
+
+  }
+
+  currentAvatarUrl = data.signedUrl;
+
+  renderAvatar(
+    currentAvatarUrl,
+    currentProfile.full_name
+  );
+
+}
+
+/* ---------------------------------
+   SAVE PROFILE INFORMATION
+--------------------------------- */
+
+$("saveProfileBtn").addEventListener("click",async()=>{
+
+  clearMessage("profileMessage");
+
+  const name = $("fullName").value.trim();
+
+  const phone = $("phoneNumber").value.trim();
+
+  if(!name){
+
+    showMessage(
+      "profileMessage",
+      "Please enter your full name.",
+      "error"
+    );
+
+    return;
+
+  }
+
+  const button = $("saveProfileBtn");
+
+  setLoading(button,true);
+
+  try{
+
+    const {data,error} = await sb
+      .from("profiles")
+      .update({
+        full_name:name,
+        phone:phone
+      })
+      .eq("user_id",currentUser.id)
+      .select()
+      .single();
+
+    if(error)throw error;
+
+    currentProfile = data;
+
+    $("displayName").textContent = name;
+
+    $("fullName").value = name;
+
+    showMessage(
+      "profileMessage",
+      "Your profile information has been updated successfully.",
+      "success"
+    );
+
+  }catch(error){
+
+    console.error(error);
+
+    showMessage(
+      "profileMessage",
+      error.message || "Unable to update profile.",
+      "error"
+    );
+
+  }finally{
+
+    setLoading(
+      button,
+      false,
+      '<i class="fa-solid fa-floppy-disk"></i> Save Changes'
+    );
+
+  }
+
+});
+
+/* ---------------------------------
+   SELECT AVATAR
+--------------------------------- */
+
+$("changeAvatarBtn").addEventListener("click",()=>{
+
+  $("avatarInput").click();
+
+});
+
+/* ---------------------------------
+   UPLOAD AVATAR
+--------------------------------- */
+
+$("avatarInput").addEventListener("change",async()=>{
+
+  clearMessage("globalMessage");
+
+  const file = $("avatarInput").files[0];
+
+  if(!file)return;
+
+  const allowedTypes = [
+    "image/jpeg",
+    "image/png",
+    "image/webp"
+  ];
+
+  if(!allowedTypes.includes(file.type)){
+
+    showMessage(
+      "globalMessage",
+      "Only JPG, PNG and WEBP images are allowed.",
+      "error"
+    );
+
+    $("avatarInput").value = "";
+
+    return;
+
+  }
+
+  if(file.size > 5 * 1024 * 1024){
+
+    showMessage(
+      "globalMessage",
+      "Image size must be smaller than 5 MB.",
+      "error"
+    );
+
+    $("avatarInput").value = "";
+
+    return;
+
+  }
+
+  const extension = file.type === "image/png"
+    ? "png"
+    : file.type === "image/webp"
+      ? "webp"
+      : "jpg";
+
+  const newPath =
+    currentUser.id +
+    "/avatar-" +
+    Date.now() +
+    "." +
+    extension;
+
+  const button = $("changeAvatarBtn");
+
+  setLoading(button,true);
+
+  try{
+
+    const {error:uploadError} = await sb.storage
+      .from(AVATAR_BUCKET)
+      .upload(newPath,file,{
+        contentType:file.type,
+        upsert:false
+      });
+
+    if(uploadError)throw uploadError;
+
+    const {data:updateData,error:updateError} = await sb
+      .from("profiles")
+      .update({
+        avatar_path:newPath
+      })
+      .eq("user_id",currentUser.id)
+      .select()
+      .single();
+
+    if(updateError){
+
+      await sb.storage
+        .from(AVATAR_BUCKET)
+        .remove([newPath]);
+
+      throw updateError;
+
+    }
+
+    const oldPath = currentAvatarPath;
+
+    currentAvatarPath = newPath;
+
+    currentProfile = updateData;
+
+    await refreshAvatar();
+
+    if(oldPath && oldPath !== newPath){
+
+      const {error:removeError} = await sb.storage
+        .from(AVATAR_BUCKET)
+        .remove([oldPath]);
+
+      if(removeError){
+
+        console.warn(
+          "Old avatar cleanup failed:",
+          removeError.message
+        );
+
+      }
+
+    }
+
+    showMessage(
+      "globalMessage",
+      "Profile picture updated successfully.",
+      "success"
+    );
+
+  }catch(error){
+
+    console.error(error);
+
+    showMessage(
+      "globalMessage",
+      error.message || "Image upload failed.",
+      "error"
+    );
+
+  }finally{
+
+    $("avatarInput").value = "";
+
+    setLoading(
+      button,
+      false,
+      '<i class="fa-solid fa-camera"></i> Change Picture'
+    );
+
+  }
+
+});
+
+/* ---------------------------------
+   REMOVE AVATAR
+--------------------------------- */
+
+$("removeAvatarBtn").addEventListener("click",async()=>{
+
+  clearMessage("globalMessage");
+
+  if(!currentAvatarPath){
+
+    showMessage(
+      "globalMessage",
+      "You do not have a profile picture.",
+      "error"
+    );
+
+    return;
+
+  }
+
+  if(!confirm("Are you sure you want to remove your profile picture?")){
+
+    return;
+
+  }
+
+  const button = $("removeAvatarBtn");
+
+  setLoading(button,true);
+
+  try{
+
+    const oldPath = currentAvatarPath;
+
+    const {data,error:updateError} = await sb
+      .from("profiles")
+      .update({
+        avatar_path:null
+      })
+      .eq("user_id",currentUser.id)
+      .select()
+      .single();
+
+    if(updateError)throw updateError;
+
+    currentProfile = data;
+
+    currentAvatarPath = "";
+
+    currentAvatarUrl = "";
+
+    renderAvatar("",currentProfile.full_name);
+
+    const {error:removeError} = await sb.storage
+      .from(AVATAR_BUCKET)
+      .remove([oldPath]);
+
+    if(removeError){
+
+      console.warn(
+        "Storage cleanup failed:",
+        removeError.message
+      );
+
+    }
+
+    showMessage(
+      "globalMessage",
+      "Profile picture removed successfully.",
+      "success"
+    );
+
+  }catch(error){
+
+    console.error(error);
+
+    showMessage(
+      "globalMessage",
+      error.message || "Unable to remove picture.",
+      "error"
+    );
+
+  }finally{
+
+    setLoading(
+      button,
+      false,
+      '<i class="fa-solid fa-trash"></i> Remove'
+    );
+
+  }
+
+});
+
+/* ---------------------------------
+   PASSWORD VISIBILITY
+--------------------------------- */
+
+document.querySelectorAll("[data-toggle]").forEach(button=>{
+
+  button.addEventListener("click",()=>{
+
+    const input = $(button.dataset.toggle);
+
+    const icon = button.querySelector("i");
+
+    if(input.type === "password"){
+
+      input.type = "text";
+
+      icon.className = "fa-solid fa-eye-slash";
+
+    }else{
+
+      input.type = "password";
+
+      icon.className = "fa-solid fa-eye";
+
+    }
+
+  });
+
+});
+
+/* ---------------------------------
+   CHANGE PASSWORD
+--------------------------------- */
+
+$("changePasswordBtn").addEventListener("click",async()=>{
+
+  clearMessage("passwordMessage");
+
+  const currentPassword =
+    $("currentPassword").value;
+
+  const newPassword =
+    $("newPassword").value;
+
+  const confirmPassword =
+    $("confirmPassword").value;
+
+  if(!currentPassword || !newPassword || !confirmPassword){
+
+    showMessage(
+      "passwordMessage",
+      "Please complete all password fields.",
+      "error"
+    );
+
+    return;
+
+  }
+
+  if(newPassword.length < 8){
+
+    showMessage(
+      "passwordMessage",
+      "New password must contain at least 8 characters.",
+      "error"
+    );
+
+    return;
+
+  }
+
+  if(newPassword !== confirmPassword){
+
+    showMessage(
+      "passwordMessage",
+      "New password and confirmation do not match.",
+      "error"
+    );
+
+    return;
+
+  }
+
+  if(currentPassword === newPassword){
+
+    showMessage(
+      "passwordMessage",
+      "New password must be different from current password.",
+      "error"
+    );
+
+    return;
+
+  }
+
+  const button = $("changePasswordBtn");
+
+  setLoading(button,true);
+
+  try{
+
+    /* Verify current password */
+
+    const {error:verifyError} = await sb.auth
+      .signInWithPassword({
+        email:currentUser.email,
+        password:currentPassword
+      });
+
+    if(verifyError){
+
+      throw new Error(
+        "Current password is incorrect."
+      );
+
+    }
+
+    /* Update password */
+
+    const {error:updateError} = await sb.auth
+      .updateUser({
+        password:newPassword
+      });
+
+    if(updateError)throw updateError;
+
+    $("currentPassword").value = "";
+
+    $("newPassword").value = "";
+
+    $("confirmPassword").value = "";
+
+    showMessage(
+      "passwordMessage",
+      "Password changed successfully.",
+      "success"
+    );
+
+  }catch(error){
+
+    console.error(error);
+
+    showMessage(
+      "passwordMessage",
+      error.message || "Unable to change password.",
+      "error"
+    );
+
+  }finally{
+
+    setLoading(
+      button,
+      false,
+      '<i class="fa-solid fa-key"></i> Update Password'
+    );
+
+  }
+
+});
+
+/* ---------------------------------
+   THEME SUPPORT
+--------------------------------- */
+
+function applyParentTheme(){
+
+  try{
+
+    const theme =
+      window.parent.document.body.getAttribute("data-theme") ||
+      localStorage.getItem("one_online_theme") ||
+      "light";
+
+    document.body.setAttribute(
+      "data-theme",
+      theme === "dark" ? "dark" : "light"
+    );
+
+  }catch(error){
+
+    const theme =
+      localStorage.getItem("one_online_theme") || "light";
+
+    document.body.setAttribute("data-theme",theme);
+
+  }
+
+}
+
+applyParentTheme();
+
+/* Keep iframe theme synchronized */
+
+window.addEventListener("storage",event=>{
+
+  if(event.key === "one_online_theme"){
+
+    applyParentTheme();
+
+  }
+
+});
+
+/* ---------------------------------
+   AUTH STATE
+--------------------------------- */
+
+sb.auth.onAuthStateChange((event,session)=>{
+
+  if(event === "SIGNED_OUT" || !session){
+
+    window.top.location.href =
+      "https://cdt248.github.io/one-online-management/";
+
+  }
+
+});
+
+/* ---------------------------------
+   INITIALIZE
+--------------------------------- */
+
+async function initialize(){
+
+  try{
+
+    await loadProfile();
+
+    if(!currentUser)return;
+
+    $("loadingScreen").classList.add("hidden");
+
+    $("accountApp").classList.remove("hidden");
+
+  }catch(error){
+
+    console.error(error);
+
+    $("loadingScreen").innerHTML = `
+      <div>
+        <i class="fa-solid fa-circle-exclamation"
+           style="font-size:35px;color:var(--danger)"></i>
+        <h3>Unable to load account</h3>
+        <p style="max-width:450px;line-height:1.7">
+          ${escapeHTML(error.message || "Please try again.")}
+        </p>
+        <button class="btn btn-primary"
+          onclick="location.reload()">
+          Try Again
+        </button>
+      </div>
+    `;
+
+  }
+
+}
+
+/* Escape text before showing errors */
+
+function escapeHTML(value){
+
+  return String(value).replace(/[&<>"']/g,char=>({
+    "&":"&amp;",
+    "<":"&lt;",
+    ">":"&gt;",
+    '"':"&quot;",
+    "'":"&#039;"
+  })[char]);
+
+}
+
+initialize();
+
+</script>
+
+</body>
+</html>
