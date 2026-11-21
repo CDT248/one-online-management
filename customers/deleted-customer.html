@@ -4,450 +4,819 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Under Construction | Coming Soon</title>
+<title>Deleted Customers | ONE ONLINE</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 <style>
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+:root{
+  --bg:#f4f7fb;
+  --panel:#ffffff;
+  --panel2:#f8fafc;
+  --text:#172033;
+  --muted:#718096;
+  --line:#e5eaf1;
+  --primary:#087f5b;
+  --primary-soft:#e6f5ef;
+  --red:#dc3545;
+  --red-soft:#fff0f1;
+  --orange:#d97706;
+  --shadow:0 8px 25px rgba(20,35,60,.07);
 }
-
-:root {
-    --primary: #8b5cf6;
-    --secondary: #06b6d4;
+*{box-sizing:border-box}
+body{
+  margin:0;
+  padding:20px;
+  background:var(--bg);
+  color:var(--text);
+  font-family:Inter,Arial,sans-serif;
 }
-
-body {
-    font-family: 'Inter', sans-serif;
-    min-height: 100vh;
-    background: #080b18;
-    color: white;
-    overflow-x: hidden;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
+button,input,select{font:inherit}
+.container{max-width:1500px;margin:auto}
+.header{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:15px;flex-wrap:wrap;margin-bottom:22px
 }
-
-/* Background */
-.background {
-    position: fixed;
-    inset: 0;
-    background:
-    radial-gradient(circle at 20% 20%, #38206c 0%, transparent 35%),
-    radial-gradient(circle at 80% 80%, #064b61 0%, transparent 35%),
-    #080b18;
-    z-index: -2;
+.heading{display:flex;align-items:center;gap:13px}
+.heading-icon{
+  width:48px;height:48px;border-radius:14px;
+  display:grid;place-items:center;background:var(--red-soft);
+  color:var(--red);font-size:21px
 }
-
-.glow {
-    position: fixed;
-    width: 350px;
-    height: 350px;
-    border-radius: 50%;
-    filter: blur(100px);
-    opacity: .3;
-    z-index: -1;
-    animation: float 8s infinite alternate;
+h1{font-size:22px;margin:0 0 5px;font-weight:800}
+.subtitle{font-size:12px;color:var(--muted)}
+.header-actions{display:flex;gap:9px;flex-wrap:wrap}
+.btn{
+  border:0;border-radius:9px;padding:10px 14px;
+  cursor:pointer;font-weight:700;font-size:12px;
+  display:inline-flex;align-items:center;justify-content:center;gap:7px;
+  transition:.2s
 }
-
-.glow.one {
-    background: #8b5cf6;
-    top: 5%;
-    left: 5%;
+.btn:hover{filter:brightness(.96);transform:translateY(-1px)}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.btn-primary{background:var(--primary);color:#fff}
+.btn-light{background:var(--panel);border:1px solid var(--line);color:var(--text)}
+.btn-danger{background:var(--red);color:white}
+.btn-warning{background:#fff3d6;color:#9a5b00}
+.btn-small{padding:7px 10px;font-size:11px;border-radius:7px}
+.stats{
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:14px;margin-bottom:18px
 }
-
-.glow.two {
-    background: #06b6d4;
-    bottom: 5%;
-    right: 5%;
+.stat{
+  background:var(--panel);border:1px solid var(--line);
+  border-radius:13px;padding:17px;box-shadow:var(--shadow)
 }
-
-@keyframes float {
-    from { transform: translate(0,0); }
-    to { transform: translate(70px,-50px); }
+.stat-top{display:flex;justify-content:space-between;align-items:center}
+.stat-label{font-size:12px;color:var(--muted);font-weight:600}
+.stat-icon{
+  width:34px;height:34px;border-radius:10px;
+  display:grid;place-items:center;background:var(--red-soft);color:var(--red)
 }
-
-/* Main */
-.container {
-    width: 100%;
-    max-width: 1050px;
-    padding: 30px 20px;
-    text-align: center;
+.stat-value{font-size:25px;font-weight:800;margin-top:12px}
+.toolbar{
+  background:var(--panel);border:1px solid var(--line);
+  border-radius:13px;padding:14px;margin-bottom:15px;
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  box-shadow:var(--shadow)
 }
-
-/* Logo section */
-.logo-area {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 17px;
-    margin-bottom: 35px;
+.search-box{position:relative;flex:1;min-width:210px}
+.search-box i{
+  position:absolute;left:12px;top:50%;transform:translateY(-50%);
+  color:var(--muted);font-size:13px
 }
-
-.logo-box {
-    width: 68px;
-    height: 68px;
-    border-radius: 20px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 30px;
-    background: linear-gradient(135deg,#8b5cf6,#06b6d4);
-    box-shadow: 0 0 35px #8b5cf655;
-    animation: logoFloat 3s ease-in-out infinite;
+.search-box input{
+  width:100%;padding:11px 12px 11px 36px;
+  border:1px solid var(--line);border-radius:8px;
+  background:var(--panel2);color:var(--text);outline:none;font-size:12px
 }
-
-@keyframes logoFloat {
-    0%,100% { transform: translateY(0); }
-    50% { transform: translateY(-9px); }
+.toolbar select{
+  padding:11px 12px;border:1px solid var(--line);
+  border-radius:8px;background:var(--panel2);color:var(--text);
+  outline:none;font-size:12px;min-width:135px
 }
-
-.brand-name {
-    font-size: 25px;
-    font-weight: 900;
-    letter-spacing: 2px;
+.result-count{font-size:11px;color:var(--muted);font-weight:600}
+.table-card{
+  background:var(--panel);border:1px solid var(--line);
+  border-radius:13px;overflow:hidden;box-shadow:var(--shadow)
 }
-
-.brand-name span {
-    color: #a78bfa;
+.table-head{
+  padding:15px 17px;border-bottom:1px solid var(--line);
+  display:flex;justify-content:space-between;align-items:center;gap:10px
 }
-
-/* Badge */
-.status {
-    display: inline-flex;
-    align-items: center;
-    gap: 9px;
-    padding: 10px 19px;
-    border: 1px solid #a78bfa55;
-    background: #8b5cf61c;
-    border-radius: 50px;
-    font-size: 11px;
-    font-weight: 800;
-    letter-spacing: 2px;
-    color: #c4b5fd;
-    margin-bottom: 25px;
+.table-head strong{font-size:13px}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:1050px}
+th{
+  padding:13px 14px;text-align:left;background:var(--panel2);
+  color:var(--muted);font-size:10px;text-transform:uppercase;
+  letter-spacing:.5px;white-space:nowrap
 }
-
-.dot {
-    width: 8px;
-    height: 8px;
-    background: #a78bfa;
-    border-radius: 50%;
-    box-shadow: 0 0 12px #a78bfa;
-    animation: blink 1s infinite;
+td{
+  padding:13px 14px;border-top:1px solid var(--line);
+  font-size:11px;vertical-align:middle
 }
-
-@keyframes blink {
-    50% { opacity: .2; }
+tbody tr:hover{background:var(--panel2)}
+.customer-name{font-weight:700;font-size:12px}
+.customer-id{font-size:10px;color:var(--muted);margin-top:4px}
+.subtext{color:var(--muted);font-size:10px;margin-top:4px}
+.badge{
+  display:inline-block;padding:5px 8px;border-radius:20px;
+  font-size:10px;font-weight:700;white-space:nowrap
 }
-
-/* Heading */
-h1 {
-    font-size: clamp(37px, 7vw, 76px);
-    line-height: 1.12;
-    font-weight: 900;
-    letter-spacing: -3px;
-    margin-bottom: 20px;
+.badge-deleted{background:var(--red-soft);color:var(--red)}
+.badge-due{background:#fff3d6;color:#9a5b00}
+.badge-paid{background:var(--primary-soft);color:var(--primary)}
+.actions{display:flex;gap:6px;white-space:nowrap}
+.empty{
+  padding:55px 15px;text-align:center;color:var(--muted)
 }
-
-h1 .gradient {
-    background: linear-gradient(90deg,#a78bfa,#22d3ee,#a78bfa);
-    background-size: 200%;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    animation: gradient 4s linear infinite;
+.empty i{font-size:35px;margin-bottom:12px;display:block;opacity:.45}
+.empty strong{display:block;color:var(--text);font-size:14px;margin-bottom:6px}
+.empty p{font-size:11px;margin:0}
+.loading{text-align:center;padding:45px;color:var(--muted);font-size:12px}
+.loading i{margin-right:7px}
+.pagination{
+  display:flex;justify-content:space-between;align-items:center;
+  gap:10px;padding:13px 16px;border-top:1px solid var(--line);
+  flex-wrap:wrap
 }
-
-@keyframes gradient {
-    to { background-position: 200%; }
+.page-info{font-size:11px;color:var(--muted)}
+.page-buttons{display:flex;gap:6px}
+.page-buttons button{
+  border:1px solid var(--line);background:var(--panel);
+  color:var(--text);padding:7px 11px;border-radius:7px;
+  cursor:pointer;font-size:11px
 }
-
-.description {
-    max-width: 650px;
-    margin: 0 auto;
-    font-size: 15px;
-    color: #a5b4cc;
-    line-height: 1.9;
+.page-buttons button:disabled{opacity:.4;cursor:not-allowed}
+.overlay{
+  display:none;position:fixed;inset:0;background:rgba(10,18,32,.65);
+  z-index:1000;align-items:center;justify-content:center;padding:15px
 }
-
-/* Construction animation */
-.construction {
-    margin: 40px auto;
-    width: 180px;
-    height: 130px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
+.overlay.show{display:flex}
+.modal{
+  width:100%;max-width:680px;max-height:90vh;overflow:auto;
+  background:#fff;color:#172033;border-radius:15px;
+  box-shadow:0 20px 70px rgba(0,0,0,.25)
 }
-
-.construction i {
-    font-size: 90px;
-    color: #c4b5fd;
-    filter: drop-shadow(0 0 25px #8b5cf6);
-    animation: tool 2s ease-in-out infinite;
+.modal-header{
+  padding:17px 20px;border-bottom:1px solid #e5eaf1;
+  display:flex;justify-content:space-between;align-items:center
 }
-
-@keyframes tool {
-    0%,100% { transform: rotate(-8deg) scale(1); }
-    50% { transform: rotate(8deg) scale(1.08); }
+.modal-header h2{font-size:16px;margin:0}
+.close{
+  border:0;background:#f1f4f8;width:32px;height:32px;
+  border-radius:8px;cursor:pointer;font-size:17px
 }
-
-/* Progress */
-.progress-section {
-    max-width: 440px;
-    margin: 35px auto;
+.modal-body{padding:18px 20px}
+.detail-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
+.detail-item{
+  padding:11px;background:#f7f9fc;border:1px solid #edf0f5;border-radius:9px;
+  min-width:0
 }
-
-.progress-info {
-    display: flex;
-    justify-content: space-between;
-    color: #a5b4cc;
-    font-size: 12px;
-    margin-bottom: 12px;
-    font-weight: 700;
+.detail-label{
+  font-size:9px;color:#718096;text-transform:uppercase;
+  letter-spacing:.5px;font-weight:700;margin-bottom:6px
 }
-
-.progress-bar {
-    height: 7px;
-    background: #ffffff15;
-    border-radius: 50px;
-    overflow: hidden;
+.detail-value{font-size:12px;font-weight:600;overflow-wrap:anywhere}
+.modal-footer{
+  padding:14px 20px;border-top:1px solid #e5eaf1;
+  display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap
 }
-
-.progress-fill {
-    width: 0%;
-    height: 100%;
-    border-radius: 50px;
-    background: linear-gradient(90deg,#8b5cf6,#22d3ee);
-    box-shadow: 0 0 15px #22d3ee;
-    animation: progress 4s ease forwards;
+.toast{
+  position:fixed;right:20px;bottom:20px;z-index:2000;
+  background:#172033;color:#fff;padding:13px 17px;border-radius:9px;
+  font-size:12px;box-shadow:var(--shadow);display:none;max-width:90vw
 }
-
-@keyframes progress {
-    to { width: 72%; }
-}
-
-/* Logo collection */
-.logo-title {
-    margin-top: 45px;
-    margin-bottom: 20px;
-    color: #64748b;
-    font-size: 10px;
-    font-weight: 800;
-    letter-spacing: 4px;
-}
-
-.logo-list {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 14px;
-}
-
-.logo-item {
-    width: 48px;
-    height: 48px;
-    border-radius: 15px;
-    background: #ffffff0b;
-    border: 1px solid #ffffff15;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #b9c4d8;
-    font-size: 19px;
-    transition: .3s;
-}
-
-.logo-item:hover {
-    transform: translateY(-7px) rotate(8deg);
-    color: white;
-    border-color: #8b5cf6;
-    background: #8b5cf633;
-    box-shadow: 0 5px 25px #8b5cf633;
-}
-
-/* Footer */
-footer {
-    margin-top: 45px;
-    color: #64748b;
-    font-size: 11px;
-    line-height: 2;
-}
-
-footer strong {
-    color: #c4b5fd;
-}
-
-/* Clock */
-.clock {
-    color: #94a3b8;
-    margin-top: 20px;
-    font-size: 12px;
-    letter-spacing: 1px;
-}
-
-@media(max-width:600px) {
-    .container {
-        padding: 35px 18px;
-    }
-
-    h1 {
-        letter-spacing: -1.5px;
-    }
-
-    .description {
-        font-size: 13px;
-    }
-
-    .logo-box {
-        width: 55px;
-        height: 55px;
-        font-size: 24px;
-    }
-
-    .brand-name {
-        font-size: 20px;
-    }
-
-    .construction {
-        margin: 25px auto;
-    }
+.toast.show{display:block}
+.toast.error{background:#b42332}
+@media(max-width:700px){
+  body{padding:12px}
+  h1{font-size:18px}
+  .stats{grid-template-columns:1fr 1fr;gap:9px}
+  .stat{padding:13px}
+  .stat-value{font-size:21px}
+  .toolbar{padding:11px}
+  .search-box{flex-basis:100%}
+  .toolbar select{flex:1;min-width:0}
+  .header-actions{width:100%}
+  .header-actions .btn{flex:1}
+  .detail-grid{grid-template-columns:1fr}
 }
 </style>
 </head>
 
 <body>
+<div class="container">
 
-<div class="background"></div>
-<div class="glow one"></div>
-<div class="glow two"></div>
+  <div class="header">
+    <div class="heading">
+      <div class="heading-icon"><i class="fa-solid fa-trash-can"></i></div>
+      <div>
+        <h1>Deleted Customers</h1>
+        <div class="subtitle">ONE ONLINE · Customer Management</div>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-light" onclick="loadCustomers()">
+        <i class="fa-solid fa-rotate"></i> Refresh
+      </button>
+    </div>
+  </div>
 
-<main class="container">
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-top">
+        <span class="stat-label">Total Deleted</span>
+        <span class="stat-icon"><i class="fa-solid fa-trash"></i></span>
+      </div>
+      <div class="stat-value" id="totalDeleted">0</div>
+    </div>
+    <div class="stat">
+      <div class="stat-top">
+        <span class="stat-label">Total Due Amount</span>
+        <span class="stat-icon"><i class="fa-solid fa-money-bill-wave"></i></span>
+      </div>
+      <div class="stat-value" id="totalDue">৳0</div>
+    </div>
+    <div class="stat">
+      <div class="stat-top">
+        <span class="stat-label">Showing Results</span>
+        <span class="stat-icon"><i class="fa-solid fa-list"></i></span>
+      </div>
+      <div class="stat-value" id="showingCount">0</div>
+    </div>
+  </div>
 
-    <!-- BRAND LOGO -->
-    <div class="logo-area">
-        <div class="logo-box">
-            <i class="fa-solid fa-cube"></i>
-        </div>
+  <div class="toolbar">
+    <div class="search-box">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input id="searchInput" type="search"
+        placeholder="Search name, mobile, IP, area, email..."
+        oninput="applyFilters()">
+    </div>
+    <select id="statusFilter" onchange="applyFilters()">
+      <option value="">All Collect Status</option>
+      <option value="collect">Collected</option>
+      <option value="due">Due</option>
+    </select>
+    <select id="sortFilter" onchange="applyFilters()">
+      <option value="newest">Recently Deleted</option>
+      <option value="oldest">Oldest Deleted</option>
+      <option value="name">Name A-Z</option>
+      <option value="due">Highest Due</option>
+    </select>
+    <span class="result-count" id="resultCount">0 records</span>
+  </div>
 
-        <div class="brand-name">
-            YOUR<span>BRAND</span>
-        </div>
+  <div class="table-card">
+    <div class="table-head">
+      <strong><i class="fa-solid fa-users-slash"></i> Deleted Customer List</strong>
+      <span class="result-count" id="tableCount">0 Customers</span>
     </div>
 
-    <!-- STATUS -->
-    <div class="status">
-        <span class="dot"></span>
-        WEBSITE UNDER DEVELOPMENT
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Customer</th>
+            <th>Mobile</th>
+            <th>IP Address</th>
+            <th>Area / Zone</th>
+            <th>Customer Bill</th>
+            <th>Due Amount</th>
+            <th>Collect Status</th>
+            <th>Deleted At</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="customerTable">
+          <tr><td colspan="9" class="loading">
+            <i class="fa-solid fa-spinner fa-spin"></i> Loading customers...
+          </td></tr>
+        </tbody>
+      </table>
     </div>
 
-    <!-- MAIN TITLE -->
-    <h1>
-        SORRY USER!<br>
-        <span class="gradient">THIS SITE IS</span><br>
-        UNDER CONSTRUCTION
-    </h1>
-
-    <p class="description">
-        We are currently working hard to build something amazing for you.
-        Our website is getting a brand-new look with exciting features
-        and a better experience. Thank you for your patience!
-    </p>
-
-    <!-- CONSTRUCTION ICON -->
-    <div class="construction">
-        <i class="fa-solid fa-person-digging"></i>
+    <div class="pagination">
+      <span class="page-info" id="pageInfo">Page 1</span>
+      <div class="page-buttons">
+        <button id="prevBtn" onclick="changePage(-1)">Previous</button>
+        <button id="nextBtn" onclick="changePage(1)">Next</button>
+      </div>
     </div>
+  </div>
+</div>
 
-    <!-- PROGRESS BAR -->
-    <div class="progress-section">
-        <div class="progress-info">
-            <span>DEVELOPMENT PROGRESS</span>
-            <span id="percentage">0%</span>
-        </div>
-
-        <div class="progress-bar">
-            <div class="progress-fill" id="progress"></div>
-        </div>
+<!-- Customer Details Modal -->
+<div class="overlay" id="detailsOverlay" onclick="overlayClose(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <h2><i class="fa-solid fa-user"></i> Customer Details</h2>
+      <button class="close" onclick="closeDetails()">×</button>
     </div>
-
-    <!-- MULTIPLE LOGOS -->
-    <div class="logo-title">
-        POWERED BY CREATIVITY & TECHNOLOGY
+    <div class="modal-body">
+      <div class="detail-grid" id="detailGrid"></div>
     </div>
-
-    <div class="logo-list">
-        <div class="logo-item"><i class="fa-brands fa-html5"></i></div>
-        <div class="logo-item"><i class="fa-brands fa-css3-alt"></i></div>
-        <div class="logo-item"><i class="fa-brands fa-js"></i></div>
-        <div class="logo-item"><i class="fa-brands fa-react"></i></div>
-        <div class="logo-item"><i class="fa-brands fa-node-js"></i></div>
-        <div class="logo-item"><i class="fa-brands fa-github"></i></div>
-        <div class="logo-item"><i class="fa-brands fa-google"></i></div>
-        <div class="logo-item"><i class="fa-solid fa-cloud"></i></div>
-        <div class="logo-item"><i class="fa-solid fa-code"></i></div>
+    <div class="modal-footer">
+      <button class="btn btn-light" onclick="closeDetails()">Close</button>
+      <button class="btn btn-primary" id="detailRestoreBtn">
+        <i class="fa-solid fa-rotate-left"></i> Restore Customer
+      </button>
     </div>
+  </div>
+</div>
 
-    <!-- LIVE CLOCK -->
-    <div class="clock" id="clock"></div>
-
-    <!-- FOOTER -->
-    <footer>
-        © <span id="year"></span> <strong>One Online</strong>. All Rights Reserved.<br>
-        Made with Shemanto Islam <i class="fa-solid fa-heart" style="color:#f472b6"></i>
-        for something extraordinary.
-    </footer>
-
-</main>
+<div class="toast" id="toast"></div>
 
 <script>
-// Live progress animation
-let progress = 0;
+/* =====================================================
+   ONE ONLINE - DELETED CUSTOMER PAGE
+   Google Apps Script API
+===================================================== */
 
-const progressElement = document.getElementById("progress");
-const percentageElement = document.getElementById("percentage");
+const API_URL = "https://script.google.com/macros/s/AKfycbxrhL_45Ey9QHICYzpNdsYRapqRZv36fzyEORs02MCnlAuju8yF-s5bDOfxY_l5qNrG/exec";
 
-const progressInterval = setInterval(() => {
-    if (progress < 72) {
-        progress++;
-        progressElement.style.width = progress + "%";
-        percentageElement.textContent = progress + "%";
-    } else {
-        clearInterval(progressInterval);
+let allCustomers = [];
+let filteredCustomers = [];
+let currentPage = 1;
+const PAGE_SIZE = 10;
+let selectedCustomer = null;
+let busy = false;
+
+/* ---------- Helpers ---------- */
+
+function valueOf(obj, keys, fallback="") {
+  for (const key of keys) {
+    if (obj && obj[key] !== undefined && obj[key] !== null && obj[key] !== "") {
+      return obj[key];
     }
-}, 45);
-
-// Live date and time
-function updateClock() {
-    const now = new Date();
-
-    document.getElementById("clock").textContent =
-        now.toLocaleString("en-US", {
-            weekday: "long",
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-            hour: "2-digit",
-            minute: "2-digit",
-            second: "2-digit"
-        });
+  }
+  return fallback;
 }
 
-updateClock();
-setInterval(updateClock, 1000);
+function customerId(c) {
+  return String(valueOf(c, ["customerId","customerID","id","Customer ID","customer_id"], ""));
+}
 
-// Current year
-document.getElementById("year").textContent =
-    new Date().getFullYear();
+function customerName(c) {
+  return valueOf(c, ["customerName","name","Customer Name","customer_name"], "Unknown");
+}
 
+function mobile(c) {
+  return valueOf(c, ["mobileNumber","mobile","phone","Mobile Number","mobile_number"], "—");
+}
+
+function alternativeMobile(c) {
+  return valueOf(c, ["alternativeMobile","alternative_mobile","Alternative Mobile"], "—");
+}
+
+function ipAddress(c) {
+  return valueOf(c, ["ipAddress","ip","IP Address","ip_address"], "—");
+}
+
+function area(c) {
+  return valueOf(c, ["areaZone","area","Area / Zone","area_zone"], "—");
+}
+
+function fullAddress(c) {
+  return valueOf(c, ["fullAddress","address","Full Address","full_address"], "—");
+}
+
+function mapLink(c) {
+  return valueOf(c, ["googleMapLink","mapLink","Google Map Link"], "");
+}
+
+function email(c) {
+  return valueOf(c, ["customerGmail","email","gmail","Customer Gmail"], "—");
+}
+
+function customerBill(c) {
+  return numberOf(valueOf(c, ["customerBill","bill","Customer Bill"], 0));
+}
+
+function ipBill(c) {
+  return numberOf(valueOf(c, ["ipBill","IP Bill"], 0));
+}
+
+function dueAmount(c) {
+  return numberOf(valueOf(c, ["dueAmount","Due Amount"], 0));
+}
+
+function dueReason(c) {
+  return valueOf(c, ["dueReason","Due Reason"], "—");
+}
+
+function billingDate(c) {
+  return valueOf(c, ["billingDate","Billing Date"], "—");
+}
+
+function collectStatus(c) {
+  return String(valueOf(c, ["collectStatus","collect","Collect Status"], "Due"));
+}
+
+function renewStatus(c) {
+  return valueOf(c, ["renewStatus","Renew Status"], "—");
+}
+
+function connectionDate(c) {
+  return valueOf(c, ["connectionDate","Connection Date"], "—");
+}
+
+function notes(c) {
+  return valueOf(c, ["additionalNotes","notes","Additional Notes"], "—");
+}
+
+function createdBy(c) {
+  return valueOf(c, ["createdBy","Created By"], "—");
+}
+
+function lastRenewed(c) {
+  return valueOf(c, ["internetBillLastRenewedAt","lastInternetBillRenewedAt","Internet Bill Last Renewed At"], "—");
+}
+
+function deletedAt(c) {
+  return valueOf(c, ["deletedAt","Deleted At","deleted_at"], "—");
+}
+
+function deletedBy(c) {
+  return valueOf(c, ["deletedBy","Deleted By","deleted_by"], "—");
+}
+
+function numberOf(v) {
+  const n = Number(String(v).replace(/[৳,\s]/g,""));
+  return Number.isFinite(n) ? n : 0;
+}
+
+function money(v) {
+  return "৳" + numberOf(v).toLocaleString("en-BD");
+}
+
+function safe(v) {
+  return String(v ?? "").replace(/[&<>"']/g, ch => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  }[ch]));
+}
+
+function formatDate(v) {
+  if (!v || v === "—") return "—";
+  const d = new Date(v);
+  if (isNaN(d.getTime())) return String(v);
+  return d.toLocaleString("en-GB", {
+    day:"2-digit",month:"short",year:"numeric",
+    hour:"2-digit",minute:"2-digit"
+  });
+}
+
+function showToast(message, error=false) {
+  const el = document.getElementById("toast");
+  el.textContent = message;
+  el.className = "toast show" + (error ? " error" : "");
+  clearTimeout(showToast.timer);
+  showToast.timer = setTimeout(() => el.className="toast", 3500);
+}
+
+/* ---------- API ---------- */
+
+async function apiGet(action) {
+  const url = API_URL + "?action=" + encodeURIComponent(action) + "&_=" + Date.now();
+  const response = await fetch(url, {
+    method:"GET",
+    redirect:"follow",
+    cache:"no-store"
+  });
+  if (!response.ok) throw new Error("Server returned HTTP " + response.status);
+  return await response.json();
+}
+
+async function apiPost(action, data={}) {
+  const payload = {
+    action,
+    ...data
+  };
+
+  const response = await fetch(API_URL, {
+    method:"POST",
+    redirect:"follow",
+    headers:{
+      "Content-Type":"text/plain;charset=utf-8"
+    },
+    body:JSON.stringify(payload)
+  });
+
+  if (!response.ok) throw new Error("Server returned HTTP " + response.status);
+
+  const result = await response.json();
+  if (result && result.success === false) {
+    throw new Error(result.message || result.error || "Operation failed");
+  }
+  return result;
+}
+
+/* ---------- Load Deleted Customers ---------- */
+
+async function loadCustomers() {
+  const tbody = document.getElementById("customerTable");
+  tbody.innerHTML = `<tr><td colspan="9" class="loading">
+    <i class="fa-solid fa-spinner fa-spin"></i> Loading deleted customers...
+  </td></tr>`;
+
+  try {
+    const result = await apiGet("getDeletedCustomers");
+
+    if (result && result.success === false) {
+      throw new Error(result.message || "Could not load deleted customers");
+    }
+
+    let list = [];
+    if (Array.isArray(result)) list = result;
+    else if (Array.isArray(result.customers)) list = result.customers;
+    else if (Array.isArray(result.data)) list = result.data;
+    else if (Array.isArray(result.records)) list = result.records;
+
+    allCustomers = list;
+    applyFilters();
+    updateStats();
+
+  } catch (error) {
+    console.error("Deleted customer load error:", error);
+    tbody.innerHTML = `<tr><td colspan="9" class="empty">
+      <i class="fa-solid fa-triangle-exclamation"></i>
+      <strong>Could not load deleted customers</strong>
+      <p>${safe(error.message)}. Check deployment access and API action names.</p>
+      <br><button class="btn btn-primary btn-small" onclick="loadCustomers()">Try Again</button>
+    </td></tr>`;
+    document.getElementById("totalDeleted").textContent = "—";
+    document.getElementById("showingCount").textContent = "0";
+  }
+}
+
+/* ---------- Stats ---------- */
+
+function updateStats() {
+  const total = allCustomers.length;
+  const due = allCustomers.reduce((sum,c) => sum + dueAmount(c), 0);
+  document.getElementById("totalDeleted").textContent = total.toLocaleString("en-BD");
+  document.getElementById("totalDue").textContent = money(due);
+  document.getElementById("showingCount").textContent = filteredCustomers.length.toLocaleString("en-BD");
+  document.getElementById("tableCount").textContent = total + " Customers";
+}
+
+/* ---------- Search / Filter / Sort ---------- */
+
+function applyFilters() {
+  const q = document.getElementById("searchInput").value.toLowerCase().trim();
+  const status = document.getElementById("statusFilter").value.toLowerCase();
+  const sort = document.getElementById("sortFilter").value;
+
+  filteredCustomers = allCustomers.filter(c => {
+    const searchable = [
+      customerId(c), customerName(c), mobile(c), alternativeMobile(c),
+      ipAddress(c), area(c), fullAddress(c), email(c), dueReason(c)
+    ].join(" ").toLowerCase();
+
+    if (q && !searchable.includes(q)) return false;
+
+    const st = collectStatus(c).toLowerCase();
+    if (status === "collect" && !st.includes("collect")) return false;
+    if (status === "due" && (st.includes("collect") && !st.includes("not"))) return false;
+
+    return true;
+  });
+
+  if (sort === "newest") {
+    filteredCustomers.sort((a,b) => dateValue(deletedAt(b)) - dateValue(deletedAt(a)));
+  } else if (sort === "oldest") {
+    filteredCustomers.sort((a,b) => dateValue(deletedAt(a)) - dateValue(deletedAt(b)));
+  } else if (sort === "name") {
+    filteredCustomers.sort((a,b) => customerName(a).localeCompare(customerName(b)));
+  } else if (sort === "due") {
+    filteredCustomers.sort((a,b) => dueAmount(b) - dueAmount(a));
+  }
+
+  currentPage = 1;
+  updateStats();
+  renderTable();
+}
+
+function dateValue(v) {
+  const d = new Date(v);
+  return isNaN(d.getTime()) ? 0 : d.getTime();
+}
+
+/* ---------- Table ---------- */
+
+function renderTable() {
+  const tbody = document.getElementById("customerTable");
+  const total = filteredCustomers.length;
+  const pages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+  currentPage = Math.min(currentPage, pages);
+
+  const start = (currentPage - 1) * PAGE_SIZE;
+  const items = filteredCustomers.slice(start, start + PAGE_SIZE);
+
+  if (!items.length) {
+    tbody.innerHTML = `<tr><td colspan="9" class="empty">
+      <i class="fa-solid fa-box-open"></i>
+      <strong>No deleted customers found</strong>
+      <p>Deleted customer records will appear here.</p>
+    </td></tr>`;
+  } else {
+    tbody.innerHTML = items.map((c,index) => {
+      const id = customerId(c);
+      const status = collectStatus(c);
+      const isCollected = status.toLowerCase().includes("collect") &&
+                          !status.toLowerCase().includes("not");
+      const badgeClass = isCollected ? "badge-paid" : "badge-due";
+
+      return `<tr>
+        <td>
+          <div class="customer-name">${safe(customerName(c))}</div>
+          <div class="customer-id">ID: ${safe(id || "—")}</div>
+        </td>
+        <td>${safe(mobile(c))}</td>
+        <td>${safe(ipAddress(c))}</td>
+        <td>${safe(area(c))}</td>
+        <td>${money(customerBill(c))}</td>
+        <td><strong>${money(dueAmount(c))}</strong></td>
+        <td><span class="badge ${badgeClass}">${safe(status)}</span></td>
+        <td>${safe(formatDate(deletedAt(c)))}</td>
+        <td>
+          <div class="actions">
+            <button class="btn btn-light btn-small" title="Details"
+              onclick="showDetails(${start+index})">
+              <i class="fa-solid fa-eye"></i>
+            </button>
+            <button class="btn btn-warning btn-small" title="Restore"
+              onclick="restoreCustomer('${safe(id)}')">
+              <i class="fa-solid fa-rotate-left"></i>
+            </button>
+            <button class="btn btn-danger btn-small" title="Permanent Delete"
+              onclick="permanentDelete('${safe(id)}')">
+              <i class="fa-solid fa-trash"></i>
+            </button>
+          </div>
+        </td>
+      </tr>`;
+    }).join("");
+  }
+
+  document.getElementById("resultCount").textContent = total + " records";
+  document.getElementById("pageInfo").textContent =
+    `Page ${currentPage} of ${pages} · ${total} records`;
+  document.getElementById("prevBtn").disabled = currentPage <= 1;
+  document.getElementById("nextBtn").disabled = currentPage >= pages;
+}
+
+function changePage(step) {
+  const pages = Math.max(1, Math.ceil(filteredCustomers.length / PAGE_SIZE));
+  currentPage = Math.max(1, Math.min(pages, currentPage + step));
+  renderTable();
+}
+
+/* ---------- Details ---------- */
+
+function showDetails(index) {
+  const c = filteredCustomers[index];
+  if (!c) return;
+  selectedCustomer = c;
+
+  const fields = [
+    ["Customer ID",customerId(c)],
+    ["Customer Name",customerName(c)],
+    ["Mobile Number",mobile(c)],
+    ["Alternative Mobile",alternativeMobile(c)],
+    ["IP Address",ipAddress(c)],
+    ["Area / Zone",area(c)],
+    ["Full Address",fullAddress(c)],
+    ["Google Map Link",mapLink(c) || "—"],
+    ["Customer Gmail",email(c)],
+    ["Customer Bill",money(customerBill(c))],
+    ["IP Bill",money(ipBill(c))],
+    ["Due Amount",money(dueAmount(c))],
+    ["Due Reason",dueReason(c)],
+    ["Billing Date",billingDate(c)],
+    ["Collect Status",collectStatus(c)],
+    ["Renew Status",renewStatus(c)],
+    ["Connection Date",connectionDate(c)],
+    ["Additional Notes",notes(c)],
+    ["Created By",createdBy(c)],
+    ["Last Internet Bill Renewed",lastRenewed(c)],
+    ["Deleted At",formatDate(deletedAt(c))],
+    ["Deleted By",deletedBy(c)]
+  ];
+
+  document.getElementById("detailGrid").innerHTML = fields.map(([label,value]) => {
+    let content = safe(value);
+    if (label === "Google Map Link" && value && value !== "—") {
+      const url = safe(value);
+      content = `<a href="${url}" target="_blank" rel="noopener">Open Map</a>`;
+    }
+    return `<div class="detail-item">
+      <div class="detail-label">${safe(label)}</div>
+      <div class="detail-value">${content || "—"}</div>
+    </div>`;
+  }).join("");
+
+  document.getElementById("detailRestoreBtn").onclick = () => {
+    restoreCustomer(customerId(c));
+  };
+
+  document.getElementById("detailsOverlay").classList.add("show");
+}
+
+function closeDetails() {
+  document.getElementById("detailsOverlay").classList.remove("show");
+  selectedCustomer = null;
+}
+
+function overlayClose(event) {
+  if (event.target.id === "detailsOverlay") closeDetails();
+}
+
+/* ---------- Restore Customer ---------- */
+
+async function restoreCustomer(id) {
+  if (!id) {
+    showToast("Customer ID not found.", true);
+    return;
+  }
+
+  const customer = allCustomers.find(c => customerId(c) === String(id));
+  const name = customer ? customerName(customer) : "this customer";
+
+  if (!confirm(`Restore "${name}" to the main Customers sheet?`)) return;
+  if (busy) return;
+
+  busy = true;
+  try {
+    showToast("Restoring customer...");
+    const result = await apiPost("restoreCustomer", {
+      id:id,
+      customerId:id
+    });
+
+    if (result && result.success === false) {
+      throw new Error(result.message || "Restore failed");
+    }
+
+    closeDetails();
+    showToast("Customer restored successfully.");
+    await loadCustomers();
+
+  } catch (error) {
+    console.error("Restore error:", error);
+    showToast(error.message || "Could not restore customer.", true);
+  } finally {
+    busy = false;
+  }
+}
+
+/* ---------- Permanent Delete ---------- */
+
+async function permanentDelete(id) {
+  if (!id) {
+    showToast("Customer ID not found.", true);
+    return;
+  }
+
+  const customer = allCustomers.find(c => customerId(c) === String(id));
+  const name = customer ? customerName(customer) : "this customer";
+
+  const confirmed = confirm(
+    `PERMANENT DELETE\n\n"${name}" will be permanently removed from the Deleted Customers sheet.\n\nThis action cannot be undone. Continue?`
+  );
+  if (!confirmed || busy) return;
+
+  busy = true;
+  try {
+    showToast("Permanently deleting...");
+    const result = await apiPost("permanentDeleteCustomer", {
+      id:id,
+      customerId:id
+    });
+
+    if (result && result.success === false) {
+      throw new Error(result.message || "Permanent delete failed");
+    }
+
+    closeDetails();
+    showToast("Customer permanently deleted.");
+    await loadCustomers();
+
+  } catch (error) {
+    console.error("Permanent delete error:", error);
+    showToast(error.message || "Could not permanently delete customer.", true);
+  } finally {
+    busy = false;
+  }
+}
+
+/* ---------- Start ---------- */
+
+document.addEventListener("DOMContentLoaded", loadCustomers);
 </script>
-
 </body>
 </html>
