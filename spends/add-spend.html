@@ -4,17 +4,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Spend Add | ONE ONLINE</title>
+<title>Add Spend | ONE ONLINE</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
 <style>
-/* =====================================
-   ONE ONLINE INDEX THEME VARIABLES
-===================================== */
-
 :root{
   --bg:#f4f6fa;
   --surface:#ffffff;
@@ -28,7 +24,6 @@
   --shadow:0 8px 28px rgba(20,35,55,.07);
 }
 
-/* DARK THEME - SAME AS INDEX */
 body[data-theme="dark"]{
   --bg:#0b1220;
   --surface:#111c2e;
@@ -42,41 +37,10 @@ body[data-theme="dark"]{
   --shadow:0 8px 28px rgba(0,0,0,.2);
 }
 
-/* LIGHT THEME */
-body[data-theme="light"]{
-  --bg:#f4f6fa;
-  --surface:#ffffff;
-  --surface2:#f8fafc;
-  --text:#172033;
-  --muted:#78869a;
-  --border:#e5eaf1;
-  --primary:#087f5b;
-  --primary-soft:#e7f5ef;
-  --danger:#dc3545;
-}
-
-/* FUNNY THEME - OPTIONAL */
-body[data-theme="funny"]{
-  --bg:#fff0fa;
-  --surface:#ffffff;
-  --surface2:#fff7fd;
-  --text:#382047;
-  --muted:#8b6c98;
-  --border:#f0d8f5;
-  --primary:#a855f7;
-  --primary-soft:#f3e8ff;
-  --danger:#e11d48;
-  --shadow:0 8px 28px rgba(168,85,247,.08);
-}
-
-/* =====================================
-   GENERAL
-===================================== */
-
 *{
+  box-sizing:border-box;
   margin:0;
   padding:0;
-  box-sizing:border-box;
 }
 
 html{
@@ -96,22 +60,24 @@ body{
   transition:background .2s,color .2s;
 }
 
+button,input,textarea{
+  font:inherit;
+}
+
 .container{
   width:100%;
   max-width:850px;
   margin:0 auto;
 }
 
-/* =====================================
-   PAGE HEADER
-===================================== */
+/* HEADER */
 
 .page-header{
-  margin-bottom:25px;
+  margin-bottom:24px;
 }
 
 .page-header h1{
-  font-size:25px;
+  font-size:24px;
   font-weight:800;
   display:flex;
   align-items:center;
@@ -125,23 +91,20 @@ body{
 
 .page-header p{
   color:var(--muted);
-  font-size:13px;
+  font-size:12px;
   margin-top:8px;
   line-height:1.6;
 }
 
-/* =====================================
-   FORM CARD
-===================================== */
+/* FORM CARD */
 
 .form-card{
   width:100%;
   background:var(--surface);
   border:1px solid var(--border);
-  border-radius:16px;
-  padding:30px;
+  border-radius:15px;
+  padding:28px;
   box-shadow:var(--shadow);
-  transition:background .2s,border-color .2s;
 }
 
 .form-title{
@@ -167,20 +130,18 @@ body{
 }
 
 .form-title h2{
-  font-size:17px;
+  font-size:16px;
   font-weight:800;
   color:var(--text);
 }
 
 .form-title p{
   color:var(--muted);
-  font-size:12px;
+  font-size:11px;
   margin-top:5px;
 }
 
-/* =====================================
-   INPUT FIELDS
-===================================== */
+/* INPUT */
 
 .form-group{
   margin-bottom:22px;
@@ -188,7 +149,7 @@ body{
 
 .form-group label{
   display:block;
-  font-size:13px;
+  font-size:12px;
   font-weight:700;
   margin-bottom:9px;
   color:var(--text);
@@ -200,12 +161,12 @@ body{
 
 .form-control{
   width:100%;
-  height:48px;
+  height:47px;
   border:1px solid var(--border);
   border-radius:9px;
-  padding:0 14px;
+  padding:0 13px;
+  font-size:13px;
   font-family:inherit;
-  font-size:14px;
   color:var(--text);
   background:var(--surface2);
   outline:none;
@@ -214,7 +175,7 @@ body{
 
 .form-control:focus{
   border-color:var(--primary);
-  box-shadow:0 0 0 3px rgba(8,127,91,.10);
+  box-shadow:0 0 0 3px rgba(16,185,129,.10);
 }
 
 .form-control::placeholder{
@@ -223,8 +184,8 @@ body{
 }
 
 textarea.form-control{
-  height:115px;
-  padding:13px 14px;
+  height:110px;
+  padding:13px;
   resize:vertical;
   line-height:1.6;
 }
@@ -238,42 +199,38 @@ textarea.form-control{
   left:14px;
   top:50%;
   transform:translateY(-50%);
-  font-size:14px;
-  font-weight:700;
   color:var(--muted);
+  font-weight:700;
 }
 
 .amount-wrap input{
   padding-left:38px;
 }
 
-/* =====================================
-   BUTTONS
-===================================== */
+/* BUTTONS */
 
 .form-footer{
   display:flex;
   justify-content:flex-end;
   gap:12px;
   border-top:1px solid var(--border);
-  padding-top:22px;
+  padding-top:21px;
   margin-top:10px;
 }
 
 .btn{
-  height:46px;
-  padding:0 22px;
-  border:none;
+  height:45px;
+  padding:0 21px;
+  border:0;
   border-radius:9px;
-  font-family:inherit;
-  font-size:13px;
+  font-size:12px;
   font-weight:700;
   cursor:pointer;
-  transition:.2s;
   display:flex;
   align-items:center;
   justify-content:center;
   gap:9px;
+  transition:.2s;
 }
 
 .btn-reset{
@@ -282,14 +239,10 @@ textarea.form-control{
   color:var(--text);
 }
 
-.btn-reset:hover{
-  opacity:.8;
-}
-
 .btn-save{
+  min-width:145px;
   background:var(--primary);
-  color:#ffffff;
-  min-width:150px;
+  color:#fff;
 }
 
 .btn-save:hover{
@@ -298,21 +251,19 @@ textarea.form-control{
 }
 
 .btn:disabled{
-  opacity:.65;
+  opacity:.6;
   cursor:not-allowed;
   transform:none;
 }
 
-/* =====================================
-   MESSAGE
-===================================== */
+/* MESSAGE */
 
 .message{
   display:none;
-  padding:13px 15px;
-  border-radius:9px;
+  padding:12px 14px;
+  border-radius:8px;
   margin-bottom:20px;
-  font-size:13px;
+  font-size:12px;
   line-height:1.5;
 }
 
@@ -330,12 +281,9 @@ textarea.form-control{
   border:1px solid #ffc9c9;
 }
 
-/* =====================================
-   MOBILE RESPONSIVE
-===================================== */
+/* MOBILE */
 
 @media(max-width:600px){
-
   body{
     padding:15px;
   }
@@ -355,7 +303,6 @@ textarea.form-control{
   .btn{
     width:100%;
   }
-
 }
 </style>
 </head>
@@ -364,50 +311,33 @@ textarea.form-control{
 
 <div class="container">
 
-  <!-- PAGE HEADER -->
   <div class="page-header">
-
     <h1>
       <i class="fa-solid fa-wallet"></i>
       Add Spend
     </h1>
-
-    <p>
-      Add and manage your company expenses from one place.
-    </p>
-
+    <p>Add and manage your company expenses.</p>
   </div>
 
-  <!-- FORM CARD -->
   <div class="form-card">
 
     <div class="form-title">
-
       <div class="form-icon">
         <i class="fa-solid fa-file-invoice-dollar"></i>
       </div>
 
       <div>
         <h2>New Expense Entry</h2>
-        <p>Enter the expense information below</p>
+        <p>Enter your expense information below</p>
       </div>
-
     </div>
 
-    <!-- MESSAGE -->
-    <div
-      id="messageBox"
-      class="message"
-      role="status"
-      aria-live="polite">
-    </div>
+    <div id="messageBox" class="message" role="status"></div>
 
-    <!-- SPEND FORM -->
     <form id="spendForm">
 
       <!-- TITLE -->
       <div class="form-group">
-
         <label for="spendTitle">
           Add Title <span class="required">*</span>
         </label>
@@ -417,21 +347,18 @@ textarea.form-control{
           id="spendTitle"
           class="form-control"
           placeholder="Enter expense title"
-          required
           maxlength="150"
+          required
         >
-
       </div>
 
       <!-- AMOUNT -->
       <div class="form-group">
-
         <label for="spendAmount">
-          Amount (৳) <span class="required">*</span>
+          Amount <span class="required">*</span>
         </label>
 
         <div class="amount-wrap">
-
           <span class="currency">৳</span>
 
           <input
@@ -443,14 +370,11 @@ textarea.form-control{
             step="0.01"
             required
           >
-
         </div>
-
       </div>
 
       <!-- EXPENSE DATE -->
       <div class="form-group">
-
         <label for="spendDate">
           Expense Date <span class="required">*</span>
         </label>
@@ -461,12 +385,10 @@ textarea.form-control{
           class="form-control"
           required
         >
-
       </div>
 
       <!-- COMMENT -->
       <div class="form-group">
-
         <label for="spendComment">
           Comment
         </label>
@@ -477,216 +399,130 @@ textarea.form-control{
           placeholder="Write expense details or comments..."
           maxlength="2000"
         ></textarea>
-
       </div>
 
-      <!-- FOOTER BUTTONS -->
+      <!-- BUTTONS -->
       <div class="form-footer">
 
-        <button
-          type="reset"
-          class="btn btn-reset"
-          id="resetBtn">
-
+        <button type="reset" class="btn btn-reset" id="resetBtn">
           <i class="fa-solid fa-rotate-left"></i>
           Reset
-
         </button>
 
-        <button
-          type="submit"
-          class="btn btn-save"
-          id="saveBtn">
-
+        <button type="submit" class="btn btn-save" id="saveBtn">
           <i class="fa-solid fa-floppy-disk"></i>
           Save Spend
-
         </button>
 
       </div>
 
     </form>
-
   </div>
-
 </div>
 
 <script>
-
 /* ==========================================
-   ONE ONLINE INDEX THEME INTEGRATION
-   Actual Index:
-   localStorage key = one_online_theme
-   body[data-theme] = light / dark
-   iframe = pageFrame
+   ONE ONLINE INDEX THEME SYNC
+   Index theme key: one_online_theme
+   Index body attribute: data-theme
 ========================================== */
 
 (function(){
 
-  "use strict";
-
   const THEME_KEY = "one_online_theme";
 
   function normalizeTheme(theme){
-
-    theme = String(theme || "light").toLowerCase();
-
-    if(theme === "dark") return "dark";
-    if(theme === "funny") return "funny";
-
-    return "light";
-
+    return theme === "dark" ? "dark" : "light";
   }
 
   function applyTheme(theme){
-
-    theme = normalizeTheme(theme);
-
-    document.body.setAttribute("data-theme",theme);
-
+    document.body.setAttribute(
+      "data-theme",
+      normalizeTheme(theme)
+    );
   }
 
-  /* Read theme directly from Parent Index */
-  function readParentTheme(){
+  function getParentTheme(){
 
     try{
-
       if(
         window.parent &&
-        window.parent !== window &&
-        window.parent.document &&
-        window.parent.document.body
+        window.parent !== window
       ){
-
         const parentTheme =
           window.parent.document.body.getAttribute("data-theme");
 
         if(parentTheme){
           return parentTheme;
         }
-
       }
-
-    }catch(error){
-
-      // Parent access unavailable: use saved theme.
-
-    }
+    }catch(error){}
 
     try{
-
       return localStorage.getItem(THEME_KEY) || "light";
-
     }catch(error){
-
       return "light";
-
     }
-
   }
 
-  /* Apply current Index theme */
   function syncTheme(){
-
-    applyTheme(readParentTheme());
-
+    applyTheme(getParentTheme());
   }
 
   /* Initial theme */
   syncTheme();
 
-  /* Listen for localStorage changes from Index */
-  window.addEventListener("storage",function(event){
-
-    if(event.key === THEME_KEY){
-
-      applyTheme(event.newValue || "light");
-
-    }
-
-  });
-
-  /* Observe Index body theme changes directly */
+  /* Detect Index theme changes */
   try{
-
-    if(
-      window.parent &&
-      window.parent !== window &&
-      window.parent.document &&
-      window.parent.document.body
-    ){
+    if(window.parent && window.parent !== window){
 
       const parentBody = window.parent.document.body;
 
       const observer = new MutationObserver(function(){
-
-        const theme =
-          parentBody.getAttribute("data-theme") || "light";
-
-        applyTheme(theme);
-
+        syncTheme();
       });
 
       observer.observe(parentBody,{
-
         attributes:true,
         attributeFilter:["data-theme"]
-
       });
-
     }
+  }catch(error){}
 
-  }catch(error){
-
-    // Storage and focus listeners remain available.
-
-  }
-
-  /* Refresh when iframe becomes active */
-  window.addEventListener("focus",syncTheme);
-
-  document.addEventListener("visibilitychange",function(){
-
-    if(!document.hidden){
-
-      syncTheme();
-
+  /* Detect theme storage changes */
+  window.addEventListener("storage",function(event){
+    if(event.key === THEME_KEY){
+      applyTheme(event.newValue);
     }
-
   });
 
-  /* Refresh when returning to the page */
+  /* Refresh theme when returning */
+  window.addEventListener("focus",syncTheme);
   window.addEventListener("pageshow",syncTheme);
 
 })();
 
 
 /* ==========================================
-   SPEND FORM SYSTEM
+   FORM SYSTEM
 ========================================== */
 
 const form = document.getElementById("spendForm");
-
 const saveBtn = document.getElementById("saveBtn");
-
 const messageBox = document.getElementById("messageBox");
-
 const dateInput = document.getElementById("spendDate");
 
 
-/* TODAY'S DATE */
+/* SET TODAY DATE */
 function setTodayDate(){
 
   const now = new Date();
 
-  const localDate = new Date(
-
+  const date = new Date(
     now.getTime() - now.getTimezoneOffset() * 60000
-
   ).toISOString().split("T")[0];
 
-  dateInput.value = localDate;
-
+  dateInput.value = date;
 }
 
 setTodayDate();
@@ -696,18 +532,13 @@ setTodayDate();
 function showMessage(message,type){
 
   messageBox.className = "message " + type;
-
   messageBox.textContent = message;
-
   messageBox.style.display = "block";
 
   messageBox.scrollIntoView({
-
     behavior:"smooth",
     block:"nearest"
-
   });
-
 }
 
 
@@ -715,23 +546,17 @@ function showMessage(message,type){
 function hideMessage(){
 
   messageBox.className = "message";
-
   messageBox.textContent = "";
-
   messageBox.style.display = "none";
-
 }
 
 
-/* RESET FORM */
+/* RESET */
 document.getElementById("resetBtn").addEventListener("click",function(){
 
   setTimeout(function(){
-
     setTodayDate();
-
     hideMessage();
-
   },0);
 
 });
@@ -741,14 +566,12 @@ document.getElementById("resetBtn").addEventListener("click",function(){
    SAVE SPEND
 ========================================== */
 
-form.addEventListener("submit",function(e){
+form.addEventListener("submit",function(event){
 
-  e.preventDefault();
-
+  event.preventDefault();
   hideMessage();
 
   const payload = {
-
     title:document.getElementById("spendTitle").value.trim(),
 
     amount:Number(
@@ -758,113 +581,76 @@ form.addEventListener("submit",function(e){
     expenseDate:dateInput.value,
 
     comment:document.getElementById("spendComment").value.trim()
-
   };
 
 
   /* VALIDATION */
 
   if(!payload.title){
-
-    showMessage(
-      "Please enter expense title.",
-      "error"
-    );
-
+    showMessage("Please enter expense title.","error");
     return;
-
   }
 
-
-  if(
-    !Number.isFinite(payload.amount) ||
-    payload.amount <= 0
-  ){
-
-    showMessage(
-      "Please enter a valid amount.",
-      "error"
-    );
-
+  if(!Number.isFinite(payload.amount) || payload.amount <= 0){
+    showMessage("Please enter a valid amount.","error");
     return;
-
   }
-
 
   if(!payload.expenseDate){
-
-    showMessage(
-      "Please select expense date.",
-      "error"
-    );
-
+    showMessage("Please select expense date.","error");
     return;
-
   }
 
 
-  /* CHECK GOOGLE APPS SCRIPT */
+  /* BACKEND CHECK */
 
   if(
     typeof google === "undefined" ||
     !google.script ||
     !google.script.run
   ){
-
     showMessage(
-      "Backend connection is not available. Please connect the Spend Add API in Code.gs.",
+      "Backend connection is unavailable. Please check your Apps Script setup.",
       "error"
     );
-
     return;
-
   }
 
 
   /* LOADING */
 
   saveBtn.disabled = true;
-
   saveBtn.innerHTML =
     '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
 
 
-  /* SEND DATA TO BACKEND */
+  /* SEND TO CODE.GS */
 
   google.script.run
 
     .withSuccessHandler(function(response){
 
       saveBtn.disabled = false;
-
       saveBtn.innerHTML =
         '<i class="fa-solid fa-floppy-disk"></i> Save Spend';
-
 
       if(response && response.success){
 
         showMessage(
-
           response.message || "Expense saved successfully!",
-
           "success"
-
         );
 
         form.reset();
-
         setTodayDate();
 
       }else{
 
         showMessage(
-
           response && response.message
             ? response.message
-            : "Could not save expense. Please try again.",
-
+            : "Could not save expense.",
           "error"
-
         );
 
       }
@@ -874,18 +660,14 @@ form.addEventListener("submit",function(e){
     .withFailureHandler(function(error){
 
       saveBtn.disabled = false;
-
       saveBtn.innerHTML =
         '<i class="fa-solid fa-floppy-disk"></i> Save Spend';
 
       showMessage(
-
         error && error.message
           ? error.message
           : "Something went wrong while saving.",
-
         "error"
-
       );
 
     })
@@ -893,7 +675,6 @@ form.addEventListener("submit",function(e){
     .addSpend(payload);
 
 });
-
 </script>
 
 </body>
