@@ -3,20 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Spend History | ONE ONLINE</title>
+<title>Earn & Spend History | ONE ONLINE</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
-<!-- PDF LIBRARY -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.4/jspdf.plugin.autotable.min.js"></script>
 
 <style>
 :root{
   --bg:#f4f6fa;
-  --surface:#ffffff;
+  --surface:#fff;
   --surface2:#f8fafc;
   --text:#172033;
   --muted:#78869a;
@@ -24,6 +23,7 @@
   --primary:#087f5b;
   --primary-soft:#e7f5ef;
   --danger:#dc3545;
+  --success:#087f5b;
   --shadow:0 8px 28px rgba(20,35,55,.06);
 }
 
@@ -37,11 +37,11 @@ body[data-theme="dark"]{
   --primary:#10b981;
   --primary-soft:#123b32;
   --danger:#f87171;
+  --success:#10b981;
   --shadow:0 8px 28px rgba(0,0,0,.2);
 }
 
 *{box-sizing:border-box;margin:0;padding:0;}
-
 html{color-scheme:light;}
 html:has(body[data-theme="dark"]){color-scheme:dark;}
 
@@ -52,11 +52,10 @@ body{
   padding:25px;
   min-height:100vh;
   font-size:14px;
-  transition:background .2s,color .2s;
+  transition:.2s;
 }
 
 button,input,select{font:inherit;}
-
 .container{width:100%;max-width:1400px;margin:auto;}
 
 .page-header{
@@ -112,8 +111,8 @@ button,input,select{font:inherit;}
 
 .stats-grid{
   display:grid;
-  grid-template-columns:repeat(3,minmax(0,1fr));
-  gap:16px;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:15px;
   margin-bottom:22px;
 }
 
@@ -121,31 +120,38 @@ button,input,select{font:inherit;}
   background:var(--surface);
   border:1px solid var(--border);
   border-radius:13px;
-  padding:20px;
+  padding:19px;
   box-shadow:var(--shadow);
   display:flex;
   align-items:center;
-  gap:15px;
+  gap:13px;
   min-width:0;
 }
 
 .stat-icon{
-  width:48px;height:48px;min-width:48px;
+  width:46px;
+  height:46px;
+  min-width:46px;
   border-radius:12px;
-  display:flex;align-items:center;justify-content:center;
-  font-size:19px;
-  background:var(--primary-soft);color:var(--primary);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:18px;
 }
 
+.stat-icon.earn{background:#e7f5ef;color:#087f5b;}
+.stat-icon.spend{background:#fff0f0;color:#dc3545;}
 .stat-icon.blue{background:#eaf2ff;color:#3974d8;}
 .stat-icon.orange{background:#fff3e5;color:#e58b26;}
 
+body[data-theme="dark"] .stat-icon.earn{background:#123b32;color:#10b981;}
+body[data-theme="dark"] .stat-icon.spend{background:#40232a;color:#f87171;}
 body[data-theme="dark"] .stat-icon.blue{background:#1b3151;color:#83b5ff;}
 body[data-theme="dark"] .stat-icon.orange{background:#3c2d1d;color:#ffc477;}
 
 .stat-info{min-width:0;}
 .stat-info p{font-size:11px;font-weight:600;color:var(--muted);margin-bottom:7px;}
-.stat-info h2{font-size:22px;font-weight:800;color:var(--text);overflow-wrap:anywhere;}
+.stat-info h2{font-size:20px;font-weight:800;overflow-wrap:anywhere;}
 
 .main-card{
   background:var(--surface);
@@ -171,12 +177,11 @@ body[data-theme="dark"] .stat-icon.orange{background:#3c2d1d;color:#ffc477;}
 .filter-section{
   padding:20px 22px;
   border-bottom:1px solid var(--border);
-  background:var(--surface);
 }
 
 .filter-grid{
   display:grid;
-  grid-template-columns:minmax(200px,1.7fr) repeat(3,minmax(140px,1fr));
+  grid-template-columns:minmax(180px,1.5fr) repeat(4,minmax(130px,1fr));
   gap:13px;
   align-items:end;
 }
@@ -185,7 +190,6 @@ body[data-theme="dark"] .stat-icon.orange{background:#3c2d1d;color:#ffc477;}
   display:block;
   font-size:11px;
   font-weight:700;
-  color:var(--text);
   margin-bottom:8px;
 }
 
@@ -210,9 +214,12 @@ body[data-theme="dark"] .stat-icon.orange{background:#3c2d1d;color:#ffc477;}
 
 .search-wrap{position:relative;}
 .search-wrap i{
-  position:absolute;left:13px;top:50%;
+  position:absolute;
+  left:13px;
+  top:50%;
   transform:translateY(-50%);
-  color:var(--muted);font-size:13px;
+  color:var(--muted);
+  font-size:13px;
 }
 .search-wrap input{padding-left:37px;}
 
@@ -235,8 +242,7 @@ body[data-theme="dark"] .stat-icon.orange{background:#3c2d1d;color:#ffc477;}
 }
 
 .table-wrap{width:100%;overflow-x:auto;}
-
-table{width:100%;border-collapse:collapse;min-width:750px;}
+table{width:100%;border-collapse:collapse;min-width:820px;}
 thead{background:var(--surface2);}
 
 th{
@@ -264,10 +270,28 @@ tbody tr:hover{background:var(--surface2);}
 tbody tr:last-child td{border-bottom:0;}
 
 .title-cell{font-weight:700;min-width:150px;}
-.amount-cell{font-weight:800;color:var(--danger);white-space:nowrap;}
+.amount-cell{font-weight:800;white-space:nowrap;}
+.amount-cell.earn{color:var(--success);}
+.amount-cell.spend{color:var(--danger);}
 .date-cell{white-space:nowrap;color:var(--muted);}
 .comment-cell{max-width:280px;min-width:150px;line-height:1.6;color:var(--muted);overflow-wrap:anywhere;}
 .row-number{color:var(--muted);font-weight:600;}
+
+.type-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  padding:6px 10px;
+  border-radius:20px;
+  font-size:10px;
+  font-weight:800;
+}
+
+.type-badge.earn{background:#e7f5ef;color:#087f5b;}
+.type-badge.spend{background:#fff0f0;color:#dc3545;}
+
+body[data-theme="dark"] .type-badge.earn{background:#123b32;color:#10b981;}
+body[data-theme="dark"] .type-badge.spend{background:#40232a;color:#f87171;}
 
 .state-box{padding:55px 20px;text-align:center;color:var(--muted);}
 .state-box i{font-size:34px;margin-bottom:15px;opacity:.55;}
@@ -288,12 +312,16 @@ tbody tr:last-child td{border-bottom:0;}
 .pagination-controls{display:flex;align-items:center;gap:7px;}
 
 .page-btn{
-  min-width:34px;height:34px;padding:0 10px;
+  min-width:34px;
+  height:34px;
+  padding:0 10px;
   border:1px solid var(--border);
   border-radius:7px;
   background:var(--surface);
   color:var(--text);
-  cursor:pointer;font-size:11px;font-weight:700;
+  cursor:pointer;
+  font-size:11px;
+  font-weight:700;
 }
 
 .page-btn.active{background:var(--primary);color:#fff;border-color:var(--primary);}
@@ -310,36 +338,34 @@ tbody tr:last-child td{border-bottom:0;}
   gap:8px;
 }
 
-@media print{
-  body{background:#fff;color:#000;padding:0;}
-  .header-actions,.filter-section,.pagination,.footer-note{display:none!important;}
-  .main-card,.stat-card{box-shadow:none;}
-  .table-wrap{overflow:visible;}
-  table{min-width:100%;}
-  th,td{color:#000;}
+@media(max-width:1100px){
+  .stats-grid{grid-template-columns:repeat(2,minmax(0,1fr));}
+  .filter-grid{grid-template-columns:repeat(3,minmax(0,1fr));}
 }
 
-@media(max-width:900px){
-  .filter-grid{grid-template-columns:repeat(2,minmax(0,1fr));}
-}
-
-@media(max-width:650px){
+@media(max-width:700px){
   body{padding:15px;}
   .page-header{align-items:flex-start;}
   .page-header h1{font-size:21px;}
   .header-actions{width:100%;}
-  .header-actions .btn{flex:1;padding:0 9px;}
-  .stats-grid{grid-template-columns:1fr;gap:11px;}
-  .stat-card{padding:15px;}
-  .stat-info h2{font-size:20px;}
-  .filter-grid{grid-template-columns:1fr;}
+  .header-actions .btn{flex:1;padding:0 8px;}
+  .stats-grid{grid-template-columns:1fr 1fr;gap:10px;}
+  .stat-card{padding:13px;gap:9px;}
+  .stat-icon{width:39px;height:39px;min-width:39px;font-size:15px;}
+  .stat-info h2{font-size:16px;}
+  .stat-info p{font-size:10px;}
+  .filter-grid{grid-template-columns:1fr 1fr;}
   .filter-actions{flex-direction:column;}
   .filter-actions .btn{width:100%;}
-  .card-header{padding:17px;}
-  .filter-section{padding:17px;}
+  .card-header,.filter-section{padding:17px;}
   .table-info{padding:14px 17px;}
   .pagination{padding:15px 17px;}
   .pagination-controls{width:100%;justify-content:flex-end;}
+}
+
+@media(max-width:420px){
+  .stats-grid{grid-template-columns:1fr;}
+  .filter-grid{grid-template-columns:1fr;}
 }
 </style>
 </head>
@@ -350,8 +376,8 @@ tbody tr:last-child td{border-bottom:0;}
 
   <div class="page-header">
     <div>
-      <h1><i class="fa-solid fa-money-bill-transfer"></i> Spend History</h1>
-      <p>View, search and filter all company expenses.</p>
+      <h1><i class="fa-solid fa-money-bill-transfer"></i> Earn & Spend History</h1>
+      <p>Manage and view all company income and expenses.</p>
     </div>
 
     <div class="header-actions">
@@ -369,10 +395,24 @@ tbody tr:last-child td{border-bottom:0;}
     </div>
   </div>
 
+  <!-- SUMMARY CARDS -->
+
   <div class="stats-grid">
 
     <div class="stat-card">
-      <div class="stat-icon"><i class="fa-solid fa-wallet"></i></div>
+      <div class="stat-icon earn">
+        <i class="fa-solid fa-arrow-trend-up"></i>
+      </div>
+      <div class="stat-info">
+        <p>Total Earn</p>
+        <h2 id="totalEarn">৳0.00</h2>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon spend">
+        <i class="fa-solid fa-arrow-trend-down"></i>
+      </div>
       <div class="stat-info">
         <p>Total Spend</p>
         <h2 id="totalSpend">৳0.00</h2>
@@ -380,7 +420,9 @@ tbody tr:last-child td{border-bottom:0;}
     </div>
 
     <div class="stat-card">
-      <div class="stat-icon blue"><i class="fa-solid fa-receipt"></i></div>
+      <div class="stat-icon blue">
+        <i class="fa-solid fa-receipt"></i>
+      </div>
       <div class="stat-info">
         <p>Total Entries</p>
         <h2 id="totalEntries">0</h2>
@@ -388,10 +430,12 @@ tbody tr:last-child td{border-bottom:0;}
     </div>
 
     <div class="stat-card">
-      <div class="stat-icon orange"><i class="fa-solid fa-filter"></i></div>
+      <div class="stat-icon orange">
+        <i class="fa-solid fa-filter"></i>
+      </div>
       <div class="stat-info">
-        <p>Filtered Spend</p>
-        <h2 id="filteredSpend">৳0.00</h2>
+        <p>Filtered Amount</p>
+        <h2 id="filteredAmount">৳0.00</h2>
       </div>
     </div>
 
@@ -401,21 +445,32 @@ tbody tr:last-child td{border-bottom:0;}
 
     <div class="card-header">
       <div>
-        <h2>All Expense Records</h2>
-        <p>Complete history of your company expenses</p>
+        <h2>All Financial Records</h2>
+        <p>Separate income and expense records</p>
       </div>
     </div>
+
+    <!-- FILTERS -->
 
     <div class="filter-section">
 
       <div class="filter-grid">
 
         <div class="filter-group">
-          <label for="searchInput">Search Expense</label>
+          <label for="searchInput">Search</label>
           <div class="search-wrap">
             <i class="fa-solid fa-magnifying-glass"></i>
             <input type="search" id="searchInput" class="filter-control" placeholder="Search title or comment...">
           </div>
+        </div>
+
+        <div class="filter-group">
+          <label for="typeFilter">Record Type</label>
+          <select id="typeFilter" class="filter-control">
+            <option value="all">All (Earn + Spend)</option>
+            <option value="earn">Earn Only</option>
+            <option value="spend">Spend Only</option>
+          </select>
         </div>
 
         <div class="filter-group">
@@ -441,47 +496,53 @@ tbody tr:last-child td{border-bottom:0;}
       </div>
 
       <div class="filter-actions">
+
         <button class="btn btn-primary" type="button" id="applyFilterBtn">
           <i class="fa-solid fa-filter"></i> Apply Filter
         </button>
 
-        <button class="btn" type="button" id="clearFilterBtn">
-          <i class="fa-solid fa-rotate-left"></i> Clear Filter
+        <button class="btn" type="button" id="resetFilterBtn">
+          <i class="fa-solid fa-rotate-left"></i> Reset Filter
         </button>
-      </div>
 
+      </div>
     </div>
 
     <div class="table-info">
       <span id="resultText">Showing 0 records</span>
-      <span id="filterStatus">All records</span>
+      <span id="filterStatus">All Records</span>
     </div>
+
+    <!-- TABLE -->
 
     <div class="table-wrap">
       <table>
         <thead>
           <tr>
             <th>SL</th>
-            <th>Expense Title</th>
+            <th>Type</th>
+            <th>Title</th>
             <th>Amount</th>
-            <th>Expense Date</th>
+            <th>Date</th>
             <th>Comment</th>
           </tr>
         </thead>
 
-        <tbody id="spendTableBody">
+        <tbody id="recordTableBody">
           <tr>
-            <td colspan="5">
+            <td colspan="6">
               <div class="state-box">
-                <i class="fa-solid fa-receipt"></i>
-                <h3>No Expense Data</h3>
-                <p>Connect the Google Sheet to display expense history here.</p>
+                <i class="fa-solid fa-wallet"></i>
+                <h3>No Financial Data</h3>
+                <p>Connect the Google Sheet to display Earn and Spend records here.</p>
               </div>
             </td>
           </tr>
         </tbody>
       </table>
     </div>
+
+    <!-- PAGINATION -->
 
     <div class="pagination">
       <div class="pagination-info" id="paginationInfo">Showing 0–0 of 0</div>
@@ -500,8 +561,8 @@ tbody tr:last-child td{border-bottom:0;}
     </div>
 
     <div class="footer-note">
-      <span>ONE ONLINE | Spend Management</span>
-      <span>Expense History</span>
+      <span>ONE ONLINE | Financial Management</span>
+      <span>Earn & Spend History</span>
     </div>
 
   </div>
@@ -509,7 +570,10 @@ tbody tr:last-child td{border-bottom:0;}
 
 <script>
 
-/* THEME SYNC */
+/* ==========================================
+   THEME SYNC
+========================================== */
+
 (function(){
 
   const THEME_KEY="one_online_theme";
@@ -525,6 +589,7 @@ tbody tr:last-child td{border-bottom:0;}
   }
 
   function getParentTheme(){
+
     try{
       if(window.parent && window.parent!==window){
         const parentTheme=window.parent.document.body.getAttribute("data-theme");
@@ -565,7 +630,9 @@ tbody tr:last-child td{border-bottom:0;}
 })();
 
 
-/* SPEND HISTORY */
+/* ==========================================
+   FINANCIAL HISTORY
+========================================== */
 
 const state={
   records:[],
@@ -575,19 +642,65 @@ const state={
 };
 
 const $=id=>document.getElementById(id);
-const tableBody=$("spendTableBody");
+const tableBody=$("recordTableBody");
+
+
+/*
+  RECORD FORMAT FOR FUTURE SHEET CONNECTION:
+
+  {
+    title: "Internet Bill",
+    amount: 1000,
+    expenseDate: "2026-11-24",
+    comment: "Monthly income",
+    type: "earn"
+  }
+
+  For expenses use:
+  type: "spend"
+*/
+
+
+/* TYPE NORMALIZATION */
+
+function getRecordType(item){
+
+  const raw=String(
+    item.type ||
+    item.recordType ||
+    item.transactionType ||
+    item.category ||
+    "spend"
+  ).toLowerCase().trim();
+
+  if(["earn","earning","income","credit"].includes(raw)){
+    return "earn";
+  }
+
+  return "spend";
+}
+
+
+/* CURRENCY */
 
 function formatMoney(value){
   const amount=Number(value)||0;
+
   return "৳"+amount.toLocaleString("en-BD",{
     minimumFractionDigits:2,
     maximumFractionDigits:2
   });
 }
 
+
+/* DATE */
+
 function formatDate(value){
+
   if(!value)return "—";
+
   const date=new Date(value);
+
   if(isNaN(date.getTime()))return String(value);
 
   return date.toLocaleDateString("en-GB",{
@@ -597,61 +710,108 @@ function formatDate(value){
   });
 }
 
+
+/* SAFE TEXT */
+
 function escapeHTML(value){
+
   return String(value??"").replace(/[&<>"']/g,function(char){
+
     const map={
-      "&":"&amp;","<":"&lt;",">":"&gt;",
-      '"':"&quot;","'":"&#039;"
+      "&":"&amp;",
+      "<":"&lt;",
+      ">":"&gt;",
+      '"':"&quot;",
+      "'":"&#039;"
     };
+
     return map[char];
   });
 }
 
+
+/* SUMMARY CARDS */
+
 function updateStats(){
 
-  const total=state.records.reduce((sum,item)=>{
+  let totalEarn=0;
+  let totalSpend=0;
+
+  state.records.forEach(item=>{
+
+    const amount=Number(item.amount)||0;
+
+    if(getRecordType(item)==="earn"){
+      totalEarn+=amount;
+    }else{
+      totalSpend+=amount;
+    }
+
+  });
+
+  const filteredTotal=state.filtered.reduce((sum,item)=>{
     return sum+(Number(item.amount)||0);
   },0);
 
-  const filtered=state.filtered.reduce((sum,item)=>{
-    return sum+(Number(item.amount)||0);
-  },0);
-
-  $("totalSpend").textContent=formatMoney(total);
+  $("totalEarn").textContent=formatMoney(totalEarn);
+  $("totalSpend").textContent=formatMoney(totalSpend);
   $("totalEntries").textContent=state.records.length.toLocaleString("en-BD");
-  $("filteredSpend").textContent=formatMoney(filtered);
+  $("filteredAmount").textContent=formatMoney(filteredTotal);
 }
 
+
+/* EMPTY STATE */
+
 function showEmptyState(){
+
   tableBody.innerHTML=`
     <tr>
-      <td colspan="5">
+      <td colspan="6">
         <div class="state-box">
           <i class="fa-solid fa-folder-open"></i>
-          <h3>No Expense Found</h3>
-          <p>No records match your search or filter.</p>
+          <h3>No Records Found</h3>
+          <p>No records match your selected filters.</p>
         </div>
       </td>
     </tr>
   `;
 }
 
+
+/* FILTER RECORDS */
+
 function applyFilters(){
 
   const search=$("searchInput").value.trim().toLowerCase();
+  const type=$("typeFilter").value;
   const from=$("fromDate").value;
   const to=$("toDate").value;
   const sort=$("sortOrder").value;
 
   let result=[...state.records];
 
+  /* TYPE FILTER */
+
+  if(type!=="all"){
+    result=result.filter(item=>getRecordType(item)===type);
+  }
+
+  /* SEARCH FILTER */
+
   if(search){
+
     result=result.filter(item=>{
+
       const title=String(item.title||"").toLowerCase();
       const comment=String(item.comment||"").toLowerCase();
+
       return title.includes(search)||comment.includes(search);
+
     });
+
   }
+
+  /* DATE FILTER */
 
   if(from){
     result=result.filter(item=>{
@@ -665,18 +825,32 @@ function applyFilters(){
     });
   }
 
+  /* SORT */
+
   if(sort==="newest"){
+
     result.sort((a,b)=>{
       return String(b.expenseDate||"").localeCompare(String(a.expenseDate||""));
     });
+
   }else if(sort==="oldest"){
+
     result.sort((a,b)=>{
       return String(a.expenseDate||"").localeCompare(String(b.expenseDate||""));
     });
+
   }else if(sort==="high"){
-    result.sort((a,b)=>Number(b.amount)-Number(a.amount));
+
+    result.sort((a,b)=>{
+      return Number(b.amount)-Number(a.amount);
+    });
+
   }else if(sort==="low"){
-    result.sort((a,b)=>Number(a.amount)-Number(b.amount));
+
+    result.sort((a,b)=>{
+      return Number(a.amount)-Number(b.amount);
+    });
+
   }
 
   state.filtered=result;
@@ -685,44 +859,83 @@ function applyFilters(){
   updateStats();
   renderTable();
 
-  const active=search||from||to;
-  $("filterStatus").textContent=active?"Filtered Results":"All Records";
+  let status="All Records";
+
+  if(type==="earn")status="Earn Only";
+  if(type==="spend")status="Spend Only";
+
+  if(search||from||to)status+=" | Filtered";
+
+  $("filterStatus").textContent=status;
 }
+
+
+/* RENDER TABLE */
 
 function renderTable(){
 
   const total=state.filtered.length;
-  const totalPages=Math.max(1,Math.ceil(total/state.perPage));
 
-  if(state.currentPage>totalPages)state.currentPage=totalPages;
+  const totalPages=Math.max(
+    1,
+    Math.ceil(total/state.perPage)
+  );
+
+  if(state.currentPage>totalPages){
+    state.currentPage=totalPages;
+  }
 
   const start=(state.currentPage-1)*state.perPage;
   const end=Math.min(start+state.perPage,total);
   const pageRecords=state.filtered.slice(start,end);
 
   if(!total){
+
     showEmptyState();
+
   }else{
+
     tableBody.innerHTML=pageRecords.map((item,index)=>{
+
+      const type=getRecordType(item);
+      const isEarn=type==="earn";
+
       return `
         <tr>
           <td class="row-number">${start+index+1}</td>
+
+          <td>
+            <span class="type-badge ${type}">
+              <i class="fa-solid ${isEarn?"fa-arrow-trend-up":"fa-arrow-trend-down"}"></i>
+              ${isEarn?"EARN":"SPEND"}
+            </span>
+          </td>
+
           <td class="title-cell">${escapeHTML(item.title||"Untitled")}</td>
-          <td class="amount-cell">${formatMoney(item.amount)}</td>
+
+          <td class="amount-cell ${type}">
+            ${isEarn?"+":"-"}${formatMoney(item.amount)}
+          </td>
+
           <td class="date-cell">${escapeHTML(formatDate(item.expenseDate))}</td>
+
           <td class="comment-cell">${escapeHTML(item.comment||"—")}</td>
         </tr>
       `;
+
     }).join("");
+
   }
 
-  $("resultText").textContent="Showing "+total.toLocaleString("en-BD")+" records";
+  $("resultText").textContent=
+    "Showing "+total.toLocaleString("en-BD")+" records";
 
   $("paginationInfo").textContent=total
     ?"Showing "+(start+1)+"–"+end+" of "+total
     :"Showing 0–0 of 0";
 
   $("currentPage").textContent=state.currentPage;
+
   $("prevPage").disabled=state.currentPage<=1;
   $("nextPage").disabled=state.currentPage>=totalPages;
 }
@@ -731,60 +944,82 @@ function renderTable(){
 /* PAGINATION */
 
 $("prevPage").addEventListener("click",function(){
+
   if(state.currentPage>1){
     state.currentPage--;
     renderTable();
   }
+
 });
 
 $("nextPage").addEventListener("click",function(){
-  const totalPages=Math.max(1,Math.ceil(state.filtered.length/state.perPage));
+
+  const totalPages=Math.max(
+    1,
+    Math.ceil(state.filtered.length/state.perPage)
+  );
+
   if(state.currentPage<totalPages){
     state.currentPage++;
     renderTable();
   }
+
 });
 
 
 /* FILTER EVENTS */
 
 $("applyFilterBtn").addEventListener("click",applyFilters);
+
 $("searchInput").addEventListener("input",applyFilters);
+$("typeFilter").addEventListener("change",applyFilters);
 $("sortOrder").addEventListener("change",applyFilters);
 
 $("fromDate").addEventListener("change",function(){
+
   if($("toDate").value && this.value>$("toDate").value){
     $("toDate").value="";
   }
+
   applyFilters();
+
 });
 
 $("toDate").addEventListener("change",function(){
+
   if($("fromDate").value && this.value<$("fromDate").value){
     alert("To Date cannot be earlier than From Date.");
     this.value="";
     return;
   }
+
   applyFilters();
+
 });
 
 
-/* CLEAR FILTER */
+/* RESET FILTER */
 
-$("clearFilterBtn").addEventListener("click",function(){
+$("resetFilterBtn").addEventListener("click",function(){
+
   $("searchInput").value="";
+  $("typeFilter").value="all";
   $("fromDate").value="";
   $("toDate").value="";
   $("sortOrder").value="newest";
+
   applyFilters();
+
 });
 
 
 /* REFRESH */
 
 $("refreshBtn").addEventListener("click",function(){
+
   // Google Sheet reload will be connected later.
   applyFilters();
+
 });
 
 
@@ -795,17 +1030,19 @@ $("printBtn").addEventListener("click",function(){
 });
 
 
-/* DOWNLOAD PDF */
+/* ==========================================
+   DOWNLOAD PDF
+========================================== */
 
 $("downloadPdfBtn").addEventListener("click",function(){
 
   if(!state.filtered.length){
-    alert("There are no expense records to download.");
+    alert("There are no records to download.");
     return;
   }
 
   if(!window.jspdf || !window.jspdf.jsPDF){
-    alert("PDF library could not load. Please check your internet connection and try again.");
+    alert("PDF library could not load. Please check your internet connection.");
     return;
   }
 
@@ -825,21 +1062,42 @@ $("downloadPdfBtn").addEventListener("click",function(){
       format:"a4"
     });
 
-    const rows=state.filtered.map((item,index)=>[
-      index+1,
-      String(item.title||"Untitled"),
-      "BDT "+(Number(item.amount)||0).toFixed(2),
-      formatDate(item.expenseDate),
-      String(item.comment||"—")
-    ]);
+    const selectedType=$("typeFilter").value;
 
-    const totalAmount=state.filtered.reduce((sum,item)=>{
-      return sum+(Number(item.amount)||0);
-    },0);
+    const rows=state.filtered.map((item,index)=>{
+
+      const type=getRecordType(item);
+
+      return [
+        index+1,
+        type.toUpperCase(),
+        String(item.title||"Untitled"),
+        (type==="earn"?"+":"-")+"BDT "+(Number(item.amount)||0).toFixed(2),
+        formatDate(item.expenseDate),
+        String(item.comment||"—")
+      ];
+
+    });
+
+    let totalEarn=0;
+    let totalSpend=0;
+
+    state.filtered.forEach(item=>{
+
+      const amount=Number(item.amount)||0;
+
+      if(getRecordType(item)==="earn"){
+        totalEarn+=amount;
+      }else{
+        totalSpend+=amount;
+      }
+
+    });
 
     const pageWidth=doc.internal.pageSize.getWidth();
 
-    // Header
+    /* REPORT HEADER */
+
     doc.setFont("helvetica","bold");
     doc.setFontSize(20);
     doc.setTextColor(8,127,91);
@@ -847,47 +1105,69 @@ $("downloadPdfBtn").addEventListener("click",function(){
 
     doc.setFontSize(15);
     doc.setTextColor(30,40,55);
-    doc.text("SPEND HISTORY REPORT",14,27);
+    doc.text("EARN & SPEND REPORT",14,27);
 
     doc.setFont("helvetica","normal");
     doc.setFontSize(9);
     doc.setTextColor(100,110,125);
-    doc.text("Company Expense Records",14,33);
 
-    // Report details
+    doc.text(
+      "Record Type: "+(selectedType==="all"?"All Records":selectedType.toUpperCase()),
+      14,33
+    );
+
     const generated=new Date().toLocaleString("en-GB");
 
-    doc.setFontSize(9);
     doc.text("Generated: "+generated,pageWidth-14,17,{align:"right"});
     doc.text("Total Records: "+state.filtered.length,pageWidth-14,23,{align:"right"});
 
-    if($("fromDate").value || $("toDate").value){
-      const dateRange=
-        "Date Range: "+($("fromDate").value||"Start")+
-        " to "+($("toDate").value||"Present");
+    /* DATE RANGE */
 
-      doc.text(dateRange,pageWidth-14,29,{align:"right"});
+    if($("fromDate").value||$("toDate").value){
+
+      doc.text(
+        "Date: "+($("fromDate").value||"Start")+" to "+($("toDate").value||"Present"),
+        pageWidth-14,29,
+        {align:"right"}
+      );
+
     }
 
-    // Summary
+    /* SUMMARY */
+
     doc.setFillColor(240,248,244);
-    doc.roundedRect(14,39,pageWidth-28,15,2,2,"F");
+    doc.roundedRect(14,39,pageWidth-28,19,2,2,"F");
 
     doc.setFont("helvetica","bold");
     doc.setFontSize(10);
     doc.setTextColor(8,110,78);
-    doc.text("TOTAL SPEND: BDT "+totalAmount.toLocaleString("en-US",{
-      minimumFractionDigits:2,
-      maximumFractionDigits:2
-    }),19,48);
 
-    // Table
+    doc.text(
+      "TOTAL EARN: BDT "+totalEarn.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2}),
+      19,47
+    );
+
+    doc.setTextColor(190,50,60);
+
+    doc.text(
+      "TOTAL SPEND: BDT "+totalSpend.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2}),
+      19,54
+    );
+
+    /* TABLE */
+
     doc.autoTable({
-      startY:60,
-      head:[["SL","EXPENSE TITLE","AMOUNT","EXPENSE DATE","COMMENT"]],
+
+      startY:65,
+
+      head:[["SL","TYPE","TITLE","AMOUNT","DATE","COMMENT"]],
+
       body:rows,
+
       theme:"grid",
+
       margin:{left:14,right:14},
+
       styles:{
         font:"helvetica",
         fontSize:8,
@@ -897,23 +1177,55 @@ $("downloadPdfBtn").addEventListener("click",function(){
         lineWidth:0.2,
         overflow:"linebreak"
       },
+
       headStyles:{
         fillColor:[8,127,91],
         textColor:[255,255,255],
-        fontStyle:"bold",
-        halign:"left"
+        fontStyle:"bold"
       },
+
       columnStyles:{
-        0:{cellWidth:13,halign:"center"},
-        1:{cellWidth:55},
-        2:{cellWidth:35,halign:"right"},
-        3:{cellWidth:32},
-        4:{cellWidth:"auto"}
+        0:{cellWidth:12,halign:"center"},
+        1:{cellWidth:22},
+        2:{cellWidth:48},
+        3:{cellWidth:35,halign:"right"},
+        4:{cellWidth:30},
+        5:{cellWidth:"auto"}
       },
+
+      didParseCell:function(data){
+
+        if(data.section==="body" && data.column.index===1){
+
+          const value=String(data.cell.raw).toLowerCase();
+
+          if(value==="earn"){
+            data.cell.styles.textColor=[8,127,91];
+          }else{
+            data.cell.styles.textColor=[220,53,69];
+          }
+
+        }
+
+        if(data.section==="body" && data.column.index===3){
+
+          const value=String(data.row.raw[1]).toLowerCase();
+
+          if(value==="earn"){
+            data.cell.styles.textColor=[8,127,91];
+          }else{
+            data.cell.styles.textColor=[220,53,69];
+          }
+
+        }
+
+      },
+
       alternateRowStyles:{
         fillColor:[247,250,248]
       },
-      didDrawPage:function(data){
+
+      didDrawPage:function(){
 
         const pageHeight=doc.internal.pageSize.getHeight();
 
@@ -921,7 +1233,7 @@ $("downloadPdfBtn").addEventListener("click",function(){
         doc.setTextColor(120,130,140);
 
         doc.text(
-          "ONE ONLINE | Spend Management",
+          "ONE ONLINE | Financial Management",
           14,
           pageHeight-8
         );
@@ -932,11 +1244,14 @@ $("downloadPdfBtn").addEventListener("click",function(){
           pageHeight-8,
           {align:"right"}
         );
+
       }
+
     });
 
     const fileDate=new Date().toISOString().slice(0,10);
-    doc.save("ONE-ONLINE-Spend-History-"+fileDate+".pdf");
+
+    doc.save("ONE-ONLINE-Earn-Spend-"+fileDate+".pdf");
 
   }catch(error){
 
