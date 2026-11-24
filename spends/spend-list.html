@@ -1,4 +1,5 @@
-<!DOCTYPE html>1
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -137,11 +138,11 @@ button,input,select{
 }
 
 .btn:disabled{
-  opacity:.6;
+  opacity:.5;
   cursor:not-allowed;
 }
 
-/* STAT CARDS */
+/* STATS */
 
 .stats-grid{
   display:grid;
@@ -396,7 +397,7 @@ tbody tr:last-child td{
   font-weight:600;
 }
 
-/* EMPTY / LOADING */
+/* EMPTY STATE */
 
 .state-box{
   padding:55px 20px;
@@ -419,14 +420,6 @@ tbody tr:last-child td{
 .state-box p{
   font-size:11px;
   line-height:1.7;
-}
-
-.loading-spinner{
-  animation:spin 1s linear infinite;
-}
-
-@keyframes spin{
-  to{transform:rotate(360deg)}
 }
 
 /* PAGINATION */
@@ -489,15 +482,54 @@ tbody tr:last-child td{
   gap:8px;
 }
 
+/* PRINT */
+
+@media print{
+
+  body{
+    background:#fff;
+    color:#000;
+    padding:0;
+  }
+
+  .header-actions,
+  .filter-section,
+  .pagination,
+  .footer-note{
+    display:none!important;
+  }
+
+  .main-card,
+  .stat-card{
+    box-shadow:none;
+  }
+
+  .table-wrap{
+    overflow:visible;
+  }
+
+  table{
+    min-width:100%;
+  }
+
+  th,td{
+    color:#000;
+  }
+
+}
+
 /* RESPONSIVE */
 
 @media(max-width:900px){
+
   .filter-grid{
     grid-template-columns:repeat(2,minmax(0,1fr));
   }
+
 }
 
 @media(max-width:650px){
+
   body{
     padding:15px;
   }
@@ -563,6 +595,7 @@ tbody tr:last-child td{
     width:100%;
     justify-content:flex-end;
   }
+
 }
 </style>
 </head>
@@ -571,7 +604,6 @@ tbody tr:last-child td{
 
 <div class="container">
 
-  <!-- HEADER -->
   <div class="page-header">
 
     <div>
@@ -585,7 +617,7 @@ tbody tr:last-child td{
     <div class="header-actions">
 
       <button class="btn" type="button" id="refreshBtn">
-        <i class="fa-solid fa-rotate" id="refreshIcon"></i>
+        <i class="fa-solid fa-rotate"></i>
         Refresh
       </button>
 
@@ -595,16 +627,19 @@ tbody tr:last-child td{
       </button>
 
     </div>
+
   </div>
 
 
   <!-- STATISTICS -->
+
   <div class="stats-grid">
 
     <div class="stat-card">
       <div class="stat-icon">
         <i class="fa-solid fa-wallet"></i>
       </div>
+
       <div class="stat-info">
         <p>Total Spend</p>
         <h2 id="totalSpend">৳0.00</h2>
@@ -615,6 +650,7 @@ tbody tr:last-child td{
       <div class="stat-icon blue">
         <i class="fa-solid fa-receipt"></i>
       </div>
+
       <div class="stat-info">
         <p>Total Entries</p>
         <h2 id="totalEntries">0</h2>
@@ -625,6 +661,7 @@ tbody tr:last-child td{
       <div class="stat-icon orange">
         <i class="fa-solid fa-filter"></i>
       </div>
+
       <div class="stat-info">
         <p>Filtered Spend</p>
         <h2 id="filteredSpend">৳0.00</h2>
@@ -635,6 +672,7 @@ tbody tr:last-child td{
 
 
   <!-- HISTORY CARD -->
+
   <div class="main-card">
 
     <div class="card-header">
@@ -645,15 +683,18 @@ tbody tr:last-child td{
     </div>
 
 
-    <!-- FILTER SECTION -->
+    <!-- FILTERS -->
+
     <div class="filter-section">
 
       <div class="filter-grid">
 
         <div class="filter-group">
           <label for="searchInput">Search Expense</label>
+
           <div class="search-wrap">
             <i class="fa-solid fa-magnifying-glass"></i>
+
             <input
               type="search"
               id="searchInput"
@@ -665,6 +706,7 @@ tbody tr:last-child td{
 
         <div class="filter-group">
           <label for="fromDate">From Date</label>
+
           <input
             type="date"
             id="fromDate"
@@ -674,6 +716,7 @@ tbody tr:last-child td{
 
         <div class="filter-group">
           <label for="toDate">To Date</label>
+
           <input
             type="date"
             id="toDate"
@@ -683,6 +726,7 @@ tbody tr:last-child td{
 
         <div class="filter-group">
           <label for="sortOrder">Sort By</label>
+
           <select id="sortOrder" class="filter-control">
             <option value="newest">Newest First</option>
             <option value="oldest">Oldest First</option>
@@ -711,6 +755,7 @@ tbody tr:last-child td{
 
 
     <!-- TABLE INFORMATION -->
+
     <div class="table-info">
       <span id="resultText">Showing 0 records</span>
       <span id="filterStatus">All records</span>
@@ -718,6 +763,7 @@ tbody tr:last-child td{
 
 
     <!-- TABLE -->
+
     <div class="table-wrap">
 
       <table>
@@ -737,9 +783,9 @@ tbody tr:last-child td{
           <tr>
             <td colspan="5">
               <div class="state-box">
-                <i class="fa-solid fa-cloud-arrow-down loading-spinner"></i>
-                <h3>Loading Spend History</h3>
-                <p>Please wait while records are loaded.</p>
+                <i class="fa-solid fa-receipt"></i>
+                <h3>No Expense Data</h3>
+                <p>Connect the Google Sheet to display expense history here.</p>
               </div>
             </td>
           </tr>
@@ -752,6 +798,7 @@ tbody tr:last-child td{
 
 
     <!-- PAGINATION -->
+
     <div class="pagination">
 
       <div class="pagination-info" id="paginationInfo">
@@ -760,7 +807,7 @@ tbody tr:last-child td{
 
       <div class="pagination-controls">
 
-        <button class="page-btn" id="prevPage" type="button">
+        <button class="page-btn" id="prevPage" type="button" disabled>
           <i class="fa-solid fa-chevron-left"></i>
         </button>
 
@@ -768,7 +815,7 @@ tbody tr:last-child td{
           1
         </button>
 
-        <button class="page-btn" id="nextPage" type="button">
+        <button class="page-btn" id="nextPage" type="button" disabled>
           <i class="fa-solid fa-chevron-right"></i>
         </button>
 
@@ -828,7 +875,13 @@ tbody tr:last-child td{
     }catch(error){}
 
     try{
-      return normalizeTheme(localStorage.getItem(THEME_KEY));
+
+      const savedTheme = localStorage.getItem(THEME_KEY);
+
+      if(savedTheme){
+        return normalizeTheme(savedTheme);
+      }
+
     }catch(error){}
 
     return "light";
@@ -871,15 +924,14 @@ tbody tr:last-child td{
 
 /* ==========================================
    SPEND HISTORY FRONTEND
-   Backend connection will be added next.
+   Google Sheet connection will be added later.
 ========================================== */
 
 const state = {
   records:[],
   filtered:[],
   currentPage:1,
-  perPage:10,
-  loading:false
+  perPage:10
 };
 
 const $ = id => document.getElementById(id);
@@ -943,25 +995,6 @@ function escapeHTML(value){
 }
 
 
-/* EMPTY / LOADING STATE */
-
-function showState(icon,title,description){
-
-  tableBody.innerHTML = `
-    <tr>
-      <td colspan="5">
-        <div class="state-box">
-          <i class="${icon}"></i>
-          <h3>${escapeHTML(title)}</h3>
-          <p>${escapeHTML(description)}</p>
-        </div>
-      </td>
-    </tr>
-  `;
-
-}
-
-
 /* UPDATE STATISTICS */
 
 function updateStats(){
@@ -975,10 +1008,30 @@ function updateStats(){
   },0);
 
   $("totalSpend").textContent = formatMoney(total);
+
   $("totalEntries").textContent =
     state.records.length.toLocaleString("en-BD");
 
   $("filteredSpend").textContent = formatMoney(filtered);
+
+}
+
+
+/* EMPTY STATE */
+
+function showEmptyState(){
+
+  tableBody.innerHTML = `
+    <tr>
+      <td colspan="5">
+        <div class="state-box">
+          <i class="fa-solid fa-folder-open"></i>
+          <h3>No Expense Found</h3>
+          <p>No records match your search or filter.</p>
+        </div>
+      </td>
+    </tr>
+  `;
 
 }
 
@@ -1026,13 +1079,13 @@ function applyFilters(){
   if(sort === "newest"){
 
     result.sort((a,b)=>{
-      return new Date(b.expenseDate) - new Date(a.expenseDate);
+      return String(b.expenseDate || "").localeCompare(String(a.expenseDate || ""));
     });
 
   }else if(sort === "oldest"){
 
     result.sort((a,b)=>{
-      return new Date(a.expenseDate) - new Date(b.expenseDate);
+      return String(a.expenseDate || "").localeCompare(String(b.expenseDate || ""));
     });
 
   }else if(sort === "high"){
@@ -1085,11 +1138,7 @@ function renderTable(){
 
   if(!total){
 
-    showState(
-      "fa-solid fa-folder-open",
-      "No Expense Found",
-      "No records match your search or filter."
-    );
+    showEmptyState();
 
   }else{
 
@@ -1151,7 +1200,7 @@ $("nextPage").addEventListener("click",function(){
 });
 
 
-/* FILTER BUTTONS */
+/* FILTER EVENTS */
 
 $("applyFilterBtn").addEventListener("click",applyFilters);
 
@@ -1198,65 +1247,25 @@ $("clearFilterBtn").addEventListener("click",function(){
 /* REFRESH */
 
 $("refreshBtn").addEventListener("click",function(){
-  loadSpendHistory();
+
+  // Will reload records after Google Sheet connection.
+  applyFilters();
+
 });
 
 
 /* PRINT */
 
 $("printBtn").addEventListener("click",function(){
-
   window.print();
-
 });
 
 
-/* ==========================================
-   BACKEND CONNECTION PLACEHOLDER
-
-   Expected Code.gs API:
-   getSpendHistory()
-
-   Expected response:
-   {
-     success: true,
-     data: [
-       {
-         title: "Office Rent",
-         amount: 5000,
-         expenseDate: "2026-11-24",
-         comment: "Monthly rent"
-       }
-     ]
-   }
-
-   This API will be connected after reviewing
-   the existing Code.gs and Spend Sheet.
-========================================== */
-
-function loadSpendHistory(){
-
-  showState(
-    "fa-solid fa-plug",
-    "Waiting for Sheet Connection",
-    "The Spend History design is ready. Connect the Google Sheet backend to load expense records."
-  );
-
-  $("resultText").textContent = "Waiting for connection";
-
-  $("refreshBtn").disabled = true;
-
-  setTimeout(function(){
-    $("refreshBtn").disabled = false;
-  },500);
-
-}
-
-
-/* INITIAL LOAD */
+/* INITIAL DISPLAY */
 
 updateStats();
-loadSpendHistory();
+state.filtered = [];
+renderTable();
 
 </script>
 
