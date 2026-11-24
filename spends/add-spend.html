@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -33,6 +34,7 @@ body{
   background:var(--bg);
   color:var(--text);
   padding:25px;
+  transition:background .2s,color .2s;
 }
 
 .container{
@@ -69,6 +71,7 @@ body{
   border-radius:16px;
   padding:30px;
   box-shadow:var(--shadow);
+  transition:background .2s,border-color .2s;
 }
 
 .form-title{
@@ -83,6 +86,7 @@ body{
 .form-icon{
   width:45px;
   height:45px;
+  flex-shrink:0;
   border-radius:12px;
   background:rgba(8,127,91,.11);
   color:var(--primary);
@@ -112,6 +116,7 @@ body{
   font-size:13px;
   font-weight:700;
   margin-bottom:9px;
+  color:var(--text);
 }
 
 .required{
@@ -145,7 +150,8 @@ textarea.form-control{
 }
 
 .form-control::placeholder{
-  color:#a0a9b7;
+  color:var(--muted);
+  opacity:.8;
 }
 
 .amount-wrap{
@@ -192,12 +198,12 @@ textarea.form-control{
 }
 
 .btn-reset{
-  background:#eef1f5;
-  color:#536174;
+  background:var(--border);
+  color:var(--text);
 }
 
 .btn-reset:hover{
-  background:#e1e6ed;
+  opacity:.8;
 }
 
 .btn-save{
@@ -240,14 +246,21 @@ textarea.form-control{
   border:1px solid #ffc9c9;
 }
 
-@media(max-width:600px){
-  body{padding:15px}
-  .page-header h1{font-size:21px}
-  .form-card{padding:20px 16px}
-  .form-footer{flex-direction:column-reverse}
-  .btn{width:100%}
+/* WHITE MODE */
+body.white-mode,
+body[data-theme="white"],
+body[data-theme="light"]{
+  --bg:#f4f7fb;
+  --card:#ffffff;
+  --text:#172033;
+  --muted:#748094;
+  --border:#e5eaf0;
+  --input:#ffffff;
+  --primary:#087f5b;
+  --primary-dark:#066548;
 }
 
+/* DARK MODE */
 body.dark-mode,
 body[data-theme="dark"]{
   --bg:#111827;
@@ -256,19 +269,45 @@ body[data-theme="dark"]{
   --muted:#aab4c4;
   --border:#374151;
   --input:#111827;
-  --shadow:0 8px 30px rgba(0,0,0,.15);
+  --primary:#10b981;
+  --primary-dark:#059669;
+  --shadow:0 8px 30px rgba(0,0,0,.18);
 }
 
+/* FUNNY MODE */
 body.funny-mode,
 body[data-theme="funny"]{
-  --primary:#a855f7;
-  --primary-dark:#9333ea;
   --bg:#fff0fa;
   --card:#ffffff;
   --text:#382047;
   --muted:#8b6c98;
   --border:#f0d8f5;
   --input:#ffffff;
+  --primary:#a855f7;
+  --primary-dark:#9333ea;
+  --shadow:0 8px 30px rgba(168,85,247,.08);
+}
+
+@media(max-width:600px){
+  body{
+    padding:15px;
+  }
+
+  .page-header h1{
+    font-size:21px;
+  }
+
+  .form-card{
+    padding:20px 16px;
+  }
+
+  .form-footer{
+    flex-direction:column-reverse;
+  }
+
+  .btn{
+    width:100%;
+  }
 }
 </style>
 </head>
@@ -297,11 +336,10 @@ body[data-theme="funny"]{
       </div>
     </div>
 
-    <div id="messageBox" class="message"></div>
+    <div id="messageBox" class="message" role="status"></div>
 
     <form id="spendForm">
 
-      <!-- ADD TITLE -->
       <div class="form-group">
         <label for="spendTitle">
           Add Title <span class="required">*</span>
@@ -316,7 +354,6 @@ body[data-theme="funny"]{
         >
       </div>
 
-      <!-- AMOUNT -->
       <div class="form-group">
         <label for="spendAmount">
           Amount (৳) <span class="required">*</span>
@@ -336,7 +373,6 @@ body[data-theme="funny"]{
         </div>
       </div>
 
-      <!-- EXPENSE DATE -->
       <div class="form-group">
         <label for="spendDate">
           Expense Date <span class="required">*</span>
@@ -349,7 +385,6 @@ body[data-theme="funny"]{
         >
       </div>
 
-      <!-- COMMENT -->
       <div class="form-group">
         <label for="spendComment">Comment</label>
         <textarea
@@ -360,7 +395,6 @@ body[data-theme="funny"]{
         ></textarea>
       </div>
 
-      <!-- BUTTONS -->
       <div class="form-footer">
 
         <button type="reset" class="btn btn-reset" id="resetBtn">
@@ -381,15 +415,82 @@ body[data-theme="funny"]{
 </div>
 
 <script>
+/* ==================================
+   INDEX THEME SUPPORT
+================================== */
+
+function applyTheme(theme){
+
+  document.body.classList.remove(
+    "dark-mode",
+    "white-mode",
+    "funny-mode"
+  );
+
+  const normalized = String(theme || "white").toLowerCase();
+
+  if(normalized.includes("dark")){
+    document.body.classList.add("dark-mode");
+    document.body.dataset.theme = "dark";
+  }
+  else if(normalized.includes("funny")){
+    document.body.classList.add("funny-mode");
+    document.body.dataset.theme = "funny";
+  }
+  else{
+    document.body.classList.add("white-mode");
+    document.body.dataset.theme = "white";
+  }
+}
+
+/* Initial theme fallback */
+applyTheme("white");
+
+/* Receive theme from Index */
+window.addEventListener("message",function(event){
+
+  const data = event.data;
+
+  if(!data) return;
+
+  if(typeof data === "string"){
+    const value = data.toLowerCase();
+
+    if(value.includes("theme")){
+      applyTheme(value);
+    }
+    return;
+  }
+
+  const theme =
+    data.theme ||
+    data.currentTheme ||
+    data.payload?.theme ||
+    data.user?.theme;
+
+  if(theme){
+    applyTheme(theme);
+  }
+
+  if(data.type === "THEME_CHANGE" && data.theme){
+    applyTheme(data.theme);
+  }
+
+});
+
+/* ==================================
+   SPEND FORM
+================================== */
+
 const form = document.getElementById("spendForm");
 const saveBtn = document.getElementById("saveBtn");
 const messageBox = document.getElementById("messageBox");
-
 const dateInput = document.getElementById("spendDate");
 
-// Set today's date by default
 function setTodayDate(){
+
   const now = new Date();
+
   const localDate = new Date(
     now.getTime() - now.getTimezoneOffset() * 60000
   ).toISOString().split("T")[0];
@@ -400,32 +501,53 @@ function setTodayDate(){
 setTodayDate();
 
 function showMessage(message,type){
+
   messageBox.className = "message " + type;
   messageBox.textContent = message;
   messageBox.style.display = "block";
+
+  messageBox.scrollIntoView({
+    behavior:"smooth",
+    block:"nearest"
+  });
 }
 
 function hideMessage(){
+
   messageBox.className = "message";
   messageBox.style.display = "none";
 }
 
-document.getElementById("resetBtn").addEventListener("click",()=>{
-  setTimeout(()=>{
+document.getElementById("resetBtn").addEventListener("click",function(){
+
+  setTimeout(function(){
     setTodayDate();
     hideMessage();
   },0);
+
 });
 
+/* ==================================
+   SAVE SPEND
+================================== */
+
 form.addEventListener("submit",function(e){
+
   e.preventDefault();
   hideMessage();
 
   const payload = {
-    title: document.getElementById("spendTitle").value.trim(),
-    amount: Number(document.getElementById("spendAmount").value),
-    expenseDate: dateInput.value,
-    comment: document.getElementById("spendComment").value.trim()
+
+    title:document.getElementById("spendTitle").value.trim(),
+
+    amount:Number(
+      document.getElementById("spendAmount").value
+    ),
+
+    expenseDate:dateInput.value,
+
+    comment:document.getElementById("spendComment").value.trim()
+
   };
 
   if(!payload.title){
@@ -443,27 +565,31 @@ form.addEventListener("submit",function(e){
     return;
   }
 
-  // Apps Script backend connection
   if(
     typeof google === "undefined" ||
     !google.script ||
     !google.script.run
   ){
+
     showMessage(
       "Backend connection is not available. Please connect the Spend Add API in Code.gs.",
       "error"
     );
+
     return;
   }
 
   saveBtn.disabled = true;
+
   saveBtn.innerHTML =
     '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
 
   google.script.run
+
     .withSuccessHandler(function(response){
 
       saveBtn.disabled = false;
+
       saveBtn.innerHTML =
         '<i class="fa-solid fa-floppy-disk"></i> Save Spend';
 
@@ -485,12 +611,15 @@ form.addEventListener("submit",function(e){
             : "Could not save expense. Please try again.",
           "error"
         );
+
       }
 
     })
+
     .withFailureHandler(function(error){
 
       saveBtn.disabled = false;
+
       saveBtn.innerHTML =
         '<i class="fa-solid fa-floppy-disk"></i> Save Spend';
 
@@ -502,6 +631,7 @@ form.addEventListener("submit",function(e){
       );
 
     })
+
     .addSpend(payload);
 
 });
