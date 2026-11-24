@@ -47,7 +47,7 @@ html{
   color-scheme:light;
 }
 
-body[data-theme="dark"]{
+html:has(body[data-theme="dark"]){
   color-scheme:dark;
 }
 
@@ -58,6 +58,7 @@ body{
   padding:25px;
   font-size:14px;
   transition:background .2s,color .2s;
+  min-height:100vh;
 }
 
 button,input,textarea{
@@ -105,6 +106,7 @@ button,input,textarea{
   border-radius:15px;
   padding:28px;
   box-shadow:var(--shadow);
+  transition:background .2s,border-color .2s;
 }
 
 .form-title{
@@ -336,7 +338,6 @@ textarea.form-control{
 
     <form id="spendForm">
 
-      <!-- TITLE -->
       <div class="form-group">
         <label for="spendTitle">
           Add Title <span class="required">*</span>
@@ -352,7 +353,6 @@ textarea.form-control{
         >
       </div>
 
-      <!-- AMOUNT -->
       <div class="form-group">
         <label for="spendAmount">
           Amount <span class="required">*</span>
@@ -373,7 +373,6 @@ textarea.form-control{
         </div>
       </div>
 
-      <!-- EXPENSE DATE -->
       <div class="form-group">
         <label for="spendDate">
           Expense Date <span class="required">*</span>
@@ -387,7 +386,6 @@ textarea.form-control{
         >
       </div>
 
-      <!-- COMMENT -->
       <div class="form-group">
         <label for="spendComment">
           Comment
@@ -401,7 +399,6 @@ textarea.form-control{
         ></textarea>
       </div>
 
-      <!-- BUTTONS -->
       <div class="form-footer">
 
         <button type="reset" class="btn btn-reset" id="resetBtn">
@@ -421,10 +418,9 @@ textarea.form-control{
 </div>
 
 <script>
+
 /* ==========================================
-   ONE ONLINE INDEX THEME SYNC
-   Index theme key: one_online_theme
-   Index body attribute: data-theme
+   ONE ONLINE INDEX THEME SYNC - FINAL FIX
 ========================================== */
 
 (function(){
@@ -432,48 +428,59 @@ textarea.form-control{
   const THEME_KEY = "one_online_theme";
 
   function normalizeTheme(theme){
-    return theme === "dark" ? "dark" : "light";
+    return String(theme || "").toLowerCase().includes("dark")
+      ? "dark"
+      : "light";
   }
 
   function applyTheme(theme){
-    document.body.setAttribute(
-      "data-theme",
-      normalizeTheme(theme)
-    );
+
+    const finalTheme = normalizeTheme(theme);
+
+    document.body.setAttribute("data-theme",finalTheme);
+
+    document.documentElement.style.colorScheme = finalTheme;
   }
 
   function getParentTheme(){
 
     try{
-      if(
-        window.parent &&
-        window.parent !== window
-      ){
+
+      if(window.parent && window.parent !== window){
+
         const parentTheme =
           window.parent.document.body.getAttribute("data-theme");
 
         if(parentTheme){
-          return parentTheme;
+          return normalizeTheme(parentTheme);
         }
       }
+
     }catch(error){}
 
     try{
-      return localStorage.getItem(THEME_KEY) || "light";
-    }catch(error){
-      return "light";
-    }
+
+      const savedTheme = localStorage.getItem(THEME_KEY);
+
+      if(savedTheme){
+        return normalizeTheme(savedTheme);
+      }
+
+    }catch(error){}
+
+    return "light";
   }
 
   function syncTheme(){
     applyTheme(getParentTheme());
   }
 
-  /* Initial theme */
+  // Initial theme
   syncTheme();
 
-  /* Detect Index theme changes */
+  // Observe Index theme changes
   try{
+
     if(window.parent && window.parent !== window){
 
       const parentBody = window.parent.document.body;
@@ -486,17 +493,24 @@ textarea.form-control{
         attributes:true,
         attributeFilter:["data-theme"]
       });
+
     }
+
   }catch(error){}
 
-  /* Detect theme storage changes */
-  window.addEventListener("storage",function(event){
-    if(event.key === THEME_KEY){
-      applyTheme(event.newValue);
+  // Receive optional theme message from Index
+  window.addEventListener("message",function(event){
+
+    if(
+      event.data &&
+      event.data.type === "ONE_ONLINE_THEME"
+    ){
+      applyTheme(event.data.theme);
     }
+
   });
 
-  /* Refresh theme when returning */
+  // Sync when page becomes active
   window.addEventListener("focus",syncTheme);
   window.addEventListener("pageshow",syncTheme);
 
@@ -514,6 +528,7 @@ const dateInput = document.getElementById("spendDate");
 
 
 /* SET TODAY DATE */
+
 function setTodayDate(){
 
   const now = new Date();
@@ -529,6 +544,7 @@ setTodayDate();
 
 
 /* SHOW MESSAGE */
+
 function showMessage(message,type){
 
   messageBox.className = "message " + type;
@@ -543,6 +559,7 @@ function showMessage(message,type){
 
 
 /* HIDE MESSAGE */
+
 function hideMessage(){
 
   messageBox.className = "message";
@@ -552,6 +569,7 @@ function hideMessage(){
 
 
 /* RESET */
+
 document.getElementById("resetBtn").addEventListener("click",function(){
 
   setTimeout(function(){
@@ -572,6 +590,7 @@ form.addEventListener("submit",function(event){
   hideMessage();
 
   const payload = {
+
     title:document.getElementById("spendTitle").value.trim(),
 
     amount:Number(
@@ -581,6 +600,7 @@ form.addEventListener("submit",function(event){
     expenseDate:dateInput.value,
 
     comment:document.getElementById("spendComment").value.trim()
+
   };
 
 
@@ -609,10 +629,12 @@ form.addEventListener("submit",function(event){
     !google.script ||
     !google.script.run
   ){
+
     showMessage(
       "Backend connection is unavailable. Please check your Apps Script setup.",
       "error"
     );
+
     return;
   }
 
@@ -620,6 +642,7 @@ form.addEventListener("submit",function(event){
   /* LOADING */
 
   saveBtn.disabled = true;
+
   saveBtn.innerHTML =
     '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
 
@@ -631,6 +654,7 @@ form.addEventListener("submit",function(event){
     .withSuccessHandler(function(response){
 
       saveBtn.disabled = false;
+
       saveBtn.innerHTML =
         '<i class="fa-solid fa-floppy-disk"></i> Save Spend';
 
@@ -660,6 +684,7 @@ form.addEventListener("submit",function(event){
     .withFailureHandler(function(error){
 
       saveBtn.disabled = false;
+
       saveBtn.innerHTML =
         '<i class="fa-solid fa-floppy-disk"></i> Save Spend';
 
@@ -675,6 +700,7 @@ form.addEventListener("submit",function(event){
     .addSpend(payload);
 
 });
+
 </script>
 
 </body>
