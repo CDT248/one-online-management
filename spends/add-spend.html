@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,39 +8,103 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
 <style>
+/* =====================================
+   ONE ONLINE INDEX THEME VARIABLES
+===================================== */
+
+:root{
+  --bg:#f4f6fa;
+  --surface:#ffffff;
+  --surface2:#f8fafc;
+  --text:#172033;
+  --muted:#78869a;
+  --border:#e5eaf1;
+  --primary:#087f5b;
+  --primary-soft:#e7f5ef;
+  --danger:#dc3545;
+  --shadow:0 8px 28px rgba(20,35,55,.07);
+}
+
+/* DARK THEME - SAME AS INDEX */
+body[data-theme="dark"]{
+  --bg:#0b1220;
+  --surface:#111c2e;
+  --surface2:#17243a;
+  --text:#edf4ff;
+  --muted:#91a2ba;
+  --border:#26364d;
+  --primary:#10b981;
+  --primary-soft:#123b32;
+  --danger:#f87171;
+  --shadow:0 8px 28px rgba(0,0,0,.2);
+}
+
+/* LIGHT THEME */
+body[data-theme="light"]{
+  --bg:#f4f6fa;
+  --surface:#ffffff;
+  --surface2:#f8fafc;
+  --text:#172033;
+  --muted:#78869a;
+  --border:#e5eaf1;
+  --primary:#087f5b;
+  --primary-soft:#e7f5ef;
+  --danger:#dc3545;
+}
+
+/* FUNNY THEME - OPTIONAL */
+body[data-theme="funny"]{
+  --bg:#fff0fa;
+  --surface:#ffffff;
+  --surface2:#fff7fd;
+  --text:#382047;
+  --muted:#8b6c98;
+  --border:#f0d8f5;
+  --primary:#a855f7;
+  --primary-soft:#f3e8ff;
+  --danger:#e11d48;
+  --shadow:0 8px 28px rgba(168,85,247,.08);
+}
+
+/* =====================================
+   GENERAL
+===================================== */
+
 *{
   margin:0;
   padding:0;
   box-sizing:border-box;
 }
 
-:root{
-  --primary:#087f5b;
-  --primary-dark:#066548;
-  --bg:#f4f7fb;
-  --card:#ffffff;
-  --text:#172033;
-  --muted:#748094;
-  --border:#e5eaf0;
-  --input:#ffffff;
-  --shadow:0 8px 30px rgba(20,35,60,.07);
+html{
+  color-scheme:light;
+}
+
+body[data-theme="dark"]{
+  color-scheme:dark;
 }
 
 body{
-  font-family:'Inter',sans-serif;
+  font-family:'Inter',Arial,sans-serif;
   background:var(--bg);
   color:var(--text);
   padding:25px;
+  font-size:14px;
   transition:background .2s,color .2s;
 }
 
 .container{
+  width:100%;
   max-width:850px;
   margin:0 auto;
 }
+
+/* =====================================
+   PAGE HEADER
+===================================== */
 
 .page-header{
   margin-bottom:25px;
@@ -51,6 +116,7 @@ body{
   display:flex;
   align-items:center;
   gap:12px;
+  color:var(--text);
 }
 
 .page-header h1 i{
@@ -64,8 +130,13 @@ body{
   line-height:1.6;
 }
 
+/* =====================================
+   FORM CARD
+===================================== */
+
 .form-card{
-  background:var(--card);
+  width:100%;
+  background:var(--surface);
   border:1px solid var(--border);
   border-radius:16px;
   padding:30px;
@@ -85,9 +156,9 @@ body{
 .form-icon{
   width:45px;
   height:45px;
-  flex-shrink:0;
+  min-width:45px;
   border-radius:12px;
-  background:rgba(8,127,91,.11);
+  background:var(--primary-soft);
   color:var(--primary);
   display:flex;
   align-items:center;
@@ -98,6 +169,7 @@ body{
 .form-title h2{
   font-size:17px;
   font-weight:800;
+  color:var(--text);
 }
 
 .form-title p{
@@ -105,6 +177,10 @@ body{
   font-size:12px;
   margin-top:5px;
 }
+
+/* =====================================
+   INPUT FIELDS
+===================================== */
 
 .form-group{
   margin-bottom:22px;
@@ -119,7 +195,7 @@ body{
 }
 
 .required{
-  color:#e03131;
+  color:var(--danger);
 }
 
 .form-control{
@@ -131,16 +207,9 @@ body{
   font-family:inherit;
   font-size:14px;
   color:var(--text);
-  background:var(--input);
+  background:var(--surface2);
   outline:none;
   transition:.2s;
-}
-
-textarea.form-control{
-  height:115px;
-  padding:13px 14px;
-  resize:vertical;
-  line-height:1.6;
 }
 
 .form-control:focus{
@@ -151,6 +220,13 @@ textarea.form-control{
 .form-control::placeholder{
   color:var(--muted);
   opacity:.8;
+}
+
+textarea.form-control{
+  height:115px;
+  padding:13px 14px;
+  resize:vertical;
+  line-height:1.6;
 }
 
 .amount-wrap{
@@ -170,6 +246,10 @@ textarea.form-control{
 .amount-wrap input{
   padding-left:38px;
 }
+
+/* =====================================
+   BUTTONS
+===================================== */
 
 .form-footer{
   display:flex;
@@ -197,7 +277,8 @@ textarea.form-control{
 }
 
 .btn-reset{
-  background:var(--border);
+  background:var(--surface2);
+  border:1px solid var(--border);
   color:var(--text);
 }
 
@@ -207,12 +288,12 @@ textarea.form-control{
 
 .btn-save{
   background:var(--primary);
-  color:#fff;
+  color:#ffffff;
   min-width:150px;
 }
 
 .btn-save:hover{
-  background:var(--primary-dark);
+  opacity:.9;
   transform:translateY(-1px);
 }
 
@@ -221,6 +302,10 @@ textarea.form-control{
   cursor:not-allowed;
   transform:none;
 }
+
+/* =====================================
+   MESSAGE
+===================================== */
 
 .message{
   display:none;
@@ -245,49 +330,12 @@ textarea.form-control{
   border:1px solid #ffc9c9;
 }
 
-/* WHITE MODE */
-body.white-mode,
-body[data-theme="white"],
-body[data-theme="light"]{
-  --bg:#f4f7fb;
-  --card:#ffffff;
-  --text:#172033;
-  --muted:#748094;
-  --border:#e5eaf0;
-  --input:#ffffff;
-  --primary:#087f5b;
-  --primary-dark:#066548;
-}
-
-/* DARK MODE */
-body.dark-mode,
-body[data-theme="dark"]{
-  --bg:#111827;
-  --card:#1f2937;
-  --text:#f3f4f6;
-  --muted:#aab4c4;
-  --border:#374151;
-  --input:#111827;
-  --primary:#10b981;
-  --primary-dark:#059669;
-  --shadow:0 8px 30px rgba(0,0,0,.18);
-}
-
-/* FUNNY MODE */
-body.funny-mode,
-body[data-theme="funny"]{
-  --bg:#fff0fa;
-  --card:#ffffff;
-  --text:#382047;
-  --muted:#8b6c98;
-  --border:#f0d8f5;
-  --input:#ffffff;
-  --primary:#a855f7;
-  --primary-dark:#9333ea;
-  --shadow:0 8px 30px rgba(168,85,247,.08);
-}
+/* =====================================
+   MOBILE RESPONSIVE
+===================================== */
 
 @media(max-width:600px){
+
   body{
     padding:15px;
   }
@@ -307,42 +355,63 @@ body[data-theme="funny"]{
   .btn{
     width:100%;
   }
+
 }
 </style>
 </head>
 
-<body>
+<body data-theme="light">
 
 <div class="container">
 
+  <!-- PAGE HEADER -->
   <div class="page-header">
+
     <h1>
       <i class="fa-solid fa-wallet"></i>
       Add Spend
     </h1>
-    <p>Add and manage your company expenses from one place.</p>
+
+    <p>
+      Add and manage your company expenses from one place.
+    </p>
+
   </div>
 
+  <!-- FORM CARD -->
   <div class="form-card">
 
     <div class="form-title">
+
       <div class="form-icon">
         <i class="fa-solid fa-file-invoice-dollar"></i>
       </div>
+
       <div>
         <h2>New Expense Entry</h2>
         <p>Enter the expense information below</p>
       </div>
+
     </div>
 
-    <div id="messageBox" class="message" role="status"></div>
+    <!-- MESSAGE -->
+    <div
+      id="messageBox"
+      class="message"
+      role="status"
+      aria-live="polite">
+    </div>
 
+    <!-- SPEND FORM -->
     <form id="spendForm">
 
+      <!-- TITLE -->
       <div class="form-group">
+
         <label for="spendTitle">
           Add Title <span class="required">*</span>
         </label>
+
         <input
           type="text"
           id="spendTitle"
@@ -351,15 +420,20 @@ body[data-theme="funny"]{
           required
           maxlength="150"
         >
+
       </div>
 
+      <!-- AMOUNT -->
       <div class="form-group">
+
         <label for="spendAmount">
           Amount (৳) <span class="required">*</span>
         </label>
 
         <div class="amount-wrap">
+
           <span class="currency">৳</span>
+
           <input
             type="number"
             id="spendAmount"
@@ -369,41 +443,64 @@ body[data-theme="funny"]{
             step="0.01"
             required
           >
+
         </div>
+
       </div>
 
+      <!-- EXPENSE DATE -->
       <div class="form-group">
+
         <label for="spendDate">
           Expense Date <span class="required">*</span>
         </label>
+
         <input
           type="date"
           id="spendDate"
           class="form-control"
           required
         >
+
       </div>
 
+      <!-- COMMENT -->
       <div class="form-group">
-        <label for="spendComment">Comment</label>
+
+        <label for="spendComment">
+          Comment
+        </label>
+
         <textarea
           id="spendComment"
           class="form-control"
           placeholder="Write expense details or comments..."
           maxlength="2000"
         ></textarea>
+
       </div>
 
+      <!-- FOOTER BUTTONS -->
       <div class="form-footer">
 
-        <button type="reset" class="btn btn-reset" id="resetBtn">
+        <button
+          type="reset"
+          class="btn btn-reset"
+          id="resetBtn">
+
           <i class="fa-solid fa-rotate-left"></i>
           Reset
+
         </button>
 
-        <button type="submit" class="btn btn-save" id="saveBtn">
+        <button
+          type="submit"
+          class="btn btn-save"
+          id="saveBtn">
+
           <i class="fa-solid fa-floppy-disk"></i>
           Save Spend
+
         </button>
 
       </div>
@@ -411,128 +508,243 @@ body[data-theme="funny"]{
     </form>
 
   </div>
+
 </div>
 
 <script>
-/* ==================================
-   INDEX THEME SUPPORT
-================================== */
 
-function applyTheme(theme){
+/* ==========================================
+   ONE ONLINE INDEX THEME INTEGRATION
+   Actual Index:
+   localStorage key = one_online_theme
+   body[data-theme] = light / dark
+   iframe = pageFrame
+========================================== */
 
-  document.body.classList.remove(
-    "dark-mode",
-    "white-mode",
-    "funny-mode"
-  );
+(function(){
 
-  const normalized = String(theme || "white").toLowerCase();
+  "use strict";
 
-  if(normalized.includes("dark")){
-    document.body.classList.add("dark-mode");
-    document.body.dataset.theme = "dark";
+  const THEME_KEY = "one_online_theme";
+
+  function normalizeTheme(theme){
+
+    theme = String(theme || "light").toLowerCase();
+
+    if(theme === "dark") return "dark";
+    if(theme === "funny") return "funny";
+
+    return "light";
+
   }
-  else if(normalized.includes("funny")){
-    document.body.classList.add("funny-mode");
-    document.body.dataset.theme = "funny";
+
+  function applyTheme(theme){
+
+    theme = normalizeTheme(theme);
+
+    document.body.setAttribute("data-theme",theme);
+
   }
-  else{
-    document.body.classList.add("white-mode");
-    document.body.dataset.theme = "white";
-  }
-}
 
-/* Initial theme fallback */
-applyTheme("white");
+  /* Read theme directly from Parent Index */
+  function readParentTheme(){
 
-/* Receive theme from Index */
-window.addEventListener("message",function(event){
+    try{
 
-  const data = event.data;
+      if(
+        window.parent &&
+        window.parent !== window &&
+        window.parent.document &&
+        window.parent.document.body
+      ){
 
-  if(!data) return;
+        const parentTheme =
+          window.parent.document.body.getAttribute("data-theme");
 
-  if(typeof data === "string"){
-    const value = data.toLowerCase();
+        if(parentTheme){
+          return parentTheme;
+        }
 
-    if(value.includes("theme")){
-      applyTheme(value);
+      }
+
+    }catch(error){
+
+      // Parent access unavailable: use saved theme.
+
     }
-    return;
+
+    try{
+
+      return localStorage.getItem(THEME_KEY) || "light";
+
+    }catch(error){
+
+      return "light";
+
+    }
+
   }
 
-  const theme =
-    data.theme ||
-    data.currentTheme ||
-    data.payload?.theme ||
-    data.user?.theme;
+  /* Apply current Index theme */
+  function syncTheme(){
 
-  if(theme){
-    applyTheme(theme);
+    applyTheme(readParentTheme());
+
   }
 
-  if(data.type === "THEME_CHANGE" && data.theme){
-    applyTheme(data.theme);
+  /* Initial theme */
+  syncTheme();
+
+  /* Listen for localStorage changes from Index */
+  window.addEventListener("storage",function(event){
+
+    if(event.key === THEME_KEY){
+
+      applyTheme(event.newValue || "light");
+
+    }
+
+  });
+
+  /* Observe Index body theme changes directly */
+  try{
+
+    if(
+      window.parent &&
+      window.parent !== window &&
+      window.parent.document &&
+      window.parent.document.body
+    ){
+
+      const parentBody = window.parent.document.body;
+
+      const observer = new MutationObserver(function(){
+
+        const theme =
+          parentBody.getAttribute("data-theme") || "light";
+
+        applyTheme(theme);
+
+      });
+
+      observer.observe(parentBody,{
+
+        attributes:true,
+        attributeFilter:["data-theme"]
+
+      });
+
+    }
+
+  }catch(error){
+
+    // Storage and focus listeners remain available.
+
   }
 
-});
+  /* Refresh when iframe becomes active */
+  window.addEventListener("focus",syncTheme);
 
-/* ==================================
-   SPEND FORM
-================================== */
+  document.addEventListener("visibilitychange",function(){
+
+    if(!document.hidden){
+
+      syncTheme();
+
+    }
+
+  });
+
+  /* Refresh when returning to the page */
+  window.addEventListener("pageshow",syncTheme);
+
+})();
+
+
+/* ==========================================
+   SPEND FORM SYSTEM
+========================================== */
 
 const form = document.getElementById("spendForm");
+
 const saveBtn = document.getElementById("saveBtn");
+
 const messageBox = document.getElementById("messageBox");
+
 const dateInput = document.getElementById("spendDate");
 
+
+/* TODAY'S DATE */
 function setTodayDate(){
 
   const now = new Date();
 
   const localDate = new Date(
+
     now.getTime() - now.getTimezoneOffset() * 60000
+
   ).toISOString().split("T")[0];
 
   dateInput.value = localDate;
+
 }
 
 setTodayDate();
 
+
+/* SHOW MESSAGE */
 function showMessage(message,type){
 
   messageBox.className = "message " + type;
+
   messageBox.textContent = message;
+
   messageBox.style.display = "block";
 
   messageBox.scrollIntoView({
+
     behavior:"smooth",
     block:"nearest"
+
   });
+
 }
 
+
+/* HIDE MESSAGE */
 function hideMessage(){
 
   messageBox.className = "message";
+
+  messageBox.textContent = "";
+
   messageBox.style.display = "none";
+
 }
 
+
+/* RESET FORM */
 document.getElementById("resetBtn").addEventListener("click",function(){
 
   setTimeout(function(){
+
     setTodayDate();
+
     hideMessage();
+
   },0);
 
 });
 
-/* ==================================
+
+/* ==========================================
    SAVE SPEND
-================================== */
+========================================== */
 
 form.addEventListener("submit",function(e){
 
   e.preventDefault();
+
   hideMessage();
 
   const payload = {
@@ -549,20 +761,49 @@ form.addEventListener("submit",function(e){
 
   };
 
+
+  /* VALIDATION */
+
   if(!payload.title){
-    showMessage("Please enter expense title.","error");
+
+    showMessage(
+      "Please enter expense title.",
+      "error"
+    );
+
     return;
+
   }
 
-  if(!Number.isFinite(payload.amount) || payload.amount <= 0){
-    showMessage("Please enter a valid amount.","error");
+
+  if(
+    !Number.isFinite(payload.amount) ||
+    payload.amount <= 0
+  ){
+
+    showMessage(
+      "Please enter a valid amount.",
+      "error"
+    );
+
     return;
+
   }
+
 
   if(!payload.expenseDate){
-    showMessage("Please select expense date.","error");
+
+    showMessage(
+      "Please select expense date.",
+      "error"
+    );
+
     return;
+
   }
+
+
+  /* CHECK GOOGLE APPS SCRIPT */
 
   if(
     typeof google === "undefined" ||
@@ -576,12 +817,19 @@ form.addEventListener("submit",function(e){
     );
 
     return;
+
   }
+
+
+  /* LOADING */
 
   saveBtn.disabled = true;
 
   saveBtn.innerHTML =
     '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
+
+
+  /* SEND DATA TO BACKEND */
 
   google.script.run
 
@@ -592,23 +840,31 @@ form.addEventListener("submit",function(e){
       saveBtn.innerHTML =
         '<i class="fa-solid fa-floppy-disk"></i> Save Spend';
 
+
       if(response && response.success){
 
         showMessage(
+
           response.message || "Expense saved successfully!",
+
           "success"
+
         );
 
         form.reset();
+
         setTodayDate();
 
       }else{
 
         showMessage(
+
           response && response.message
             ? response.message
             : "Could not save expense. Please try again.",
+
           "error"
+
         );
 
       }
@@ -623,10 +879,13 @@ form.addEventListener("submit",function(e){
         '<i class="fa-solid fa-floppy-disk"></i> Save Spend';
 
       showMessage(
+
         error && error.message
           ? error.message
           : "Something went wrong while saving.",
+
         "error"
+
       );
 
     })
@@ -634,6 +893,7 @@ form.addEventListener("submit",function(e){
     .addSpend(payload);
 
 });
+
 </script>
 
 </body>
