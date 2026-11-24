@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -420,7 +419,14 @@ textarea.form-control{
 <script>
 
 /* ==========================================
-   ONE ONLINE INDEX THEME SYNC - FINAL FIX
+   API CONFIGURATION
+========================================== */
+
+const API_URL = "https://script.google.com/macros/s/AKfycbzGaDxG13iSKFgGQAUa9sSsE66Zetjy2kZJuEkAibXhcAHYb1gYioYC8SqooA6-e6v6/exec";
+
+
+/* ==========================================
+   ONE ONLINE INDEX THEME SYNC
 ========================================== */
 
 (function(){
@@ -475,10 +481,8 @@ textarea.form-control{
     applyTheme(getParentTheme());
   }
 
-  // Initial theme
   syncTheme();
 
-  // Observe Index theme changes
   try{
 
     if(window.parent && window.parent !== window){
@@ -498,7 +502,6 @@ textarea.form-control{
 
   }catch(error){}
 
-  // Receive optional theme message from Index
   window.addEventListener("message",function(event){
 
     if(
@@ -510,7 +513,6 @@ textarea.form-control{
 
   });
 
-  // Sync when page becomes active
   window.addEventListener("focus",syncTheme);
   window.addEventListener("pageshow",syncTheme);
 
@@ -525,6 +527,8 @@ const form = document.getElementById("spendForm");
 const saveBtn = document.getElementById("saveBtn");
 const messageBox = document.getElementById("messageBox");
 const dateInput = document.getElementById("spendDate");
+
+let isSaving = false;
 
 
 /* SET TODAY DATE */
@@ -568,6 +572,19 @@ function hideMessage(){
 }
 
 
+/* LOADING BUTTON */
+
+function setLoading(loading){
+
+  isSaving = loading;
+  saveBtn.disabled = loading;
+
+  saveBtn.innerHTML = loading
+    ? '<i class="fa-solid fa-spinner fa-spin"></i> Saving...'
+    : '<i class="fa-solid fa-floppy-disk"></i> Save Spend';
+}
+
+
 /* RESET */
 
 document.getElementById("resetBtn").addEventListener("click",function(){
@@ -581,12 +598,116 @@ document.getElementById("resetBtn").addEventListener("click",function(){
 
 
 /* ==========================================
+   SEND DATA TO GOOGLE APPS SCRIPT API
+========================================== */
+
+function sendSpendToAPI(payload){
+
+  return new Promise(function(resolve,reject){
+
+    const callbackName =
+      "oneOnlineSpendCallback_" +
+      Date.now() + "_" +
+      Math.floor(Math.random() * 100000);
+
+    const params = new URLSearchParams();
+
+    params.append("action","addSpend");
+    params.append("title",payload.title);
+    params.append("amount",String(payload.amount));
+    params.append("expenseDate",payload.expenseDate);
+    params.append("comment",payload.comment);
+    params.append("callback",callbackName);
+
+    const script = document.createElement("script");
+
+    let completed = false;
+
+    function cleanup(){
+
+      if(script.parentNode){
+        script.parentNode.removeChild(script);
+      }
+
+      try{
+        delete window[callbackName];
+      }catch(error){
+        window[callbackName] = undefined;
+      }
+    }
+
+    const timeout = setTimeout(function(){
+
+      if(completed) return;
+
+      completed = true;
+      cleanup();
+
+      reject(new Error(
+        "API response timeout. Please check your Apps Script deployment."
+      ));
+
+    },30000);
+
+
+    window[callbackName] = function(response){
+
+      if(completed) return;
+
+      completed = true;
+      clearTimeout(timeout);
+      cleanup();
+
+      if(response && response.success){
+
+        resolve(response);
+
+      }else{
+
+        reject(new Error(
+          response && response.message
+            ? response.message
+            : "Could not save spend."
+        ));
+
+      }
+    };
+
+
+    script.onerror = function(){
+
+      if(completed) return;
+
+      completed = true;
+      clearTimeout(timeout);
+      cleanup();
+
+      reject(new Error(
+        "Could not connect to Spend API. Check deployment access settings."
+      ));
+
+    };
+
+
+    script.src = API_URL + "?" + params.toString();
+
+    document.body.appendChild(script);
+
+  });
+
+}
+
+
+/* ==========================================
    SAVE SPEND
 ========================================== */
 
-form.addEventListener("submit",function(event){
+form.addEventListener("submit",async function(event){
 
   event.preventDefault();
+
+  if(isSaving) return;
+
   hideMessage();
 
   const payload = {
@@ -622,82 +743,34 @@ form.addEventListener("submit",function(event){
   }
 
 
-  /* BACKEND CHECK */
+  /* SAVE */
 
-  if(
-    typeof google === "undefined" ||
-    !google.script ||
-    !google.script.run
-  ){
+  setLoading(true);
+
+  try{
+
+    const response = await sendSpendToAPI(payload);
 
     showMessage(
-      "Backend connection is unavailable. Please check your Apps Script setup.",
+      response.message || "Expense saved successfully!",
+      "success"
+    );
+
+    form.reset();
+    setTodayDate();
+
+  }catch(error){
+
+    showMessage(
+      error.message || "Something went wrong while saving.",
       "error"
     );
 
-    return;
+  }finally{
+
+    setLoading(false);
+
   }
-
-
-  /* LOADING */
-
-  saveBtn.disabled = true;
-
-  saveBtn.innerHTML =
-    '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
-
-
-  /* SEND TO CODE.GS */
-
-  google.script.run
-
-    .withSuccessHandler(function(response){
-
-      saveBtn.disabled = false;
-
-      saveBtn.innerHTML =
-        '<i class="fa-solid fa-floppy-disk"></i> Save Spend';
-
-      if(response && response.success){
-
-        showMessage(
-          response.message || "Expense saved successfully!",
-          "success"
-        );
-
-        form.reset();
-        setTodayDate();
-
-      }else{
-
-        showMessage(
-          response && response.message
-            ? response.message
-            : "Could not save expense.",
-          "error"
-        );
-
-      }
-
-    })
-
-    .withFailureHandler(function(error){
-
-      saveBtn.disabled = false;
-
-      saveBtn.innerHTML =
-        '<i class="fa-solid fa-floppy-disk"></i> Save Spend';
-
-      showMessage(
-        error && error.message
-          ? error.message
-          : "Something went wrong while saving.",
-        "error"
-      );
-
-    })
-
-    .addSpend(payload);
 
 });
 
