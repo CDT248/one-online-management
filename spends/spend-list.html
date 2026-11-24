@@ -7,687 +7,248 @@
 <title>Earn & Spend History | ONE ONLINE</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Bengali:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
 <style>
 :root{
-  --bg:#f4f7fb;
-  --panel:#ffffff;
-  --panel2:#f8fafc;
-  --text:#172033;
-  --muted:#718096;
-  --line:#e5eaf1;
-  --primary:#087f5b;
-  --primary-light:#e7f7f1;
-  --green:#16a36a;
-  --red:#e34d59;
-  --red-light:#fff0f0;
-  --blue:#3678e5;
-  --blue-light:#edf4ff;
-  --orange:#df8a22;
-  --shadow:0 5px 20px rgba(25,40,65,.06);
+  --bg:#f4f7fb;--panel:#fff;--panel2:#f8fafc;
+  --text:#172033;--muted:#718096;--line:#e5eaf1;
+  --primary:#087f5b;--primary-light:#e7f7f1;
+  --green:#16a36a;--red:#e34d59;--red-light:#fff0f0;
+  --blue:#3678e5;--blue-light:#edf4ff;
+  --orange:#df8a22;--shadow:0 5px 20px rgba(25,40,65,.06);
 }
-
-*{
-  box-sizing:border-box;
-  margin:0;
-  padding:0;
-}
-
+*{box-sizing:border-box;margin:0;padding:0}
 body{
-  font-family:Inter,Arial,sans-serif;
-  background:var(--bg);
-  color:var(--text);
-  padding:22px;
-  transition:.2s;
+  font-family:Inter,"Noto Sans Bengali",Arial,sans-serif;
+  background:var(--bg);color:var(--text);padding:22px;transition:.2s;
 }
-
 body[data-theme="dark"]{
-  --bg:#0b1220;
-  --panel:#111c2e;
-  --panel2:#172338;
-  --text:#e8f0fc;
-  --muted:#8fa2bd;
-  --line:#26364d;
-  --primary:#20b486;
-  --primary-light:#123b34;
-  --green:#32c58b;
-  --red:#ff727d;
-  --red-light:#421e2a;
-  --blue:#75a9ff;
-  --blue-light:#1a3153;
-  --orange:#f2b45c;
+  --bg:#0b1220;--panel:#111c2e;--panel2:#172338;
+  --text:#e8f0fc;--muted:#8fa2bd;--line:#26364d;
+  --primary:#20b486;--primary-light:#123b34;
+  --green:#32c58b;--red:#ff727d;--red-light:#421e2a;
+  --blue:#75a9ff;--blue-light:#1a3153;--orange:#f2b45c;
   --shadow:0 5px 20px rgba(0,0,0,.18);
 }
-
 body[data-theme="funny"]{
-  --bg:#fff1fa;
-  --panel:#ffffff;
-  --panel2:#fff5fc;
-  --text:#49234e;
-  --muted:#936b99;
-  --line:#f0d9ed;
-  --primary:#a52caa;
-  --primary-light:#f8e4fa;
-  --green:#1ca879;
-  --red:#df4c83;
-  --red-light:#fff0f6;
-  --blue:#7554d9;
-  --blue-light:#f0ebff;
-  --orange:#e38b35;
+  --bg:#fff1fa;--panel:#fff;--panel2:#fff5fc;
+  --text:#49234e;--muted:#936b99;--line:#f0d9ed;
+  --primary:#a52caa;--primary-light:#f8e4fa;
+  --green:#1ca879;--red:#df4c83;--red-light:#fff0f6;
+  --blue:#7554d9;--blue-light:#f0ebff;--orange:#e38b35;
   --shadow:0 5px 20px rgba(120,40,120,.08);
 }
-
-button,input,select,textarea{
-  font:inherit;
-}
-
-button{
-  cursor:pointer;
-}
-
-.page{
-  max-width:1500px;
-  margin:auto;
-}
-
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+.page{max-width:1500px;margin:auto}
 .page-header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:15px;
-  flex-wrap:wrap;
-  margin-bottom:22px;
+  display:flex;justify-content:space-between;align-items:center;
+  gap:15px;flex-wrap:wrap;margin-bottom:22px;
 }
-
 .page-title h1{
-  font-size:23px;
-  font-weight:800;
-  display:flex;
-  align-items:center;
-  gap:10px;
+  font-size:23px;font-weight:800;display:flex;align-items:center;gap:10px;
 }
-
-.page-title p{
-  font-size:12px;
-  color:var(--muted);
-  margin-top:6px;
-}
-
-.header-actions{
-  display:flex;
-  gap:9px;
-  flex-wrap:wrap;
-}
-
+.page-title p{font-size:12px;color:var(--muted);margin-top:6px}
+.header-actions{display:flex;gap:9px;flex-wrap:wrap}
 .btn{
-  border:1px solid var(--line);
-  background:var(--panel);
-  color:var(--text);
-  padding:10px 14px;
-  border-radius:9px;
-  font-size:12px;
-  font-weight:700;
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  gap:7px;
-  transition:.2s;
+  border:1px solid var(--line);background:var(--panel);color:var(--text);
+  padding:10px 14px;border-radius:9px;font-size:12px;font-weight:700;
+  display:inline-flex;align-items:center;justify-content:center;gap:7px;transition:.2s;
 }
-
-.btn:hover{
-  transform:translateY(-1px);
-  box-shadow:var(--shadow);
-}
-
-.btn-primary{
-  background:var(--primary);
-  border-color:var(--primary);
-  color:white;
-}
-
-.btn-danger{
-  background:var(--red-light);
-  color:var(--red);
-  border-color:transparent;
-}
-
-.btn-blue{
-  background:var(--blue-light);
-  color:var(--blue);
-  border-color:transparent;
-}
-
-.btn-success{
-  background:var(--primary-light);
-  color:var(--primary);
-  border-color:transparent;
-}
-
-.btn-sm{
-  padding:7px 9px;
-  font-size:11px;
-  border-radius:7px;
-}
-
-.stats{
-  display:grid;
-  grid-template-columns:repeat(4,minmax(0,1fr));
-  gap:14px;
-  margin-bottom:20px;
-}
-
+.btn:hover{transform:translateY(-1px);box-shadow:var(--shadow)}
+.btn-primary{background:var(--primary);border-color:var(--primary);color:white}
+.btn-danger{background:var(--red-light);color:var(--red);border-color:transparent}
+.btn-blue{background:var(--blue-light);color:var(--blue);border-color:transparent}
+.btn-success{background:var(--primary-light);color:var(--primary);border-color:transparent}
+.btn-sm{padding:7px 9px;font-size:11px;border-radius:7px}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:20px}
 .stat-card{
-  background:var(--panel);
-  border:1px solid var(--line);
-  border-radius:13px;
-  padding:18px;
-  box-shadow:var(--shadow);
-  min-width:0;
+  background:var(--panel);border:1px solid var(--line);border-radius:13px;
+  padding:18px;box-shadow:var(--shadow);min-width:0;
 }
-
-.stat-top{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:10px;
-}
-
-.stat-label{
-  font-size:11px;
-  color:var(--muted);
-  font-weight:700;
-}
-
+.stat-top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.stat-label{font-size:11px;color:var(--muted);font-weight:700}
 .stat-icon{
-  width:35px;
-  height:35px;
-  border-radius:10px;
-  display:grid;
-  place-items:center;
-  font-size:15px;
+  width:35px;height:35px;border-radius:10px;display:grid;
+  place-items:center;font-size:15px;
 }
-
 .icon-green{background:var(--primary-light);color:var(--green)}
 .icon-red{background:var(--red-light);color:var(--red)}
 .icon-blue{background:var(--blue-light);color:var(--blue)}
 .icon-orange{background:#fff4e5;color:var(--orange)}
-
-.stat-value{
-  font-size:23px;
-  font-weight:800;
-  margin-top:13px;
-  overflow-wrap:anywhere;
-}
-
-.stat-sub{
-  color:var(--muted);
-  font-size:10px;
-  margin-top:5px;
-}
-
+.stat-value{font-size:23px;font-weight:800;margin-top:13px;overflow-wrap:anywhere}
+.stat-sub{color:var(--muted);font-size:10px;margin-top:5px}
 .panel{
-  background:var(--panel);
-  border:1px solid var(--line);
-  border-radius:13px;
-  box-shadow:var(--shadow);
-  overflow:hidden;
+  background:var(--panel);border:1px solid var(--line);
+  border-radius:13px;box-shadow:var(--shadow);overflow:hidden;
 }
-
 .panel-header{
-  padding:17px 18px;
-  border-bottom:1px solid var(--line);
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  flex-wrap:wrap;
-  gap:12px;
+  padding:17px 18px;border-bottom:1px solid var(--line);
+  display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;
 }
-
-.panel-header h2{
-  font-size:14px;
-  font-weight:800;
-}
-
-.panel-header p{
-  color:var(--muted);
-  font-size:11px;
-  margin-top:4px;
-}
-
+.panel-header h2{font-size:14px;font-weight:800}
+.panel-header p{color:var(--muted);font-size:11px;margin-top:4px}
 .filters{
-  padding:15px 18px;
-  display:flex;
-  flex-wrap:wrap;
-  gap:10px;
-  align-items:center;
-  border-bottom:1px solid var(--line);
+  padding:15px 18px;display:flex;flex-wrap:wrap;gap:10px;
+  align-items:center;border-bottom:1px solid var(--line);
 }
-
 .field{
-  height:38px;
-  padding:0 11px;
-  border:1px solid var(--line);
-  background:var(--panel2);
-  color:var(--text);
-  border-radius:8px;
-  outline:none;
-  font-size:11px;
-  min-width:130px;
+  height:38px;padding:0 11px;border:1px solid var(--line);
+  background:var(--panel2);color:var(--text);border-radius:8px;
+  outline:none;font-size:11px;min-width:130px;
 }
-
-.field:focus{
-  border-color:var(--primary);
-}
-
-.search-box{
-  position:relative;
-  flex:1;
-  min-width:180px;
-}
-
-.search-box i{
-  position:absolute;
-  left:12px;
-  top:13px;
-  font-size:11px;
-  color:var(--muted);
-}
-
-.search-box input{
-  width:100%;
-  padding-left:32px;
-}
-
-.tabs{
-  display:flex;
-  gap:6px;
-  flex-wrap:wrap;
-}
-
+.field:focus{border-color:var(--primary)}
+.search-box{position:relative;flex:1;min-width:180px}
+.search-box i{position:absolute;left:12px;top:13px;font-size:11px;color:var(--muted)}
+.search-box input{width:100%;padding-left:32px}
+.tabs{display:flex;gap:6px;flex-wrap:wrap}
 .tab{
-  padding:9px 13px;
-  border:1px solid var(--line);
-  background:var(--panel2);
-  color:var(--muted);
-  font-size:11px;
-  font-weight:700;
-  border-radius:8px;
+  padding:9px 13px;border:1px solid var(--line);background:var(--panel2);
+  color:var(--muted);font-size:11px;font-weight:700;border-radius:8px;
 }
-
-.tab.active{
-  background:var(--primary);
-  border-color:var(--primary);
-  color:#fff;
-}
-
-.table-wrap{
-  width:100%;
-  overflow-x:auto;
-}
-
-table{
-  width:100%;
-  min-width:950px;
-  border-collapse:collapse;
-}
-
-thead{
-  background:var(--panel2);
-}
-
+.tab.active{background:var(--primary);border-color:var(--primary);color:#fff}
+.table-wrap{width:100%;overflow-x:auto}
+table{width:100%;min-width:950px;border-collapse:collapse}
+thead{background:var(--panel2)}
 th{
-  padding:13px 12px;
-  text-align:left;
-  font-size:10px;
-  color:var(--muted);
-  font-weight:800;
-  text-transform:uppercase;
-  letter-spacing:.4px;
-  border-bottom:1px solid var(--line);
-  white-space:nowrap;
+  padding:13px 12px;text-align:left;font-size:10px;color:var(--muted);
+  font-weight:800;text-transform:uppercase;letter-spacing:.4px;
+  border-bottom:1px solid var(--line);white-space:nowrap;
 }
-
-td{
-  padding:13px 12px;
-  font-size:11px;
-  border-bottom:1px solid var(--line);
-  vertical-align:middle;
-}
-
-tbody tr:hover{
-  background:var(--panel2);
-}
-
-tbody tr:last-child td{
-  border-bottom:none;
-}
-
-.amount{
-  font-weight:800;
-  white-space:nowrap;
-}
-
+td{padding:13px 12px;font-size:11px;border-bottom:1px solid var(--line);vertical-align:middle}
+tbody tr:hover{background:var(--panel2)}
+tbody tr:last-child td{border-bottom:none}
+.amount{font-weight:800;white-space:nowrap}
 .amount.earn{color:var(--green)}
 .amount.spend{color:var(--red)}
-
 .type-badge{
-  display:inline-flex;
-  padding:5px 9px;
-  border-radius:20px;
-  font-size:9px;
-  font-weight:800;
+  display:inline-flex;padding:5px 9px;border-radius:20px;
+  font-size:9px;font-weight:800;
 }
-
-.type-badge.earn{
-  background:var(--primary-light);
-  color:var(--green);
-}
-
-.type-badge.spend{
-  background:var(--red-light);
-  color:var(--red);
-}
-
+.type-badge.earn{background:var(--primary-light);color:var(--green)}
+.type-badge.spend{background:var(--red-light);color:var(--red)}
 .comment-cell{
-  max-width:180px;
-  color:var(--muted);
-  overflow:hidden;
-  text-overflow:ellipsis;
-  white-space:nowrap;
+  max-width:180px;color:var(--muted);overflow:hidden;
+  text-overflow:ellipsis;white-space:nowrap;
 }
-
-.actions{
-  display:flex;
-  gap:5px;
-  white-space:nowrap;
-}
-
+.actions{display:flex;gap:5px;white-space:nowrap}
 .action-btn{
-  width:29px;
-  height:29px;
-  display:grid;
-  place-items:center;
-  border:none;
-  border-radius:7px;
-  font-size:11px;
+  width:29px;height:29px;display:grid;place-items:center;
+  border:none;border-radius:7px;font-size:11px;
 }
-
-.action-view{
-  background:var(--blue-light);
-  color:var(--blue);
-}
-
-.action-edit{
-  background:var(--primary-light);
-  color:var(--green);
-}
-
-.action-delete{
-  background:var(--red-light);
-  color:var(--red);
-}
-
-.empty{
-  text-align:center;
-  padding:45px 15px;
-  color:var(--muted);
-  font-size:12px;
-}
-
-.empty i{
-  font-size:28px;
-  margin-bottom:12px;
-  display:block;
-  opacity:.5;
-}
-
+.action-view{background:var(--blue-light);color:var(--blue)}
+.action-edit{background:var(--primary-light);color:var(--green)}
+.action-delete{background:var(--red-light);color:var(--red)}
+.empty{text-align:center;padding:45px 15px;color:var(--muted);font-size:12px}
+.empty i{font-size:28px;margin-bottom:12px;display:block;opacity:.5}
 .table-footer{
-  padding:13px 18px;
-  border-top:1px solid var(--line);
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  flex-wrap:wrap;
-  gap:10px;
+  padding:13px 18px;border-top:1px solid var(--line);
+  display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;
 }
-
-.table-info{
-  font-size:10px;
-  color:var(--muted);
-}
-
-.pagination{
-  display:flex;
-  align-items:center;
-  gap:5px;
-}
-
+.table-info{font-size:10px;color:var(--muted)}
+.pagination{display:flex;align-items:center;gap:5px}
 .pagination button{
-  border:1px solid var(--line);
-  background:var(--panel2);
-  color:var(--text);
-  min-width:29px;
-  height:29px;
-  border-radius:6px;
-  font-size:10px;
-  font-weight:700;
+  border:1px solid var(--line);background:var(--panel2);color:var(--text);
+  min-width:29px;height:29px;border-radius:6px;font-size:10px;font-weight:700;
 }
-
-.pagination button.active{
-  background:var(--primary);
-  color:white;
-  border-color:var(--primary);
-}
-
-.pagination button:disabled{
-  opacity:.4;
-  cursor:not-allowed;
-}
-
-/* MODAL */
-
+.pagination button.active{background:var(--primary);color:white;border-color:var(--primary)}
+.pagination button:disabled{opacity:.4;cursor:not-allowed}
 .modal-overlay{
-  position:fixed;
-  inset:0;
-  z-index:9999;
-  display:none;
-  align-items:center;
-  justify-content:center;
-  padding:15px;
-  background:rgba(5,12,25,.72);
+  position:fixed;inset:0;z-index:9999;display:none;align-items:center;
+  justify-content:center;padding:15px;background:rgba(5,12,25,.72);
 }
-
-.modal-overlay.show{
-  display:flex;
-}
-
+.modal-overlay.show{display:flex}
 .modal{
-  width:100%;
-  max-width:500px;
-  max-height:90vh;
-  overflow-y:auto;
-  background:var(--panel);
-  color:var(--text);
-  border:1px solid var(--line);
-  border-radius:15px;
-  box-shadow:0 20px 70px rgba(0,0,0,.3);
+  width:100%;max-width:500px;max-height:90vh;overflow-y:auto;
+  background:var(--panel);color:var(--text);border:1px solid var(--line);
+  border-radius:15px;box-shadow:0 20px 70px rgba(0,0,0,.3);
   animation:modalIn .2s ease;
 }
-
-@keyframes modalIn{
-  from{opacity:0;transform:translateY(10px)}
-  to{opacity:1;transform:translateY(0)}
-}
-
+@keyframes modalIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 .modal-header{
-  padding:17px 20px;
-  border-bottom:1px solid var(--line);
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
+  padding:17px 20px;border-bottom:1px solid var(--line);
+  display:flex;justify-content:space-between;align-items:center;
 }
-
-.modal-header h3{
-  font-size:15px;
-  font-weight:800;
-}
-
+.modal-header h3{font-size:15px;font-weight:800}
 .modal-close{
-  border:none;
-  background:var(--panel2);
-  color:var(--muted);
-  width:30px;
-  height:30px;
-  border-radius:7px;
-  font-size:14px;
+  border:none;background:var(--panel2);color:var(--muted);
+  width:30px;height:30px;border-radius:7px;font-size:14px;
 }
-
-.modal-body{
-  padding:20px;
-}
-
+.modal-body{padding:20px}
 .modal-footer{
-  padding:14px 20px;
-  border-top:1px solid var(--line);
-  display:flex;
-  justify-content:flex-end;
-  gap:8px;
-  flex-wrap:wrap;
+  padding:14px 20px;border-top:1px solid var(--line);
+  display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;
 }
-
-.form-group{
-  margin-bottom:15px;
-}
-
-.form-group label{
-  display:block;
-  font-size:11px;
-  font-weight:700;
-  margin-bottom:7px;
-}
-
+.form-group{margin-bottom:15px}
+.form-group label{display:block;font-size:11px;font-weight:700;margin-bottom:7px}
 .form-control{
-  width:100%;
-  min-height:40px;
-  border:1px solid var(--line);
-  background:var(--panel2);
-  color:var(--text);
-  border-radius:8px;
-  padding:10px 12px;
-  outline:none;
-  font-size:12px;
+  width:100%;min-height:40px;border:1px solid var(--line);
+  background:var(--panel2);color:var(--text);border-radius:8px;
+  padding:10px 12px;outline:none;font-size:12px;
 }
-
-.form-control:focus{
-  border-color:var(--primary);
-}
-
-textarea.form-control{
-  min-height:85px;
-  resize:vertical;
-}
-
-.detail-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:10px;
-}
-
+.form-control:focus{border-color:var(--primary)}
+textarea.form-control{min-height:85px;resize:vertical}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .detail-item{
-  background:var(--panel2);
-  border:1px solid var(--line);
-  border-radius:9px;
-  padding:13px;
-  min-width:0;
+  background:var(--panel2);border:1px solid var(--line);
+  border-radius:9px;padding:13px;min-width:0;
 }
-
-.detail-item.full{
-  grid-column:1/-1;
-}
-
-.detail-label{
-  font-size:9px;
-  color:var(--muted);
-  font-weight:800;
-  text-transform:uppercase;
-  margin-bottom:7px;
-}
-
-.detail-value{
-  font-size:13px;
-  font-weight:700;
-  overflow-wrap:anywhere;
-}
-
+.detail-item.full{grid-column:1/-1}
+.detail-label{font-size:9px;color:var(--muted);font-weight:800;text-transform:uppercase;margin-bottom:7px}
+.detail-value{font-size:13px;font-weight:700;overflow-wrap:anywhere}
 .confirm-icon{
-  width:50px;
-  height:50px;
-  border-radius:50%;
-  display:grid;
-  place-items:center;
-  background:var(--red-light);
-  color:var(--red);
-  font-size:20px;
-  margin:0 auto 15px;
+  width:50px;height:50px;border-radius:50%;display:grid;place-items:center;
+  background:var(--red-light);color:var(--red);font-size:20px;margin:0 auto 15px;
 }
-
-.confirm-text{
-  text-align:center;
-  font-size:13px;
-  line-height:1.7;
-  color:var(--muted);
-}
-
+.confirm-text{text-align:center;font-size:13px;line-height:1.7;color:var(--muted)}
 .toast{
-  position:fixed;
-  right:20px;
-  bottom:20px;
-  z-index:10001;
-  padding:13px 17px;
-  border-radius:9px;
-  background:#172033;
-  color:#fff;
-  font-size:12px;
-  font-weight:700;
-  box-shadow:var(--shadow);
-  opacity:0;
-  pointer-events:none;
-  transform:translateY(10px);
-  transition:.25s;
-  max-width:calc(100% - 40px);
+  position:fixed;right:20px;bottom:20px;z-index:10001;padding:13px 17px;
+  border-radius:9px;background:#172033;color:#fff;font-size:12px;font-weight:700;
+  box-shadow:var(--shadow);opacity:0;pointer-events:none;transform:translateY(10px);
+  transition:.25s;max-width:calc(100% - 40px);
+}
+.toast.show{opacity:1;transform:translateY(0)}
+.toast.error{background:#b52d3b}
+.loading{text-align:center;padding:35px;color:var(--muted);font-size:12px}
+.loading i{margin-right:7px}
+
+/* PDF REPORT: hidden from normal screen, captured by html2canvas */
+#pdfReport{
+  position:fixed;left:-20000px;top:0;width:1100px;
+  background:#fff;color:#172033;padding:35px;
+  font-family:"Noto Sans Bengali",Arial,sans-serif;
+  z-index:-1;
+}
+#pdfReport h1{font-size:25px;margin-bottom:6px;color:#087f5b}
+#pdfReport .pdf-subtitle{font-size:13px;color:#555;margin-bottom:20px}
+#pdfReport .pdf-summary{
+  display:flex;gap:15px;margin:18px 0 22px;
+}
+#pdfReport .pdf-summary div{
+  flex:1;border:1px solid #ddd;padding:13px;border-radius:7px;
+}
+#pdfReport .pdf-summary strong{display:block;font-size:11px;color:#555;margin-bottom:6px}
+#pdfReport .pdf-summary span{font-size:17px;font-weight:700}
+#pdfReport table{width:100%;min-width:0;border-collapse:collapse;table-layout:fixed}
+#pdfReport th{
+  background:#087f5b!important;color:#fff!important;
+  font-size:11px;padding:10px;border:1px solid #ddd;
+  text-transform:none;letter-spacing:0;
+}
+#pdfReport td{
+  color:#172033!important;font-size:10px;padding:9px;
+  border:1px solid #ddd;overflow-wrap:anywhere;white-space:normal;
+}
+#pdfReport .pdf-footer{
+  margin-top:18px;font-size:10px;color:#666;text-align:right;
 }
 
-.toast.show{
-  opacity:1;
-  transform:translateY(0);
-}
-
-.toast.error{
-  background:#b52d3b;
-}
-
-.loading{
-  text-align:center;
-  padding:35px;
-  color:var(--muted);
-  font-size:12px;
-}
-
-.loading i{
-  margin-right:7px;
-}
-
-@media(max-width:900px){
-  .stats{
-    grid-template-columns:repeat(2,minmax(0,1fr));
-  }
-}
-
+@media(max-width:900px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:600px){
   body{padding:13px}
   .page-title h1{font-size:19px}
@@ -703,11 +264,9 @@ textarea.form-control{
   .detail-item.full{grid-column:auto}
   .header-actions .btn{padding:9px 10px}
 }
-
 @media print{
   body{padding:0;background:white;color:black}
-  .header-actions,.filters,.table-footer,.actions-col,.actions,
-  .panel-header .btn{display:none!important}
+  .header-actions,.filters,.table-footer,.actions-col,.actions,.panel-header .tabs{display:none!important}
   .panel,.stat-card{box-shadow:none}
   .panel{border:1px solid #ddd}
   .table-wrap{overflow:visible}
@@ -718,7 +277,6 @@ textarea.form-control{
 </head>
 
 <body>
-
 <div class="page">
 
   <div class="page-header">
@@ -731,22 +289,16 @@ textarea.form-control{
       <button class="btn" onclick="loadRecords()">
         <i class="fa-solid fa-rotate"></i> Refresh
       </button>
-
       <button class="btn" onclick="exportPDF()">
         <i class="fa-solid fa-file-pdf"></i> PDF
       </button>
-
       <button class="btn" onclick="window.print()">
         <i class="fa-solid fa-print"></i> Print
       </button>
     </div>
   </div>
 
-
-  <!-- SUMMARY -->
-
   <div class="stats">
-
     <div class="stat-card">
       <div class="stat-top">
         <span class="stat-label">TOTAL EARN</span>
@@ -782,20 +334,14 @@ textarea.form-control{
       <div class="stat-value" id="totalRecords">0</div>
       <div class="stat-sub">Earn + Spend entries</div>
     </div>
-
   </div>
 
-
-  <!-- HISTORY TABLE -->
-
   <div class="panel">
-
     <div class="panel-header">
       <div>
         <h2><i class="fa-solid fa-clock-rotate-left"></i> Transaction History</h2>
         <p>All your Earn and Spend transactions</p>
       </div>
-
       <div class="tabs">
         <button class="tab active" data-type="all" onclick="setType('all',this)">All</button>
         <button class="tab" data-type="earn" onclick="setType('earn',this)">Earn</button>
@@ -803,1338 +349,747 @@ textarea.form-control{
       </div>
     </div>
 
-
-    <!-- FILTERS -->
-
     <div class="filters">
-
       <div class="search-box">
         <i class="fa-solid fa-magnifying-glass"></i>
         <input class="field" id="searchInput" placeholder="Search title, IP or comment..." oninput="applyFilters()">
       </div>
-
       <input class="field" type="date" id="fromDate" title="From date" onchange="applyFilters()">
-
       <input class="field" type="date" id="toDate" title="To date" onchange="applyFilters()">
-
       <select class="field" id="sortOrder" onchange="applyFilters()">
         <option value="newest">Newest First</option>
         <option value="oldest">Oldest First</option>
         <option value="high">Amount: High to Low</option>
         <option value="low">Amount: Low to High</option>
       </select>
-
       <select class="field" id="pageSize" onchange="changePageSize()">
         <option value="10">10 Rows</option>
         <option value="25">25 Rows</option>
         <option value="50">50 Rows</option>
         <option value="100">100 Rows</option>
       </select>
-
       <button class="btn" onclick="resetFilters()">
         <i class="fa-solid fa-filter-circle-xmark"></i> Reset
       </button>
-
     </div>
 
-
-    <!-- TABLE -->
-
     <div class="table-wrap">
-
       <table>
         <thead>
           <tr>
-            <th>SL</th>
-            <th>Type</th>
-            <th>Title / IP</th>
-            <th>Amount</th>
-            <th>Date</th>
-            <th>Comment</th>
+            <th>SL</th><th>Type</th><th>Title / IP</th>
+            <th>Amount</th><th>Date</th><th>Comment</th>
             <th class="actions-col">Actions</th>
           </tr>
         </thead>
-
         <tbody id="tableBody">
-          <tr>
-            <td colspan="7">
-              <div class="loading">
-                <i class="fa-solid fa-spinner fa-spin"></i>
-                Loading records...
-              </div>
-            </td>
-          </tr>
+          <tr><td colspan="7"><div class="loading">
+            <i class="fa-solid fa-spinner fa-spin"></i> Loading records...
+          </div></td></tr>
         </tbody>
       </table>
-
     </div>
-
 
     <div class="table-footer">
-
-      <div class="table-info" id="tableInfo">
-        Loading...
-      </div>
-
+      <div class="table-info" id="tableInfo">Loading...</div>
       <div class="pagination" id="pagination"></div>
-
     </div>
-
   </div>
-
 </div>
 
-
 <!-- VIEW MODAL -->
-
 <div class="modal-overlay" id="viewModal" onclick="overlayClose(event,'viewModal')">
   <div class="modal">
-
     <div class="modal-header">
       <h3><i class="fa-solid fa-eye"></i> Transaction Details</h3>
       <button class="modal-close" onclick="closeModal('viewModal')"><i class="fa-solid fa-xmark"></i></button>
     </div>
-
-    <div class="modal-body">
-      <div class="detail-grid" id="viewDetails"></div>
-    </div>
-
+    <div class="modal-body"><div class="detail-grid" id="viewDetails"></div></div>
     <div class="modal-footer">
       <button class="btn" onclick="closeModal('viewModal')">Close</button>
     </div>
-
   </div>
 </div>
 
-
 <!-- EDIT MODAL -->
-
 <div class="modal-overlay" id="editModal" onclick="overlayClose(event,'editModal')">
   <div class="modal">
-
     <div class="modal-header">
       <h3><i class="fa-solid fa-pen-to-square"></i> Edit Transaction</h3>
       <button class="modal-close" onclick="closeModal('editModal')"><i class="fa-solid fa-xmark"></i></button>
     </div>
-
     <form id="editForm" onsubmit="saveEdit(event)">
-
       <div class="modal-body">
-
         <input type="hidden" id="editRow">
         <input type="hidden" id="editType">
-
         <div class="form-group">
           <label id="editTitleLabel">Title / IP</label>
           <input class="form-control" id="editTitle" required>
         </div>
-
         <div class="form-group">
           <label>Amount (৳)</label>
           <input class="form-control" type="number" id="editAmount" min="0" step="0.01" required>
         </div>
-
         <div class="form-group">
           <label>Date</label>
           <input class="form-control" type="date" id="editDate" required>
         </div>
-
         <div class="form-group">
           <label>Comment</label>
           <textarea class="form-control" id="editComment" placeholder="Write comment..."></textarea>
         </div>
-
       </div>
-
       <div class="modal-footer">
         <button type="button" class="btn" onclick="closeModal('editModal')">Cancel</button>
         <button type="submit" class="btn btn-primary" id="saveEditBtn">
           <i class="fa-solid fa-floppy-disk"></i> Save Changes
         </button>
       </div>
-
     </form>
-
   </div>
 </div>
 
-
 <!-- DELETE CONFIRM MODAL -->
-
 <div class="modal-overlay" id="deleteModal" onclick="overlayClose(event,'deleteModal')">
   <div class="modal" style="max-width:390px">
-
     <div class="modal-header">
       <h3>Delete Transaction</h3>
       <button class="modal-close" onclick="closeModal('deleteModal')"><i class="fa-solid fa-xmark"></i></button>
     </div>
-
     <div class="modal-body">
-
-      <div class="confirm-icon">
-        <i class="fa-solid fa-trash"></i>
-      </div>
-
+      <div class="confirm-icon"><i class="fa-solid fa-trash"></i></div>
       <div class="confirm-text">
         Are you sure you want to delete this record?
         <br>
         <strong style="color:var(--text)">The record will be moved to the Deleted archive.</strong>
       </div>
-
       <input type="hidden" id="deleteRow">
       <input type="hidden" id="deleteType">
-
     </div>
-
     <div class="modal-footer" style="justify-content:center">
       <button class="btn" onclick="closeModal('deleteModal')">Cancel</button>
       <button class="btn btn-danger" id="confirmDeleteBtn" onclick="confirmDelete()">
         <i class="fa-solid fa-trash"></i> Yes, Delete
       </button>
     </div>
-
   </div>
 </div>
 
-
 <div class="toast" id="toast"></div>
 
+<!-- PDF CONTENT -->
+<div id="pdfReport"></div>
 
 <script>
-
-/* ==========================================
-   CONFIG
-========================================== */
-
+/* CONFIG */
 const API_URL = "https://script.google.com/macros/s/AKfycbzGaDxG13iSKFgGQAUa9sSsE66Zetjy2kZJuEkAibXhcAHYb1gYioYC8SqooA6-e6v6/exec";
 
 let allRecords = [];
 let filteredRecords = [];
-
 let currentType = "all";
 let currentPage = 1;
 let pageSize = 10;
-
 let busy = false;
 
-
-/* ==========================================
-   JSONP API
-========================================== */
-
+/* JSONP API */
 function apiCall(params){
-
   return new Promise((resolve,reject)=>{
+    const callbackName="__oo_callback_"+Date.now()+"_"+Math.floor(Math.random()*100000);
+    const query=new URLSearchParams({...params,callback:callbackName});
+    const script=document.createElement("script");
+    let finished=false;
 
-    const callbackName =
-      "__oo_callback_" +
-      Date.now() +
-      "_" +
-      Math.floor(Math.random()*100000);
-
-    const query = new URLSearchParams({
-      ...params,
-      callback:callbackName
-    });
-
-    const script = document.createElement("script");
-
-    let finished = false;
-
-    const timer = setTimeout(()=>{
-
+    const timer=setTimeout(()=>{
       finish();
-
       reject(new Error("Server response timeout. Please try again."));
-
     },20000);
 
-
     function finish(){
-
       if(finished)return;
-
-      finished = true;
-
+      finished=true;
       clearTimeout(timer);
-
       delete window[callbackName];
-
-      if(script.parentNode){
-        script.parentNode.removeChild(script);
-      }
-
+      if(script.parentNode)script.parentNode.removeChild(script);
     }
 
-
-    window[callbackName] = function(response){
-
+    window[callbackName]=function(response){
       finish();
-
-      if(!response || response.success === false){
-
-        reject(
-          new Error(
-            response && response.message
-              ? response.message
-              : "Request failed."
-          )
-        );
-
+      if(!response || response.success===false){
+        reject(new Error(response && response.message ? response.message : "Request failed."));
         return;
-
       }
-
       resolve(response);
-
     };
 
-
-    script.onerror = function(){
-
+    script.onerror=function(){
       finish();
-
       reject(new Error("Could not connect to Google Apps Script."));
-
     };
 
-
-    script.src =
-      API_URL + "?" + query.toString();
-
+    script.src=API_URL+"?"+query.toString();
     document.body.appendChild(script);
-
   });
-
 }
 
-
-/* ==========================================
-   HELPERS
-========================================== */
-
+/* HELPERS */
 function money(value){
-
-  return "৳" + Number(value || 0).toLocaleString("en-BD",{
-    maximumFractionDigits:2
-  });
-
+  return "৳"+Number(value||0).toLocaleString("en-BD",{maximumFractionDigits:2});
 }
-
 
 function escapeHTML(value){
-
-  return String(value === undefined || value === null ? "" : value)
-    .replace(/&/g,"&amp;")
-    .replace(/</g,"&lt;")
-    .replace(/>/g,"&gt;")
-    .replace(/"/g,"&quot;")
+  return String(value===undefined||value===null?"":value)
+    .replace(/&/g,"&amp;").replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;").replace(/"/g,"&quot;")
     .replace(/'/g,"&#039;");
-
 }
-
 
 function normalizeRecord(record){
-
-  const type = String(record.type || "").toLowerCase();
-
-  const date =
-    record.expenseDate ||
-    record.date ||
-    record.earnDate ||
-    "";
+  const type=String(record.type||"").toLowerCase();
+  const date=record.expenseDate||record.date||record.earnDate||record.spendDate||"";
 
   return {
-
     row:Number(record.row),
-
     type:type,
-
-    title:String(
-      record.title ||
-      record.ip ||
-      record.spendTitle ||
-      ""
-    ),
-
-    amount:Number(
-      record.amount !== undefined
-        ? record.amount
-        : record.bill || 0
-    ),
-
+    title:String(record.title||record.ip||record.spendTitle||record.spend_title||""),
+    amount:Number(record.amount!==undefined?record.amount:(record.bill||record.spendAmount||record.spend_amount||0)),
     expenseDate:String(date).slice(0,10),
-
-    comment:String(record.comment || "")
-
+    comment:String(record.comment||"")
   };
-
 }
-
 
 function showToast(message,isError=false){
-
-  const toast = document.getElementById("toast");
-
-  toast.textContent = message;
-
-  toast.className = "toast show" + (isError ? " error" : "");
-
+  const toast=document.getElementById("toast");
+  toast.textContent=message;
+  toast.className="toast show"+(isError?" error":"");
   clearTimeout(showToast.timer);
-
-  showToast.timer = setTimeout(()=>{
-
-    toast.className = "toast";
-
-  },3200);
-
+  showToast.timer=setTimeout(()=>toast.className="toast",3200);
 }
-
 
 function setLoading(message="Loading records..."){
-
-  document.getElementById("tableBody").innerHTML = `
-    <tr>
-      <td colspan="7">
-        <div class="loading">
-          <i class="fa-solid fa-spinner fa-spin"></i>
-          ${escapeHTML(message)}
-        </div>
-      </td>
-    </tr>
-  `;
-
+  document.getElementById("tableBody").innerHTML=`
+    <tr><td colspan="7"><div class="loading">
+    <i class="fa-solid fa-spinner fa-spin"></i>${escapeHTML(message)}
+    </div></td></tr>`;
 }
 
-
-/* ==========================================
-   LOAD RECORDS
-========================================== */
-
+/* LOAD RECORDS */
 async function loadRecords(){
-
   if(busy)return;
-
-  busy = true;
-
+  busy=true;
   setLoading();
 
   try{
-
-    const response = await apiCall({
-      action:"getRecords"
-    });
-
-    allRecords = (response.records || [])
+    const response=await apiCall({action:"getRecords"});
+    allRecords=(response.records||[])
       .map(normalizeRecord)
       .filter(record=>
-        record.type === "earn" ||
-        record.type === "spend"
+        (record.type==="earn"||record.type==="spend") &&
+        Number.isFinite(record.row)
       );
 
     updateStats();
-
     applyFilters();
-
   }catch(error){
-
-    document.getElementById("tableBody").innerHTML = `
-      <tr>
-        <td colspan="7">
-          <div class="empty">
-            <i class="fa-solid fa-triangle-exclamation"></i>
-            ${escapeHTML(error.message)}
-            <br><br>
-            <button class="btn btn-primary" onclick="loadRecords()">
-              Retry
-            </button>
-          </div>
-        </td>
-      </tr>
-    `;
-
+    document.getElementById("tableBody").innerHTML=`
+      <tr><td colspan="7"><div class="empty">
+      <i class="fa-solid fa-triangle-exclamation"></i>
+      ${escapeHTML(error.message)}<br><br>
+      <button class="btn btn-primary" onclick="loadRecords()">Retry</button>
+      </div></td></tr>`;
     showToast(error.message,true);
-
   }finally{
-
-    busy = false;
-
+    busy=false;
   }
-
 }
 
-
-/* ==========================================
-   SUMMARY
-========================================== */
-
+/* SUMMARY */
 function updateStats(){
-
-  let totalEarn = 0;
-  let totalSpend = 0;
-
+  let totalEarn=0,totalSpend=0;
   allRecords.forEach(record=>{
-
-    if(record.type === "earn"){
-      totalEarn += record.amount;
-    }else{
-      totalSpend += record.amount;
-    }
-
+    if(record.type==="earn")totalEarn+=record.amount;
+    else totalSpend+=record.amount;
   });
 
-  document.getElementById("totalEarn").textContent =
-    money(totalEarn);
-
-  document.getElementById("totalSpend").textContent =
-    money(totalSpend);
-
-  document.getElementById("balance").textContent =
-    money(totalEarn-totalSpend);
-
-  document.getElementById("totalRecords").textContent =
-    allRecords.length.toLocaleString("en-BD");
-
+  document.getElementById("totalEarn").textContent=money(totalEarn);
+  document.getElementById("totalSpend").textContent=money(totalSpend);
+  document.getElementById("balance").textContent=money(totalEarn-totalSpend);
+  document.getElementById("totalRecords").textContent=allRecords.length.toLocaleString("en-BD");
 }
 
-
-/* ==========================================
-   FILTERS
-========================================== */
-
+/* FILTERS */
 function setType(type,button){
-
-  currentType = type;
-
-  document.querySelectorAll(".tab").forEach(tab=>{
-    tab.classList.remove("active");
-  });
-
+  currentType=type;
+  document.querySelectorAll(".tab").forEach(tab=>tab.classList.remove("active"));
   button.classList.add("active");
-
-  currentPage = 1;
-
+  currentPage=1;
   applyFilters();
-
 }
-
 
 function applyFilters(){
+  const search=document.getElementById("searchInput").value.toLowerCase().trim();
+  const from=document.getElementById("fromDate").value;
+  const to=document.getElementById("toDate").value;
+  const sort=document.getElementById("sortOrder").value;
 
-  const search = document.getElementById("searchInput")
-    .value.toLowerCase().trim();
+  filteredRecords=allRecords.filter(record=>{
+    if(currentType!=="all"&&record.type!==currentType)return false;
 
-  const from = document.getElementById("fromDate").value;
-  const to = document.getElementById("toDate").value;
-
-  const sort = document.getElementById("sortOrder").value;
-
-  filteredRecords = allRecords.filter(record=>{
-
-    if(currentType !== "all" && record.type !== currentType){
-      return false;
-    }
-
-    const searchable = (
-      record.title + " " +
-      record.comment + " " +
-      record.expenseDate + " " +
-      record.type
-    ).toLowerCase();
-
-    if(search && !searchable.includes(search)){
-      return false;
-    }
-
-    if(from && record.expenseDate < from){
-      return false;
-    }
-
-    if(to && record.expenseDate > to){
-      return false;
-    }
-
+    const searchable=(record.title+" "+record.comment+" "+record.expenseDate+" "+record.type).toLowerCase();
+    if(search&&!searchable.includes(search))return false;
+    if(from&&record.expenseDate<from)return false;
+    if(to&&record.expenseDate>to)return false;
     return true;
-
   });
 
+  if(sort==="newest")filteredRecords.sort((a,b)=>b.expenseDate.localeCompare(a.expenseDate));
+  else if(sort==="oldest")filteredRecords.sort((a,b)=>a.expenseDate.localeCompare(b.expenseDate));
+  else if(sort==="high")filteredRecords.sort((a,b)=>b.amount-a.amount);
+  else if(sort==="low")filteredRecords.sort((a,b)=>a.amount-b.amount);
 
-  if(sort === "newest"){
-
-    filteredRecords.sort((a,b)=>
-      b.expenseDate.localeCompare(a.expenseDate)
-    );
-
-  }else if(sort === "oldest"){
-
-    filteredRecords.sort((a,b)=>
-      a.expenseDate.localeCompare(b.expenseDate)
-    );
-
-  }else if(sort === "high"){
-
-    filteredRecords.sort((a,b)=>
-      b.amount-a.amount
-    );
-
-  }else if(sort === "low"){
-
-    filteredRecords.sort((a,b)=>
-      a.amount-b.amount
-    );
-
-  }
-
-  currentPage = 1;
-
+  currentPage=1;
   renderTable();
-
 }
-
 
 function resetFilters(){
-
-  document.getElementById("searchInput").value = "";
-  document.getElementById("fromDate").value = "";
-  document.getElementById("toDate").value = "";
-  document.getElementById("sortOrder").value = "newest";
-
-  currentType = "all";
+  document.getElementById("searchInput").value="";
+  document.getElementById("fromDate").value="";
+  document.getElementById("toDate").value="";
+  document.getElementById("sortOrder").value="newest";
+  currentType="all";
 
   document.querySelectorAll(".tab").forEach(tab=>{
-    tab.classList.toggle(
-      "active",
-      tab.dataset.type === "all"
-    );
+    tab.classList.toggle("active",tab.dataset.type==="all");
   });
-
   applyFilters();
-
 }
-
 
 function changePageSize(){
-
-  pageSize = Number(
-    document.getElementById("pageSize").value
-  ) || 10;
-
-  currentPage = 1;
-
+  pageSize=Number(document.getElementById("pageSize").value)||10;
+  currentPage=1;
   renderTable();
-
 }
 
-
-/* ==========================================
-   TABLE RENDER
-========================================== */
-
+/* TABLE */
 function renderTable(){
+  const tbody=document.getElementById("tableBody");
+  const total=filteredRecords.length;
+  const totalPages=Math.max(1,Math.ceil(total/pageSize));
 
-  const tbody = document.getElementById("tableBody");
+  if(currentPage>totalPages)currentPage=totalPages;
 
-  const total = filteredRecords.length;
-
-  const totalPages = Math.max(
-    1,
-    Math.ceil(total/pageSize)
-  );
-
-  if(currentPage > totalPages){
-    currentPage = totalPages;
-  }
-
-  const start = (currentPage-1)*pageSize;
-
-  const end = Math.min(
-    start+pageSize,
-    total
-  );
-
-  const pageRecords = filteredRecords.slice(start,end);
-
+  const start=(currentPage-1)*pageSize;
+  const end=Math.min(start+pageSize,total);
+  const pageRecords=filteredRecords.slice(start,end);
 
   if(!pageRecords.length){
+    tbody.innerHTML=`<tr><td colspan="7"><div class="empty">
+      <i class="fa-solid fa-folder-open"></i>No transaction records found.
+    </div></td></tr>`;
+  }else{
+    tbody.innerHTML=pageRecords.map((record,index)=>{
+      const sl=start+index+1;
+      const typeLabel=record.type==="earn"?"EARN":"SPEND";
+      const amountClass=record.type==="earn"?"earn":"spend";
 
-    tbody.innerHTML = `
-      <tr>
-        <td colspan="7">
-          <div class="empty">
-            <i class="fa-solid fa-folder-open"></i>
-            No transaction records found.
+      return `<tr>
+        <td>${sl}</td>
+        <td><span class="type-badge ${record.type}">${typeLabel}</span></td>
+        <td><strong>${escapeHTML(record.title)}</strong></td>
+        <td><span class="amount ${amountClass}">${record.type==="earn"?"+":"−"}${money(record.amount)}</span></td>
+        <td>${escapeHTML(record.expenseDate||"-")}</td>
+        <td><div class="comment-cell" title="${escapeHTML(record.comment)}">${escapeHTML(record.comment||"-")}</div></td>
+        <td class="actions-col">
+          <div class="actions">
+            <button class="action-btn action-view" title="View" onclick="viewRecord(${record.row},'${record.type}')"><i class="fa-solid fa-eye"></i></button>
+            <button class="action-btn action-edit" title="Edit" onclick="editRecord(${record.row},'${record.type}')"><i class="fa-solid fa-pen"></i></button>
+            <button class="action-btn action-delete" title="Delete" onclick="deleteRecord(${record.row},'${record.type}')"><i class="fa-solid fa-trash"></i></button>
           </div>
         </td>
-      </tr>
-    `;
-
-  }else{
-
-    tbody.innerHTML = pageRecords.map((record,index)=>{
-
-      const sl = start+index+1;
-
-      const typeLabel =
-        record.type === "earn" ? "EARN" : "SPEND";
-
-      const amountClass =
-        record.type === "earn" ? "earn" : "spend";
-
-      return `
-        <tr>
-
-          <td>${sl}</td>
-
-          <td>
-            <span class="type-badge ${record.type}">
-              ${typeLabel}
-            </span>
-          </td>
-
-          <td>
-            <strong>${escapeHTML(record.title)}</strong>
-          </td>
-
-          <td>
-            <span class="amount ${amountClass}">
-              ${record.type==="earn"?"+":"−"}${money(record.amount)}
-            </span>
-          </td>
-
-          <td>${escapeHTML(record.expenseDate || "-")}</td>
-
-          <td>
-            <div class="comment-cell" title="${escapeHTML(record.comment)}">
-              ${escapeHTML(record.comment || "-")}
-            </div>
-          </td>
-
-          <td class="actions-col">
-            <div class="actions">
-
-              <button class="action-btn action-view"
-                title="View"
-                onclick="viewRecord(${record.row},'${record.type}')">
-                <i class="fa-solid fa-eye"></i>
-              </button>
-
-              <button class="action-btn action-edit"
-                title="Edit"
-                onclick="editRecord(${record.row},'${record.type}')">
-                <i class="fa-solid fa-pen"></i>
-              </button>
-
-              <button class="action-btn action-delete"
-                title="Delete"
-                onclick="deleteRecord(${record.row},'${record.type}')">
-                <i class="fa-solid fa-trash"></i>
-              </button>
-
-            </div>
-          </td>
-
-        </tr>
-      `;
-
+      </tr>`;
     }).join("");
-
   }
 
-
-  document.getElementById("tableInfo").textContent =
-    total === 0
-      ? "Showing 0 records"
-      : `Showing ${start+1}–${end} of ${total} records`;
-
-
+  document.getElementById("tableInfo").textContent=total===0?"Showing 0 records":`Showing ${start+1}–${end} of ${total} records`;
   renderPagination(totalPages);
-
 }
-
 
 function renderPagination(totalPages){
+  const container=document.getElementById("pagination");
+  let html=`<button onclick="goPage(${currentPage-1})" ${currentPage===1?"disabled":""}><i class="fa-solid fa-chevron-left"></i></button>`;
 
-  const container = document.getElementById("pagination");
-
-  let html = `
-    <button onclick="goPage(${currentPage-1})"
-      ${currentPage===1?"disabled":""}>
-      <i class="fa-solid fa-chevron-left"></i>
-    </button>
-  `;
-
-  const maxButtons = 5;
-
-  let first = Math.max(
-    1,
-    currentPage-Math.floor(maxButtons/2)
-  );
-
-  let last = Math.min(
-    totalPages,
-    first+maxButtons-1
-  );
-
-  if(last-first+1 < maxButtons){
-    first = Math.max(1,last-maxButtons+1);
-  }
+  const maxButtons=5;
+  let first=Math.max(1,currentPage-Math.floor(maxButtons/2));
+  let last=Math.min(totalPages,first+maxButtons-1);
+  if(last-first+1<maxButtons)first=Math.max(1,last-maxButtons+1);
 
   for(let i=first;i<=last;i++){
-
-    html += `
-      <button
-        class="${i===currentPage?"active":""}"
-        onclick="goPage(${i})">
-        ${i}
-      </button>
-    `;
-
+    html+=`<button class="${i===currentPage?"active":""}" onclick="goPage(${i})">${i}</button>`;
   }
 
-  html += `
-    <button onclick="goPage(${currentPage+1})"
-      ${currentPage===totalPages?"disabled":""}>
-      <i class="fa-solid fa-chevron-right"></i>
-    </button>
-  `;
-
-  container.innerHTML = html;
-
+  html+=`<button onclick="goPage(${currentPage+1})" ${currentPage===totalPages?"disabled":""}><i class="fa-solid fa-chevron-right"></i></button>`;
+  container.innerHTML=html;
 }
-
 
 function goPage(page){
-
-  const totalPages = Math.max(
-    1,
-    Math.ceil(filteredRecords.length/pageSize)
-  );
-
-  if(page<1 || page>totalPages)return;
-
-  currentPage = page;
-
+  const totalPages=Math.max(1,Math.ceil(filteredRecords.length/pageSize));
+  if(page<1||page>totalPages)return;
+  currentPage=page;
   renderTable();
-
 }
 
-
-/* ==========================================
-   VIEW RECORD
-========================================== */
-
+/* VIEW */
 async function viewRecord(row,type){
-
   try{
+    const response=await apiCall({action:"getOne",type:type,row:row});
+    const record=normalizeRecord(response);
 
-    const response = await apiCall({
-      action:"getOne",
-      type:type,
-      row:row
-    });
-
-    const record = normalizeRecord(response);
-
-    const details = document.getElementById("viewDetails");
-
-    details.innerHTML = `
-
+    document.getElementById("viewDetails").innerHTML=`
       <div class="detail-item">
         <div class="detail-label">Transaction Type</div>
-        <div class="detail-value">${record.type.toUpperCase()}</div>
+        <div class="detail-value">${escapeHTML(record.type.toUpperCase())}</div>
       </div>
-
       <div class="detail-item">
         <div class="detail-label">${type==="earn"?"IP Address":"Spend Title"}</div>
         <div class="detail-value">${escapeHTML(record.title)}</div>
       </div>
-
       <div class="detail-item">
         <div class="detail-label">Amount</div>
         <div class="detail-value">${money(record.amount)}</div>
       </div>
-
       <div class="detail-item">
         <div class="detail-label">Transaction Date</div>
-        <div class="detail-value">${escapeHTML(record.expenseDate || "-")}</div>
+        <div class="detail-value">${escapeHTML(record.expenseDate||"-")}</div>
       </div>
-
       <div class="detail-item full">
         <div class="detail-label">Comment</div>
-        <div class="detail-value">${escapeHTML(record.comment || "No comment")}</div>
+        <div class="detail-value">${escapeHTML(record.comment||"No comment")}</div>
       </div>
-
       <div class="detail-item full">
         <div class="detail-label">Sheet Row</div>
         <div class="detail-value">${record.row}</div>
-      </div>
-
-    `;
-
+      </div>`;
     openModal("viewModal");
-
-  }catch(error){
-
-    showToast(error.message,true);
-
-  }
-
+  }catch(error){showToast(error.message,true)}
 }
 
-
-/* ==========================================
-   EDIT RECORD
-========================================== */
-
+/* EDIT */
 async function editRecord(row,type){
-
   try{
+    const response=await apiCall({action:"getOne",type:type,row:row});
+    const record=normalizeRecord(response);
 
-    const response = await apiCall({
-      action:"getOne",
-      type:type,
-      row:row
-    });
-
-    const record = normalizeRecord(response);
-
-    document.getElementById("editRow").value = row;
-
-    document.getElementById("editType").value = type;
-
-    document.getElementById("editTitle").value =
-      record.title;
-
-    document.getElementById("editAmount").value =
-      record.amount;
-
-    document.getElementById("editDate").value =
-      record.expenseDate;
-
-    document.getElementById("editComment").value =
-      record.comment;
-
-    document.getElementById("editTitleLabel").textContent =
-      type === "earn" ? "IP Address" : "Spend Title";
-
-    document.getElementById("editTitle").placeholder =
-      type === "earn" ? "Enter IP address" : "Enter spend title";
-
+    document.getElementById("editRow").value=row;
+    document.getElementById("editType").value=type;
+    document.getElementById("editTitle").value=record.title;
+    document.getElementById("editAmount").value=record.amount;
+    document.getElementById("editDate").value=record.expenseDate;
+    document.getElementById("editComment").value=record.comment;
+    document.getElementById("editTitleLabel").textContent=type==="earn"?"IP Address":"Spend Title";
+    document.getElementById("editTitle").placeholder=type==="earn"?"Enter IP address":"Enter spend title";
     openModal("editModal");
-
-  }catch(error){
-
-    showToast(error.message,true);
-
-  }
-
+  }catch(error){showToast(error.message,true)}
 }
-
 
 async function saveEdit(event){
-
   event.preventDefault();
-
-  const button = document.getElementById("saveEditBtn");
-
+  const button=document.getElementById("saveEditBtn");
   if(button.disabled)return;
 
-  const row = Number(
-    document.getElementById("editRow").value
-  );
+  const row=Number(document.getElementById("editRow").value);
+  const type=document.getElementById("editType").value;
+  const title=document.getElementById("editTitle").value.trim();
+  const amount=document.getElementById("editAmount").value;
+  const date=document.getElementById("editDate").value;
+  const comment=document.getElementById("editComment").value.trim();
 
-  const type = document.getElementById("editType").value;
-
-  const title = document.getElementById("editTitle").value.trim();
-
-  const amount = document.getElementById("editAmount").value;
-
-  const date = document.getElementById("editDate").value;
-
-  const comment = document.getElementById("editComment").value.trim();
-
-
-  if(!title || !amount || !date){
-
+  if(!title||amount===""||!date){
     showToast("Please fill all required fields.",true);
-
     return;
-
   }
 
-
-  button.disabled = true;
-
-  button.innerHTML =
-    '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
-
+  button.disabled=true;
+  button.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
 
   try{
-
-    const payload = {
-
-      action:type==="earn" ? "updateEarn" : "updateSpend",
-
-      row:row,
-
-      amount:amount,
-
-      date:date,
-
-      expenseDate:date,
-
-      comment:comment
-
+    const payload={
+      action:type==="earn"?"updateEarn":"updateSpend",
+      row:row,amount:amount,date:date,expenseDate:date,comment:comment
     };
 
-
     if(type==="earn"){
-
-      payload.ip = title;
-      payload.bill = amount;
-
+      payload.ip=title;
+      payload.bill=amount;
     }else{
-
-      payload.title = title;
-
+      payload.title=title;
     }
 
-
-    const response = await apiCall(payload);
-
+    const response=await apiCall(payload);
     closeModal("editModal");
-
-    showToast(response.message || "Record updated successfully.");
-
+    showToast(response.message||"Record updated successfully.");
     await loadRecords();
-
   }catch(error){
-
     showToast(error.message,true);
-
   }finally{
-
-    button.disabled = false;
-
-    button.innerHTML =
-      '<i class="fa-solid fa-floppy-disk"></i> Save Changes';
-
+    button.disabled=false;
+    button.innerHTML='<i class="fa-solid fa-floppy-disk"></i> Save Changes';
   }
-
 }
 
-
-/* ==========================================
-   DELETE RECORD
-========================================== */
-
+/* DELETE */
 function deleteRecord(row,type){
-
-  document.getElementById("deleteRow").value = row;
-
-  document.getElementById("deleteType").value = type;
-
+  document.getElementById("deleteRow").value=row;
+  document.getElementById("deleteType").value=type;
   openModal("deleteModal");
-
 }
-
 
 async function confirmDelete(){
-
-  const button = document.getElementById("confirmDeleteBtn");
-
+  const button=document.getElementById("confirmDeleteBtn");
   if(button.disabled)return;
 
-  const row = Number(
-    document.getElementById("deleteRow").value
-  );
+  const row=Number(document.getElementById("deleteRow").value);
+  const type=document.getElementById("deleteType").value;
 
-  const type = document.getElementById("deleteType").value;
-
-  button.disabled = true;
-
-  button.innerHTML =
-    '<i class="fa-solid fa-spinner fa-spin"></i> Deleting...';
-
+  button.disabled=true;
+  button.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Deleting...';
 
   try{
-
-    const response = await apiCall({
-
-      action:"delete",
-
-      type:type,
-
-      row:row
-
-    });
-
-
+    const response=await apiCall({action:"delete",type:type,row:row});
     closeModal("deleteModal");
-
-    showToast(
-      response.message || "Record archived successfully."
-    );
-
+    showToast(response.message||"Record archived successfully.");
     await loadRecords();
-
   }catch(error){
-
     showToast(error.message,true);
-
   }finally{
-
-    button.disabled = false;
-
-    button.innerHTML =
-      '<i class="fa-solid fa-trash"></i> Yes, Delete';
-
+    button.disabled=false;
+    button.innerHTML='<i class="fa-solid fa-trash"></i> Yes, Delete';
   }
-
 }
 
-
-/* ==========================================
-   MODAL HELPERS
-========================================== */
-
+/* MODALS */
 function openModal(id){
-
   document.getElementById(id).classList.add("show");
-
-  document.body.style.overflow = "hidden";
-
+  document.body.style.overflow="hidden";
 }
-
 
 function closeModal(id){
-
   document.getElementById(id).classList.remove("show");
-
-  if(!document.querySelector(".modal-overlay.show")){
-    document.body.style.overflow = "";
-  }
-
+  if(!document.querySelector(".modal-overlay.show"))document.body.style.overflow="";
 }
-
 
 function overlayClose(event,id){
-
-  if(event.target.id === id){
-    closeModal(id);
-  }
-
+  if(event.target.id===id)closeModal(id);
 }
 
-
 document.addEventListener("keydown",event=>{
-
-  if(event.key === "Escape"){
-
-    document.querySelectorAll(".modal-overlay.show").forEach(modal=>{
-      closeModal(modal.id);
-    });
-
+  if(event.key==="Escape"){
+    document.querySelectorAll(".modal-overlay.show").forEach(modal=>closeModal(modal.id));
   }
-
 });
 
-
 /* ==========================================
-   PDF EXPORT
+   BANGLA SUPPORTED PDF EXPORT
+   PDF তৈরির আগে confirmation নেওয়া হবে।
 ========================================== */
 
-function exportPDF(){
+function makePDFReport(){
+  const report=document.getElementById("pdfReport");
 
-  if(!filteredRecords.length){
-
-    showToast("No records available to export.",true);
-
-    return;
-
-  }
-
-  if(!window.jspdf || !window.jspdf.jsPDF){
-
-    showToast("PDF library could not load.",true);
-
-    return;
-
-  }
-
-  const {jsPDF} = window.jspdf;
-
-  const doc = new jsPDF({
-    orientation:"landscape"
-  });
-
-  doc.setFontSize(17);
-
-  doc.text("ONE ONLINE - Earn & Spend History",14,15);
-
-  doc.setFontSize(9);
-
-  doc.text(
-    "Generated: "+new Date().toLocaleString(),
-    14,
-    22
-  );
-
-  const rows = filteredRecords.map((record,index)=>[
-
-    index+1,
-
-    record.type.toUpperCase(),
-
-    record.title,
-
-    "BDT "+record.amount,
-
-    record.expenseDate,
-
-    record.comment
-
-  ]);
-
-
-  doc.autoTable({
-
-    startY:29,
-
-    head:[[
-      "SL",
-      "TYPE",
-      "TITLE / IP",
-      "AMOUNT",
-      "DATE",
-      "COMMENT"
-    ]],
-
-    body:rows,
-
-    theme:"grid",
-
-    styles:{
-      fontSize:8,
-      cellPadding:3
-    },
-
-    headStyles:{
-      fillColor:[8,127,91],
-      textColor:255
-    },
-
-    margin:{
-      left:14,
-      right:14
-    }
-
-  });
-
-
-  const finalY = doc.lastAutoTable.finalY || 30;
-
-  const earn = filteredRecords
+  const earn=filteredRecords
     .filter(r=>r.type==="earn")
     .reduce((sum,r)=>sum+r.amount,0);
 
-  const spend = filteredRecords
+  const spend=filteredRecords
     .filter(r=>r.type==="spend")
     .reduce((sum,r)=>sum+r.amount,0);
 
+  const balance=earn-spend;
 
-  doc.setFontSize(10);
+  const typeName=currentType==="all"?"All Transactions":currentType.toUpperCase();
 
-  doc.text(
-    "Total Earn: BDT "+earn.toLocaleString("en-BD"),
-    14,
-    finalY+10
-  );
+  const rows=filteredRecords.map((record,index)=>`
+    <tr>
+      <td>${index+1}</td>
+      <td>${record.type==="earn"?"আয় (EARN)":"খরচ (SPEND)"}</td>
+      <td>${escapeHTML(record.title)}</td>
+      <td>${money(record.amount)}</td>
+      <td>${escapeHTML(record.expenseDate||"-")}</td>
+      <td>${escapeHTML(record.comment||"-")}</td>
+    </tr>
+  `).join("");
 
-  doc.text(
-    "Total Spend: BDT "+spend.toLocaleString("en-BD"),
-    14,
-    finalY+17
-  );
+  report.innerHTML=`
+    <h1>ONE ONLINE</h1>
+    <div class="pdf-subtitle">Earn & Spend History Report | ${escapeHTML(typeName)}</div>
+    <div class="pdf-subtitle">রিপোর্ট তৈরির সময়: ${escapeHTML(new Date().toLocaleString("bn-BD"))}</div>
 
-  doc.text(
-    "Balance: BDT "+(earn-spend).toLocaleString("en-BD"),
-    14,
-    finalY+24
-  );
+    <div class="pdf-summary">
+      <div><strong>মোট আয় (Total Earn)</strong><span>${money(earn)}</span></div>
+      <div><strong>মোট খরচ (Total Spend)</strong><span>${money(spend)}</span></div>
+      <div><strong>বর্তমান ব্যালেন্স (Balance)</strong><span>${money(balance)}</span></div>
+      <div><strong>মোট রেকর্ড</strong><span>${filteredRecords.length}</span></div>
+    </div>
 
+    <table>
+      <thead>
+        <tr>
+          <th style="width:5%">SL</th>
+          <th style="width:13%">ধরন</th>
+          <th style="width:22%">নাম / IP</th>
+          <th style="width:15%">পরিমাণ</th>
+          <th style="width:15%">তারিখ</th>
+          <th style="width:30%">মন্তব্য</th>
+        </tr>
+      </thead>
+      <tbody>${rows}</tbody>
+    </table>
 
-  doc.save("ONE-ONLINE-Earn-Spend-History.pdf");
+    <div class="pdf-footer">ONE ONLINE | Management System</div>
+  `;
 
+  return report;
 }
 
+async function exportPDF(){
+  if(!filteredRecords.length){
+    showToast("No records available to export.",true);
+    return;
+  }
 
-/* ==========================================
-   THEME SYNC
-========================================== */
+  if(!window.jspdf||!window.jspdf.jsPDF||!window.html2canvas){
+    showToast("PDF library could not load. Please refresh the page.",true);
+    return;
+  }
 
-function applyTheme(theme){
-
-  if(!theme)return;
-
-  document.body.setAttribute(
-    "data-theme",
-    theme
+  const confirmed=window.confirm(
+    "আপনি কি PDF তৈরি করতে চান?\n\n"+
+    "রেকর্ড সংখ্যা: "+filteredRecords.length+"\n"+
+    "PDF-এ বাংলা লেখা ও বর্তমান Filter করা ডাটা থাকবে।\n\n"+
+    "PDF তৈরি করতে OK চাপুন।"
   );
 
-}
+  if(!confirmed)return;
 
+  const button=document.querySelector('.header-actions button[onclick="exportPDF()"]');
+  const originalText=button.innerHTML;
 
-function syncTheme(){
+  button.disabled=true;
+  button.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Preparing PDF...';
 
   try{
+    const report=makePDFReport();
 
-    const saved = localStorage.getItem("one_online_theme");
-
-    if(saved){
-      applyTheme(saved);
+    /* Bengali font load হওয়া পর্যন্ত অপেক্ষা */
+    if(document.fonts&&document.fonts.ready){
+      await document.fonts.ready;
+      await document.fonts.load('400 14px "Noto Sans Bengali"');
+      await document.fonts.load('700 14px "Noto Sans Bengali"');
     }
 
-  }catch(error){}
+    await new Promise(resolve=>setTimeout(resolve,300));
 
+    const canvas=await html2canvas(report,{
+      scale:2,
+      backgroundColor:"#ffffff",
+      useCORS:true,
+      logging:false,
+      windowWidth:1200
+    });
+
+    const {jsPDF}=window.jspdf;
+    const pdf=new jsPDF({
+      orientation:"landscape",
+      unit:"mm",
+      format:"a4",
+      compress:true
+    });
+
+    const pageWidth=287;
+    const pageHeight=200;
+    const margin=5;
+    const usableWidth=pageWidth;
+    const usableHeight=pageHeight;
+
+    const imageHeightMM=canvas.height*(usableWidth/canvas.width);
+    const pageCount=Math.ceil(imageHeightMM/usableHeight);
+
+    const sliceHeightPx=Math.floor(usableHeight*(canvas.width/usableWidth));
+
+    for(let page=0;page<pageCount;page++){
+      if(page>0)pdf.addPage();
+
+      const sourceY=page*sliceHeightPx;
+      const currentSliceHeight=Math.min(sliceHeightPx,canvas.height-sourceY);
+
+      const pageCanvas=document.createElement("canvas");
+      pageCanvas.width=canvas.width;
+      pageCanvas.height=currentSliceHeight;
+
+      const ctx=pageCanvas.getContext("2d");
+      ctx.fillStyle="#ffffff";
+      ctx.fillRect(0,0,pageCanvas.width,pageCanvas.height);
+
+      ctx.drawImage(
+        canvas,
+        0,sourceY,canvas.width,currentSliceHeight,
+        0,0,canvas.width,currentSliceHeight
+      );
+
+      const sliceData=pageCanvas.toDataURL("image/jpeg",0.95);
+      const sliceHeightMM=currentSliceHeight*(usableWidth/canvas.width);
+
+      pdf.addImage(
+        sliceData,
+        "JPEG",
+        margin,
+        margin,
+        usableWidth,
+        sliceHeightMM,
+        undefined,
+        "FAST"
+      );
+    }
+
+    const today=new Date().toISOString().slice(0,10);
+    pdf.save("ONE-ONLINE-Earn-Spend-"+today+".pdf");
+
+    showToast("বাংলা সহ PDF সফলভাবে তৈরি হয়েছে।");
+
+  }catch(error){
+    console.error(error);
+    showToast("PDF তৈরি করা যায়নি: "+error.message,true);
+  }finally{
+    button.disabled=false;
+    button.innerHTML=originalText;
+    document.getElementById("pdfReport").innerHTML="";
+  }
 }
 
+/* THEME SYNC */
+function applyTheme(theme){
+  if(!theme)return;
+  document.body.setAttribute("data-theme",theme);
+}
+
+function syncTheme(){
+  try{
+    const saved=localStorage.getItem("one_online_theme");
+    if(saved)applyTheme(saved);
+  }catch(error){}
+}
 
 window.addEventListener("storage",event=>{
-
-  if(event.key === "one_online_theme"){
-    applyTheme(event.newValue);
-  }
-
+  if(event.key==="one_online_theme")applyTheme(event.newValue);
 });
-
 
 window.addEventListener("message",event=>{
-
-  if(
-    event.data &&
-    event.data.type === "ONE_ONLINE_THEME"
-  ){
-
-    applyTheme(
-      event.data.theme ||
-      event.data.value
-    );
-
+  if(event.data&&event.data.type==="ONE_ONLINE_THEME"){
+    applyTheme(event.data.theme||event.data.value);
   }
-
 });
 
-
-/* ==========================================
-   INITIALIZE
-========================================== */
-
+/* INITIALIZE */
 syncTheme();
-
 loadRecords();
-
 </script>
-
 </body>
 </html>
