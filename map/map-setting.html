@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,1238 +6,1388 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Map Setting | ONE ONLINE</title>
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 
 <style>
 :root{
   --bg:#0b1220;
   --panel:#111c2e;
   --panel2:#172338;
-  --input:#0b1628;
   --text:#e8f0fc;
   --muted:#91a3bd;
-  --line:#293951;
-  --primary:#1687f8;
-  --green:#10b981;
-  --red:#ef4444;
-  --orange:#f59e0b;
-  --purple:#a78bfa;
+  --line:#293a53;
+  --primary:#168b68;
+  --danger:#e05252;
+  --input:#0b1729;
 }
 *{box-sizing:border-box}
 body{
   margin:0;
-  padding:20px;
   background:var(--bg);
   color:var(--text);
-  font-family:Inter,Arial,sans-serif;
+  font-family:Arial,Helvetica,sans-serif;
 }
-button,input,select{font:inherit}
-.page{max-width:1350px;margin:auto}
-.header{
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+.container{
+  max-width:1250px;
+  margin:auto;
+  padding:20px;
+}
+.topbar{
   display:flex;
   align-items:center;
   justify-content:space-between;
   flex-wrap:wrap;
-  gap:15px;
+  gap:12px;
   margin-bottom:20px;
 }
-.header h1{font-size:24px;margin:0 0 6px;font-weight:800}
-.header p{font-size:12px;color:var(--muted);margin:0}
-.header-actions{display:flex;gap:9px;flex-wrap:wrap}
-.btn{
-  border:0;
-  border-radius:9px;
-  padding:11px 15px;
-  font-size:12px;
-  font-weight:800;
-  cursor:pointer;
-  transition:.2s;
+.brand{display:flex;align-items:center;gap:11px}
+.logo{
+  width:45px;height:45px;
+  border-radius:12px;
+  display:grid;place-items:center;
+  background:linear-gradient(135deg,#087f5b,#16b887);
+  color:white;font-weight:900;font-size:22px;
 }
-.btn:hover{filter:brightness(1.1);transform:translateY(-1px)}
-.primary{background:var(--primary);color:#fff}
-.green{background:var(--green);color:#052e24}
-.danger{background:#7f1d1d;color:#fff}
-.muted-btn{background:#26364d;color:var(--text)}
-.orange{background:var(--orange);color:#422006}
+.brand h2{font-size:18px;margin:0 0 4px}
+.brand p{font-size:11px;color:var(--muted);margin:0}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+.btn{
+  padding:10px 13px;
+  border-radius:9px;
+  border:1px solid var(--line);
+  background:var(--panel2);
+  color:var(--text);
+  font-size:12px;
+  font-weight:700;
+}
+.btn.primary{background:var(--primary);border-color:var(--primary);color:#fff}
+.btn.danger{background:#51232b;border-color:#80343e;color:#ffd9dd}
+.btn.small{padding:7px 9px;font-size:11px}
+.btn:disabled{opacity:.5;cursor:not-allowed}
 .layout{
   display:grid;
-  grid-template-columns:235px minmax(0,1fr);
-  gap:18px;
+  grid-template-columns:1fr 1fr;
+  gap:16px;
   align-items:start;
 }
-.sidebar{
+.card{
   background:var(--panel);
   border:1px solid var(--line);
   border-radius:14px;
-  padding:12px;
-  position:sticky;
-  top:15px;
-}
-.side-btn{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  width:100%;
-  padding:12px;
-  margin-bottom:5px;
-  border:0;
-  background:transparent;
-  color:var(--muted);
-  border-radius:9px;
-  text-align:left;
-  cursor:pointer;
-  font-weight:700;
-  font-size:12px;
-}
-.side-btn:hover,.side-btn.active{
-  background:rgba(22,135,248,.14);
-  color:#60a5fa;
-}
-.side-icon{font-size:17px;width:22px;text-align:center}
-.content{min-width:0}
-.tab-panel{
-  display:none;
-  background:var(--panel);
-  border:1px solid var(--line);
-  border-radius:14px;
-  padding:20px;
+  padding:17px;
   margin-bottom:16px;
+  min-width:0;
 }
-.tab-panel.active{display:block}
-.panel-heading{
+.card-title{
   display:flex;
   justify-content:space-between;
   align-items:center;
   gap:10px;
-  margin-bottom:18px;
+  margin-bottom:15px;
 }
-.panel-heading h2{font-size:17px;margin:0}
-.panel-heading p{font-size:11px;color:var(--muted);margin:5px 0 0}
-.section-title{
-  font-size:11px;
-  font-weight:800;
-  text-transform:uppercase;
-  color:#8da5c3;
-  letter-spacing:.8px;
-  margin:22px 0 12px;
-}
-.grid{
-  display:grid;
-  grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:14px;
-}
-.field{min-width:0}
-.field label{
+.card-title h3{font-size:15px;margin:0}
+.card-title span{font-size:10px;color:var(--muted)}
+.field{margin-bottom:13px}
+label{
   display:block;
   font-size:12px;
+  color:#c5d3e7;
   font-weight:700;
-  color:#c5d3e6;
   margin-bottom:7px;
 }
-.field input,.field select{
+input,select,textarea{
   width:100%;
-  min-height:42px;
+  padding:11px;
   border:1px solid var(--line);
   border-radius:8px;
   background:var(--input);
   color:var(--text);
-  padding:10px 11px;
   outline:none;
+  min-width:0;
 }
-.field input:focus,.field select:focus{
-  border-color:var(--primary);
-  box-shadow:0 0 0 3px rgba(22,135,248,.12);
-}
-.field input[type=color]{
+input:focus,select:focus,textarea:focus{border-color:#1ca77d}
+input[type="color"]{
+  height:39px;
   padding:4px;
-  height:43px;
   cursor:pointer;
 }
-.field input[type=checkbox]{
-  width:17px;
-  height:17px;
-  accent-color:var(--primary);
-}
+input[type="checkbox"]{accent-color:#168b68}
 .help{
+  font-size:11px;
   color:var(--muted);
-  font-size:10px;
   line-height:1.6;
   margin-top:6px;
 }
-.toggle-row{
+.grid2{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:11px;
+}
+.row{
   display:flex;
   align-items:center;
   justify-content:space-between;
-  gap:15px;
+  gap:10px;
+}
+.switch{
+  width:38px;height:21px;
+  appearance:none;
+  background:#43516a;
+  border-radius:30px;
+  position:relative;
+  cursor:pointer;
+  flex-shrink:0;
+}
+.switch:before{
+  content:"";
+  width:15px;height:15px;
+  position:absolute;
+  top:3px;left:3px;
+  background:white;
+  border-radius:50%;
+  transition:.2s;
+}
+.switch:checked{background:#168b68}
+.switch:checked:before{left:20px}
+.type-list{display:flex;flex-direction:column;gap:9px}
+.type-card{
   background:var(--panel2);
   border:1px solid var(--line);
   border-radius:10px;
-  padding:12px;
-  margin-bottom:9px;
+  padding:11px;
 }
-.toggle-row strong{font-size:12px;display:block}
-.toggle-row small{font-size:10px;color:var(--muted);display:block;margin-top:4px}
-.toggle-row input{width:18px;height:18px;accent-color:var(--primary);cursor:pointer}
-.actions{
-  display:flex;
-  flex-wrap:wrap;
-  gap:9px;
-  margin-top:18px;
-}
-.info-box{
-  border:1px solid rgba(22,135,248,.25);
-  background:rgba(22,135,248,.09);
-  color:#a8d1ff;
-  border-radius:10px;
-  padding:13px;
-  font-size:11px;
-  line-height:1.7;
-  margin-bottom:15px;
-}
-.warning-box{
-  border:1px solid rgba(245,158,11,.25);
-  background:rgba(245,158,11,.08);
-  color:#fcd58b;
-  border-radius:10px;
-  padding:13px;
-  font-size:11px;
-  line-height:1.7;
-  margin:15px 0;
-}
-.cards{
-  display:grid;
-  grid-template-columns:repeat(3,minmax(0,1fr));
-  gap:12px;
-  margin-bottom:15px;
-}
-.stat{
-  padding:14px;
-  background:var(--panel2);
-  border:1px solid var(--line);
-  border-radius:11px;
-}
-.stat small{display:block;color:var(--muted);font-size:10px;margin-bottom:7px}
-.stat strong{font-size:22px}
-.backup-card{
-  border:1px solid var(--line);
-  background:var(--panel2);
-  border-radius:11px;
-  padding:15px;
-  margin-bottom:12px;
-}
-.backup-card h3{font-size:13px;margin:0 0 7px}
-.backup-card p{font-size:11px;color:var(--muted);line-height:1.6;margin:0 0 13px}
-.preview-row{
+.type-head{
   display:flex;
   align-items:center;
   gap:10px;
-  flex-wrap:wrap;
 }
-.preview-marker{
-  display:inline-flex;
+.type-icon{
   width:36px;height:36px;
-  border-radius:50%;
+  border-radius:9px;
+  display:grid;place-items:center;
+  font-size:19px;
+  background:#0c192a;
+  flex-shrink:0;
+}
+.type-name{font-size:12px;font-weight:800}
+.type-sub{font-size:10px;color:var(--muted);margin-top:4px}
+.type-controls{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  margin-left:auto;
+}
+.type-actions{display:flex;gap:5px;margin-top:9px}
+.type-actions button{flex:1}
+.tag{
+  display:inline-block;
+  padding:4px 7px;
+  border-radius:20px;
+  background:#234237;
+  color:#a9efd3;
+  font-size:9px;
+  font-weight:700;
+}
+.form-actions{display:flex;gap:8px;flex-wrap:wrap}
+.status{
+  display:none;
+  padding:11px;
+  border-radius:8px;
+  margin-top:12px;
+  font-size:12px;
+  line-height:1.5;
+}
+.status.success{display:block;background:#123c30;color:#b9f3dc}
+.status.error{display:block;background:#48242b;color:#ffd0d5}
+.status.info{display:block;background:#17354b;color:#c6eaff}
+#settingMap{
+  height:300px;
+  border-radius:10px;
+  border:1px solid var(--line);
+  z-index:1;
+}
+.area-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.area-info{
+  padding:10px;
+  border-radius:8px;
+  background:#0d192b;
+  color:var(--muted);
+  font-size:11px;
+  line-height:1.6;
+  margin-top:10px;
+}
+.preview-icon{
+  display:inline-grid;
+  place-items:center;
+  width:30px;height:30px;
+  border-radius:8px;
+  font-size:18px;
+}
+hr{border:0;border-top:1px solid var(--line);margin:15px 0}
+.footer{text-align:center;color:var(--muted);font-size:11px;padding:15px}
+.empty{
+  padding:15px;
+  border:1px dashed var(--line);
+  border-radius:9px;
+  text-align:center;
+  color:var(--muted);
+  font-size:11px;
+}
+.modal-backdrop{
+  position:fixed;
+  inset:0;
+  z-index:3000;
+  background:rgba(0,0,0,.72);
+  display:none;
   align-items:center;
   justify-content:center;
-  color:white;
-  font-weight:900;
-  border:2px solid white;
-  box-shadow:0 2px 8px #0008;
+  padding:15px;
 }
-.color-line{
-  width:90px;
-  height:0;
-  border-top:4px solid #1687f8;
-  border-radius:5px;
+.modal-backdrop.show{display:flex}
+.modal{
+  width:min(440px,100%);
+  background:#111c2e;
+  border:1px solid #394d68;
+  border-radius:14px;
+  padding:18px;
+  box-shadow:0 20px 60px #0009;
 }
-.status{
-  display:inline-flex;
-  align-items:center;
-  gap:7px;
-  border:1px solid rgba(16,185,129,.25);
-  background:rgba(16,185,129,.1);
-  color:#34d399;
-  padding:7px 11px;
-  border-radius:30px;
-  font-size:10px;
-  font-weight:800;
-}
-.status-dot{width:7px;height:7px;background:#10b981;border-radius:50%}
-.footer-note{
-  text-align:center;
-  font-size:10px;
-  color:var(--muted);
-  padding:18px 0;
-}
-#fileInput{display:none}
+.modal h3{margin:0 0 15px;font-size:16px}
+.modal-actions{display:flex;gap:8px;margin-top:15px}
+.modal-actions button{flex:1}
 @media(max-width:850px){
   .layout{grid-template-columns:1fr}
-  .sidebar{
-    position:static;
-    display:flex;
-    gap:5px;
-    overflow-x:auto;
-  }
-  .side-btn{
-    min-width:max-content;
-    margin:0;
-  }
 }
-@media(max-width:560px){
-  body{padding:11px}
-  .header h1{font-size:20px}
-  .tab-panel{padding:14px}
-  .grid{grid-template-columns:1fr}
-  .cards{gap:7px}
-  .stat{padding:10px}
-  .stat strong{font-size:18px}
-  .header-actions{width:100%}
+@media(max-width:520px){
+  .container{padding:12px}
+  .card{padding:13px}
+  .grid2{grid-template-columns:1fr}
+  .brand h2{font-size:15px}
+  .btn{padding:9px 10px}
 }
 </style>
 </head>
 
 <body>
-<div class="page">
 
-  <header class="header">
-    <div>
-      <h1>Map Settings</h1>
-      <p>Manage map appearance, markers, wires, backup and data restoration.</p>
+<div class="container">
+
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo">O</div>
+      <div>
+        <h2>ONE ONLINE</h2>
+        <p>MAP MANAGEMENT SETTINGS</p>
+      </div>
     </div>
-    <div class="header-actions">
-      <span class="status"><span class="status-dot"></span> LOCAL SETTINGS</span>
-      <button class="btn primary" onclick="saveSettings()">Save All Settings</button>
+
+    <div class="actions">
+      <button class="btn" onclick="loadSettings()">↻ Refresh</button>
+      <button class="btn" onclick="goToMap()">🗺 View Map</button>
+      <button class="btn primary" onclick="saveAllSettings()">💾 Save All Settings</button>
     </div>
   </header>
 
   <div class="layout">
 
-    <!-- SETTINGS NAVIGATION -->
-    <aside class="sidebar">
-      <button class="side-btn active" data-tab="general" onclick="openTab('general',this)">
-        <span class="side-icon">⚙️</span> General Settings
-      </button>
-      <button class="side-btn" data-tab="display" onclick="openTab('display',this)">
-        <span class="side-icon">🗺️</span> Map Display
-      </button>
-      <button class="side-btn" data-tab="markers" onclick="openTab('markers',this)">
-        <span class="side-icon">📍</span> Marker Settings
-      </button>
-      <button class="side-btn" data-tab="wires" onclick="openTab('wires',this)">
-        <span class="side-icon">〰️</span> Wire Settings
-      </button>
-      <button class="side-btn" data-tab="backup" onclick="openTab('backup',this)">
-        <span class="side-icon">💾</span> Export / Import
-      </button>
-      <button class="side-btn" data-tab="data" onclick="openTab('data',this)">
-        <span class="side-icon">🗄️</span> Data Management
-      </button>
-    </aside>
+    <!-- LEFT COLUMN -->
+    <section>
 
-    <main class="content">
-
-      <!-- GENERAL -->
-      <section class="tab-panel active" id="tab-general">
-        <div class="panel-heading">
-          <div>
-            <h2>General Settings</h2>
-            <p>Basic map system behavior.</p>
-          </div>
+      <!-- LOCATION TYPE MANAGEMENT -->
+      <div class="card">
+        <div class="card-title">
+          <h3>📍 Location Type Management</h3>
+          <span>TYPE CONTROL</span>
         </div>
 
-        <div class="info-box">
-          এই সেটিংস একই Browser-এর Map Data Storage-এ Save হবে। Google Sheet সংযোগ পরে করা যাবে।
+        <div class="help" style="margin-bottom:13px">
+          Customer, Pole ও Switch আগে থেকেই থাকবে। নতুন Type যোগ করতে পারবে।
+          প্রতিটি Type-এর Show/Hide সুইচ দিয়ে Map-এর সব Marker নিয়ন্ত্রণ করতে পারবে।
         </div>
 
-        <div class="toggle-row">
-          <div>
-            <strong>Auto Save</strong>
-            <small>Automatically save settings when you press Save All Settings.</small>
-          </div>
-          <input type="checkbox" id="autoSave">
+        <button class="btn primary" onclick="openTypeModal()">
+          ＋ Add New Location Type
+        </button>
+
+        <hr>
+
+        <div class="type-list" id="typeList">
+          <div class="empty">Loading location types...</div>
         </div>
 
-        <div class="toggle-row">
-          <div>
-            <strong>Confirm Before Delete</strong>
-            <small>Ask before deleting a location or connection.</small>
-          </div>
-          <input type="checkbox" id="confirmDelete">
-        </div>
-
-        <div class="toggle-row">
-          <div>
-            <strong>Show Location Number</strong>
-            <small>Display Location Number in marker information.</small>
-          </div>
-          <input type="checkbox" id="showLocationNumber">
-        </div>
-
-        <div class="toggle-row">
-          <div>
-            <strong>Show Marker Labels</strong>
-            <small>Show marker names on the map.</small>
-          </div>
-          <input type="checkbox" id="showLabels">
-        </div>
-
-        <div class="toggle-row">
-          <div>
-            <strong>Auto Fit All Locations</strong>
-            <small>Automatically fit map view to all available locations.</small>
-          </div>
-          <input type="checkbox" id="autoFit">
-        </div>
-
-        <div class="actions">
-          <button class="btn primary" onclick="saveSettings()">Save General Settings</button>
-          <button class="btn muted-btn" onclick="resetSettings()">Reset Defaults</button>
-        </div>
-      </section>
+        <div id="typeStatus" class="status"></div>
+      </div>
 
       <!-- MAP DISPLAY -->
-      <section class="tab-panel" id="tab-display">
-        <div class="panel-heading">
-          <div>
-            <h2>Map Display Settings</h2>
-            <p>Control map center, zoom and map appearance.</p>
-          </div>
+      <div class="card">
+        <div class="card-title">
+          <h3>🗺 Map Display Settings</h3>
+          <span>MAP VIEW</span>
         </div>
 
-        <div class="section-title">Default Map Position</div>
-
-        <div class="grid">
-          <div class="field">
-            <label>Default Latitude</label>
-            <input type="number" step="any" id="centerLat" placeholder="22.342356">
-          </div>
-          <div class="field">
-            <label>Default Longitude</label>
-            <input type="number" step="any" id="centerLng" placeholder="91.797103">
-          </div>
-          <div class="field">
-            <label>Default Zoom Level</label>
-            <input type="number" min="1" max="19" id="zoomLevel">
-            <div class="help">Minimum 1, maximum 19.</div>
-          </div>
-          <div class="field">
-            <label>Maximum Zoom Level</label>
-            <input type="number" min="1" max="19" id="maxZoom">
-          </div>
-        </div>
-
-        <div class="section-title">Map Layer</div>
-
-        <div class="grid">
-          <div class="field">
-            <label>Map Type</label>
-            <select id="mapType">
-              <option value="osm">OpenStreetMap</option>
-              <option value="satellite">Satellite (requires configured tile provider)</option>
-            </select>
-            <div class="help">Satellite view requires a valid tile provider and may require an API key.</div>
-          </div>
-          <div class="field">
-            <label>Map Language / Display</label>
-            <select id="mapDisplay">
-              <option value="normal">Normal</option>
-              <option value="compact">Compact</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="actions">
-          <button class="btn primary" onclick="saveSettings()">Save Map Display</button>
-          <button class="btn muted-btn" onclick="resetDisplay()">Reset Map Display</button>
-        </div>
-      </section>
-
-      <!-- MARKERS -->
-      <section class="tab-panel" id="tab-markers">
-        <div class="panel-heading">
-          <div>
-            <h2>Marker Settings</h2>
-            <p>Customize Pole, Customer and Switch markers.</p>
-          </div>
-        </div>
-
-        <div class="section-title">Pole Marker</div>
-        <div class="grid">
-          <div class="field">
-            <label>Pole Color</label>
-            <input type="color" id="poleColor">
-          </div>
-          <div class="field">
-            <label>Pole Symbol</label>
-            <select id="poleSymbol">
-              <option value="P">P</option>
-              <option value="🗼">🗼</option>
-              <option value="●">●</option>
-              <option value="▲">▲</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="section-title">Customer Marker</div>
-        <div class="grid">
-          <div class="field">
-            <label>Customer Color</label>
-            <input type="color" id="customerColor">
-          </div>
-          <div class="field">
-            <label>Customer Symbol</label>
-            <select id="customerSymbol">
-              <option value="C">C</option>
-              <option value="🏠">🏠</option>
-              <option value="●">●</option>
-              <option value="H">H</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="section-title">Switch Marker</div>
-        <div class="grid">
-          <div class="field">
-            <label>Switch Color</label>
-            <input type="color" id="switchColor">
-          </div>
-          <div class="field">
-            <label>Switch Symbol</label>
-            <select id="switchSymbol">
-              <option value="S">S</option>
-              <option value="🔀">🔀</option>
-              <option value="◆">◆</option>
-              <option value="●">●</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="section-title">Marker Size</div>
         <div class="field">
-          <label>Marker Size (Pixels)</label>
-          <input type="number" min="20" max="60" id="markerSize">
+          <label>Map Type</label>
+          <select id="mapType">
+            <option value="road">Road Map</option>
+            <option value="satellite">Satellite</option>
+            <option value="terrain">Terrain</option>
+          </select>
         </div>
 
-        <div class="section-title">Live Preview</div>
-        <div class="preview-row">
-          <div id="polePreview" class="preview-marker">P</div>
-          <div id="customerPreview" class="preview-marker">C</div>
-          <div id="switchPreview" class="preview-marker">S</div>
-        </div>
-
-        <div class="actions">
-          <button class="btn primary" onclick="saveSettings()">Save Marker Settings</button>
-          <button class="btn muted-btn" onclick="updateMarkerPreview()">Preview</button>
-        </div>
-      </section>
-
-      <!-- WIRES -->
-      <section class="tab-panel" id="tab-wires">
-        <div class="panel-heading">
-          <div>
-            <h2>Wire / Connection Settings</h2>
-            <p>Customize network connection lines.</p>
-          </div>
-        </div>
-
-        <div class="grid">
+        <div class="grid2">
           <div class="field">
-            <label>Wire Color</label>
-            <input type="color" id="wireColor">
+            <label>Center Latitude</label>
+            <input id="centerLat" type="number" step="any">
           </div>
           <div class="field">
-            <label>Wire Thickness (Pixels)</label>
-            <input type="number" min="1" max="12" id="wireWeight">
-          </div>
-          <div class="field">
-            <label>Wire Style</label>
-            <select id="wireStyle">
-              <option value="solid">Solid</option>
-              <option value="dashed">Dashed</option>
-              <option value="dotted">Dotted</option>
-            </select>
-          </div>
-          <div class="field">
-            <label>Wire Opacity (%)</label>
-            <input type="number" min="10" max="100" id="wireOpacity">
+            <label>Center Longitude</label>
+            <input id="centerLng" type="number" step="any">
           </div>
         </div>
 
-        <div class="section-title">Connection Visibility</div>
+        <div class="field">
+          <label>Default Zoom Level: <span id="zoomValue">12</span></label>
+          <input id="zoomLevel" type="range" min="5" max="20" value="12"
+            oninput="zoomValue.textContent=this.value">
+        </div>
 
-        <div class="toggle-row">
+        <div class="field">
+          <label>Marker Size: <span id="markerSizeValue">34</span> px</label>
+          <input id="markerSize" type="range" min="20" max="60" value="34"
+            oninput="markerSizeValue.textContent=this.value">
+        </div>
+
+        <div class="row">
           <div>
-            <strong>Show Wire Connections</strong>
-            <small>Display network wires on the map.</small>
+            <div style="font-size:12px;font-weight:700">Show Marker Labels</div>
+            <div class="help">Location name under each marker</div>
           </div>
-          <input type="checkbox" id="showWires">
+          <input type="checkbox" class="switch" id="showMarkerLabels" checked>
         </div>
 
-        <div class="toggle-row">
+        <hr>
+
+        <div class="row">
           <div>
-            <strong>Allow Pole → Customer</strong>
-            <small>Allow pole to customer connections.</small>
+            <div style="font-size:12px;font-weight:700">Show All Wires</div>
+            <div class="help">Map-এর সব connection line দেখাবে</div>
           </div>
-          <input type="checkbox" id="allowPoleCustomer">
+          <input type="checkbox" class="switch" id="showWires" checked>
+        </div>
+      </div>
+
+      <!-- AREA LOCK -->
+      <div class="card">
+        <div class="card-title">
+          <h3>🔒 Area Lock Settings</h3>
+          <span>MAP BOUNDARY</span>
         </div>
 
-        <div class="toggle-row">
+        <div class="row">
           <div>
-            <strong>Allow Switch → Customer</strong>
-            <small>Allow switch to customer connections.</small>
+            <div style="font-size:12px;font-weight:700">Enable Area Lock</div>
+            <div class="help">Map নির্দিষ্ট এলাকার মধ্যে সীমাবদ্ধ রাখবে</div>
           </div>
-          <input type="checkbox" id="allowSwitchCustomer">
+          <input type="checkbox" class="switch" id="areaLockEnabled">
         </div>
 
-        <div class="toggle-row">
-          <div>
-            <strong>Allow Customer → Switch → Customer</strong>
-            <small>Allow two customers to connect through one switch.</small>
-          </div>
-          <input type="checkbox" id="allowCustomerSwitchCustomer">
+        <hr>
+
+        <div class="help">
+          Map-এ প্রথম ক্লিক করলে প্রথম Corner এবং দ্বিতীয় ক্লিক করলে বিপরীত Corner নির্ধারিত হবে।
         </div>
 
-        <div class="section-title">Wire Preview</div>
-        <div class="preview-row">
-          <div class="color-line" id="wirePreview"></div>
-          <span class="help">Example connection wire</span>
+        <div id="settingMap"></div>
+
+        <div class="area-actions">
+          <button class="btn primary" onclick="startAreaSelection()">Select Area</button>
+          <button class="btn" onclick="clearAreaSelection()">Clear Area</button>
         </div>
 
-        <div class="actions">
-          <button class="btn primary" onclick="saveSettings()">Save Wire Settings</button>
-          <button class="btn muted-btn" onclick="updateWirePreview()">Preview Wire</button>
+        <div class="area-info" id="areaInfo">
+          কোনো Area নির্ধারণ করা হয়নি।
         </div>
-      </section>
+      </div>
 
-      <!-- BACKUP / IMPORT -->
-      <section class="tab-panel" id="tab-backup">
-        <div class="panel-heading">
-          <div>
-            <h2>Export / Import Map Data</h2>
-            <p>Backup your complete map and restore it later.</p>
-          </div>
-        </div>
+    </section>
 
-        <div class="info-box">
-          JSON Export-এ থাকবে Locations, Wire Connections এবং Map Settings। Import করলে এগুলো একসঙ্গে Restore করা যাবে।
+    <!-- RIGHT COLUMN -->
+    <section>
+
+      <!-- WIRE SETTINGS -->
+      <div class="card">
+        <div class="card-title">
+          <h3>🔗 Wire / Connection Settings</h3>
+          <span>NETWORK LINE</span>
         </div>
 
-        <div class="cards">
-          <div class="stat">
-            <small>Total Locations</small>
-            <strong id="backupLocations">0</strong>
-          </div>
-          <div class="stat">
-            <small>Total Wires</small>
-            <strong id="backupWires">0</strong>
-          </div>
-          <div class="stat">
-            <small>Storage Status</small>
-            <strong style="font-size:14px;color:#34d399">LOCAL</strong>
-          </div>
+        <div class="field">
+          <label>Wire Color</label>
+          <input type="color" id="wireColor" value="#16b987">
         </div>
 
-        <div class="backup-card">
-          <h3>📦 Export Complete Map Backup (JSON)</h3>
-          <p>All locations, connections and settings will be exported into one JSON file.</p>
-          <button class="btn primary" onclick="exportJSON()">Export JSON Backup</button>
+        <div class="field">
+          <label>Wire Thickness: <span id="wireWeightValue">3</span> px</label>
+          <input type="range" id="wireWeight" min="1" max="10" value="3"
+            oninput="wireWeightValue.textContent=this.value">
         </div>
 
-        <div class="backup-card">
-          <h3>📄 Export Location List (CSV)</h3>
-          <p>Download all Pole, Customer and Switch records as a CSV spreadsheet.</p>
-          <button class="btn green" onclick="exportCSV()">Export CSV</button>
+        <div class="field">
+          <label>Wire Opacity: <span id="wireOpacityValue">90</span>%</label>
+          <input type="range" id="wireOpacity" min="10" max="100" value="90"
+            oninput="wireOpacityValue.textContent=this.value">
         </div>
 
-        <div class="backup-card">
-          <h3>📥 Import Map Backup (JSON)</h3>
-          <p>Restore a previously exported ONE ONLINE map JSON file. Existing data will be replaced after confirmation.</p>
-          <button class="btn orange" onclick="document.getElementById('fileInput').click()">Choose JSON File</button>
-          <input type="file" id="fileInput" accept=".json,application/json">
+        <div class="field">
+          <label>Wire Style</label>
+          <select id="wireStyle">
+            <option value="solid">Solid Line</option>
+            <option value="dashed">Dashed Line</option>
+            <option value="dotted">Dotted Line</option>
+          </select>
         </div>
 
-        <div class="backup-card">
-          <h3>🛟 Create Local Backup</h3>
-          <p>Download a backup of the current map data before making changes.</p>
-          <button class="btn muted-btn" onclick="exportJSON()">Download Backup Now</button>
+        <div class="help">
+          Fiber ও Drop Connection-এর জন্য Map-এ আলাদা Dashed/Dotted Style ব্যবহার করা হবে।
         </div>
-      </section>
+      </div>
 
-      <!-- DATA MANAGEMENT -->
-      <section class="tab-panel" id="tab-data">
-        <div class="panel-heading">
-          <div>
-            <h2>Data Management</h2>
-            <p>Review, restore or clear local map data.</p>
-          </div>
+      <!-- BACKUP -->
+      <div class="card">
+        <div class="card-title">
+          <h3>💾 Backup & Restore</h3>
+          <span>DATA SAFETY</span>
         </div>
 
-        <div class="cards">
-          <div class="stat">
-            <small>Pole</small>
-            <strong id="dataPole">0</strong>
-          </div>
-          <div class="stat">
-            <small>Customer</small>
-            <strong id="dataCustomer">0</strong>
-          </div>
-          <div class="stat">
-            <small>Switch</small>
-            <strong id="dataSwitch">0</strong>
-          </div>
+        <p class="help">
+          Map Settings এবং Custom Location Types JSON File হিসেবে Backup রাখতে পারবে।
+        </p>
+
+        <div class="form-actions">
+          <button class="btn primary" onclick="exportSettings()">Export JSON</button>
+          <button class="btn" onclick="document.getElementById('importFile').click()">Import JSON</button>
+          <input type="file" id="importFile" accept=".json,application/json"
+            style="display:none" onchange="importSettings(event)">
         </div>
 
-        <div class="backup-card">
-          <h3>🔄 Reload Saved Data</h3>
-          <p>Reload map data and settings from this browser's local storage.</p>
-          <button class="btn primary" onclick="reloadData()">Reload Data</button>
+        <div id="backupStatus" class="status"></div>
+      </div>
+
+      <!-- SAVE -->
+      <div class="card">
+        <div class="card-title">
+          <h3>⚙ Save Map Configuration</h3>
+          <span>GOOGLE SHEET</span>
         </div>
 
-        <div class="backup-card">
-          <h3>♻️ Reset Map Settings Only</h3>
-          <p>Restore default settings without deleting saved locations or wire connections.</p>
-          <button class="btn orange" onclick="resetSettings()">Reset Settings</button>
+        <div class="help">
+          Save করলে Map Entry এবং Map পেজ একই Google Sheet-এর Settings ব্যবহার করবে।
         </div>
 
-        <div class="warning-box">
-          <strong>⚠️ Danger Zone</strong><br>
-          Clear All Map Data permanently removes every location, wire connection and saved map setting from this browser. Export a backup first.
-        </div>
+        <hr>
 
-        <div class="backup-card">
-          <h3>🗑️ Clear All Map Data</h3>
-          <p>This action cannot be undone unless you have an exported backup.</p>
-          <button class="btn danger" onclick="clearAllData()">Clear All Map Data</button>
-        </div>
-      </section>
+        <button class="btn primary" style="width:100%" id="saveAllBtn"
+          onclick="saveAllSettings()">
+          💾 Save All Settings
+        </button>
 
-    </main>
+        <div id="mainStatus" class="status"></div>
+      </div>
+
+    </section>
   </div>
 
-  <div class="footer-note">
-    ONE ONLINE | MAP MANAGEMENT SYSTEM
+  <div class="footer">ONE ONLINE | MAP SETTINGS</div>
+</div>
+
+<!-- TYPE MODAL -->
+<div class="modal-backdrop" id="typeModal">
+  <div class="modal">
+    <h3 id="modalTitle">Add Location Type</h3>
+
+    <input type="hidden" id="editTypeId">
+
+    <div class="field">
+      <label>Type Name *</label>
+      <input id="typeName" placeholder="Example: Pump">
+    </div>
+
+    <div class="grid2">
+      <div class="field">
+        <label>Icon / Emoji *</label>
+        <input id="typeIcon" placeholder="Example: 💧" maxlength="12">
+        <div class="help">Emoji ব্যবহার করতে পারো।</div>
+      </div>
+
+      <div class="field">
+        <label>Marker Color</label>
+        <input id="typeColor" type="color" value="#168b68">
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn" onclick="closeTypeModal()">Cancel</button>
+      <button class="btn primary" onclick="saveType()">Save Type</button>
+    </div>
+
+    <div id="modalStatus" class="status"></div>
   </div>
 </div>
 
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
 <script>
-/* ==========================================
-   ONE ONLINE MAP SETTING
-   Shared localStorage key with Map Entry
-========================================== */
+/************************************************************
+ ONE ONLINE - MAP SETTING
+ Shared Google Apps Script API
+************************************************************/
+
+const API_URL =
+"https://script.google.com/macros/s/AKfycbxmDzfnY3LpvfvHjC4usnZiBT4BX4KZIjVoCGcSULikoTKQaC_mj7cbG_zUaiTyZ4sb8w/exec";
 
 const STORAGE_KEY = "ONE_ONLINE_MAP_DATA_V1";
 
-const DEFAULT_SETTINGS = {
-  autoSave:true,
-  confirmDelete:true,
-  showLocationNumber:true,
-  showLabels:true,
-  autoFit:false,
+const BUILTIN_TYPES = [
+  {name:"Customer",icon:"🏠",color:"#168b68"},
+  {name:"Pole",icon:"📍",color:"#e5a12c"},
+  {name:"Switch",icon:"🔀",color:"#287bd0"}
+];
 
-  centerLat:22.342356,
-  centerLng:91.797103,
-  zoomLevel:13,
-  maxZoom:19,
-  mapType:"osm",
-  mapDisplay:"normal",
-
-  poleColor:"#f59e0b",
-  poleSymbol:"P",
-
-  customerColor:"#1687f8",
-  customerSymbol:"C",
-
-  switchColor:"#10b981",
-  switchSymbol:"S",
-
-  markerSize:34,
-
-  wireColor:"#1687f8",
-  wireWeight:3,
-  wireStyle:"solid",
-  wireOpacity:90,
-  showWires:true,
-
-  allowPoleCustomer:true,
-  allowSwitchCustomer:true,
-  allowCustomerSwitchCustomer:true
-};
-
-let mapData = {
+let db = {
   locations:[],
   connections:[],
-  settings:{...DEFAULT_SETTINGS}
+  settings:{},
+  customTypes:[]
 };
 
-/* SAFE LOAD */
-function loadMapData(){
-  try{
-    const raw = localStorage.getItem(STORAGE_KEY);
+let settingMap = null;
+let areaPoints = [];
+let areaRectangle = null;
+let selectingArea = false;
+let saving = false;
 
-    if(raw){
-      const parsed = JSON.parse(raw);
+/* ---------------- HELPERS ---------------- */
 
-      mapData.locations = Array.isArray(parsed.locations)
-        ? parsed.locations : [];
-
-      mapData.connections = Array.isArray(parsed.connections)
-        ? parsed.connections : [];
-
-      mapData.settings = {
-        ...DEFAULT_SETTINGS,
-        ...(parsed.settings || {})
-      };
-    }else{
-      mapData.settings = {...DEFAULT_SETTINGS};
-    }
-
-  }catch(error){
-    console.error(error);
-    alert("Map data could not be loaded. Please check your browser storage.");
-    mapData = {
-      locations:[],
-      connections:[],
-      settings:{...DEFAULT_SETTINGS}
-    };
-  }
+function escapeHtml(value){
+  return String(value ?? "").replace(/[&<>"']/g,ch=>({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+  })[ch]);
 }
 
-/* SAVE SHARED DATA */
-function saveMapData(){
-  try{
-    localStorage.setItem(STORAGE_KEY,JSON.stringify({
-      locations:mapData.locations,
-      connections:mapData.connections,
-      settings:mapData.settings
-    }));
-    return true;
-  }catch(error){
-    console.error(error);
-    alert("Save failed. Browser storage may be full or unavailable.");
-    return false;
-  }
+function makeId(){
+  return "TYPE-" + Date.now() + "-" +
+    Math.random().toString(36).slice(2,7);
 }
 
-/* TABS */
-function openTab(name,button){
-  document.querySelectorAll(".tab-panel").forEach(panel=>{
-    panel.classList.remove("active");
-  });
-
-  document.querySelectorAll(".side-btn").forEach(btn=>{
-    btn.classList.remove("active");
-  });
-
-  document.getElementById("tab-"+name).classList.add("active");
-
-  if(button) button.classList.add("active");
+function isBuiltIn(name){
+  return BUILTIN_TYPES.some(x=>
+    x.name.toLowerCase() === String(name).toLowerCase()
+  );
 }
 
-/* FORM HELPERS */
-function setValue(id,value){
+function showStatus(id,message,type="info"){
   const el = document.getElementById(id);
   if(!el) return;
-
-  if(el.type === "checkbox"){
-    el.checked = Boolean(value);
-  }else{
-    el.value = value ?? "";
-  }
+  el.textContent = message;
+  el.className = "status " + type;
 }
 
-function getValue(id){
+function hideStatus(id){
   const el = document.getElementById(id);
-  if(!el) return null;
-
-  if(el.type === "checkbox") return el.checked;
-
-  if(el.type === "number"){
-    return el.value === "" ? null : Number(el.value);
-  }
-
-  return el.value;
+  if(!el) return;
+  el.textContent = "";
+  el.className = "status";
 }
 
-/* LOAD SETTINGS INTO FORM */
-function loadSettingsToForm(){
-  const s = mapData.settings;
+function boolValue(value,defaultValue=true){
+  if(value === undefined || value === null) return defaultValue;
+  return value === true || value === "true" || value === 1;
+}
 
-  Object.keys(DEFAULT_SETTINGS).forEach(key=>{
-    setValue(key,s[key]);
+function getTypeCount(type){
+  return db.locations.filter(x=>
+    String(x.type || "").toLowerCase() === String(type).toLowerCase()
+  ).length;
+}
+
+function isTypeHidden(type){
+  const hidden = Array.isArray(db.settings.hiddenTypes)
+    ? db.settings.hiddenTypes.map(x=>String(x).toLowerCase())
+    : [];
+
+  return hidden.includes(String(type).toLowerCase());
+}
+
+/* ---------------- LOCAL STORAGE ---------------- */
+
+function loadLocal(){
+  try{
+    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+
+    db.locations = Array.isArray(saved.locations) ? saved.locations : [];
+    db.connections = Array.isArray(saved.connections) ? saved.connections : [];
+    db.settings = saved.settings || {};
+    db.customTypes = Array.isArray(saved.customTypes) ? saved.customTypes : [];
+  }catch(e){
+    console.warn(e);
+  }
+}
+
+function saveLocal(){
+  try{
+    localStorage.setItem(STORAGE_KEY,JSON.stringify(db));
+  }catch(e){}
+}
+
+/* ---------------- API ---------------- */
+
+async function getRemoteData(){
+  const response = await fetch(API_URL+"?action=getMapData&t="+Date.now(),{
+    method:"GET",
+    cache:"no-store"
   });
 
-  updateMarkerPreview();
-  updateWirePreview();
-}
+  if(!response.ok) throw new Error("API connection failed");
 
-/* READ SETTINGS FROM FORM */
-function readSettingsFromForm(){
-  const newSettings = {};
+  const result = await response.json();
 
-  Object.keys(DEFAULT_SETTINGS).forEach(key=>{
-    newSettings[key] = getValue(key);
-  });
-
-  return newSettings;
-}
-
-/* VALIDATE */
-function validateSettings(s){
-  if(!Number.isFinite(s.centerLat) || s.centerLat < -90 || s.centerLat > 90){
-    alert("Invalid latitude. Please enter a value between -90 and 90.");
-    return false;
+  if(result.success === false){
+    throw new Error(result.message || "Load failed");
   }
 
-  if(!Number.isFinite(s.centerLng) || s.centerLng < -180 || s.centerLng > 180){
-    alert("Invalid longitude. Please enter a value between -180 and 180.");
-    return false;
-  }
+  const data = result.data || result;
 
-  if(!Number.isInteger(s.zoomLevel) || s.zoomLevel < 1 || s.zoomLevel > 19){
-    alert("Zoom Level must be between 1 and 19.");
-    return false;
-  }
-
-  if(!Number.isInteger(s.maxZoom) || s.maxZoom < 1 || s.maxZoom > 19){
-    alert("Maximum Zoom must be between 1 and 19.");
-    return false;
-  }
-
-  if(s.markerSize < 20 || s.markerSize > 60){
-    alert("Marker size must be between 20 and 60.");
-    return false;
-  }
-
-  if(s.wireWeight < 1 || s.wireWeight > 12){
-    alert("Wire thickness must be between 1 and 12.");
-    return false;
-  }
-
-  if(s.wireOpacity < 10 || s.wireOpacity > 100){
-    alert("Wire opacity must be between 10 and 100.");
-    return false;
-  }
-
-  if(s.maxZoom < s.zoomLevel){
-    alert("Maximum Zoom cannot be smaller than Default Zoom.");
-    return false;
-  }
-
-  return true;
+  return {
+    locations:Array.isArray(data.locations)?data.locations:[],
+    connections:Array.isArray(data.connections)?data.connections:[],
+    settings:data.settings || {},
+    customTypes:Array.isArray(data.customTypes)?data.customTypes:[]
+  };
 }
 
-/* SAVE SETTINGS */
-function saveSettings(){
-  const settings = readSettingsFromForm();
-
-  if(!validateSettings(settings)) return;
-
-  mapData.settings = settings;
-
-  if(saveMapData()){
-    updateAllStats();
-    updateMarkerPreview();
-    updateWirePreview();
-    alert("Map settings saved successfully!");
-  }
-}
-
-/* RESET SETTINGS */
-function resetSettings(){
-  if(!confirm("Reset all map settings to default values?")) return;
-
-  mapData.settings = {...DEFAULT_SETTINGS};
-
-  if(saveMapData()){
-    loadSettingsToForm();
-    updateAllStats();
-    alert("Default settings restored.");
-  }
-}
-
-function resetDisplay(){
-  mapData.settings.centerLat = DEFAULT_SETTINGS.centerLat;
-  mapData.settings.centerLng = DEFAULT_SETTINGS.centerLng;
-  mapData.settings.zoomLevel = DEFAULT_SETTINGS.zoomLevel;
-  mapData.settings.maxZoom = DEFAULT_SETTINGS.maxZoom;
-  mapData.settings.mapType = DEFAULT_SETTINGS.mapType;
-  mapData.settings.mapDisplay = DEFAULT_SETTINGS.mapDisplay;
-
-  saveMapData();
-  loadSettingsToForm();
-  alert("Map display defaults restored.");
-}
-
-/* MARKER PREVIEW */
-function updateMarkerPreview(){
-  const s = readSettingsFromForm();
-  const size = Math.max(20,Math.min(60,Number(s.markerSize)||34));
-
-  const items = [
-    ["polePreview",s.poleColor,s.poleSymbol],
-    ["customerPreview",s.customerColor,s.customerSymbol],
-    ["switchPreview",s.switchColor,s.switchSymbol]
-  ];
-
-  items.forEach(([id,color,symbol])=>{
-    const el = document.getElementById(id);
-    el.style.background = color;
-    el.textContent = symbol;
-    el.style.width = size+"px";
-    el.style.height = size+"px";
-    el.style.fontSize = Math.max(11,size*.42)+"px";
-  });
-}
-
-/* WIRE PREVIEW */
-function updateWirePreview(){
-  const s = readSettingsFromForm();
-  const el = document.getElementById("wirePreview");
-
-  el.style.borderTopColor = s.wireColor;
-  el.style.borderTopWidth = s.wireWeight+"px";
-  el.style.opacity = s.wireOpacity/100;
-
-  if(s.wireStyle === "dashed"){
-    el.style.borderTopStyle = "dashed";
-  }else if(s.wireStyle === "dotted"){
-    el.style.borderTopStyle = "dotted";
-  }else{
-    el.style.borderTopStyle = "solid";
-  }
-
-  el.style.display = s.showWires ? "block" : "none";
-}
-
-/* STATS */
-function updateAllStats(){
-  const locations = mapData.locations;
-  const connections = mapData.connections;
-
-  const count = type=>locations.filter(x=>x.type===type).length;
-
-  document.getElementById("backupLocations").textContent = locations.length;
-  document.getElementById("backupWires").textContent = connections.length;
-
-  document.getElementById("dataPole").textContent = count("pole");
-  document.getElementById("dataCustomer").textContent = count("customer");
-  document.getElementById("dataSwitch").textContent = count("switch");
-}
-
-/* DOWNLOAD FILE */
-function downloadFile(content,filename,mime){
-  const blob = new Blob([content],{type:mime});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-
-  setTimeout(()=>URL.revokeObjectURL(url),1000);
-}
-
-function getDateStamp(){
-  return new Date().toISOString().slice(0,10);
-}
-
-/* EXPORT JSON */
-function exportJSON(){
-  const backup = {
-    app:"ONE ONLINE",
-    type:"MAP_BACKUP",
-    version:1,
-    exportedAt:new Date().toISOString(),
-    locations:mapData.locations,
-    connections:mapData.connections,
-    settings:mapData.settings
+async function sendRemoteData(){
+  const payload = {
+    action:"saveMapData",
+    data:{
+      locations:db.locations,
+      connections:db.connections,
+      settings:db.settings,
+      customTypes:db.customTypes
+    }
   };
 
-  downloadFile(
-    JSON.stringify(backup,null,2),
-    "ONE_ONLINE_MAP_BACKUP_"+getDateStamp()+".json",
-    "application/json"
+  const response = await fetch(API_URL,{
+    method:"POST",
+    headers:{
+      "Content-Type":"text/plain;charset=utf-8"
+    },
+    body:JSON.stringify(payload)
+  });
+
+  if(!response.ok) throw new Error("Server save failed");
+
+  const result = await response.json();
+
+  if(result.success === false){
+    throw new Error(result.message || "Save failed");
+  }
+
+  return result;
+}
+
+async function loadSettings(){
+  showStatus("mainStatus","Google Sheet থেকে Settings Load হচ্ছে...","info");
+
+  try{
+    const data = await getRemoteData();
+
+    db = data;
+    saveLocal();
+
+    fillSettingsForm();
+    renderTypes();
+    renderArea();
+    updateAreaInfo();
+
+    showStatus("mainStatus","Google Sheet থেকে Settings Load হয়েছে।","success");
+  }catch(error){
+    console.error(error);
+
+    loadLocal();
+    fillSettingsForm();
+    renderTypes();
+    renderArea();
+    updateAreaInfo();
+
+    showStatus(
+      "mainStatus",
+      "Google Sheet Load হয়নি। Local Backup Data দেখানো হচ্ছে। API ও Deployment পরীক্ষা করো।",
+      "error"
+    );
+  }
+}
+
+/* ---------------- TYPE MANAGEMENT ---------------- */
+
+function getAllTypes(){
+  const list = BUILTIN_TYPES.map(x=>({
+    ...x,
+    builtin:true
+  }));
+
+  db.customTypes.forEach(item=>{
+    if(!item.name) return;
+
+    // Built-in names are not duplicated in custom types.
+    if(isBuiltIn(item.name)) return;
+
+    list.push({
+      id:item.id,
+      name:item.name,
+      icon:item.icon || "📌",
+      color:item.color || "#168b68",
+      builtin:false
+    });
+  });
+
+  return list;
+}
+
+function renderTypes(){
+  const container = document.getElementById("typeList");
+  const types = getAllTypes();
+
+  if(!types.length){
+    container.innerHTML = '<div class="empty">No types available.</div>';
+    return;
+  }
+
+  container.innerHTML = types.map(item=>{
+    const hidden = isTypeHidden(item.name);
+    const count = getTypeCount(item.name);
+
+    return `
+      <div class="type-card">
+        <div class="type-head">
+          <div class="type-icon"
+            style="border-bottom:3px solid ${escapeHtml(item.color)}">
+            ${escapeHtml(item.icon)}
+          </div>
+
+          <div style="min-width:0">
+            <div class="type-name">${escapeHtml(item.name)}</div>
+            <div class="type-sub">
+              ${count} locations · ${item.builtin?"Default Type":"Custom Type"}
+            </div>
+          </div>
+
+          <div class="type-controls">
+            <span style="font-size:10px;color:${hidden?"#ff9ba2":"#8de0b9"}">
+              ${hidden?"HIDDEN":"VISIBLE"}
+            </span>
+            <input type="checkbox" class="switch"
+              ${hidden?"":"checked"}
+              onchange="toggleTypeVisibility('${escapeHtml(item.name)}',this.checked)">
+          </div>
+        </div>
+
+        ${!item.builtin ? `
+          <div class="type-actions">
+            <button class="btn small" onclick="editType('${escapeHtml(item.id)}')">✎ Edit</button>
+            <button class="btn small danger" onclick="deleteType('${escapeHtml(item.id)}')">Delete</button>
+          </div>
+        ` : `
+          <div class="help">Default system type. Hide / Show করা যাবে।</div>
+        `}
+      </div>
+    `;
+  }).join("");
+}
+
+function toggleTypeVisibility(type,visible){
+  const hidden = Array.isArray(db.settings.hiddenTypes)
+    ? [...db.settings.hiddenTypes]
+    : [];
+
+  const exists = hidden.findIndex(x=>
+    String(x).toLowerCase() === String(type).toLowerCase()
+  );
+
+  if(visible){
+    if(exists >= 0) hidden.splice(exists,1);
+  }else{
+    if(exists < 0) hidden.push(type);
+  }
+
+  db.settings.hiddenTypes = hidden;
+
+  saveLocal();
+  renderTypes();
+
+  showStatus(
+    "typeStatus",
+    type + (visible ? " Map-এ Show হবে।" : " Map থেকে Hide হবে।") +
+    " পরিবর্তন কার্যকর করতে Save All Settings চাপো।",
+    "info"
   );
 }
 
-/* CSV HELPERS */
-function csvEscape(value){
-  const str = String(value ?? "");
-  return '"' + str.replace(/"/g,'""') + '"';
+function openTypeModal(){
+  document.getElementById("modalTitle").textContent = "Add New Location Type";
+  document.getElementById("editTypeId").value = "";
+  document.getElementById("typeName").value = "";
+  document.getElementById("typeIcon").value = "📌";
+  document.getElementById("typeColor").value = "#168b68";
+  hideStatus("modalStatus");
+  document.getElementById("typeModal").classList.add("show");
 }
 
-/* EXPORT CSV */
-function exportCSV(){
-  const headers = [
-    "ID","Name","Type","Location Number",
-    "Phone","Address","Details","Latitude","Longitude"
-  ];
+function closeTypeModal(){
+  document.getElementById("typeModal").classList.remove("show");
+}
 
-  const rows = mapData.locations.map(item=>[
-    item.id,
-    item.name,
-    item.type,
-    item.locationNumber,
-    item.phone,
-    item.address,
-    item.details,
-    item.lat,
-    item.lng
-  ]);
+function editType(id){
+  const item = db.customTypes.find(x=>String(x.id) === String(id));
+  if(!item) return;
 
-  const csv = [
-    headers.map(csvEscape).join(","),
-    ...rows.map(row=>row.map(csvEscape).join(","))
-  ].join("\r\n");
+  document.getElementById("modalTitle").textContent = "Edit Location Type";
+  document.getElementById("editTypeId").value = item.id;
+  document.getElementById("typeName").value = item.name || "";
+  document.getElementById("typeIcon").value = item.icon || "📌";
+  document.getElementById("typeColor").value = item.color || "#168b68";
 
-  downloadFile(
-    "\uFEFF"+csv,
-    "ONE_ONLINE_MAP_LOCATIONS_"+getDateStamp()+".csv",
-    "text/csv;charset=utf-8"
+  hideStatus("modalStatus");
+  document.getElementById("typeModal").classList.add("show");
+}
+
+function saveType(){
+  const id = document.getElementById("editTypeId").value;
+  const name = document.getElementById("typeName").value.trim();
+  const icon = document.getElementById("typeIcon").value.trim();
+  const color = document.getElementById("typeColor").value;
+
+  if(!name || !icon){
+    showStatus("modalStatus","Type Name এবং Icon দিতে হবে।","error");
+    return;
+  }
+
+  if(isBuiltIn(name)){
+    showStatus("modalStatus","এই নামটি System Type হিসেবে আগে থেকেই আছে।","error");
+    return;
+  }
+
+  const duplicate = db.customTypes.some(x=>
+    String(x.id) !== String(id) &&
+    String(x.name).toLowerCase() === name.toLowerCase()
+  );
+
+  if(duplicate){
+    showStatus("modalStatus","এই Type Name আগে থেকেই আছে।","error");
+    return;
+  }
+
+  if(id){
+    const old = db.customTypes.find(x=>String(x.id) === String(id));
+    if(!old) return;
+
+    const oldName = old.name;
+    old.name = name;
+    old.icon = icon;
+    old.color = color;
+
+    // Update existing locations using the old type name.
+    db.locations.forEach(location=>{
+      if(String(location.type).toLowerCase() === String(oldName).toLowerCase()){
+        location.type = name;
+        location.icon = icon;
+        location.color = color;
+      }
+    });
+
+    // Keep visibility setting consistent with renamed type.
+    const hidden = db.settings.hiddenTypes || [];
+    db.settings.hiddenTypes = hidden.map(x=>
+      String(x).toLowerCase() === String(oldName).toLowerCase() ? name : x
+    );
+  }else{
+    db.customTypes.push({
+      id:makeId(),
+      name:name,
+      icon:icon,
+      color:color,
+      createdAt:new Date().toISOString()
+    });
+  }
+
+  saveLocal();
+  renderTypes();
+  closeTypeModal();
+
+  showStatus(
+    "typeStatus",
+    "Location Type Update হয়েছে। Google Sheet-এ পাঠাতে Save All Settings চাপো।",
+    "success"
   );
 }
 
-/* VALIDATE IMPORT DATA */
-function validateImport(data){
-  if(!data || typeof data !== "object") return false;
+function deleteType(id){
+  const item = db.customTypes.find(x=>String(x.id) === String(id));
+  if(!item) return;
 
-  if(!Array.isArray(data.locations) || !Array.isArray(data.connections)){
-    return false;
+  const used = db.locations.filter(x=>
+    String(x.type).toLowerCase() === String(item.name).toLowerCase()
+  ).length;
+
+  let message = "এই Custom Type Delete করতে চাও?";
+
+  if(used){
+    message += "\n\nএই Type-এর " + used +
+      "টি Location আছে। সেগুলো Delete হবে না, তবে Type Configuration সরিয়ে দেওয়া হবে।";
   }
 
-  const validTypes = ["pole","customer","switch"];
-  const ids = new Set();
+  if(!confirm(message)) return;
 
-  for(const item of data.locations){
-    if(!item || typeof item !== "object") return false;
-    if(typeof item.id !== "string" || !item.id) return false;
-    if(ids.has(item.id)) return false;
-    ids.add(item.id);
+  db.customTypes = db.customTypes.filter(x=>String(x.id) !== String(id));
 
-    if(!validTypes.includes(item.type)) return false;
-    if(typeof item.name !== "string") return false;
+  db.settings.hiddenTypes = (db.settings.hiddenTypes || []).filter(x=>
+    String(x).toLowerCase() !== String(item.name).toLowerCase()
+  );
 
-    if(!Number.isFinite(Number(item.lat)) ||
-       !Number.isFinite(Number(item.lng))) return false;
+  saveLocal();
+  renderTypes();
 
-    if(Number(item.lat) < -90 || Number(item.lat) > 90 ||
-       Number(item.lng) < -180 || Number(item.lng) > 180) return false;
-  }
-
-  for(const connection of data.connections){
-    if(!connection || typeof connection !== "object") return false;
-    if(!ids.has(connection.from) || !ids.has(connection.to)) return false;
-    if(connection.from === connection.to) return false;
-  }
-
-  return true;
+  showStatus(
+    "typeStatus",
+    "Custom Type Delete হয়েছে। Save All Settings চাপো।",
+    "success"
+  );
 }
 
-/* IMPORT JSON */
-document.getElementById("fileInput").addEventListener("change",function(e){
-  const file = e.target.files[0];
+/* ---------------- FORM LOAD / SAVE ---------------- */
+
+function fillSettingsForm(){
+  const s = db.settings || {};
+
+  document.getElementById("mapType").value = s.mapType || "road";
+  document.getElementById("centerLat").value = s.centerLat ?? 22.3569;
+  document.getElementById("centerLng").value = s.centerLng ?? 91.7832;
+
+  document.getElementById("zoomLevel").value = s.zoomLevel ?? 12;
+  document.getElementById("zoomValue").textContent = s.zoomLevel ?? 12;
+
+  document.getElementById("markerSize").value = s.markerSize ?? 34;
+  document.getElementById("markerSizeValue").textContent = s.markerSize ?? 34;
+
+  document.getElementById("showMarkerLabels").checked =
+    boolValue(s.showMarkerLabels,true);
+
+  document.getElementById("showWires").checked =
+    boolValue(s.showWires,true);
+
+  document.getElementById("wireColor").value = s.wireColor || "#16b987";
+
+  document.getElementById("wireWeight").value = s.wireWeight ?? 3;
+  document.getElementById("wireWeightValue").textContent = s.wireWeight ?? 3;
+
+  const opacity = Math.round(Number(s.wireOpacity ?? .9) * 100);
+  document.getElementById("wireOpacity").value = opacity;
+  document.getElementById("wireOpacityValue").textContent = opacity;
+
+  document.getElementById("wireStyle").value = s.wireStyle || "solid";
+
+  const area = s.lockedArea || {};
+  document.getElementById("areaLockEnabled").checked =
+    boolValue(area.enabled,false);
+}
+
+/* ---------------- COLLECT SETTINGS ---------------- */
+
+function collectSettings(){
+  const lat = Number(document.getElementById("centerLat").value);
+  const lng = Number(document.getElementById("centerLng").value);
+
+  if(!Number.isFinite(lat) || lat < -90 || lat > 90){
+    throw new Error("Center Latitude সঠিক নয়।");
+  }
+
+  if(!Number.isFinite(lng) || lng < -180 || lng > 180){
+    throw new Error("Center Longitude সঠিক নয়।");
+  }
+
+  const old = db.settings || {};
+
+  db.settings = {
+    ...old,
+
+    mapType:document.getElementById("mapType").value,
+
+    centerLat:lat,
+    centerLng:lng,
+
+    zoomLevel:Number(document.getElementById("zoomLevel").value),
+    markerSize:Number(document.getElementById("markerSize").value),
+
+    showMarkerLabels:document.getElementById("showMarkerLabels").checked,
+    showWires:document.getElementById("showWires").checked,
+
+    wireColor:document.getElementById("wireColor").value,
+    wireWeight:Number(document.getElementById("wireWeight").value),
+    wireOpacity:Number(document.getElementById("wireOpacity").value)/100,
+    wireStyle:document.getElementById("wireStyle").value,
+
+    hiddenTypes:Array.isArray(old.hiddenTypes) ? old.hiddenTypes : [],
+
+    lockedArea:{
+      enabled:document.getElementById("areaLockEnabled").checked,
+      southWest:old.lockedArea?.southWest || null,
+      northEast:old.lockedArea?.northEast || null
+    }
+  };
+}
+
+/* ---------------- SAVE SETTINGS ---------------- */
+
+async function saveAllSettings(){
+  if(saving) return;
+
+  try{
+    collectSettings();
+  }catch(error){
+    showStatus("mainStatus",error.message,"error");
+    return;
+  }
+
+  saving = true;
+
+  const button = document.getElementById("saveAllBtn");
+  button.disabled = true;
+  button.textContent = "Saving...";
+
+  saveLocal();
+
+  try{
+    await sendRemoteData();
+
+    saveLocal();
+
+    showStatus(
+      "mainStatus",
+      "সব Map Settings, Hide/Show এবং Custom Types Google Sheet-এ Save হয়েছে।",
+      "success"
+    );
+
+    showStatus(
+      "typeStatus",
+      "Type Settings সফলভাবে Save হয়েছে।",
+      "success"
+    );
+
+    showStatus(
+      "backupStatus",
+      "Settings Saved Successfully.",
+      "success"
+    );
+
+    if(settingMap){
+      settingMap.invalidateSize();
+      renderArea();
+    }
+  }catch(error){
+    console.error(error);
+
+    showStatus(
+      "mainStatus",
+      "Local Backup রাখা হয়েছে, কিন্তু Google Sheet Save হয়নি। API/Deployment পরীক্ষা করো। " + error.message,
+      "error"
+    );
+  }finally{
+    saving = false;
+    button.disabled = false;
+    button.textContent = "💾 Save All Settings";
+  }
+}
+
+/* ---------------- AREA LOCK MAP ---------------- */
+
+function initSettingMap(){
+  if(settingMap) return;
+
+  settingMap = L.map("settingMap").setView([22.3569,91.7832],12);
+
+  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{
+    maxZoom:19,
+    attribution:"© OpenStreetMap contributors"
+  }).addTo(settingMap);
+
+  settingMap.on("click",function(event){
+    if(!selectingArea) return;
+
+    areaPoints.push({
+      lat:event.latlng.lat,
+      lng:event.latlng.lng
+    });
+
+    if(areaPoints.length === 1){
+      updateAreaInfo();
+      showStatus("mainStatus","প্রথম Corner নেওয়া হয়েছে। এবার বিপরীত Corner-এ Click করো।","info");
+    }
+
+    if(areaPoints.length === 2){
+      selectingArea = false;
+
+      const bounds = L.latLngBounds(
+        [areaPoints[0].lat,areaPoints[0].lng],
+        [areaPoints[1].lat,areaPoints[1].lng]
+      );
+
+      if(areaRectangle) settingMap.removeLayer(areaRectangle);
+
+      areaRectangle = L.rectangle(bounds,{
+        color:"#13b987",
+        weight:2,
+        fillOpacity:.10,
+        dashArray:"7 5"
+      }).addTo(settingMap);
+
+      const sw = bounds.getSouthWest();
+      const ne = bounds.getNorthEast();
+
+      db.settings.lockedArea = {
+        enabled:true,
+        southWest:{lat:sw.lat,lng:sw.lng},
+        northEast:{lat:ne.lat,lng:ne.lng}
+      };
+
+      document.getElementById("areaLockEnabled").checked = true;
+
+      updateAreaInfo();
+
+      showStatus(
+        "mainStatus",
+        "Area তৈরি হয়েছে। Save All Settings চাপলে Map-এ Area Lock চালু হবে।",
+        "success"
+      );
+    }
+  });
+}
+
+function startAreaSelection(){
+  if(!settingMap) initSettingMap();
+
+  areaPoints = [];
+  selectingArea = true;
+
+  if(areaRectangle){
+    settingMap.removeLayer(areaRectangle);
+    areaRectangle = null;
+  }
+
+  updateAreaInfo();
+
+  showStatus(
+    "mainStatus",
+    "প্রথম Corner-এ Click করো। তারপর দ্বিতীয় Corner-এ Click করো।",
+    "info"
+  );
+}
+
+function clearAreaSelection(){
+  if(areaRectangle && settingMap){
+    settingMap.removeLayer(areaRectangle);
+  }
+
+  areaRectangle = null;
+  areaPoints = [];
+  selectingArea = false;
+
+  db.settings.lockedArea = {
+    enabled:false,
+    southWest:null,
+    northEast:null
+  };
+
+  document.getElementById("areaLockEnabled").checked = false;
+
+  updateAreaInfo();
+
+  showStatus("mainStatus","Area Lock Clear করা হয়েছে। Save All Settings চাপো।","info");
+}
+
+function renderArea(){
+  if(!settingMap) return;
+
+  if(areaRectangle){
+    settingMap.removeLayer(areaRectangle);
+    areaRectangle = null;
+  }
+
+  const area = db.settings.lockedArea;
+
+  if(!area || !area.southWest || !area.northEast){
+    updateAreaInfo();
+    return;
+  }
+
+  const bounds = L.latLngBounds(
+    [Number(area.southWest.lat),Number(area.southWest.lng)],
+    [Number(area.northEast.lat),Number(area.northEast.lng)]
+  );
+
+  areaRectangle = L.rectangle(bounds,{
+    color:"#13b987",
+    weight:2,
+    fillOpacity:.10,
+    dashArray:"7 5"
+  }).addTo(settingMap);
+
+  settingMap.fitBounds(bounds);
+  updateAreaInfo();
+}
+
+function updateAreaInfo(){
+  const el = document.getElementById("areaInfo");
+
+  if(selectingArea){
+    el.textContent = areaPoints.length === 0
+      ? "প্রথম Corner নির্বাচন করো।"
+      : "প্রথম Corner নেওয়া হয়েছে। এখন দ্বিতীয় Corner নির্বাচন করো।";
+    return;
+  }
+
+  const area = db.settings.lockedArea;
+
+  if(!area || !area.southWest || !area.northEast){
+    el.textContent = "কোনো Area নির্ধারণ করা হয়নি।";
+    return;
+  }
+
+  el.innerHTML = `
+    <b>South West:</b> ${Number(area.southWest.lat).toFixed(6)},
+    ${Number(area.southWest.lng).toFixed(6)}<br>
+    <b>North East:</b> ${Number(area.northEast.lat).toFixed(6)},
+    ${Number(area.northEast.lng).toFixed(6)}<br>
+    <b>Status:</b> ${area.enabled ? "Enabled" : "Disabled"}
+  `;
+}
+
+/* ---------------- BACKUP EXPORT ---------------- */
+
+function exportSettings(){
+  try{
+    collectSettings();
+
+    const backup = {
+      app:"ONE ONLINE MAP SETTINGS",
+      version:"1.0",
+      exportedAt:new Date().toISOString(),
+      settings:db.settings,
+      customTypes:db.customTypes
+    };
+
+    const blob = new Blob(
+      [JSON.stringify(backup,null,2)],
+      {type:"application/json"}
+    );
+
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+
+    a.href = url;
+    a.download = "one-online-map-settings.json";
+    a.click();
+
+    URL.revokeObjectURL(url);
+
+    showStatus("backupStatus","Settings JSON Export হয়েছে।","success");
+  }catch(error){
+    showStatus("backupStatus",error.message,"error");
+  }
+}
+
+/* ---------------- BACKUP IMPORT ---------------- */
+
+function importSettings(event){
+  const file = event.target.files[0];
   if(!file) return;
 
   const reader = new FileReader();
 
   reader.onload = function(){
     try{
-      const imported = JSON.parse(reader.result);
+      const backup = JSON.parse(reader.result);
 
-      if(!validateImport(imported)){
-        alert("Invalid map backup file. Please select a valid ONE ONLINE JSON backup.");
-        return;
+      if(!backup.settings || typeof backup.settings !== "object"){
+        throw new Error("Invalid settings backup file.");
       }
 
-      if(!confirm(
-        "Import this backup?\n\n" +
-        "Current locations and connections will be replaced."
-      )) return;
+      if(!confirm("বর্তমান Map Settings-এর পরিবর্তে Backup Settings Import করতে চাও?")) return;
 
-      mapData.locations = imported.locations;
-      mapData.connections = imported.connections;
-
-      mapData.settings = {
-        ...DEFAULT_SETTINGS,
-        ...(imported.settings || {})
+      db.settings = {
+        ...db.settings,
+        ...backup.settings
       };
 
-      if(saveMapData()){
-        loadSettingsToForm();
-        updateAllStats();
-        alert("Map backup imported successfully!");
+      if(Array.isArray(backup.customTypes)){
+        db.customTypes = backup.customTypes;
       }
 
+      saveLocal();
+      fillSettingsForm();
+      renderTypes();
+      renderArea();
+      updateAreaInfo();
+
+      showStatus(
+        "backupStatus",
+        "Backup Import হয়েছে। Google Sheet-এ পাঠাতে Save All Settings চাপো।",
+        "success"
+      );
     }catch(error){
-      console.error(error);
-      alert("Could not read this JSON file.");
-    }finally{
-      e.target.value = "";
+      showStatus("backupStatus","Import Error: "+error.message,"error");
     }
+
+    event.target.value = "";
   };
 
   reader.readAsText(file);
-});
-
-/* RELOAD */
-function reloadData(){
-  loadMapData();
-  loadSettingsToForm();
-  updateAllStats();
-  alert("Saved map data reloaded.");
 }
 
-/* CLEAR ALL */
-function clearAllData(){
-  const first = confirm(
-    "WARNING!\n\nThis will permanently delete all map locations, wires and settings from this browser.\n\nContinue?"
-  );
+/* ---------------- NAVIGATION ---------------- */
 
-  if(!first) return;
-
-  const second = confirm(
-    "Are you absolutely sure?\n\nPlease make sure you have downloaded a backup."
-  );
-
-  if(!second) return;
-
-  mapData = {
-    locations:[],
-    connections:[],
-    settings:{...DEFAULT_SETTINGS}
-  };
-
-  if(saveMapData()){
-    loadSettingsToForm();
-    updateAllStats();
-    alert("All local map data has been cleared.");
+function goToMap(){
+  if(window.parent && window.parent !== window){
+    window.parent.postMessage({
+      type:"ONE_ONLINE_NAVIGATE",
+      page:"map"
+    },"*");
+  }else{
+    window.location.href = "map.html";
   }
 }
 
-/* INITIALIZE */
-loadMapData();
-loadSettingsToForm();
-updateAllStats();
+/* ---------------- START ---------------- */
 
-/* PREVIEW EVENTS */
-[
-  "poleColor","poleSymbol",
-  "customerColor","customerSymbol",
-  "switchColor","switchSymbol","markerSize"
-].forEach(id=>{
-  document.getElementById(id).addEventListener("input",updateMarkerPreview);
-  document.getElementById(id).addEventListener("change",updateMarkerPreview);
+loadLocal();
+fillSettingsForm();
+renderTypes();
+
+window.addEventListener("load",()=>{
+  initSettingMap();
+  renderArea();
+
+  setTimeout(()=>{
+    if(settingMap) settingMap.invalidateSize();
+  },250);
+
+  loadSettings();
 });
 
-[
-  "wireColor","wireWeight","wireStyle","wireOpacity","showWires"
-].forEach(id=>{
-  document.getElementById(id).addEventListener("input",updateWirePreview);
-  document.getElementById(id).addEventListener("change",updateWirePreview);
+window.addEventListener("resize",()=>{
+  if(settingMap) settingMap.invalidateSize();
 });
+
 </script>
 </body>
 </html>
