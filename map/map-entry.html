@@ -1,0 +1,997 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Map Entry | ONE ONLINE</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+
+<style>
+:root{
+  --bg:#0b1220;
+  --panel:#111c2e;
+  --panel2:#172338;
+  --text:#e8f0fc;
+  --muted:#91a3bd;
+  --line:#293951;
+  --primary:#1687f8;
+  --green:#10b981;
+  --red:#ef4444;
+  --orange:#f59e0b;
+  --shadow:0 12px 30px rgba(0,0,0,.18);
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  padding:20px;
+  background:var(--bg);
+  color:var(--text);
+  font-family:Inter,Arial,sans-serif;
+}
+button,input,select,textarea{font:inherit}
+.page{max-width:1500px;margin:auto}
+.header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:15px;
+  flex-wrap:wrap;
+  margin-bottom:20px;
+}
+.header h1{font-size:24px;margin:0 0 6px;font-weight:800}
+.header p{font-size:13px;color:var(--muted);margin:0}
+.header-actions{display:flex;gap:9px;flex-wrap:wrap}
+.btn{
+  border:0;
+  border-radius:9px;
+  padding:11px 15px;
+  font-weight:700;
+  cursor:pointer;
+  transition:.2s;
+}
+.btn:hover{filter:brightness(1.1);transform:translateY(-1px)}
+.btn-primary{background:var(--primary);color:white}
+.btn-green{background:var(--green);color:#052e24}
+.btn-danger{background:#7f1d1d;color:white}
+.btn-muted{background:#26364d;color:var(--text)}
+.btn-small{padding:7px 10px;font-size:12px}
+.status{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  background:rgba(16,185,129,.12);
+  color:#34d399;
+  border:1px solid rgba(16,185,129,.25);
+  padding:7px 11px;
+  border-radius:30px;
+  font-size:11px;
+  font-weight:700;
+}
+.dot{width:7px;height:7px;border-radius:50%;background:#10b981}
+.layout{
+  display:grid;
+  grid-template-columns:390px minmax(0,1fr);
+  gap:18px;
+  align-items:start;
+}
+.panel{
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:15px;
+  padding:18px;
+  box-shadow:var(--shadow);
+  min-width:0;
+}
+.panel-title{
+  font-size:16px;
+  font-weight:800;
+  margin:0 0 16px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+}
+.section-label{
+  color:var(--muted);
+  font-size:11px;
+  font-weight:800;
+  text-transform:uppercase;
+  letter-spacing:.8px;
+  margin:20px 0 11px;
+}
+.field{margin-bottom:13px}
+.field label{
+  display:block;
+  font-size:12px;
+  color:#c3d1e4;
+  font-weight:700;
+  margin-bottom:7px;
+}
+.field input,.field select,.field textarea{
+  width:100%;
+  background:#0b1628;
+  border:1px solid var(--line);
+  border-radius:9px;
+  color:var(--text);
+  padding:11px 12px;
+  outline:none;
+  min-height:42px;
+}
+.field textarea{min-height:75px;resize:vertical}
+.field input:focus,.field select:focus,.field textarea:focus{
+  border-color:var(--primary);
+  box-shadow:0 0 0 3px rgba(22,135,248,.12);
+}
+.field input::placeholder,.field textarea::placeholder{color:#63758e}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.type-selector{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+  margin-bottom:15px;
+}
+.type-option{
+  background:#0b1628;
+  border:1px solid var(--line);
+  border-radius:10px;
+  padding:12px 5px;
+  text-align:center;
+  cursor:pointer;
+  color:var(--muted);
+  font-size:12px;
+  font-weight:800;
+}
+.type-option .symbol{font-size:22px;display:block;margin-bottom:5px}
+.type-option.active{
+  border-color:var(--primary);
+  background:rgba(22,135,248,.13);
+  color:#60a5fa;
+}
+.map-help{
+  background:rgba(22,135,248,.09);
+  border:1px solid rgba(22,135,248,.22);
+  border-radius:9px;
+  padding:10px 12px;
+  color:#9dcaff;
+  font-size:11px;
+  line-height:1.6;
+  margin-bottom:12px;
+}
+#pickMap{
+  width:100%;
+  height:280px;
+  border-radius:11px;
+  border:1px solid var(--line);
+  z-index:1;
+}
+.coords{
+  display:flex;
+  gap:8px;
+  margin-top:9px;
+}
+.coords input{min-width:0}
+.full{width:100%}
+.right-column{display:grid;gap:18px}
+#previewMap{
+  height:430px;
+  width:100%;
+  border-radius:11px;
+  border:1px solid var(--line);
+  z-index:1;
+}
+.stats{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+  margin-bottom:15px;
+}
+.stat{
+  background:var(--panel2);
+  border:1px solid var(--line);
+  border-radius:10px;
+  padding:12px;
+}
+.stat small{display:block;color:var(--muted);font-size:11px;margin-bottom:7px}
+.stat strong{font-size:22px}
+.list-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:520px}
+th,td{
+  padding:11px 9px;
+  text-align:left;
+  border-bottom:1px solid var(--line);
+  font-size:12px;
+}
+th{color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.5px}
+td{color:#d9e5f5}
+.type-badge{
+  display:inline-block;
+  border-radius:20px;
+  padding:5px 8px;
+  font-size:10px;
+  font-weight:800;
+}
+.badge-pole{background:rgba(245,158,11,.15);color:#fbbf24}
+.badge-customer{background:rgba(22,135,248,.15);color:#60a5fa}
+.badge-switch{background:rgba(16,185,129,.15);color:#34d399}
+.empty{
+  text-align:center;
+  color:var(--muted);
+  padding:25px 10px;
+  font-size:12px;
+}
+.connection-box{
+  background:var(--panel2);
+  border:1px solid var(--line);
+  border-radius:11px;
+  padding:14px;
+  margin-top:12px;
+}
+.connection-box h3{font-size:13px;margin:0 0 12px}
+.connection-box p{font-size:11px;color:var(--muted);line-height:1.6}
+.connection-list{display:grid;gap:8px}
+.connection-item{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  background:#0b1628;
+  border:1px solid var(--line);
+  border-radius:9px;
+  padding:10px;
+  font-size:11px;
+}
+.connection-item span{color:#cbd8e8}
+.wire-symbol{color:#60a5fa;font-weight:900}
+.note{font-size:11px;color:var(--muted);line-height:1.6}
+.marker-icon{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:34px;height:34px;
+  border:2px solid white;
+  border-radius:50%;
+  color:white;
+  font-size:16px;
+  font-weight:900;
+  box-shadow:0 3px 10px #0008;
+}
+.leaflet-popup-content-wrapper,.leaflet-popup-tip{background:#111c2e;color:#e8f0fc}
+.leaflet-popup-content{font-family:Inter,Arial,sans-serif;font-size:12px}
+@media(max-width:1050px){
+  .layout{grid-template-columns:1fr}
+  .right-column{grid-row:1}
+  #previewMap{height:360px}
+}
+@media(max-width:600px){
+  body{padding:12px}
+  .header h1{font-size:20px}
+  .panel{padding:13px}
+  #previewMap{height:300px}
+  #pickMap{height:240px}
+  .two-col{grid-template-columns:1fr 1fr}
+  .stats{gap:6px}
+  .stat{padding:9px}
+  .stat strong{font-size:18px}
+}
+</style>
+</head>
+
+<body>
+<div class="page">
+
+  <div class="header">
+    <div>
+      <h1>Map Entry</h1>
+      <p>Add Pole, Customer, Switch and create network wire connections.</p>
+    </div>
+    <div class="header-actions">
+      <span class="status"><span class="dot"></span> LOCAL DEMO MODE</span>
+      <button class="btn btn-muted" onclick="resetForm()">Reset Form</button>
+    </div>
+  </div>
+
+  <div class="layout">
+
+    <!-- LEFT SIDE: ENTRY FORMS -->
+    <div class="panel">
+
+      <h2 class="panel-title">Add New Location</h2>
+
+      <div class="type-selector">
+        <button class="type-option active" data-type="pole" onclick="selectType('pole')">
+          <span class="symbol">🗼</span>Pole
+        </button>
+        <button class="type-option" data-type="customer" onclick="selectType('customer')">
+          <span class="symbol">🏠</span>Customer
+        </button>
+        <button class="type-option" data-type="switch" onclick="selectType('switch')">
+          <span class="symbol">🔀</span>Switch
+        </button>
+      </div>
+
+      <form id="locationForm">
+        <div class="field">
+          <label id="nameLabel">Pole Name / Number *</label>
+          <input id="locationName" required placeholder="Example: P-001">
+        </div>
+
+        <div class="field">
+          <label>Location Number</label>
+          <input id="locationNumber" placeholder="Example: LOC-001">
+        </div>
+
+        <div class="field">
+          <label>Phone Number</label>
+          <input id="phone" placeholder="Phone number (optional)">
+        </div>
+
+        <div class="field">
+          <label>Address</label>
+          <input id="address" placeholder="Enter address">
+        </div>
+
+        <div class="field">
+          <label>Details / Note</label>
+          <textarea id="details" placeholder="Additional information..."></textarea>
+        </div>
+
+        <div class="section-label">Select Map Location</div>
+
+        <div class="map-help">
+          <strong>How to select location?</strong><br>
+          নিচের ম্যাপে যেখানে Pole / Customer / Switch আছে সেখানে ক্লিক করো। Latitude এবং Longitude অটোমেটিক বসে যাবে।
+        </div>
+
+        <div id="pickMap"></div>
+
+        <div class="coords">
+          <div class="field" style="flex:1">
+            <label>Latitude *</label>
+            <input id="latitude" type="number" step="any" required placeholder="22.342356">
+          </div>
+          <div class="field" style="flex:1">
+            <label>Longitude *</label>
+            <input id="longitude" type="number" step="any" required placeholder="91.797103">
+          </div>
+        </div>
+
+        <button class="btn btn-primary full" type="submit">＋ Save Location</button>
+      </form>
+
+      <div class="section-label">Create Wire Connection</div>
+
+      <div class="connection-box">
+        <h3>Connect Two Locations</h3>
+        <p>Pole → Customer, Switch → Customer অথবা Customer → Switch সংযোগ তৈরি করতে পারবে।</p>
+
+        <div class="field">
+          <label>From Location</label>
+          <select id="connectFrom">
+            <option value="">Select first location</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>To Location</label>
+          <select id="connectTo">
+            <option value="">Select second location</option>
+          </select>
+        </div>
+
+        <button class="btn btn-green full" type="button" onclick="createConnection()">
+          ＋ Connect With Wire
+        </button>
+      </div>
+
+      <div class="connection-box">
+        <h3>Customer → Switch → Customer</h3>
+        <p>দুইজন Customer-এর মাঝখানে একটি Switch বসিয়ে দুই পাশে Wire তৈরি হবে।</p>
+
+        <div class="field">
+          <label>First Customer</label>
+          <select id="customerA">
+            <option value="">Select first customer</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Middle Switch</label>
+          <select id="middleSwitch">
+            <option value="">Select switch</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Second Customer</label>
+          <select id="customerB">
+            <option value="">Select second customer</option>
+          </select>
+        </div>
+
+        <button class="btn btn-green full" type="button" onclick="connectCustomersThroughSwitch()">
+          Create Two Wire Connections
+        </button>
+      </div>
+
+    </div>
+
+    <!-- RIGHT SIDE -->
+    <div class="right-column">
+
+      <div class="panel">
+        <h2 class="panel-title">
+          Network Map Preview
+          <button class="btn btn-muted btn-small" onclick="fitMap()">Fit All</button>
+        </h2>
+
+        <div class="stats">
+          <div class="stat">
+            <small>Total Pole</small>
+            <strong id="poleCount">0</strong>
+          </div>
+          <div class="stat">
+            <small>Total Customer</small>
+            <strong id="customerCount">0</strong>
+          </div>
+          <div class="stat">
+            <small>Total Switch</small>
+            <strong id="switchCount">0</strong>
+          </div>
+        </div>
+
+        <div id="previewMap"></div>
+        <p class="note">Map data is currently saved in this browser only. Google Sheet connection will be added later.</p>
+      </div>
+
+      <div class="panel">
+        <h2 class="panel-title">Saved Locations</h2>
+        <div class="list-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Location Number</th>
+                <th>Coordinates</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="locationTable"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2 class="panel-title">Wire Connections</h2>
+        <div id="connectionList" class="connection-list">
+          <div class="empty">No wire connections added yet.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+/* =========================================
+   ONE ONLINE MAP ENTRY
+   Local browser storage - Google Sheet later
+========================================= */
+
+const STORAGE_KEY = "ONE_ONLINE_MAP_DATA_V1";
+
+let selectedType = "pole";
+let locations = [];
+let connections = [];
+let pickMarker = null;
+let previewMarkers = {};
+let previewLines = {};
+
+function makeId(prefix){
+  return prefix + "_" + Date.now() + "_" +
+    Math.random().toString(36).slice(2,8);
+}
+
+function loadData(){
+  try{
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if(saved){
+      const data = JSON.parse(saved);
+      locations = Array.isArray(data.locations) ? data.locations : [];
+      connections = Array.isArray(data.connections) ? data.connections : [];
+    }
+  }catch(error){
+    console.error("Map data load error:",error);
+    locations = [];
+    connections = [];
+  }
+}
+
+function saveData(){
+  localStorage.setItem(STORAGE_KEY,JSON.stringify({
+    locations,
+    connections,
+    settings:{
+      wireColor:"#1687f8",
+      wireWeight:3,
+      centerLat:22.342356,
+      centerLng:91.797103,
+      zoom:13
+    }
+  }));
+}
+
+function escapeHTML(value){
+  return String(value ?? "").replace(/[&<>"']/g,function(ch){
+    return {
+      "&":"&amp;",
+      "<":"&lt;",
+      ">":"&gt;",
+      '"':"&quot;",
+      "'":"&#039;"
+    }[ch];
+  });
+}
+
+/* MAP SETUP */
+const defaultCenter = [22.342356,91.797103];
+
+const pickMap = L.map("pickMap").setView(defaultCenter,14);
+const previewMap = L.map("previewMap").setView(defaultCenter,13);
+
+const tileLayer = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
+
+L.tileLayer(tileLayer,{
+  maxZoom:19,
+  attribution:'&copy; OpenStreetMap'
+}).addTo(pickMap);
+
+L.tileLayer(tileLayer,{
+  maxZoom:19,
+  attribution:'&copy; OpenStreetMap'
+}).addTo(previewMap);
+
+pickMap.on("click",function(e){
+  document.getElementById("latitude").value = e.latlng.lat.toFixed(7);
+  document.getElementById("longitude").value = e.latlng.lng.toFixed(7);
+
+  if(pickMarker) pickMap.removeLayer(pickMarker);
+
+  pickMarker = L.marker(e.latlng).addTo(pickMap)
+    .bindPopup("Selected Location").openPopup();
+});
+
+/* MARKER DESIGN */
+function markerStyle(type){
+  const styles = {
+    pole:{color:"#f59e0b",symbol:"P"},
+    customer:{color:"#1687f8",symbol:"C"},
+    switch:{color:"#10b981",symbol:"S"}
+  };
+  return styles[type] || styles.customer;
+}
+
+function makeMarkerIcon(type){
+  const style = markerStyle(type);
+
+  return L.divIcon({
+    className:"",
+    html:`<div class="marker-icon" style="background:${style.color}">
+      ${style.symbol}
+    </div>`,
+    iconSize:[34,34],
+    iconAnchor:[17,17],
+    popupAnchor:[0,-17]
+  });
+}
+
+/* TYPE SELECT */
+function selectType(type){
+  selectedType = type;
+
+  document.querySelectorAll(".type-option").forEach(btn=>{
+    btn.classList.toggle("active",btn.dataset.type === type);
+  });
+
+  const labels = {
+    pole:"Pole Name / Number *",
+    customer:"Customer Name / IP *",
+    switch:"Switch Name / Number *"
+  };
+
+  const placeholders = {
+    pole:"Example: P-001",
+    customer:"Example: Customer / IP",
+    switch:"Example: SW-001"
+  };
+
+  document.getElementById("nameLabel").textContent = labels[type];
+  document.getElementById("locationName").placeholder = placeholders[type];
+}
+
+/* SAVE LOCATION */
+document.getElementById("locationForm").addEventListener("submit",function(e){
+  e.preventDefault();
+
+  const name = document.getElementById("locationName").value.trim();
+  const lat = Number(document.getElementById("latitude").value);
+  const lng = Number(document.getElementById("longitude").value);
+
+  if(!name){
+    alert("Please enter a location name.");
+    return;
+  }
+
+  if(!Number.isFinite(lat) || !Number.isFinite(lng) ||
+     lat < -90 || lat > 90 || lng < -180 || lng > 180){
+    alert("Please select a valid map location.");
+    return;
+  }
+
+  const location = {
+    id:makeId("LOC"),
+    name:name,
+    type:selectedType,
+    lat:lat,
+    lng:lng,
+    phone:document.getElementById("phone").value.trim(),
+    address:document.getElementById("address").value.trim(),
+    details:document.getElementById("details").value.trim(),
+    locationNumber:document.getElementById("locationNumber").value.trim()
+  };
+
+  locations.push(location);
+  saveData();
+  renderAll();
+
+  this.reset();
+
+  if(pickMarker){
+    pickMap.removeLayer(pickMarker);
+    pickMarker = null;
+  }
+
+  alert("Location saved successfully!");
+});
+
+/* GENERAL CONNECTION */
+function getLocation(id){
+  return locations.find(item=>item.id === id);
+}
+
+function getConnectionType(from,to){
+  if(from.type === "pole" && to.type === "customer") return "pole-customer";
+  if(from.type === "switch" && to.type === "customer") return "switch-customer";
+  if(from.type === "customer" && to.type === "switch") return "customer-switch";
+  return null;
+}
+
+function createConnection(){
+  const fromId = document.getElementById("connectFrom").value;
+  const toId = document.getElementById("connectTo").value;
+
+  if(!fromId || !toId){
+    alert("Please select both locations.");
+    return;
+  }
+
+  if(fromId === toId){
+    alert("You cannot connect a location to itself.");
+    return;
+  }
+
+  const from = getLocation(fromId);
+  const to = getLocation(toId);
+
+  if(!from || !to) return;
+
+  const type = getConnectionType(from,to);
+
+  if(!type){
+    alert(
+      "এই Connection Type অনুমোদিত নয়।\n\n" +
+      "Allowed:\n" +
+      "Pole → Customer\n" +
+      "Switch → Customer\n" +
+      "Customer → Switch\n\n" +
+      "Customer থেকে Customer সংযোগ করতে নিচের Switch Connection ব্যবহার করো।"
+    );
+    return;
+  }
+
+  const exists = connections.some(c=>
+    c.from === fromId && c.to === toId
+  );
+
+  if(exists){
+    alert("This wire connection already exists.");
+    return;
+  }
+
+  connections.push({
+    id:makeId("WIRE"),
+    from:fromId,
+    to:toId,
+    type:type
+  });
+
+  saveData();
+  renderAll();
+  alert("Wire connection created!");
+}
+
+/* CUSTOMER → SWITCH → CUSTOMER */
+function connectCustomersThroughSwitch(){
+  const aId = document.getElementById("customerA").value;
+  const switchId = document.getElementById("middleSwitch").value;
+  const bId = document.getElementById("customerB").value;
+
+  if(!aId || !switchId || !bId){
+    alert("Please select both customers and one switch.");
+    return;
+  }
+
+  if(aId === bId){
+    alert("Please select two different customers.");
+    return;
+  }
+
+  const a = getLocation(aId);
+  const sw = getLocation(switchId);
+  const b = getLocation(bId);
+
+  if(!a || !sw || !b) return;
+
+  if(a.type !== "customer" || b.type !== "customer" || sw.type !== "switch"){
+    alert("Please select valid Customer, Switch and Customer.");
+    return;
+  }
+
+  const firstExists = connections.some(c=>c.from === aId && c.to === switchId);
+  const secondExists = connections.some(c=>c.from === switchId && c.to === bId);
+
+  if(firstExists || secondExists){
+    alert("One or both wire connections already exist.");
+    return;
+  }
+
+  connections.push(
+    {
+      id:makeId("WIRE"),
+      from:aId,
+      to:switchId,
+      type:"customer-switch"
+    },
+    {
+      id:makeId("WIRE"),
+      from:switchId,
+      to:bId,
+      type:"switch-customer"
+    }
+  );
+
+  saveData();
+  renderAll();
+  alert("Customer → Switch → Customer connection created!");
+}
+
+/* DELETE LOCATION */
+function deleteLocation(id){
+  const item = getLocation(id);
+  if(!item) return;
+
+  if(!confirm("Delete " + item.name + "?\nRelated wire connections will also be deleted.")) return;
+
+  locations = locations.filter(x=>x.id !== id);
+  connections = connections.filter(c=>c.from !== id && c.to !== id);
+
+  saveData();
+  renderAll();
+}
+
+/* DELETE CONNECTION */
+function deleteConnection(id){
+  if(!confirm("Delete this wire connection?")) return;
+
+  connections = connections.filter(c=>c.id !== id);
+  saveData();
+  renderAll();
+}
+
+/* RENDER MAP */
+function renderMap(){
+  Object.values(previewMarkers).forEach(marker=>previewMap.removeLayer(marker));
+  Object.values(previewLines).forEach(line=>previewMap.removeLayer(line));
+
+  previewMarkers = {};
+  previewLines = {};
+
+  locations.forEach(item=>{
+    const marker = L.marker([item.lat,item.lng],{
+      icon:makeMarkerIcon(item.type)
+    }).addTo(previewMap);
+
+    marker.bindPopup(`
+      <strong>${escapeHTML(item.name)}</strong><br>
+      Type: ${escapeHTML(item.type)}<br>
+      ${item.locationNumber ? "Location Number: "+escapeHTML(item.locationNumber)+"<br>" : ""}
+      ${item.phone ? "Phone: "+escapeHTML(item.phone)+"<br>" : ""}
+      ${item.address ? "Address: "+escapeHTML(item.address) : ""}
+    `);
+
+    previewMarkers[item.id] = marker;
+  });
+
+  connections.forEach(connection=>{
+    const from = getLocation(connection.from);
+    const to = getLocation(connection.to);
+
+    if(!from || !to) return;
+
+    const line = L.polyline(
+      [[from.lat,from.lng],[to.lat,to.lng]],
+      {color:"#1687f8",weight:3,opacity:.9}
+    ).addTo(previewMap);
+
+    previewLines[connection.id] = line;
+  });
+}
+
+/* RENDER TABLE */
+function renderLocations(){
+  const tbody = document.getElementById("locationTable");
+
+  if(!locations.length){
+    tbody.innerHTML = `<tr><td colspan="5" class="empty">No locations added yet.</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = locations.map(item=>{
+    const badgeClass = "badge-" + item.type;
+
+    return `
+      <tr>
+        <td><strong>${escapeHTML(item.name)}</strong></td>
+        <td><span class="type-badge ${badgeClass}">${escapeHTML(item.type.toUpperCase())}</span></td>
+        <td>${escapeHTML(item.locationNumber || "-")}</td>
+        <td>${Number(item.lat).toFixed(5)}, ${Number(item.lng).toFixed(5)}</td>
+        <td>
+          <button class="btn btn-danger btn-small" onclick="deleteLocation('${item.id}')">Delete</button>
+        </td>
+      </tr>
+    `;
+  }).join("");
+}
+
+/* RENDER CONNECTION LIST */
+function renderConnections(){
+  const box = document.getElementById("connectionList");
+
+  if(!connections.length){
+    box.innerHTML = `<div class="empty">No wire connections added yet.</div>`;
+    return;
+  }
+
+  box.innerHTML = connections.map(c=>{
+    const from = getLocation(c.from);
+    const to = getLocation(c.to);
+
+    if(!from || !to) return "";
+
+    return `
+      <div class="connection-item">
+        <span>
+          <strong>${escapeHTML(from.name)}</strong>
+          <span class="wire-symbol"> ━━━→ </span>
+          <strong>${escapeHTML(to.name)}</strong>
+          <br>
+          <small style="color:#91a3bd">${escapeHTML(c.type)}</small>
+        </span>
+        <button class="btn btn-danger btn-small" onclick="deleteConnection('${c.id}')">Delete</button>
+      </div>
+    `;
+  }).join("");
+}
+
+/* DROPDOWNS */
+function fillSelect(id,items,placeholder){
+  const select = document.getElementById(id);
+  const oldValue = select.value;
+
+  select.innerHTML =
+    `<option value="">${placeholder}</option>` +
+    items.map(item=>
+      `<option value="${item.id}">${escapeHTML(item.name)} (${item.type})</option>`
+    ).join("");
+
+  if(items.some(item=>item.id === oldValue)){
+    select.value = oldValue;
+  }
+}
+
+function renderDropdowns(){
+  fillSelect("connectFrom",locations,"Select first location");
+  fillSelect("connectTo",locations,"Select second location");
+
+  fillSelect(
+    "customerA",
+    locations.filter(x=>x.type === "customer"),
+    "Select first customer"
+  );
+
+  fillSelect(
+    "middleSwitch",
+    locations.filter(x=>x.type === "switch"),
+    "Select switch"
+  );
+
+  fillSelect(
+    "customerB",
+    locations.filter(x=>x.type === "customer"),
+    "Select second customer"
+  );
+}
+
+/* STATS */
+function renderStats(){
+  document.getElementById("poleCount").textContent =
+    locations.filter(x=>x.type === "pole").length;
+
+  document.getElementById("customerCount").textContent =
+    locations.filter(x=>x.type === "customer").length;
+
+  document.getElementById("switchCount").textContent =
+    locations.filter(x=>x.type === "switch").length;
+}
+
+function renderAll(){
+  renderStats();
+  renderLocations();
+  renderDropdowns();
+  renderConnections();
+  renderMap();
+}
+
+function fitMap(){
+  if(!locations.length){
+    previewMap.setView(defaultCenter,13);
+    return;
+  }
+
+  const points = locations.map(item=>[item.lat,item.lng]);
+
+  if(points.length === 1){
+    previewMap.setView(points[0],16);
+  }else{
+    previewMap.fitBounds(points,{padding:[35,35],maxZoom:16});
+  }
+}
+
+function resetForm(){
+  document.getElementById("locationForm").reset();
+
+  if(pickMarker){
+    pickMap.removeLayer(pickMarker);
+    pickMarker = null;
+  }
+
+  selectType("pole");
+}
+
+/* INITIALIZE */
+loadData();
+renderAll();
+
+setTimeout(()=>{
+  pickMap.invalidateSize();
+  previewMap.invalidateSize();
+},300);
+</script>
+</body>
+</html>
