@@ -1,297 +1,299 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>ONE ONLINE | Network Map</title>
+<title>Map | ONE ONLINE</title>
 
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 
 <style>
 :root{
-  --bg:#0b1220;
-  --panel:#111c2e;
-  --panel2:#172338;
-  --text:#e8f0fc;
-  --muted:#91a3bd;
-  --line:#293a53;
-  --primary:#168b68;
-  --danger:#e05252;
+ --bg:#0b1220;
+ --panel:#111c2e;
+ --panel2:#172338;
+ --text:#e8f0fc;
+ --muted:#91a3bd;
+ --line:#293a53;
+ --primary:#168b68;
+ --input:#0b1729;
 }
 *{box-sizing:border-box}
 body{
-  margin:0;
-  background:var(--bg);
-  color:var(--text);
-  font-family:Arial,Helvetica,sans-serif;
+ margin:0;
+ background:var(--bg);
+ color:var(--text);
+ font-family:Arial,Helvetica,sans-serif;
 }
 button,input,select{font:inherit}
 button{cursor:pointer}
 .app{
-  height:100vh;
-  display:flex;
-  flex-direction:column;
+ width:100%;
+ height:100vh;
+ min-height:500px;
+ display:flex;
+ flex-direction:column;
 }
 .topbar{
-  min-height:62px;
-  background:var(--panel);
-  border-bottom:1px solid var(--line);
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:10px 16px;
-  gap:12px;
-  z-index:1000;
+ min-height:64px;
+ background:var(--panel);
+ border-bottom:1px solid var(--line);
+ display:flex;
+ align-items:center;
+ justify-content:space-between;
+ padding:10px 16px;
+ gap:12px;
+ z-index:500;
 }
 .brand{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  min-width:0;
+ display:flex;
+ align-items:center;
+ gap:10px;
+ min-width:0;
 }
 .logo{
-  height:39px;width:39px;
-  display:grid;place-items:center;
-  border-radius:11px;
-  background:linear-gradient(135deg,#087f5b,#16b887);
-  color:#fff;font-weight:900;font-size:20px;
+ width:40px;height:40px;
+ border-radius:12px;
+ background:linear-gradient(135deg,#087f5b,#16b887);
+ display:grid;place-items:center;
+ font-size:21px;font-weight:900;
+ color:white;flex-shrink:0;
 }
-.brand h2{font-size:15px;margin:0 0 3px}
+.brand h2{font-size:16px;margin:0 0 3px}
 .brand p{font-size:10px;color:var(--muted);margin:0}
 .actions{display:flex;gap:7px;flex-wrap:wrap}
 .btn{
-  border:1px solid var(--line);
-  background:var(--panel2);
-  color:var(--text);
-  padding:9px 12px;
-  border-radius:8px;
-  font-size:12px;
-  font-weight:700;
+ border:1px solid var(--line);
+ background:var(--panel2);
+ color:var(--text);
+ padding:9px 12px;
+ border-radius:8px;
+ font-size:12px;
+ font-weight:700;
 }
-.btn.primary{background:var(--primary);border-color:var(--primary);color:#fff}
+.btn.primary{background:var(--primary);border-color:var(--primary);color:white}
 .btn:disabled{opacity:.5}
 .main{
-  flex:1;
-  min-height:0;
-  display:flex;
+ display:flex;
+ flex:1;
+ min-height:0;
+ position:relative;
 }
 .sidebar{
-  width:310px;
-  flex-shrink:0;
-  background:var(--panel);
-  border-right:1px solid var(--line);
-  overflow-y:auto;
-  padding:14px;
-  z-index:500;
+ width:270px;
+ flex:0 0 270px;
+ background:var(--panel);
+ border-right:1px solid var(--line);
+ padding:14px;
+ overflow-y:auto;
+ z-index:400;
 }
 .section{
-  border:1px solid var(--line);
-  border-radius:11px;
-  padding:12px;
-  margin-bottom:12px;
-  background:var(--panel2);
+ border:1px solid var(--line);
+ border-radius:11px;
+ padding:12px;
+ margin-bottom:12px;
+ background:var(--panel2);
 }
 .section h3{
-  font-size:13px;
-  margin:0 0 11px;
+ font-size:13px;
+ margin:0 0 12px;
 }
-.search{
-  width:100%;
-  padding:11px;
-  background:#0b1729;
-  color:var(--text);
-  border:1px solid var(--line);
-  border-radius:8px;
-  outline:none;
+.section-title{
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ gap:8px;
 }
-.stats{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:7px;
-  margin-bottom:12px;
+.muted{color:var(--muted);font-size:11px}
+.filter-item{
+ display:flex;
+ align-items:center;
+ justify-content:space-between;
+ gap:8px;
+ padding:8px 0;
+ border-bottom:1px solid rgba(255,255,255,.06);
+ font-size:12px;
+}
+.filter-item:last-child{border:0}
+.filter-item label{
+ display:flex;
+ align-items:center;
+ gap:8px;
+ cursor:pointer;
+}
+.filter-item input{accent-color:#16b887}
+.count{
+ background:#23354c;
+ border-radius:20px;
+ padding:3px 8px;
+ font-size:10px;
+ color:#c5d6eb;
+}
+.stat-grid{
+ display:grid;
+ grid-template-columns:repeat(2,1fr);
+ gap:8px;
 }
 .stat{
-  padding:10px 6px;
-  text-align:center;
-  border:1px solid var(--line);
-  border-radius:9px;
-  background:#0d192b;
+ padding:10px;
+ background:#0d192b;
+ border:1px solid var(--line);
+ border-radius:8px;
 }
-.stat strong{display:block;font-size:18px}
+.stat strong{display:block;font-size:20px}
 .stat span{font-size:10px;color:var(--muted)}
-.filter-list{
-  display:flex;
-  flex-direction:column;
-  gap:8px;
+.search{
+ width:100%;
+ padding:10px;
+ background:var(--input);
+ color:var(--text);
+ border:1px solid var(--line);
+ border-radius:8px;
+ outline:none;
+ font-size:12px;
 }
-.filter-row{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:8px;
-  font-size:12px;
-  padding:7px 8px;
-  background:#0d192b;
-  border:1px solid var(--line);
-  border-radius:8px;
+.legend-item{
+ display:flex;
+ align-items:center;
+ gap:8px;
+ font-size:11px;
+ margin:9px 0;
+ color:#c6d4e6;
 }
-.filter-left{
-  display:flex;align-items:center;gap:8px;
-  min-width:0;
+.legend-line{
+ width:27px;height:0;
+ border-top:3px solid;
 }
-.filter-icon{
-  width:27px;height:27px;
-  border-radius:7px;
-  display:grid;place-items:center;
-  background:#26384c;
-  font-size:15px;
-  flex-shrink:0;
-}
-.filter-name{overflow-wrap:anywhere}
-.filter-count{color:var(--muted);font-size:10px}
-.toggle{
-  width:36px;height:20px;
-  appearance:none;
-  border-radius:20px;
-  background:#42516a;
-  position:relative;
-  cursor:pointer;
-  flex-shrink:0;
-}
-.toggle:before{
-  content:"";
-  position:absolute;
-  width:14px;height:14px;
-  left:3px;top:3px;
-  background:#fff;
-  border-radius:50%;
-  transition:.2s;
-}
-.toggle:checked{background:#168b68}
-.toggle:checked:before{left:19px}
-.wire-info{
-  display:flex;align-items:center;gap:8px;
-  font-size:12px;margin:8px 0;
-}
-.line-sample{width:32px;border-top:3px solid #18c58b}
-.line-sample.dashed{border-top-style:dashed}
-.line-sample.dotted{border-top-style:dotted}
-.status{
-  color:var(--muted);
-  font-size:11px;
-  line-height:1.6;
+.map-area{
+ flex:1;
+ min-width:0;
+ position:relative;
+ background:#0b1220;
 }
 #map{
-  flex:1;
-  min-width:0;
-  height:100%;
-  background:#dce4e8;
-  z-index:1;
+ width:100%;
+ height:100%;
+ min-height:400px;
+ background:#101b2b;
+ z-index:1;
 }
-.map-legend{
+.map-tools{
+ position:absolute;
+ top:12px;
+ left:12px;
+ right:12px;
+ display:flex;
+ justify-content:space-between;
+ align-items:flex-start;
+ gap:8px;
+ pointer-events:none;
+ z-index:300;
+}
+.tool-group{
+ display:flex;
+ flex-wrap:wrap;
+ gap:6px;
+ pointer-events:auto;
+}
+.tool-btn{
+ background:rgba(12,24,40,.94);
+ color:#e8f0fc;
+ border:1px solid #40516a;
+ padding:9px 11px;
+ border-radius:8px;
+ font-size:11px;
+ font-weight:700;
+ box-shadow:0 3px 12px #0005;
+}
+.tool-btn.active{
+ background:#087f5b;
+ border-color:#16b887;
+}
+.map-status{
+ position:absolute;
+ bottom:16px;
+ left:12px;
+ z-index:300;
+ background:rgba(12,24,40,.94);
+ color:#c9d9eb;
+ padding:9px 12px;
+ border:1px solid #40516a;
+ border-radius:8px;
+ font-size:11px;
+ pointer-events:none;
+}
+.mobile-toggle{display:none}
+.leaflet-popup-content-wrapper,
+.leaflet-popup-tip{
+ background:#132238;
+ color:#e8f0fc;
+}
+.leaflet-popup-content{margin:13px;min-width:180px}
+.popup-title{font-weight:800;font-size:14px;margin-bottom:7px}
+.popup-row{font-size:11px;line-height:1.7;color:#c4d4e7}
+.popup-tag{
+ display:inline-block;
+ background:#1b4a3b;
+ color:#a8f0d2;
+ padding:4px 7px;
+ border-radius:20px;
+ font-size:10px;
+ margin-bottom:7px;
+}
+.leaflet-control-zoom a{
+ background:#172338!important;
+ color:#fff!important;
+ border-color:#344760!important;
+}
+.leaflet-control-attribution{
+ background:rgba(10,20,34,.8)!important;
+ color:#a9bbd0!important;
+}
+.leaflet-control-attribution a{color:#7ccbb1!important}
+.location-icon{
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ width:27px;
+ height:31px;
+ font-size:25px;
+ line-height:1;
+ background:transparent;
+ border:0;
+ filter:drop-shadow(0 2px 2px rgba(0,0,0,.65));
+}
+.location-icon span{display:block}
+.direction-arrow{
+ color:#fff;
+ font-size:19px;
+ font-weight:900;
+ text-shadow:
+ 0 0 3px #000,
+ 0 0 5px #000,
+ 1px 1px 2px #000;
+}
+@media(max-width:760px){
+ .topbar{padding:8px 10px}
+ .brand h2{font-size:14px}
+ .brand p{font-size:9px}
+ .logo{width:35px;height:35px}
+ .actions .btn{padding:8px;font-size:10px}
+ .mobile-toggle{display:inline-block}
+ .sidebar{
   position:absolute;
-  z-index:400;
-  bottom:20px;
-  right:16px;
-  background:rgba(13,24,40,.93);
-  color:white;
-  border:1px solid #42516a;
-  border-radius:10px;
-  padding:10px 12px;
-  font-size:11px;
-  max-width:190px;
-  pointer-events:none;
-}
-.legend-title{font-weight:800;margin-bottom:7px}
-.legend-row{display:flex;align-items:center;gap:7px;margin:5px 0}
-.legend-dot{width:10px;height:10px;border-radius:50%}
-.map-message{
-  position:absolute;
-  z-index:600;
-  top:76px;
-  left:50%;
-  transform:translateX(-50%);
-  background:#132c25;
-  color:#c9f5e3;
-  padding:9px 14px;
-  border:1px solid #24674d;
-  border-radius:9px;
-  font-size:11px;
-  display:none;
-  max-width:90%;
-  text-align:center;
-}
-.marker-wrap{
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  transform:translateY(-3px);
-}
-.marker-icon{
-  width:32px;height:32px;
-  border:2px solid white;
-  border-radius:50% 50% 50% 4px;
-  transform:rotate(-45deg);
-  display:flex;align-items:center;justify-content:center;
-  box-shadow:0 2px 7px #0007;
-}
-.marker-icon span{
-  transform:rotate(45deg);
-  font-size:16px;
-  line-height:1;
-}
-.marker-label{
-  margin-top:4px;
-  font-size:10px;
-  font-weight:800;
-  color:#172033;
-  background:#fff;
-  border:1px solid #aab7c5;
-  border-radius:4px;
-  padding:2px 5px;
-  white-space:nowrap;
-  box-shadow:0 1px 4px #0005;
-  max-width:130px;
-  overflow:hidden;
-  text-overflow:ellipsis;
-}
-.leaflet-popup-content-wrapper{
-  border-radius:10px;
-}
-.popup-title{font-size:14px;font-weight:800;margin-bottom:6px}
-.popup-line{font-size:11px;line-height:1.7}
-.popup-type{
-  display:inline-block;
-  padding:3px 7px;
-  background:#e4f4ed;
-  color:#087f5b;
-  border-radius:20px;
-  font-size:10px;
-  font-weight:800;
-  margin-bottom:6px;
-}
-.mobile-filter{display:none}
-.empty{
-  font-size:11px;color:var(--muted);padding:10px 0;
-}
-@media(max-width:750px){
-  .topbar{padding:9px 10px}
-  .brand h2{font-size:13px}
-  .brand p{font-size:9px}
-  .btn{padding:8px 9px;font-size:11px}
-  .main{position:relative}
-  .sidebar{
-    position:absolute;
-    top:0;bottom:0;left:0;
-    width:min(310px,86vw);
-    transform:translateX(-105%);
-    transition:transform .25s;
-    box-shadow:10px 0 30px #0005;
-  }
-  .sidebar.open{transform:translateX(0)}
-  #map{width:100%}
-  .mobile-filter{display:inline-block}
-  .map-legend{bottom:15px;right:8px}
+  top:0;bottom:0;left:0;
+  width:275px;
+  max-width:85vw;
+  transform:translateX(-105%);
+  transition:transform .22s ease;
+  box-shadow:8px 0 25px #0006;
+ }
+ .sidebar.open{transform:translateX(0)}
+ .map-tools{top:9px;left:8px;right:8px}
+ .tool-btn{padding:8px;font-size:10px}
+ .map-status{bottom:12px;left:8px}
 }
 </style>
 </head>
@@ -299,862 +301,952 @@ button{cursor:pointer}
 <body>
 <div class="app">
 
-  <header class="topbar">
-    <div class="brand">
-      <div class="logo">O</div>
-      <div>
-        <h2>ONE ONLINE</h2>
-        <p>NETWORK MAP</p>
-      </div>
-    </div>
+<header class="topbar">
+ <div class="brand">
+  <div class="logo">O</div>
+  <div>
+   <h2>ONE ONLINE</h2>
+   <p>NETWORK MAP</p>
+  </div>
+ </div>
 
-    <div class="actions">
-      <button class="btn mobile-filter" onclick="toggleSidebar()">☰ Filters</button>
-      <button class="btn" onclick="loadMapData()">↻ Refresh</button>
-      <button class="btn primary" onclick="goToSettings()">⚙ Map Setting</button>
-    </div>
-  </header>
+ <div class="actions">
+  <button class="btn mobile-toggle" onclick="toggleSidebar()">☰</button>
+  <button class="btn" onclick="loadMapData()">↻ Refresh</button>
+  <button class="btn" onclick="goToEntry()">＋ Entry</button>
+  <button class="btn primary" onclick="goToSettings()">⚙ Settings</button>
+ </div>
+</header>
 
-  <main class="main">
+<main class="main">
 
-    <aside class="sidebar" id="sidebar">
+<aside class="sidebar" id="sidebar">
 
-      <div class="section">
-        <h3>🔎 Find Location</h3>
-        <input id="searchInput" class="search"
-          placeholder="Search customer, IP, pole, switch..."
-          oninput="applyDisplay()">
-      </div>
+ <div class="section">
+  <div class="section-title">
+   <h3>Map Overview</h3>
+   <span class="muted" id="loadStatus">Loading...</span>
+  </div>
+  <div class="stat-grid">
+   <div class="stat"><strong id="totalCustomers">0</strong><span>Customers</span></div>
+   <div class="stat"><strong id="totalPoles">0</strong><span>Poles</span></div>
+   <div class="stat"><strong id="totalSwitches">0</strong><span>Switches</span></div>
+   <div class="stat"><strong id="totalConnections">0</strong><span>Connections</span></div>
+  </div>
+ </div>
 
-      <div class="stats">
-        <div class="stat">
-          <strong id="totalCount">0</strong>
-          <span>Total</span>
-        </div>
-        <div class="stat">
-          <strong id="visibleCount">0</strong>
-          <span>Visible</span>
-        </div>
-        <div class="stat">
-          <strong id="wireCount">0</strong>
-          <span>Wires</span>
-        </div>
-      </div>
+ <div class="section">
+  <h3>Location Search</h3>
+  <input id="mapSearch" class="search" placeholder="Search customer, IP, pole..." oninput="searchLocations()">
+ </div>
 
-      <div class="section">
-        <h3>📍 Location Visibility</h3>
-        <div class="status">
-          Map Setting থেকে কোনো Type Hide করলে সেই Type-এর সব Marker এখানে Hide থাকবে।
-        </div>
-        <div class="filter-list" id="typeFilters" style="margin-top:11px">
-          <div class="empty">Loading types...</div>
-        </div>
-      </div>
+ <div class="section">
+  <h3>Location Visibility</h3>
+  <div id="typeFilters"></div>
+ </div>
 
-      <div class="section">
-        <h3>🔗 Wire Visibility</h3>
+ <div class="section">
+  <h3>Connection Visibility</h3>
+  <div class="filter-item">
+   <label><input type="checkbox" id="showConnections" checked onchange="renderConnections()"> Show All Connections</label>
+  </div>
+  <div class="filter-item">
+   <label><input type="checkbox" id="showWire" checked onchange="renderConnections()"> Wire</label>
+  </div>
+  <div class="filter-item">
+   <label><input type="checkbox" id="showFiber" checked onchange="renderConnections()"> Fiber</label>
+  </div>
+  <div class="filter-item">
+   <label><input type="checkbox" id="showDrop" checked onchange="renderConnections()"> Drop</label>
+  </div>
+  <div class="filter-item">
+   <label><input type="checkbox" id="showArrows" checked onchange="renderConnections()"> Direction Arrows</label>
+  </div>
+ </div>
 
-        <div class="filter-row">
-          <span>Show All Wires</span>
-          <input type="checkbox" class="toggle" id="wireToggle" checked
-            onchange="applyDisplay()">
-        </div>
+ <div class="section">
+  <h3>Map Style</h3>
+  <div class="filter-item">
+   <label><input type="radio" name="mapStyle" value="road" checked onchange="changeMapStyle(this.value)"> Road Map</label>
+  </div>
+  <div class="filter-item">
+   <label><input type="radio" name="mapStyle" value="satellite" onchange="changeMapStyle(this.value)"> Satellite</label>
+  </div>
+  <div class="filter-item">
+   <label><input type="radio" name="mapStyle" value="terrain" onchange="changeMapStyle(this.value)"> Terrain</label>
+  </div>
+ </div>
 
-        <div class="wire-info">
-          <span class="line-sample"></span> Normal Wire
-        </div>
-        <div class="wire-info">
-          <span class="line-sample dashed"></span> Fiber
-        </div>
-        <div class="wire-info">
-          <span class="line-sample dotted"></span> Drop Cable
-        </div>
-      </div>
+ <div class="section">
+  <h3>Connection Legend</h3>
+  <div class="legend-item"><span class="legend-line" style="border-color:#16c784"></span> Wire</div>
+  <div class="legend-item"><span class="legend-line" style="border-color:#3c9dff"></span> Fiber</div>
+  <div class="legend-item"><span class="legend-line" style="border-color:#f3b64b"></span> Drop</div>
+  <div class="legend-item">➜ Connection Direction</div>
+ </div>
 
-      <div class="section">
-        <h3>🗺 Map Information</h3>
-        <div class="status" id="mapInfo">
-          Loading map settings...
-        </div>
-      </div>
+ <div class="section">
+  <h3>Area Lock</h3>
+  <div class="muted" id="areaStatus">Area Lock is not enabled.</div>
+  <button class="btn" style="width:100%;margin-top:10px" onclick="fitVisibleLocations()">Fit All Locations</button>
+ </div>
 
-      <div class="section">
-        <h3>📡 Data Status</h3>
-        <div class="status" id="dataStatus">
-          Connecting to Google Sheet...
-        </div>
-      </div>
+</aside>
 
-    </aside>
+<section class="map-area">
+ <div id="map"></div>
 
-    <div id="map"></div>
+ <div class="map-tools">
+  <div class="tool-group">
+   <button class="tool-btn" onclick="fitVisibleLocations()">◎ Fit All</button>
+   <button class="tool-btn" onclick="resetMapView()">⌖ Reset</button>
+  </div>
+  <div class="tool-group">
+   <button class="tool-btn" onclick="goToSettings()">⚙ Map Settings</button>
+  </div>
+ </div>
 
-    <div class="map-legend">
-      <div class="legend-title">ONE ONLINE NETWORK</div>
-      <div class="legend-row">
-        <span class="legend-dot" style="background:#168b68"></span>
-        Location Marker
-      </div>
-      <div class="legend-row">
-        <span style="width:20px;border-top:3px solid #18c58b"></span>
-        Network Connection
-      </div>
-    </div>
+ <div class="map-status" id="mapMessage">Loading Map...</div>
+</section>
 
-    <div class="map-message" id="mapMessage"></div>
-
-  </main>
+</main>
 </div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet-polylinedecorator@1.7.0/dist/leaflet.polylineDecorator.js"></script>
 
 <script>
-/************************************************************
- ONE ONLINE - NETWORK MAP
- Settings are loaded from Google Apps Script
-************************************************************/
+/* =====================================================
+   ONE ONLINE MAP
+   Compatible with Map Entry / Map Settings
+===================================================== */
 
-const API_URL =
-"https://script.google.com/macros/s/AKfycbxmDzfnY3LpvfvHjC4usnZiBT4BX4KZIjVoCGcSULikoTKQaC_mj7cbG_zUaiTyZ4sb8w/exec";
+const API_URL="https://script.google.com/macros/s/AKfycbxmDzfnY3LpvfvHjC4usnZiBT4BX4KZIjVoCGcSULikoTKQaC_mj7cbG_zUaiTyZ4sb8w/exec";
+const STORAGE_KEY="ONE_ONLINE_MAP_DATA_V1";
 
-const STORAGE_KEY = "ONE_ONLINE_MAP_DATA_V1";
-
-let db = {
-  locations:[],
-  connections:[],
-  settings:{},
-  customTypes:[]
+let db={
+ locations:[],
+ connections:[],
+ settings:{},
+ customTypes:[]
 };
 
-let map;
-let markerLayer;
-let wireLayer;
-let areaLayer;
-let markerObjects = [];
-let wireObjects = [];
-let localVisibility = {};
-let mapReady = false;
+let map=null;
+let baseLayer=null;
+let markerLayer=null;
+let connectionLayer=null;
+let areaMaskLayer=null;
+let areaBoundaryLayer=null;
 
-const DEFAULT_ICONS = {
-  customer:"🏠",
-  pole:"📍",
-  switch:"🔀",
-  pump:"💧",
-  tower:"📡",
-  junction:"🔗",
-  default:"📌"
+let markerObjects=[];
+let connectionObjects=[];
+let visibleTypes={};
+let searchTerm="";
+let mapReady=false;
+
+const TILE_LAYERS={
+ road:{
+  url:"https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+  attribution:"© OpenStreetMap contributors"
+ },
+ satellite:{
+  url:"https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+  attribution:"Tiles © Esri"
+ },
+ terrain:{
+  url:"https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",
+  attribution:"© OpenTopoMap"
+ }
 };
 
-const DEFAULT_COLORS = {
-  customer:"#168b68",
-  pole:"#e5a12c",
-  switch:"#287bd0",
-  pump:"#0ea5e9",
-  default:"#168b68"
-};
-
-/* ---------------- HELPERS ---------------- */
+/* ================= HELPERS ================= */
 
 function escapeHtml(value){
-  return String(value ?? "").replace(/[&<>"']/g,ch=>({
-    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
-  })[ch]);
-}
-
-function typeName(item){
-  return String(item.type || "Other").trim();
-}
-
-function typeKey(type){
-  return String(type || "").trim().toLowerCase();
-}
-
-function itemName(item){
-  return item.name ||
-    item.customerName ||
-    item.poleNumber ||
-    item.switchNumber ||
-    item.locationNumber ||
-    "Unnamed Location";
+ return String(value??"").replace(/[&<>"']/g,ch=>({
+  "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+ })[ch]);
 }
 
 function normalizeType(type){
-  const key = typeKey(type);
-  if(key === "customer") return "Customer";
-  if(key === "pole") return "Pole";
-  if(key === "switch") return "Switch";
+ const t=String(type||"").trim().toLowerCase();
 
-  const custom = db.customTypes.find(x=>
-    typeKey(x.name) === key || typeKey(x.id) === key
-  );
+ if(t==="customer")return "Customer";
+ if(t==="pole")return "Pole";
+ if(t==="switch")return "Switch";
 
-  return custom ? custom.name : type;
+ const custom=db.customTypes.find(x=>
+  String(x.name||"").toLowerCase()===t ||
+  String(x.id||"").toLowerCase()===t
+ );
+
+ return custom?custom.name:(type||"Other");
 }
 
-function settingBool(value,defaultValue=true){
-  if(value === undefined || value === null || value === "") return defaultValue;
-  return value === true || value === "true" || value === 1;
+function getName(item){
+ return item.name||item.customerName||item.locationNumber||"Unnamed";
 }
 
-function getCustomType(type){
-  const key = typeKey(type);
-  return db.customTypes.find(x=>
-    typeKey(x.name) === key || typeKey(x.id) === key
-  ) || {};
+function getCoords(item){
+ if(!item)return null;
+
+ const lat=Number(item.lat??item.latitude);
+ const lng=Number(item.lng??item.longitude);
+
+ if(!Number.isFinite(lat)||!Number.isFinite(lng))return null;
+ if(lat < -90||lat > 90||lng < -180||lng > 180)return null;
+
+ return {lat,lng};
 }
 
-function getTypeIcon(type,item){
-  const key = typeKey(type);
-  const custom = getCustomType(type);
-
-  if(item && item.icon) return item.icon;
-  if(custom.icon) return custom.icon;
-
-  return DEFAULT_ICONS[key] || DEFAULT_ICONS.default;
+function getConnectionFrom(c){
+ return c.from??c.fromId??c.source??c.start??"";
 }
 
-function getTypeColor(type,item){
-  const key = typeKey(type);
-  const custom = getCustomType(type);
-
-  if(item && item.color) return item.color;
-  if(custom.color) return custom.color;
-
-  return DEFAULT_COLORS[key] || DEFAULT_COLORS.default;
+function getConnectionTo(c){
+ return c.to??c.toId??c.target??c.end??"";
 }
 
-function showMessage(message){
-  const el = document.getElementById("mapMessage");
-  el.textContent = message;
-  el.style.display = "block";
-  clearTimeout(showMessage.timer);
-  showMessage.timer = setTimeout(()=>el.style.display="none",3000);
+function getConnectionType(c){
+ return String(c.type||"Wire").trim().toLowerCase();
 }
 
-/* ---------------- LOCAL BACKUP ---------------- */
-
-function loadLocal(){
-  try{
-    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
-
-    db.locations = Array.isArray(saved.locations) ? saved.locations : [];
-    db.connections = Array.isArray(saved.connections) ? saved.connections : [];
-    db.settings = saved.settings || {};
-    db.customTypes = Array.isArray(saved.customTypes) ? saved.customTypes : [];
-  }catch(e){
-    console.warn("Local map data error",e);
-  }
+function findLocation(id){
+ return db.locations.find(x=>String(x.id)===String(id));
 }
+
+/* ================= LOCAL STORAGE ================= */
 
 function saveLocal(){
-  try{
-    localStorage.setItem(STORAGE_KEY,JSON.stringify(db));
-  }catch(e){}
+ try{
+  localStorage.setItem(STORAGE_KEY,JSON.stringify(db));
+ }catch(e){}
 }
 
-/* ---------------- API ---------------- */
+function loadLocal(){
+ try{
+  const data=JSON.parse(localStorage.getItem(STORAGE_KEY)||"{}");
+  db.locations=Array.isArray(data.locations)?data.locations:[];
+  db.connections=Array.isArray(data.connections)?data.connections:[];
+  db.settings=data.settings||{};
+  db.customTypes=Array.isArray(data.customTypes)?data.customTypes:[];
+ }catch(e){}
+}
 
-async function getMapData(){
-  const response = await fetch(API_URL+"?action=getMapData&t="+Date.now(),{
-    method:"GET",
-    cache:"no-store"
-  });
+/* ================= API ================= */
 
-  if(!response.ok) throw new Error("API connection failed");
+async function getRemoteData(){
+ const response=await fetch(API_URL+"?action=getMapData&t="+Date.now(),{
+  method:"GET",
+  cache:"no-store"
+ });
 
-  const result = await response.json();
+ if(!response.ok)throw new Error("Map API request failed");
 
-  if(result.success === false){
-    throw new Error(result.message || "Data load failed");
-  }
+ const result=await response.json();
 
-  const data = result.data || result;
+ if(result.success===false){
+  throw new Error(result.message||"Map data load failed");
+ }
 
-  return {
-    locations:Array.isArray(data.locations)?data.locations:[],
-    connections:Array.isArray(data.connections)?data.connections:[],
-    settings:data.settings || {},
-    customTypes:Array.isArray(data.customTypes)?data.customTypes:[]
-  };
+ const data=result.data||result;
+
+ return {
+  locations:Array.isArray(data.locations)?data.locations:[],
+  connections:Array.isArray(data.connections)?data.connections:[],
+  settings:data.settings||{},
+  customTypes:Array.isArray(data.customTypes)?data.customTypes:[]
+ };
 }
 
 async function loadMapData(){
-  document.getElementById("dataStatus").textContent =
-    "Loading data from Google Sheet...";
+ setMessage("Loading map data...");
+ document.getElementById("loadStatus").textContent="Loading";
 
-  try{
-    const data = await getMapData();
+ try{
+  const remote=await getRemoteData();
+  db=remote;
+  saveLocal();
 
-    db = data;
-    saveLocal();
+  renderEverything();
 
-    document.getElementById("dataStatus").textContent =
-      "Connected — Google Sheet data loaded successfully.";
+  document.getElementById("loadStatus").textContent="Online";
+  setMessage("Map data successfully loaded.");
+ }catch(error){
+  console.error(error);
 
-    renderMap();
-  }catch(error){
-    console.error(error);
+  loadLocal();
+  renderEverything();
 
-    loadLocal();
-
-    document.getElementById("dataStatus").textContent =
-      "Google Sheet connection failed. Showing local backup data.";
-
-    renderMap();
-    showMessage("Offline Backup Data দেখানো হচ্ছে।");
-  }
+  document.getElementById("loadStatus").textContent="Offline";
+  setMessage("Showing saved local data. Server connection failed.");
+ }
 }
 
-/* ---------------- MAP INITIALIZATION ---------------- */
+/* ================= MAP INITIALIZATION ================= */
 
 function initMap(){
-  if(mapReady) return;
+ if(mapReady)return;
 
-  map = L.map("map",{
-    zoomControl:true,
-    preferCanvas:true
-  });
+ map=L.map("map",{
+  zoomControl:true,
+  preferCanvas:true,
+  minZoom:3
+ }).setView([22.3569,91.7832],12);
 
-  markerLayer = L.layerGroup().addTo(map);
-  wireLayer = L.layerGroup().addTo(map);
-  areaLayer = L.layerGroup().addTo(map);
+ markerLayer=L.layerGroup().addTo(map);
+ connectionLayer=L.layerGroup().addTo(map);
 
-  setBaseMap();
+ changeMapStyle("road");
 
-  map.setView([
-    Number(db.settings.centerLat) || 22.3569,
-    Number(db.settings.centerLng) || 91.7832
-  ],Number(db.settings.zoomLevel) || 12);
+ map.on("click",function(){
+  if(window.innerWidth<=760){
+   document.getElementById("sidebar").classList.remove("open");
+  }
+ });
 
-  mapReady = true;
+ mapReady=true;
 }
 
-function setBaseMap(){
-  if(!map) return;
+function changeMapStyle(style){
+ if(!mapReady)return;
 
-  if(map._baseTileLayer){
-    map.removeLayer(map._baseTileLayer);
-  }
-
-  const type = String(db.settings.mapType || "road").toLowerCase();
-
-  let url = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
-  let attribution = "© OpenStreetMap contributors";
-
-  if(type === "satellite"){
-    url = "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}";
-    attribution = "Tiles © Esri";
-  }else if(type === "terrain"){
-    url = "https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png";
-    attribution = "© OpenTopoMap contributors";
-  }
-
-  map._baseTileLayer = L.tileLayer(url,{
-    maxZoom:19,
-    attribution:attribution
-  }).addTo(map);
-
-  map._baseTileLayer.bringToBack();
-}
-
-/* ---------------- TYPE VISIBILITY ---------------- */
-
-/*
- Map Setting-এর Settings-এ নিচের যেকোনো একটি format
- থাকলে এই পেজ সেটি বুঝতে পারবে:
-
- hiddenTypes: ["Pump","Customer"]
-
- অথবা:
-
- visibility: {
-   Customer: true,
-   Pole: true,
-   Switch: true,
-   Pump: false
+ if(baseLayer){
+  map.removeLayer(baseLayer);
  }
 
- অথবা:
+ const config=TILE_LAYERS[style]||TILE_LAYERS.road;
 
- showCustomer: true,
- showPole: true,
- showSwitch: true
+ baseLayer=L.tileLayer(config.url,{
+  attribution:config.attribution,
+  maxZoom:20
+ }).addTo(map);
 
- Map Setting-এর hiddenTypes থাকলে সেটিই অগ্রাধিকার পাবে।
-*/
+ const radio=document.querySelector(`input[name="mapStyle"][value="${style}"]`);
+ if(radio)radio.checked=true;
+}
 
-function isTypeVisible(type){
-  const key = typeKey(type);
-  const settings = db.settings || {};
+/* ================= ICON SETTINGS ================= */
 
-  const hidden = Array.isArray(settings.hiddenTypes)
-    ? settings.hiddenTypes.map(typeKey)
-    : [];
+function iconForType(type,item){
+ if(item&&item.icon)return String(item.icon);
 
-  if(hidden.includes(key)) return false;
+ const t=String(type||"").toLowerCase();
 
-  if(settings.visibility && typeof settings.visibility === "object"){
-    const matchKey = Object.keys(settings.visibility)
-      .find(k=>typeKey(k) === key);
+ if(t==="customer")return "🏠";
+ if(t==="pole")return "📍";
+ if(t==="switch")return "🔀";
 
-    if(matchKey !== undefined){
-      return settingBool(settings.visibility[matchKey],true);
-    }
+ const custom=db.customTypes.find(x=>
+  String(x.name||"").toLowerCase()===t
+ );
+
+ if(custom&&custom.icon)return custom.icon;
+
+ return "📌";
+}
+
+function makeLocationIcon(item){
+ const type=normalizeType(item.type);
+ const icon=iconForType(type,item);
+
+ return L.divIcon({
+  className:"",
+  html:`<div class="location-icon"><span>${escapeHtml(icon)}</span></div>`,
+  iconSize:[27,31],
+  iconAnchor:[13,15],
+  popupAnchor:[0,-13]
+ });
+}
+
+/* ================= AREA LOCK ================= */
+
+function getLockedArea(){
+ const settings=db.settings||{};
+ const area=settings.lockedArea||settings.areaLock||{};
+
+ if(area.enabled===false||settings.areaLockEnabled===false)return null;
+
+ // New Polygon format
+ if(Array.isArray(area.points)&&area.points.length>=3){
+  const points=area.points.map(p=>{
+   const lat=Number(p.lat??p.latitude);
+   const lng=Number(p.lng??p.longitude);
+   if(!Number.isFinite(lat)||!Number.isFinite(lng))return null;
+   return [lat,lng];
+  }).filter(Boolean);
+
+  if(points.length>=3)return {points};
+ }
+
+ // Legacy Rectangle format
+ if(area.southWest&&area.northEast){
+  const sw=area.southWest;
+  const ne=area.northEast;
+
+  const south=Number(sw.lat??sw.latitude);
+  const west=Number(sw.lng??sw.longitude);
+  const north=Number(ne.lat??ne.latitude);
+  const east=Number(ne.lng??ne.longitude);
+
+  if([south,west,north,east].every(Number.isFinite)){
+   return {
+    points:[
+     [south,west],
+     [south,east],
+     [north,east],
+     [north,west]
+    ]
+   };
   }
+ }
 
-  const showKey = "show" + String(type).replace(/[^a-z0-9]/gi,"");
-  if(settings[showKey] !== undefined){
-    return settingBool(settings[showKey],true);
-  }
+ // Alternative direct points
+ if(Array.isArray(settings.lockedAreaPoints)&&settings.lockedAreaPoints.length>=3){
+  const points=settings.lockedAreaPoints.map(p=>[
+   Number(p.lat??p.latitude),
+   Number(p.lng??p.longitude)
+  ]);
+  if(points.every(p=>p.every(Number.isFinite)))return {points};
+ }
 
-  return true;
+ return null;
 }
 
-function buildTypeList(){
-  const types = new Map();
+/* Ray-casting point-in-polygon */
+function pointInsidePolygon(point,polygon){
+ const x=point.lng;
+ const y=point.lat;
+ let inside=false;
 
-  db.locations.forEach(item=>{
-    const type = normalizeType(item.type);
-    const key = typeKey(type);
+ for(let i=0,j=polygon.length-1;i<polygon.length;j=i++){
+  const xi=polygon[i][1],yi=polygon[i][0];
+  const xj=polygon[j][1],yj=polygon[j][0];
 
-    if(!types.has(key)){
-      types.set(key,{
-        name:type,
-        icon:getTypeIcon(type,item),
-        color:getTypeColor(type,item),
-        count:0
-      });
-    }
+  const intersect=((yi>y)!==(yj>y))&&
+   (x<(xj-xi)*(y-yi)/(yj-yi+0.00000000001)+xi);
 
-    types.get(key).count++;
-  });
+  if(intersect)inside=!inside;
+ }
 
-  // Include configured custom types even if no markers exist
-  db.customTypes.forEach(item=>{
-    const name = item.name;
-    if(!name) return;
-
-    const key = typeKey(name);
-
-    if(!types.has(key)){
-      types.set(key,{
-        name:name,
-        icon:item.icon || DEFAULT_ICONS.default,
-        color:item.color || DEFAULT_COLORS.default,
-        count:0
-      });
-    }
-  });
-
-  return [...types.values()];
+ return inside;
 }
 
-function renderTypeFilters(){
-  const container = document.getElementById("typeFilters");
-  const types = buildTypeList();
+function isInsideArea(item){
+ const coords=getCoords(item);
+ if(!coords)return false;
 
-  if(!types.length){
-    container.innerHTML = '<div class="empty">No location types available.</div>';
-    return;
-  }
+ const area=getLockedArea();
+ if(!area)return true;
 
-  container.innerHTML = types.map(item=>{
-    const visible = isTypeVisible(item.name);
-
-    return `
-      <div class="filter-row">
-        <div class="filter-left">
-          <div class="filter-icon"
-            style="border-bottom:3px solid ${escapeHtml(item.color)}">
-            ${escapeHtml(item.icon)}
-          </div>
-          <div>
-            <div class="filter-name">${escapeHtml(item.name)}</div>
-            <div class="filter-count">${item.count} locations</div>
-          </div>
-        </div>
-        <input type="checkbox" class="toggle type-toggle"
-          data-type="${escapeHtml(item.name)}"
-          ${visible?"checked":""}
-          onchange="toggleLocalType(this)">
-      </div>
-    `;
-  }).join("");
+ return pointInsidePolygon(coords,area.points);
 }
 
-function toggleLocalType(input){
-  const type = input.dataset.type;
-  localVisibility[typeKey(type)] = input.checked;
-  applyDisplay();
-}
-
-/* ---------------- AREA LOCK ---------------- */
-
-function getLockedBounds(){
-  const locked = db.settings.lockedArea;
-
-  if(!locked || !settingBool(locked.enabled,false)) return null;
-
-  const sw = locked.southWest;
-  const ne = locked.northEast;
-
-  if(!sw || !ne) return null;
-
-  const values = [
-    Number(sw.lat),Number(sw.lng),
-    Number(ne.lat),Number(ne.lng)
-  ];
-
-  if(values.some(v=>!Number.isFinite(v))) return null;
-
-  return L.latLngBounds(
-    [values[0],values[1]],
-    [values[2],values[3]]
-  );
-}
-
-function isInsideLockedArea(item,bounds){
-  if(!bounds) return true;
-
-  const lat = Number(item.lat ?? item.latitude);
-  const lng = Number(item.lng ?? item.longitude);
-
-  if(!Number.isFinite(lat) || !Number.isFinite(lng)) return false;
-
-  return bounds.contains([lat,lng]);
+function getPolygonBounds(points){
+ return L.latLngBounds(points.map(p=>L.latLng(p[0],p[1])));
 }
 
 function renderAreaLock(){
-  areaLayer.clearLayers();
+ if(areaMaskLayer){
+  map.removeLayer(areaMaskLayer);
+  areaMaskLayer=null;
+ }
+ if(areaBoundaryLayer){
+  map.removeLayer(areaBoundaryLayer);
+  areaBoundaryLayer=null;
+ }
 
-  const bounds = getLockedBounds();
+ const area=getLockedArea();
 
-  if(!bounds){
-    if(map && map.setMaxBounds) map.setMaxBounds(null);
-    return;
+ if(!area){
+  document.getElementById("areaStatus").textContent="Area Lock is not enabled.";
+  return;
+ }
+
+ const points=area.points;
+ const bounds=getPolygonBounds(points);
+
+ // Approximate outside mask using a world-sized outer polygon with a polygon hole.
+ const outer=[
+  [-85,-180],
+  [85,-180],
+  [85,180],
+  [-85,180]
+ ];
+
+ areaMaskLayer=L.polygon(
+  [outer,...[points]],
+  {
+   stroke:false,
+   fillColor:"#050a12",
+   fillOpacity:.70,
+   interactive:false
   }
+ ).addTo(map);
 
-  L.rectangle(bounds,{
-    color:"#13a77a",
-    weight:2,
-    fillColor:"#13a77a",
-    fillOpacity:.07,
-    dashArray:"7 5"
-  }).addTo(areaLayer);
+ areaBoundaryLayer=L.polygon(points,{
+  color:"#21d39b",
+  weight:2,
+  opacity:.95,
+  fill:false,
+  dashArray:"7 6",
+  interactive:false
+ }).addTo(map);
 
-  map.setMaxBounds(bounds.pad(.03));
-
-  document.getElementById("mapInfo").textContent =
-    "Area Lock Active — Map is restricted to the configured area.";
+ document.getElementById("areaStatus").textContent=
+  "Polygon Area Lock Active · "+points.length+" corners";
 }
 
-/* ---------------- MARKER CREATION ---------------- */
+/* ================= TYPE FILTERS ================= */
 
-function makeMarkerIcon(item){
-  const type = normalizeType(item.type);
-  const icon = getTypeIcon(type,item);
-  const color = getTypeColor(type,item);
-  const size = Math.max(20,Math.min(60,Number(db.settings.markerSize) || 34));
-
-  const label = settingBool(db.settings.showMarkerLabels,true)
-    ? `<div class="marker-label">${escapeHtml(itemName(item))}</div>`
-    : "";
-
-  return L.divIcon({
-    className:"",
-    html:`
-      <div class="marker-wrap">
-        <div class="marker-icon"
-          style="width:${size}px;height:${size}px;background:${escapeHtml(color)}">
-          <span>${escapeHtml(icon)}</span>
-        </div>
-        ${label}
-      </div>
-    `,
-    iconSize:[size+20,size+25],
-    iconAnchor:[(size+20)/2,size+20],
-    popupAnchor:[0,-size]
-  });
+function getAllTypes(){
+ const types=[...new Set(db.locations.map(x=>normalizeType(x.type)))];
+ return types.sort((a,b)=>{
+  const order=["Customer","Pole","Switch"];
+  const ai=order.indexOf(a);
+  const bi=order.indexOf(b);
+  if(ai!==-1||bi!==-1){
+   return (ai===-1?99:ai)-(bi===-1?99:bi);
+  }
+  return a.localeCompare(b);
+ });
 }
 
-function markerPopup(item){
-  const type = normalizeType(item.type);
-  const name = itemName(item);
+function renderTypeFilters(){
+ const types=getAllTypes();
+ const container=document.getElementById("typeFilters");
 
-  let extra = "";
+ types.forEach(type=>{
+  if(visibleTypes[type]===undefined)visibleTypes[type]=true;
+ });
 
-  if(type === "Customer"){
-    if(item.customerIp || item.ip){
-      extra += `<div class="popup-line"><b>Customer IP:</b> ${escapeHtml(item.customerIp || item.ip)}</div>`;
-    }
+ Object.keys(visibleTypes).forEach(type=>{
+  if(!types.includes(type))delete visibleTypes[type];
+ });
 
-    if(item.customerAddress || item.address){
-      extra += `<div class="popup-line"><b>Address:</b> ${escapeHtml(item.customerAddress || item.address)}</div>`;
-    }
-  }else{
-    extra += `<div class="popup-line"><b>Number:</b> ${escapeHtml(item.locationNumber || name)}</div>`;
-  }
+ container.innerHTML=types.map(type=>{
+  const count=db.locations.filter(x=>normalizeType(x.type)===type).length;
+  const checked=visibleTypes[type]!==false;
 
-  if(item.notes){
-    extra += `<div class="popup-line"><b>Notes:</b> ${escapeHtml(item.notes)}</div>`;
-  }
-
-  extra += `
-    <div class="popup-line">
-      <b>Latitude:</b> ${escapeHtml(item.lat ?? item.latitude)}
-    </div>
-    <div class="popup-line">
-      <b>Longitude:</b> ${escapeHtml(item.lng ?? item.longitude)}
-    </div>
-  `;
-
-  return `
-    <div>
-      <div class="popup-type">${escapeHtml(type)}</div>
-      <div class="popup-title">${escapeHtml(name)}</div>
-      ${extra}
-      ${item.locationUrl ? `
-        <div style="margin-top:8px">
-          <a href="${escapeHtml(item.locationUrl)}" target="_blank" rel="noopener">
-            Open Google Maps
-          </a>
-        </div>` : ""}
-    </div>
-  `;
+  return `<div class="filter-item">
+   <label>
+    <input type="checkbox" ${checked?"checked":""}
+     onchange="toggleType('${escapeHtml(type)}',this.checked)">
+    ${escapeHtml(iconForType(type,{}))} ${escapeHtml(type)}
+   </label>
+   <span class="count">${count}</span>
+  </div>`;
+ }).join("")||'<div class="muted">No location types found.</div>';
 }
+
+function toggleType(type,checked){
+ visibleTypes[type]=checked;
+ renderMarkers();
+}
+
+/* ================= LOCATION FILTER ================= */
+
+function matchesSearch(item){
+ if(!searchTerm)return true;
+
+ const text=[
+  item.name,
+  item.customerName,
+  item.customerIp,
+  item.ip,
+  item.locationNumber,
+  item.address,
+  item.customerAddress,
+  item.type,
+  item.notes
+ ].join(" ").toLowerCase();
+
+ return text.includes(searchTerm);
+}
+
+function isLocationVisible(item){
+ const type=normalizeType(item.type);
+
+ if(visibleTypes[type]===false)return false;
+ if(!matchesSearch(item))return false;
+ if(!isInsideArea(item))return false;
+
+ return !!getCoords(item);
+}
+
+/* ================= LOCATION POPUP ================= */
+
+function makePopup(item){
+ const type=normalizeType(item.type);
+ const name=getName(item);
+ const coords=getCoords(item);
+
+ let rows="";
+
+ if(item.customerIp||item.ip){
+  rows+=`<div class="popup-row">IP: ${escapeHtml(item.customerIp||item.ip)}</div>`;
+ }
+
+ if(item.locationNumber){
+  rows+=`<div class="popup-row">Number: ${escapeHtml(item.locationNumber)}</div>`;
+ }
+
+ if(item.customerAddress||item.address){
+  rows+=`<div class="popup-row">Address: ${escapeHtml(item.customerAddress||item.address)}</div>`;
+ }
+
+ if(coords){
+  rows+=`<div class="popup-row">Lat: ${coords.lat.toFixed(6)}</div>`;
+  rows+=`<div class="popup-row">Lng: ${coords.lng.toFixed(6)}</div>`;
+ }
+
+ if(item.notes){
+  rows+=`<div class="popup-row">Notes: ${escapeHtml(item.notes)}</div>`;
+ }
+
+ const url=item.locationUrl||"";
+ const mapLink=coords?
+  `https://www.google.com/maps?q=${coords.lat},${coords.lng}`:"";
+
+ return `
+ <div>
+  <div class="popup-tag">${escapeHtml(type)}</div>
+  <div class="popup-title">${escapeHtml(name)}</div>
+  ${rows}
+  ${mapLink?`<div style="margin-top:8px"><a href="${mapLink}" target="_blank" rel="noopener" style="color:#69d7b0;font-size:11px">Open in Google Maps ↗</a></div>`:""}
+ </div>`;
+}
+
+/* ================= MARKERS ================= */
 
 function renderMarkers(){
-  markerLayer.clearLayers();
-  markerObjects = [];
+ if(!mapReady)return;
 
-  const bounds = getLockedBounds();
-  const search = document.getElementById("searchInput").value.trim().toLowerCase();
+ markerLayer.clearLayers();
+ markerObjects=[];
 
-  let visible = 0;
+ const visible=db.locations.filter(isLocationVisible);
 
-  db.locations.forEach(item=>{
-    const lat = Number(item.lat ?? item.latitude);
-    const lng = Number(item.lng ?? item.longitude);
+ visible.forEach(item=>{
+  const coords=getCoords(item);
+  if(!coords)return;
 
-    if(!Number.isFinite(lat) || !Number.isFinite(lng)) return;
+  const marker=L.marker([coords.lat,coords.lng],{
+   icon:makeLocationIcon(item),
+   keyboard:true,
+   title:getName(item),
+   riseOnHover:true
+  });
 
-    const type = normalizeType(item.type);
-    const key = typeKey(type);
+  marker.bindPopup(makePopup(item),{
+   maxWidth:280,
+   closeButton:true
+  });
 
-    if(!isTypeVisible(type)) return;
+  marker.addTo(markerLayer);
+  markerObjects.push({item,marker});
+ });
 
-    if(localVisibility[key] === false) return;
+ renderStats();
+}
 
-    if(!isInsideLockedArea(item,bounds)) return;
+/* ================= CONNECTION STYLE ================= */
 
-    const searchText = [
-      item.name,item.type,item.locationNumber,
-      item.customerIp,item.ip,item.address,
-      item.customerAddress,item.notes
-    ].join(" ").toLowerCase();
+function getConnectionStyle(connection){
+ const type=getConnectionType(connection);
+ const settings=db.settings||{};
 
-    if(search && !searchText.includes(search)) return;
+ let color=settings.wireColor||"#16c784";
+ let weight=Number(settings.wireWeight)||3;
+ let opacity=settings.wireOpacity===undefined?.95:Number(settings.wireOpacity);
+ let style=settings.wireStyle||"solid";
 
-    const marker = L.marker([lat,lng],{
-      icon:makeMarkerIcon(item),
-      title:itemName(item)
+ if(type==="fiber"){
+  color=settings.fiberColor||settings.wireFiberColor||"#3c9dff";
+  weight=Number(settings.fiberWeight)||4;
+  opacity=settings.fiberOpacity===undefined?1:Number(settings.fiberOpacity);
+  style=settings.fiberStyle||"solid";
+ }else if(type==="drop"){
+  color=settings.dropColor||settings.wireDropColor||"#f3b64b";
+  weight=Number(settings.dropWeight)||2;
+  opacity=settings.dropOpacity===undefined?1:Number(settings.dropOpacity);
+  style=settings.dropStyle||"dashed";
+ }
+
+ const dashMap={
+  solid:null,
+  dashed:"8 7",
+  dotted:"2 7",
+  dash:"8 7",
+  dot:"2 7"
+ };
+
+ return {
+  color,
+  weight:Math.max(1,Math.min(12,weight)),
+  opacity:Math.max(0,Math.min(1,opacity)),
+  dashArray:dashMap[String(style).toLowerCase()]??null,
+  lineCap:"round",
+  lineJoin:"round"
+ };
+}
+
+/* ================= CONNECTION VISIBILITY ================= */
+
+function connectionTypeVisible(type){
+ const t=String(type||"wire").toLowerCase();
+
+ if(t==="fiber")return document.getElementById("showFiber").checked;
+ if(t==="drop")return document.getElementById("showDrop").checked;
+ return document.getElementById("showWire").checked;
+}
+
+function renderConnections(){
+ if(!mapReady)return;
+
+ connectionLayer.clearLayers();
+ connectionObjects=[];
+
+ if(!document.getElementById("showConnections").checked)return;
+
+ const showArrows=document.getElementById("showArrows").checked;
+
+ db.connections.forEach(connection=>{
+  const fromId=getConnectionFrom(connection);
+  const toId=getConnectionTo(connection);
+
+  const from=findLocation(fromId);
+  const to=findLocation(toId);
+
+  if(!from||!to)return;
+
+  const fromCoords=getCoords(from);
+  const toCoords=getCoords(to);
+
+  if(!fromCoords||!toCoords)return;
+
+  // Both endpoints must be inside the Polygon Area Lock.
+  if(!isInsideArea(from)||!isInsideArea(to))return;
+
+  // Respect type visibility and search filters.
+  if(visibleTypes[normalizeType(from.type)]===false)return;
+  if(visibleTypes[normalizeType(to.type)]===false)return;
+
+  if(!matchesSearch(from)&&!matchesSearch(to))return;
+
+  const type=getConnectionType(connection);
+  if(!connectionTypeVisible(type))return;
+
+  const style=getConnectionStyle(connection);
+
+  const line=L.polyline([
+   [fromCoords.lat,fromCoords.lng],
+   [toCoords.lat,toCoords.lng]
+  ],style).addTo(connectionLayer);
+
+  const connectionName=connection.name||type.toUpperCase();
+
+  line.bindPopup(`
+   <div>
+    <div class="popup-tag">${escapeHtml(type.toUpperCase())}</div>
+    <div class="popup-title">${escapeHtml(connectionName)}</div>
+    <div class="popup-row"><b>From:</b> ${escapeHtml(getName(from))}</div>
+    <div class="popup-row"><b>To:</b> ${escapeHtml(getName(to))}</div>
+    <div class="popup-row">Direction: ${escapeHtml(getName(from))} → ${escapeHtml(getName(to))}</div>
+   </div>
+  `);
+
+  // Direction arrow follows source -> destination.
+  if(showArrows&&typeof line.setStyle==="function"){
+   if(typeof L.polylineDecorator==="function"){
+    const arrow=L.polylineDecorator(line,{
+     patterns:[{
+      offset:"65%",
+      repeat:0,
+      symbol:L.Symbol.arrowHead({
+       pixelSize:11,
+       polygon:true,
+       pathOptions:{
+        color:style.color,
+        fillColor:style.color,
+        fillOpacity:1,
+        weight:1
+       }
+      })
+     }]
+    }).addTo(connectionLayer);
+
+    connectionObjects.push({line,arrow,connection});
+   }else{
+    // Fallback if the decorator plugin does not load.
+    const midLat=(fromCoords.lat+toCoords.lat)/2;
+    const midLng=(fromCoords.lng+toCoords.lng)/2;
+
+    const arrowIcon=L.divIcon({
+     className:"",
+     html:`<div class="direction-arrow">➤</div>`,
+     iconSize:[22,22],
+     iconAnchor:[11,11]
     });
 
-    marker.bindPopup(markerPopup(item));
+    const arrowMarker=L.marker([midLat,midLng],{
+     icon:arrowIcon,
+     interactive:false
+    }).addTo(connectionLayer);
 
-    marker.addTo(markerLayer);
-    markerObjects.push({marker,item});
-
-    visible++;
-  });
-
-  document.getElementById("totalCount").textContent = db.locations.length;
-  document.getElementById("visibleCount").textContent = visible;
-}
-
-/* ---------------- WIRES ---------------- */
-
-function getConnectionEndpoint(connection,which){
-  if(which === "from"){
-    return connection.from ?? connection.fromId ??
-      connection.source ?? connection.start;
-  }
-
-  return connection.to ?? connection.toId ??
-    connection.target ?? connection.end;
-}
-
-function wireStyle(connection){
-  const type = String(connection.type || "Wire").toLowerCase();
-  const settings = db.settings || {};
-
-  const color = settings.wireColor || "#16b987";
-  const weight = Number(settings.wireWeight) || 3;
-  const opacity = Math.max(0,Math.min(1,Number(settings.wireOpacity ?? .9)));
-
-  let dashArray = null;
-
-  const style = String(settings.wireStyle || "solid").toLowerCase();
-
-  if(style === "dashed") dashArray = "8 7";
-  if(style === "dotted") dashArray = "2 7";
-
-  if(type.includes("fiber")) dashArray = "8 7";
-  if(type.includes("drop")) dashArray = "2 7";
-
-  return {
-    color:color,
-    weight:weight,
-    opacity:opacity,
-    dashArray:dashArray
-  };
-}
-
-function renderWires(){
-  wireLayer.clearLayers();
-  wireObjects = [];
-
-  const showWires = settingBool(db.settings.showWires,true) &&
-    document.getElementById("wireToggle").checked;
-
-  if(!showWires){
-    document.getElementById("wireCount").textContent = "0";
-    return;
-  }
-
-  const bounds = getLockedBounds();
-  let count = 0;
-
-  db.connections.forEach(connection=>{
-    const fromId = getConnectionEndpoint(connection,"from");
-    const toId = getConnectionEndpoint(connection,"to");
-
-    const from = db.locations.find(x=>String(x.id) === String(fromId));
-    const to = db.locations.find(x=>String(x.id) === String(toId));
-
-    if(!from || !to) return;
-
-    // Do not show a connection if its endpoint type is hidden.
-    if(!isTypeVisible(normalizeType(from.type))) return;
-    if(!isTypeVisible(normalizeType(to.type))) return;
-
-    if(localVisibility[typeKey(normalizeType(from.type))] === false) return;
-    if(localVisibility[typeKey(normalizeType(to.type))] === false) return;
-
-    const lat1 = Number(from.lat ?? from.latitude);
-    const lng1 = Number(from.lng ?? from.longitude);
-    const lat2 = Number(to.lat ?? to.latitude);
-    const lng2 = Number(to.lng ?? to.longitude);
-
-    if(![lat1,lng1,lat2,lng2].every(Number.isFinite)) return;
-
-    if(bounds){
-      const insideFrom = bounds.contains([lat1,lng1]);
-      const insideTo = bounds.contains([lat2,lng2]);
-
-      if(!insideFrom || !insideTo) return;
-    }
-
-    const line = L.polyline(
-      [[lat1,lng1],[lat2,lng2]],
-      wireStyle(connection)
-    );
-
-    const label = connection.name || connection.type || "Connection";
-
-    line.bindPopup(`
-      <b>${escapeHtml(label)}</b><br>
-      ${escapeHtml(itemName(from))} → ${escapeHtml(itemName(to))}
-    `);
-
-    line.addTo(wireLayer);
-    wireObjects.push(line);
-    count++;
-  });
-
-  document.getElementById("wireCount").textContent = count;
-}
-
-/* ---------------- APPLY FILTERS ---------------- */
-
-function applyDisplay(){
-  renderMarkers();
-  renderWires();
-}
-
-/* ---------------- FULL RENDER ---------------- */
-
-function renderMap(){
-  initMap();
-
-  setBaseMap();
-
-  const centerLat = Number(db.settings.centerLat);
-  const centerLng = Number(db.settings.centerLng);
-  const zoom = Number(db.settings.zoomLevel);
-
-  if(Number.isFinite(centerLat) && Number.isFinite(centerLng)){
-    map.setView(
-      [centerLat,centerLng],
-      Number.isFinite(zoom) ? zoom : 12
-    );
-  }
-
-  renderAreaLock();
-  renderTypeFilters();
-  applyDisplay();
-
-  const lock = getLockedBounds();
-
-  if(lock){
-    document.getElementById("mapInfo").textContent =
-      "Area Lock Active — configured map boundary is enabled.";
+    connectionObjects.push({line,arrow:arrowMarker,connection});
+   }
   }else{
-    document.getElementById("mapInfo").textContent =
-      "Area Lock is currently disabled.";
+   connectionObjects.push({line,connection});
   }
-
-  if(!db.locations.length){
-    showMessage("এখনো কোনো Map Location পাওয়া যায়নি।");
-  }
+ });
 }
 
-/* ---------------- CONTROLS ---------------- */
+/* ================= STATS ================= */
+
+function renderStats(){
+ const count=type=>db.locations.filter(x=>
+  normalizeType(x.type).toLowerCase()===type.toLowerCase()
+ ).length;
+
+ const visibleCount=db.connections.filter(c=>{
+  const from=findLocation(getConnectionFrom(c));
+  const to=findLocation(getConnectionTo(c));
+  return from&&to&&isInsideArea(from)&&isInsideArea(to);
+ }).length;
+
+ document.getElementById("totalCustomers").textContent=count("Customer");
+ document.getElementById("totalPoles").textContent=count("Pole");
+ document.getElementById("totalSwitches").textContent=count("Switch");
+ document.getElementById("totalConnections").textContent=visibleCount;
+}
+
+/* ================= SEARCH ================= */
+
+function searchLocations(){
+ searchTerm=document.getElementById("mapSearch").value.trim().toLowerCase();
+
+ renderMarkers();
+ renderConnections();
+
+ if(searchTerm){
+  const found=markerObjects;
+  if(found.length===1){
+   map.setView(found[0].marker.getLatLng(),17);
+   found[0].marker.openPopup();
+  }
+ }
+}
+
+/* ================= FIT / RESET ================= */
+
+function fitVisibleLocations(){
+ if(!mapReady)return;
+
+ const points=db.locations
+  .filter(isLocationVisible)
+  .map(x=>{
+   const c=getCoords(x);
+   return c?[c.lat,c.lng]:null;
+  })
+  .filter(Boolean);
+
+ const area=getLockedArea();
+
+ if(points.length){
+  const bounds=L.latLngBounds(points.map(p=>L.latLng(p[0],p[1])));
+  if(area){
+   const areaBounds=getPolygonBounds(area.points);
+   bounds.extend(areaBounds);
+  }
+  map.fitBounds(bounds,{padding:[40,40],maxZoom:17});
+ }else if(area){
+  map.fitBounds(getPolygonBounds(area.points),{padding:[40,40]});
+ }else{
+  map.setView([22.3569,91.7832],12);
+ }
+}
+
+function resetMapView(){
+ const area=getLockedArea();
+
+ if(area){
+  map.fitBounds(getPolygonBounds(area.points),{padding:[35,35]});
+ }else{
+  map.setView([22.3569,91.7832],12);
+ }
+}
+
+/* ================= RENDER ALL ================= */
+
+function renderEverything(){
+ if(!mapReady)initMap();
+
+ renderTypeFilters();
+ renderAreaLock();
+ renderMarkers();
+ renderConnections();
+ renderStats();
+
+ // Keep map focused on the permitted area when one is configured.
+ const area=getLockedArea();
+
+ if(area){
+  map.fitBounds(getPolygonBounds(area.points),{padding:[30,30]});
+ }else if(db.locations.length){
+  fitVisibleLocations();
+ }
+}
+
+/* ================= NAVIGATION ================= */
 
 function toggleSidebar(){
-  document.getElementById("sidebar").classList.toggle("open");
+ document.getElementById("sidebar").classList.toggle("open");
+}
+
+function navigateParent(page){
+ if(window.parent&&window.parent!==window){
+  window.parent.postMessage({
+   type:"ONE_ONLINE_NAVIGATE",
+   page:page
+  },"*");
+ }
+}
+
+function goToEntry(){
+ navigateParent("map-entry");
 }
 
 function goToSettings(){
-  if(window.parent && window.parent !== window){
-    window.parent.postMessage({
-      type:"ONE_ONLINE_NAVIGATE",
-      page:"map-setting"
-    },"*");
-  }else{
-    window.location.href = "map-setting.html";
-  }
+ navigateParent("map-setting");
 }
 
-/* ---------------- START ---------------- */
+function setMessage(message){
+ document.getElementById("mapMessage").textContent=message;
+}
 
-document.getElementById("wireToggle").addEventListener("change",applyDisplay);
+/* ================= START ================= */
 
 loadLocal();
 initMap();
-renderMap();
+renderEverything();
 
 window.addEventListener("load",()=>{
-  setTimeout(()=>{
-    if(map) map.invalidateSize();
-  },250);
-  loadMapData();
+ setTimeout(()=>{
+  if(map)map.invalidateSize();
+ },300);
+
+ loadMapData();
 });
 
 window.addEventListener("resize",()=>{
-  if(map) map.invalidateSize();
+ if(map)setTimeout(()=>map.invalidateSize(),150);
 });
 
+// Refresh map after returning from Map Entry or Map Settings.
+window.addEventListener("focus",()=>{
+ if(mapReady)loadMapData();
+});
 </script>
+
 </body>
 </html>
