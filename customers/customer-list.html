@@ -1287,9 +1287,9 @@ function renderCustomers(){
     ${c.dueReason?`<span class="mutedline">${esc(c.dueReason)}</span>`:""}
    </td>
    <td>
-    <div class="money cost">${money(c.internetBill)}</div>
-    <span class="mutedline">Office due: ${esc(c.renewDate?displayMonthDate(c.renewDate):"Not set")}</span>
-    <span class="mutedline">Renewed: ${esc(displayMonthDate(c.internetBillLastRenewedAt))}</span>
+   <div class="money cost">${money(c.internetBill)}</div>
+   <span class="mutedline">Renew date: ${esc(c.renewDate?displayMonthDate(c.renewDate):"Not set")}</span>
+   <span class="mutedline">Last renew: ${esc(displayMonthDate(c.internetBillLastRenewedAt))}</span>
    </td>
    <td class="area">
     <strong>${esc(c.area||"—")}</strong>
