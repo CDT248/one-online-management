@@ -4,296 +4,153 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Map | ONE ONLINE</title>
+<title>ONE ONLINE | Network Map</title>
 
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 
 <style>
 :root{
- --bg:#0b1220;
- --panel:#111c2e;
- --panel2:#172338;
- --text:#e8f0fc;
- --muted:#91a3bd;
- --line:#293a53;
- --primary:#168b68;
- --input:#0b1729;
+ --bg:#0b1220;--panel:#111c2e;--panel2:#172338;
+ --text:#e8f0fc;--muted:#91a3bd;--line:#293a53;
+ --green:#16a777;
 }
 *{box-sizing:border-box}
-body{
- margin:0;
- background:var(--bg);
- color:var(--text);
- font-family:Arial,Helvetica,sans-serif;
-}
-button,input,select{font:inherit}
+body{margin:0;font-family:Arial,sans-serif;background:var(--bg);color:var(--text)}
+button,input{font:inherit}
 button{cursor:pointer}
-.app{
- width:100%;
- height:100vh;
- min-height:500px;
- display:flex;
- flex-direction:column;
-}
+
+.app{height:100vh;min-height:500px;display:flex;flex-direction:column}
 .topbar{
- min-height:64px;
- background:var(--panel);
+ height:64px;flex-shrink:0;background:var(--panel);
  border-bottom:1px solid var(--line);
- display:flex;
- align-items:center;
- justify-content:space-between;
- padding:10px 16px;
- gap:12px;
- z-index:500;
+ display:flex;align-items:center;justify-content:space-between;
+ padding:9px 15px;gap:10px;z-index:500
 }
-.brand{
- display:flex;
- align-items:center;
- gap:10px;
- min-width:0;
-}
+.brand{display:flex;align-items:center;gap:10px}
 .logo{
- width:40px;height:40px;
- border-radius:12px;
- background:linear-gradient(135deg,#087f5b,#16b887);
- display:grid;place-items:center;
- font-size:21px;font-weight:900;
- color:white;flex-shrink:0;
+ width:40px;height:40px;border-radius:12px;
+ background:linear-gradient(135deg,#087f5b,#20c997);
+ display:grid;place-items:center;color:white;font-size:22px;font-weight:900
 }
 .brand h2{font-size:16px;margin:0 0 3px}
 .brand p{font-size:10px;color:var(--muted);margin:0}
 .actions{display:flex;gap:7px;flex-wrap:wrap}
 .btn{
- border:1px solid var(--line);
- background:var(--panel2);
- color:var(--text);
- padding:9px 12px;
- border-radius:8px;
- font-size:12px;
- font-weight:700;
+ padding:9px 12px;border:1px solid var(--line);
+ border-radius:8px;background:var(--panel2);color:var(--text);
+ font-size:12px;font-weight:700
 }
-.btn.primary{background:var(--primary);border-color:var(--primary);color:white}
-.btn:disabled{opacity:.5}
-.main{
- display:flex;
- flex:1;
- min-height:0;
- position:relative;
-}
+.btn.primary{background:#087f5b;border-color:#087f5b;color:white}
+.btn:hover{filter:brightness(1.15)}
+
+.main{display:flex;flex:1;min-height:0;position:relative}
 .sidebar{
- width:270px;
- flex:0 0 270px;
- background:var(--panel);
- border-right:1px solid var(--line);
- padding:14px;
- overflow-y:auto;
- z-index:400;
+ width:270px;flex:0 0 270px;background:var(--panel);
+ border-right:1px solid var(--line);padding:13px;
+ overflow-y:auto;z-index:400
 }
 .section{
- border:1px solid var(--line);
- border-radius:11px;
- padding:12px;
- margin-bottom:12px;
- background:var(--panel2);
+ padding:12px;background:var(--panel2);
+ border:1px solid var(--line);border-radius:11px;margin-bottom:12px
 }
-.section h3{
- font-size:13px;
- margin:0 0 12px;
-}
-.section-title{
- display:flex;
- justify-content:space-between;
- align-items:center;
- gap:8px;
-}
-.muted{color:var(--muted);font-size:11px}
-.filter-item{
- display:flex;
- align-items:center;
- justify-content:space-between;
- gap:8px;
- padding:8px 0;
- border-bottom:1px solid rgba(255,255,255,.06);
- font-size:12px;
-}
-.filter-item:last-child{border:0}
-.filter-item label{
- display:flex;
- align-items:center;
- gap:8px;
- cursor:pointer;
-}
-.filter-item input{accent-color:#16b887}
-.count{
- background:#23354c;
- border-radius:20px;
- padding:3px 8px;
- font-size:10px;
- color:#c5d6eb;
-}
-.stat-grid{
- display:grid;
- grid-template-columns:repeat(2,1fr);
- gap:8px;
-}
-.stat{
- padding:10px;
- background:#0d192b;
- border:1px solid var(--line);
- border-radius:8px;
-}
-.stat strong{display:block;font-size:20px}
+.section h3{font-size:13px;margin:0 0 12px}
+.section-title{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.muted{font-size:11px;color:var(--muted)}
+.stat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.stat{padding:10px;background:#0d192b;border:1px solid var(--line);border-radius:8px}
+.stat strong{display:block;font-size:21px}
 .stat span{font-size:10px;color:var(--muted)}
 .search{
- width:100%;
- padding:10px;
- background:var(--input);
- color:var(--text);
- border:1px solid var(--line);
- border-radius:8px;
- outline:none;
- font-size:12px;
+ width:100%;padding:10px;border:1px solid var(--line);
+ background:#0b1729;color:white;border-radius:8px;outline:none;font-size:12px
 }
-.legend-item{
- display:flex;
- align-items:center;
- gap:8px;
- font-size:11px;
- margin:9px 0;
- color:#c6d4e6;
+.filter-item{
+ display:flex;align-items:center;justify-content:space-between;
+ padding:8px 0;border-bottom:1px solid #ffffff0c;font-size:12px;gap:8px
 }
-.legend-line{
- width:27px;height:0;
- border-top:3px solid;
-}
-.map-area{
- flex:1;
- min-width:0;
- position:relative;
- background:#0b1220;
-}
-#map{
- width:100%;
- height:100%;
- min-height:400px;
- background:#101b2b;
- z-index:1;
-}
+.filter-item:last-child{border:0}
+.filter-item label{display:flex;align-items:center;gap:8px;cursor:pointer}
+.filter-item input{accent-color:#16b887}
+.count{font-size:10px;padding:3px 8px;border-radius:20px;background:#263b54}
+.legend-item{display:flex;align-items:center;gap:9px;font-size:11px;margin:9px 0}
+.legend-line{width:28px;border-top:3px solid}
+.map-area{flex:1;min-width:0;position:relative;background:#e8edf2}
+#map{height:100%;width:100%;min-height:400px;background:#e8edf2;z-index:1}
+
+/* Map controls */
 .map-tools{
- position:absolute;
- top:12px;
- left:12px;
- right:12px;
- display:flex;
- justify-content:space-between;
- align-items:flex-start;
- gap:8px;
- pointer-events:none;
- z-index:300;
+ position:absolute;top:12px;left:12px;right:12px;
+ display:flex;justify-content:space-between;gap:8px;
+ pointer-events:none;z-index:300
 }
-.tool-group{
- display:flex;
- flex-wrap:wrap;
- gap:6px;
- pointer-events:auto;
-}
+.tool-group{display:flex;gap:6px;flex-wrap:wrap;pointer-events:auto}
 .tool-btn{
- background:rgba(12,24,40,.94);
- color:#e8f0fc;
- border:1px solid #40516a;
- padding:9px 11px;
- border-radius:8px;
- font-size:11px;
- font-weight:700;
- box-shadow:0 3px 12px #0005;
+ border:1px solid #b8c5d1;background:#fff;color:#24364b;
+ border-radius:8px;padding:9px 11px;font-size:11px;font-weight:800;
+ box-shadow:0 2px 8px #0002
 }
-.tool-btn.active{
- background:#087f5b;
- border-color:#16b887;
-}
+.tool-btn:hover{background:#f0f7ff}
 .map-status{
- position:absolute;
- bottom:16px;
- left:12px;
- z-index:300;
- background:rgba(12,24,40,.94);
- color:#c9d9eb;
- padding:9px 12px;
- border:1px solid #40516a;
- border-radius:8px;
- font-size:11px;
- pointer-events:none;
+ position:absolute;bottom:14px;left:12px;z-index:300;
+ background:#fff;color:#34465a;border:1px solid #d4dce5;
+ border-radius:8px;padding:8px 11px;font-size:11px;
+ box-shadow:0 2px 8px #0002;pointer-events:none
 }
-.mobile-toggle{display:none}
-.leaflet-popup-content-wrapper,
-.leaflet-popup-tip{
- background:#132238;
- color:#e8f0fc;
+
+/* Beautiful icon-only markers */
+.map-marker{
+ width:38px;height:42px;display:flex;align-items:center;justify-content:center;
+ position:relative;background:transparent;border:0;
+ filter:drop-shadow(0 2px 2px #0005)
 }
+.map-marker .bubble{
+ width:34px;height:34px;border-radius:12px;
+ display:flex;align-items:center;justify-content:center;
+ font-size:20px;border:2px solid white;
+ box-shadow:0 2px 7px #0004
+}
+.map-marker.customer .bubble{background:linear-gradient(135deg,#0b9b70,#18c995)}
+.map-marker.pole .bubble{background:linear-gradient(135deg,#e49a1c,#ffc34f)}
+.map-marker.switch .bubble{background:linear-gradient(135deg,#2877d4,#65a9ff)}
+.map-marker.custom .bubble{background:linear-gradient(135deg,#8155ce,#bd8aff)}
+.map-marker .pin-tip{
+ position:absolute;bottom:0;width:9px;height:9px;
+ transform:rotate(45deg);z-index:-1;border-radius:1px
+}
+.map-marker.customer .pin-tip{background:#0b9b70}
+.map-marker.pole .pin-tip{background:#e49a1c}
+.map-marker.switch .pin-tip{background:#2877d4}
+.map-marker.custom .pin-tip{background:#8155ce}
+
+/* Popup */
+.leaflet-popup-content-wrapper,.leaflet-popup-tip{background:#fff;color:#172338}
 .leaflet-popup-content{margin:13px;min-width:180px}
-.popup-title{font-weight:800;font-size:14px;margin-bottom:7px}
-.popup-row{font-size:11px;line-height:1.7;color:#c4d4e7}
-.popup-tag{
- display:inline-block;
- background:#1b4a3b;
- color:#a8f0d2;
- padding:4px 7px;
- border-radius:20px;
- font-size:10px;
- margin-bottom:7px;
-}
-.leaflet-control-zoom a{
- background:#172338!important;
- color:#fff!important;
- border-color:#344760!important;
-}
-.leaflet-control-attribution{
- background:rgba(10,20,34,.8)!important;
- color:#a9bbd0!important;
-}
-.leaflet-control-attribution a{color:#7ccbb1!important}
-.location-icon{
- display:flex;
- align-items:center;
- justify-content:center;
- width:27px;
- height:31px;
- font-size:25px;
- line-height:1;
- background:transparent;
- border:0;
- filter:drop-shadow(0 2px 2px rgba(0,0,0,.65));
-}
-.location-icon span{display:block}
-.direction-arrow{
- color:#fff;
- font-size:19px;
- font-weight:900;
- text-shadow:
- 0 0 3px #000,
- 0 0 5px #000,
- 1px 1px 2px #000;
-}
+.popup-title{font-size:14px;font-weight:800;margin-bottom:7px;color:#172338}
+.popup-row{font-size:11px;line-height:1.7;color:#52647a}
+.popup-tag{display:inline-block;background:#e2f7ef;color:#087f5b;padding:4px 8px;border-radius:20px;font-size:10px;margin-bottom:7px}
+.popup-link{color:#087f5b;font-weight:700;font-size:11px}
+.leaflet-control-zoom a{background:white!important;color:#26384b!important}
+.leaflet-control-attribution{background:#ffffffd9!important;color:#536579!important}
+.leaflet-control-attribution a{color:#087f5b!important}
+.mobile-toggle{display:none}
+
 @media(max-width:760px){
  .topbar{padding:8px 10px}
  .brand h2{font-size:14px}
  .brand p{font-size:9px}
  .logo{width:35px;height:35px}
  .actions .btn{padding:8px;font-size:10px}
- .mobile-toggle{display:inline-block}
+ .mobile-toggle{display:block}
  .sidebar{
-  position:absolute;
-  top:0;bottom:0;left:0;
-  width:275px;
-  max-width:85vw;
-  transform:translateX(-105%);
-  transition:transform .22s ease;
-  box-shadow:8px 0 25px #0006;
+  position:absolute;top:0;bottom:0;left:0;
+  width:275px;max-width:85vw;
+  transform:translateX(-105%);transition:transform .2s;
+  box-shadow:8px 0 25px #0005
  }
  .sidebar.open{transform:translateX(0)}
- .map-tools{top:9px;left:8px;right:8px}
+ .map-tools{top:8px;left:7px;right:7px}
  .tool-btn{padding:8px;font-size:10px}
- .map-status{bottom:12px;left:8px}
+ .map-status{left:7px;bottom:10px}
 }
 </style>
 </head>
@@ -306,10 +163,9 @@ button{cursor:pointer}
   <div class="logo">O</div>
   <div>
    <h2>ONE ONLINE</h2>
-   <p>NETWORK MAP</p>
+   <p>NETWORK MAP MANAGEMENT</p>
   </div>
  </div>
-
  <div class="actions">
   <button class="btn mobile-toggle" onclick="toggleSidebar()">☰</button>
   <button class="btn" onclick="loadMapData()">↻ Refresh</button>
@@ -325,7 +181,7 @@ button{cursor:pointer}
  <div class="section">
   <div class="section-title">
    <h3>Map Overview</h3>
-   <span class="muted" id="loadStatus">Loading...</span>
+   <span class="muted" id="loadStatus">Loading</span>
   </div>
   <div class="stat-grid">
    <div class="stat"><strong id="totalCustomers">0</strong><span>Customers</span></div>
@@ -336,8 +192,8 @@ button{cursor:pointer}
  </div>
 
  <div class="section">
-  <h3>Location Search</h3>
-  <input id="mapSearch" class="search" placeholder="Search customer, IP, pole..." oninput="searchLocations()">
+  <h3>Search Location</h3>
+  <input id="mapSearch" class="search" placeholder="Search name, IP, number..." oninput="searchLocations()">
  </div>
 
  <div class="section">
@@ -348,7 +204,7 @@ button{cursor:pointer}
  <div class="section">
   <h3>Connection Visibility</h3>
   <div class="filter-item">
-   <label><input type="checkbox" id="showConnections" checked onchange="renderConnections()"> Show All Connections</label>
+   <label><input type="checkbox" id="showConnections" checked onchange="renderConnections()"> Show Connections</label>
   </div>
   <div class="filter-item">
    <label><input type="checkbox" id="showWire" checked onchange="renderConnections()"> Wire</label>
@@ -367,7 +223,7 @@ button{cursor:pointer}
  <div class="section">
   <h3>Map Style</h3>
   <div class="filter-item">
-   <label><input type="radio" name="mapStyle" value="road" checked onchange="changeMapStyle(this.value)"> Road Map</label>
+   <label><input type="radio" name="mapStyle" value="road" checked onchange="changeMapStyle(this.value)"> Normal Map</label>
   </div>
   <div class="filter-item">
    <label><input type="radio" name="mapStyle" value="satellite" onchange="changeMapStyle(this.value)"> Satellite</label>
@@ -379,16 +235,16 @@ button{cursor:pointer}
 
  <div class="section">
   <h3>Connection Legend</h3>
-  <div class="legend-item"><span class="legend-line" style="border-color:#16c784"></span> Wire</div>
-  <div class="legend-item"><span class="legend-line" style="border-color:#3c9dff"></span> Fiber</div>
-  <div class="legend-item"><span class="legend-line" style="border-color:#f3b64b"></span> Drop</div>
-  <div class="legend-item">➜ Connection Direction</div>
+  <div class="legend-item"><span class="legend-line" style="border-color:#16a777"></span> Wire</div>
+  <div class="legend-item"><span class="legend-line" style="border-color:#287fdb"></span> Fiber</div>
+  <div class="legend-item"><span class="legend-line" style="border-color:#e5a12b"></span> Drop</div>
+  <div class="legend-item">➜ Direction of Connection</div>
  </div>
 
  <div class="section">
   <h3>Area Lock</h3>
-  <div class="muted" id="areaStatus">Area Lock is not enabled.</div>
-  <button class="btn" style="width:100%;margin-top:10px" onclick="fitVisibleLocations()">Fit All Locations</button>
+  <div class="muted" id="areaStatus">No Polygon Area Lock</div>
+  <button class="btn" style="width:100%;margin-top:10px" onclick="fitVisibleLocations()">Fit Locations</button>
  </div>
 
 </aside>
@@ -399,10 +255,10 @@ button{cursor:pointer}
  <div class="map-tools">
   <div class="tool-group">
    <button class="tool-btn" onclick="fitVisibleLocations()">◎ Fit All</button>
-   <button class="tool-btn" onclick="resetMapView()">⌖ Reset</button>
+   <button class="tool-btn" onclick="resetMapView()">⌖ Reset View</button>
   </div>
   <div class="tool-group">
-   <button class="tool-btn" onclick="goToSettings()">⚙ Map Settings</button>
+   <button class="tool-btn" onclick="goToSettings()">⚙ Settings</button>
   </div>
  </div>
 
@@ -416,38 +272,23 @@ button{cursor:pointer}
 <script src="https://unpkg.com/leaflet-polylinedecorator@1.7.0/dist/leaflet.polylineDecorator.js"></script>
 
 <script>
-/* =====================================================
-   ONE ONLINE MAP
-   Compatible with Map Entry / Map Settings
-===================================================== */
+/* ================= CONFIG ================= */
 
 const API_URL="https://script.google.com/macros/s/AKfycbxmDzfnY3LpvfvHjC4usnZiBT4BX4KZIjVoCGcSULikoTKQaC_mj7cbG_zUaiTyZ4sb8w/exec";
 const STORAGE_KEY="ONE_ONLINE_MAP_DATA_V1";
 
-let db={
- locations:[],
- connections:[],
- settings:{},
- customTypes:[]
-};
-
-let map=null;
-let baseLayer=null;
-let markerLayer=null;
-let connectionLayer=null;
-let areaMaskLayer=null;
-let areaBoundaryLayer=null;
-
-let markerObjects=[];
-let connectionObjects=[];
+let db={locations:[],connections:[],settings:{},customTypes:[]};
+let map=null,baseLayer=null;
+let markerLayer=null,connectionLayer=null;
+let areaMaskLayer=null,areaBoundaryLayer=null;
+let mapReady=false;
 let visibleTypes={};
 let searchTerm="";
-let mapReady=false;
 
-const TILE_LAYERS={
+const TILE={
  road:{
   url:"https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-  attribution:"© OpenStreetMap contributors"
+  attribution:'© <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a>'
  },
  satellite:{
   url:"https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
@@ -461,128 +302,95 @@ const TILE_LAYERS={
 
 /* ================= HELPERS ================= */
 
-function escapeHtml(value){
- return String(value??"").replace(/[&<>"']/g,ch=>({
+function esc(v){
+ return String(v??"").replace(/[&<>"']/g,c=>({
   "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
- })[ch]);
+ })[c]);
 }
-
-function normalizeType(type){
- const t=String(type||"").trim().toLowerCase();
-
+function typeOf(v){
+ const t=String(v||"").trim().toLowerCase();
  if(t==="customer")return "Customer";
  if(t==="pole")return "Pole";
  if(t==="switch")return "Switch";
-
  const custom=db.customTypes.find(x=>
-  String(x.name||"").toLowerCase()===t ||
+  String(x.name||"").toLowerCase()===t||
   String(x.id||"").toLowerCase()===t
  );
-
- return custom?custom.name:(type||"Other");
+ return custom?custom.name:(v||"Other");
 }
-
-function getName(item){
- return item.name||item.customerName||item.locationNumber||"Unnamed";
+function nameOf(x){
+ return x?.name||x?.customerName||x?.locationNumber||"Unnamed";
 }
-
-function getCoords(item){
- if(!item)return null;
-
- const lat=Number(item.lat??item.latitude);
- const lng=Number(item.lng??item.longitude);
-
+function coordsOf(x){
+ if(!x)return null;
+ const lat=Number(x.lat??x.latitude);
+ const lng=Number(x.lng??x.longitude);
  if(!Number.isFinite(lat)||!Number.isFinite(lng))return null;
  if(lat < -90||lat > 90||lng < -180||lng > 180)return null;
-
  return {lat,lng};
 }
-
-function getConnectionFrom(c){
- return c.from??c.fromId??c.source??c.start??"";
-}
-
-function getConnectionTo(c){
- return c.to??c.toId??c.target??c.end??"";
-}
-
-function getConnectionType(c){
- return String(c.type||"Wire").trim().toLowerCase();
-}
-
 function findLocation(id){
  return db.locations.find(x=>String(x.id)===String(id));
 }
+function fromOf(c){
+ return c.from??c.fromId??c.source??c.start??"";
+}
+function toOf(c){
+ return c.to??c.toId??c.target??c.end??"";
+}
+function setMessage(t){
+ document.getElementById("mapMessage").textContent=t;
+}
 
-/* ================= LOCAL STORAGE ================= */
+/* ================= LOCAL DATA ================= */
 
 function saveLocal(){
- try{
-  localStorage.setItem(STORAGE_KEY,JSON.stringify(db));
- }catch(e){}
+ try{localStorage.setItem(STORAGE_KEY,JSON.stringify(db));}catch(e){}
 }
-
 function loadLocal(){
  try{
-  const data=JSON.parse(localStorage.getItem(STORAGE_KEY)||"{}");
-  db.locations=Array.isArray(data.locations)?data.locations:[];
-  db.connections=Array.isArray(data.connections)?data.connections:[];
-  db.settings=data.settings||{};
-  db.customTypes=Array.isArray(data.customTypes)?data.customTypes:[];
+  const d=JSON.parse(localStorage.getItem(STORAGE_KEY)||"{}");
+  db.locations=Array.isArray(d.locations)?d.locations:[];
+  db.connections=Array.isArray(d.connections)?d.connections:[];
+  db.settings=d.settings||{};
+  db.customTypes=Array.isArray(d.customTypes)?d.customTypes:[];
  }catch(e){}
 }
 
-/* ================= API ================= */
+/* ================= SERVER ================= */
 
-async function getRemoteData(){
- const response=await fetch(API_URL+"?action=getMapData&t="+Date.now(),{
-  method:"GET",
-  cache:"no-store"
- });
-
- if(!response.ok)throw new Error("Map API request failed");
-
- const result=await response.json();
-
- if(result.success===false){
-  throw new Error(result.message||"Map data load failed");
- }
-
- const data=result.data||result;
-
+async function getRemote(){
+ const r=await fetch(API_URL+"?action=getMapData&t="+Date.now(),{cache:"no-store"});
+ if(!r.ok)throw new Error("Server connection failed");
+ const result=await r.json();
+ if(result.success===false)throw new Error(result.message||"Data load failed");
+ const d=result.data||result;
  return {
-  locations:Array.isArray(data.locations)?data.locations:[],
-  connections:Array.isArray(data.connections)?data.connections:[],
-  settings:data.settings||{},
-  customTypes:Array.isArray(data.customTypes)?data.customTypes:[]
+  locations:Array.isArray(d.locations)?d.locations:[],
+  connections:Array.isArray(d.connections)?d.connections:[],
+  settings:d.settings||{},
+  customTypes:Array.isArray(d.customTypes)?d.customTypes:[]
  };
 }
-
 async function loadMapData(){
- setMessage("Loading map data...");
+ setMessage("Loading data...");
  document.getElementById("loadStatus").textContent="Loading";
-
  try{
-  const remote=await getRemoteData();
-  db=remote;
+  db=await getRemote();
   saveLocal();
-
-  renderEverything();
-
+  renderAll();
   document.getElementById("loadStatus").textContent="Online";
-  setMessage("Map data successfully loaded.");
- }catch(error){
-  console.error(error);
-
+  setMessage("Map loaded successfully.");
+ }catch(e){
+  console.error(e);
   loadLocal();
-  renderEverything();
-
+  renderAll();
   document.getElementById("loadStatus").textContent="Offline";
-  setMessage("Showing saved local data. Server connection failed.");
+  setMessage("Showing saved data. Server could not be reached.");
  }
 }
 
-/* ================= MAP INITIALIZATION ================= */
+/* ================= MAP ================= */
 
 function initMap(){
  if(mapReady)return;
@@ -590,333 +398,284 @@ function initMap(){
  map=L.map("map",{
   zoomControl:true,
   preferCanvas:true,
-  minZoom:3
+  minZoom:3,
+  zoomSnap:.5
  }).setView([22.3569,91.7832],12);
 
  markerLayer=L.layerGroup().addTo(map);
  connectionLayer=L.layerGroup().addTo(map);
 
- changeMapStyle("road");
-
- map.on("click",function(){
-  if(window.innerWidth<=760){
-   document.getElementById("sidebar").classList.remove("open");
-  }
- });
-
  mapReady=true;
+ changeMapStyle("road");
 }
 
 function changeMapStyle(style){
  if(!mapReady)return;
+ if(baseLayer)map.removeLayer(baseLayer);
 
- if(baseLayer){
-  map.removeLayer(baseLayer);
- }
-
- const config=TILE_LAYERS[style]||TILE_LAYERS.road;
-
- baseLayer=L.tileLayer(config.url,{
-  attribution:config.attribution,
-  maxZoom:20
+ const cfg=TILE[style]||TILE.road;
+ baseLayer=L.tileLayer(cfg.url,{
+  attribution:cfg.attribution,
+  maxZoom:20,
+  subdomains:"abc"
  }).addTo(map);
 
- const radio=document.querySelector(`input[name="mapStyle"][value="${style}"]`);
- if(radio)radio.checked=true;
+ baseLayer.bringToBack();
 }
 
-/* ================= ICON SETTINGS ================= */
+/* ================= ICONS ================= */
 
-function iconForType(type,item){
- if(item&&item.icon)return String(item.icon);
+function iconFor(item){
+ const type=typeOf(item.type);
+ if(item.icon)return String(item.icon);
 
- const t=String(type||"").toLowerCase();
-
- if(t==="customer")return "🏠";
- if(t==="pole")return "📍";
- if(t==="switch")return "🔀";
+ if(type==="Customer")return "🏠";
+ if(type==="Pole")return "⚡";
+ if(type==="Switch")return "🔀";
 
  const custom=db.customTypes.find(x=>
-  String(x.name||"").toLowerCase()===t
+  String(x.name||"").toLowerCase()===String(type).toLowerCase()
  );
-
- if(custom&&custom.icon)return custom.icon;
-
- return "📌";
+ return custom?.icon||"📌";
 }
 
-function makeLocationIcon(item){
- const type=normalizeType(item.type);
- const icon=iconForType(type,item);
+function markerIcon(item){
+ const type=typeOf(item.type);
+ let cls="custom";
+ if(type==="Customer")cls="customer";
+ if(type==="Pole")cls="pole";
+ if(type==="Switch")cls="switch";
 
  return L.divIcon({
   className:"",
-  html:`<div class="location-icon"><span>${escapeHtml(icon)}</span></div>`,
-  iconSize:[27,31],
-  iconAnchor:[13,15],
-  popupAnchor:[0,-13]
+  html:`<div class="map-marker ${cls}">
+   <div class="bubble">${esc(iconFor(item))}</div>
+   <div class="pin-tip"></div>
+  </div>`,
+  iconSize:[38,42],
+  iconAnchor:[19,38],
+  popupAnchor:[0,-34]
  });
 }
 
-/* ================= AREA LOCK ================= */
+/* ================= POLYGON AREA ================= */
 
-function getLockedArea(){
- const settings=db.settings||{};
- const area=settings.lockedArea||settings.areaLock||{};
+function lockedArea(){
+ const s=db.settings||{};
+ const a=s.lockedArea||s.areaLock||{};
 
- if(area.enabled===false||settings.areaLockEnabled===false)return null;
+ if(a.enabled===false||s.areaLockEnabled===false)return null;
 
- // New Polygon format
- if(Array.isArray(area.points)&&area.points.length>=3){
-  const points=area.points.map(p=>{
-   const lat=Number(p.lat??p.latitude);
-   const lng=Number(p.lng??p.longitude);
-   if(!Number.isFinite(lat)||!Number.isFinite(lng))return null;
-   return [lat,lng];
-  }).filter(Boolean);
+ if(Array.isArray(a.points)&&a.points.length>=3){
+  const points=a.points.map(p=>[
+   Number(p.lat??p.latitude),
+   Number(p.lng??p.longitude)
+  ]).filter(p=>p.every(Number.isFinite));
 
   if(points.length>=3)return {points};
  }
 
- // Legacy Rectangle format
- if(area.southWest&&area.northEast){
-  const sw=area.southWest;
-  const ne=area.northEast;
-
+ if(a.southWest&&a.northEast){
+  const sw=a.southWest,ne=a.northEast;
   const south=Number(sw.lat??sw.latitude);
   const west=Number(sw.lng??sw.longitude);
   const north=Number(ne.lat??ne.latitude);
   const east=Number(ne.lng??ne.longitude);
 
   if([south,west,north,east].every(Number.isFinite)){
-   return {
-    points:[
-     [south,west],
-     [south,east],
-     [north,east],
-     [north,west]
-    ]
-   };
+   return {points:[
+    [south,west],[south,east],[north,east],[north,west]
+   ]};
   }
  }
 
- // Alternative direct points
- if(Array.isArray(settings.lockedAreaPoints)&&settings.lockedAreaPoints.length>=3){
-  const points=settings.lockedAreaPoints.map(p=>[
-   Number(p.lat??p.latitude),
-   Number(p.lng??p.longitude)
+ if(Array.isArray(s.lockedAreaPoints)&&s.lockedAreaPoints.length>=3){
+  const points=s.lockedAreaPoints.map(p=>[
+   Number(p.lat??p.latitude),Number(p.lng??p.longitude)
   ]);
-  if(points.every(p=>p.every(Number.isFinite)))return {points};
+  if(points.length>=3&&points.every(p=>p.every(Number.isFinite))){
+   return {points};
+  }
  }
-
  return null;
 }
 
-/* Ray-casting point-in-polygon */
-function pointInsidePolygon(point,polygon){
- const x=point.lng;
- const y=point.lat;
+function insidePolygon(point,polygon){
  let inside=false;
+ const x=point.lng,y=point.lat;
 
  for(let i=0,j=polygon.length-1;i<polygon.length;j=i++){
   const xi=polygon[i][1],yi=polygon[i][0];
   const xj=polygon[j][1],yj=polygon[j][0];
 
-  const intersect=((yi>y)!==(yj>y))&&
-   (x<(xj-xi)*(y-yi)/(yj-yi+0.00000000001)+xi);
+  const crosses=((yi>y)!==(yj>y))&&
+   (x<(xj-xi)*(y-yi)/(yj-yi+1e-12)+xi);
 
-  if(intersect)inside=!inside;
+  if(crosses)inside=!inside;
  }
-
  return inside;
 }
 
-function isInsideArea(item){
- const coords=getCoords(item);
- if(!coords)return false;
-
- const area=getLockedArea();
- if(!area)return true;
-
- return pointInsidePolygon(coords,area.points);
+function insideArea(item){
+ const c=coordsOf(item);
+ if(!c)return false;
+ const a=lockedArea();
+ return !a||insidePolygon(c,a.points);
 }
 
-function getPolygonBounds(points){
- return L.latLngBounds(points.map(p=>L.latLng(p[0],p[1])));
-}
+function drawArea(){
+ if(areaMaskLayer){map.removeLayer(areaMaskLayer);areaMaskLayer=null;}
+ if(areaBoundaryLayer){map.removeLayer(areaBoundaryLayer);areaBoundaryLayer=null;}
 
-function renderAreaLock(){
- if(areaMaskLayer){
-  map.removeLayer(areaMaskLayer);
-  areaMaskLayer=null;
- }
- if(areaBoundaryLayer){
-  map.removeLayer(areaBoundaryLayer);
-  areaBoundaryLayer=null;
- }
+ const a=lockedArea();
 
- const area=getLockedArea();
-
- if(!area){
-  document.getElementById("areaStatus").textContent="Area Lock is not enabled.";
+ if(!a){
+  document.getElementById("areaStatus").textContent="No Polygon Area Lock";
   return;
  }
 
- const points=area.points;
- const bounds=getPolygonBounds(points);
+ const points=a.points;
+ const bounds=L.latLngBounds(points);
 
- // Approximate outside mask using a world-sized outer polygon with a polygon hole.
+ /*
+  * FIX: use a proper outer ring + reversed inner ring.
+  * Low opacity keeps the map outside the polygon visible too.
+  * The polygon hole keeps the permitted area completely clear.
+  */
  const outer=[
-  [-85,-180],
-  [85,-180],
-  [85,180],
-  [-85,180]
+  [-89.9,-179.9],
+  [-89.9,179.9],
+  [89.9,179.9],
+  [89.9,-179.9]
  ];
+ const hole=[...points].reverse();
 
- areaMaskLayer=L.polygon(
-  [outer,...[points]],
-  {
-   stroke:false,
-   fillColor:"#050a12",
-   fillOpacity:.70,
-   interactive:false
-  }
- ).addTo(map);
+ areaMaskLayer=L.polygon([outer,hole],{
+  stroke:false,
+  fill:true,
+  fillColor:"#24364a",
+  fillOpacity:.20,
+  fillRule:"evenodd",
+  interactive:false
+ }).addTo(map);
 
  areaBoundaryLayer=L.polygon(points,{
-  color:"#21d39b",
-  weight:2,
-  opacity:.95,
+  color:"#0ca879",
+  weight:3,
+  opacity:1,
   fill:false,
   dashArray:"7 6",
   interactive:false
  }).addTo(map);
 
  document.getElementById("areaStatus").textContent=
-  "Polygon Area Lock Active · "+points.length+" corners";
+  "Polygon Lock Active · "+points.length+" Corners";
 }
 
-/* ================= TYPE FILTERS ================= */
+/* ================= TYPE FILTER ================= */
 
-function getAllTypes(){
- const types=[...new Set(db.locations.map(x=>normalizeType(x.type)))];
- return types.sort((a,b)=>{
+function allTypes(){
+ return [...new Set(db.locations.map(x=>typeOf(x.type)))].sort((a,b)=>{
   const order=["Customer","Pole","Switch"];
-  const ai=order.indexOf(a);
-  const bi=order.indexOf(b);
-  if(ai!==-1||bi!==-1){
-   return (ai===-1?99:ai)-(bi===-1?99:bi);
-  }
+  const ai=order.indexOf(a),bi=order.indexOf(b);
+  if(ai!==-1||bi!==-1)return (ai<0?99:ai)-(bi<0?99:bi);
   return a.localeCompare(b);
  });
 }
 
-function renderTypeFilters(){
- const types=getAllTypes();
- const container=document.getElementById("typeFilters");
-
- types.forEach(type=>{
-  if(visibleTypes[type]===undefined)visibleTypes[type]=true;
+function renderFilters(){
+ const types=allTypes();
+ types.forEach(t=>{
+  if(visibleTypes[t]===undefined)visibleTypes[t]=true;
  });
 
- Object.keys(visibleTypes).forEach(type=>{
-  if(!types.includes(type))delete visibleTypes[type];
+ Object.keys(visibleTypes).forEach(t=>{
+  if(!types.includes(t))delete visibleTypes[t];
  });
 
- container.innerHTML=types.map(type=>{
-  const count=db.locations.filter(x=>normalizeType(x.type)===type).length;
-  const checked=visibleTypes[type]!==false;
-
+ document.getElementById("typeFilters").innerHTML=types.map(t=>{
+  const n=db.locations.filter(x=>typeOf(x.type)===t).length;
   return `<div class="filter-item">
    <label>
-    <input type="checkbox" ${checked?"checked":""}
-     onchange="toggleType('${escapeHtml(type)}',this.checked)">
-    ${escapeHtml(iconForType(type,{}))} ${escapeHtml(type)}
+    <input type="checkbox" ${visibleTypes[t]!==false?"checked":""}
+     onchange="toggleType('${esc(t)}',this.checked)">
+    ${esc(iconFor({type:t}))} ${esc(t)}
    </label>
-   <span class="count">${count}</span>
+   <span class="count">${n}</span>
   </div>`;
  }).join("")||'<div class="muted">No location types found.</div>';
 }
 
-function toggleType(type,checked){
- visibleTypes[type]=checked;
+function toggleType(type,value){
+ visibleTypes[type]=value;
  renderMarkers();
+ renderConnections();
 }
 
-/* ================= LOCATION FILTER ================= */
+/* ================= SEARCH ================= */
 
 function matchesSearch(item){
  if(!searchTerm)return true;
-
  const text=[
-  item.name,
-  item.customerName,
-  item.customerIp,
-  item.ip,
-  item.locationNumber,
-  item.address,
-  item.customerAddress,
-  item.type,
-  item.notes
+  item.name,item.customerName,item.customerIp,item.ip,
+  item.locationNumber,item.address,item.customerAddress,
+  item.type,item.notes
  ].join(" ").toLowerCase();
-
  return text.includes(searchTerm);
 }
 
-function isLocationVisible(item){
- const type=normalizeType(item.type);
-
- if(visibleTypes[type]===false)return false;
- if(!matchesSearch(item))return false;
- if(!isInsideArea(item))return false;
-
- return !!getCoords(item);
+function locationVisible(item){
+ const type=typeOf(item.type);
+ return visibleTypes[type]!==false&&
+  matchesSearch(item)&&insideArea(item)&&!!coordsOf(item);
 }
 
-/* ================= LOCATION POPUP ================= */
+function searchLocations(){
+ searchTerm=document.getElementById("mapSearch").value.trim().toLowerCase();
+ renderMarkers();
+ renderConnections();
 
-function makePopup(item){
- const type=normalizeType(item.type);
- const name=getName(item);
- const coords=getCoords(item);
+ if(searchTerm&&markerObjects.length===1){
+  map.setView(markerObjects[0].marker.getLatLng(),17);
+  markerObjects[0].marker.openPopup();
+ }
+}
 
- let rows="";
+/* ================= POPUPS ================= */
+
+function popupHtml(item){
+ const c=coordsOf(item);
+ const type=typeOf(item.type);
+ let extra="";
 
  if(item.customerIp||item.ip){
-  rows+=`<div class="popup-row">IP: ${escapeHtml(item.customerIp||item.ip)}</div>`;
+  extra+=`<div class="popup-row">IP: ${esc(item.customerIp||item.ip)}</div>`;
  }
-
  if(item.locationNumber){
-  rows+=`<div class="popup-row">Number: ${escapeHtml(item.locationNumber)}</div>`;
+  extra+=`<div class="popup-row">Number: ${esc(item.locationNumber)}</div>`;
  }
-
  if(item.customerAddress||item.address){
-  rows+=`<div class="popup-row">Address: ${escapeHtml(item.customerAddress||item.address)}</div>`;
+  extra+=`<div class="popup-row">Address: ${esc(item.customerAddress||item.address)}</div>`;
  }
-
- if(coords){
-  rows+=`<div class="popup-row">Lat: ${coords.lat.toFixed(6)}</div>`;
-  rows+=`<div class="popup-row">Lng: ${coords.lng.toFixed(6)}</div>`;
+ if(c){
+  extra+=`<div class="popup-row">Latitude: ${c.lat.toFixed(6)}</div>`;
+  extra+=`<div class="popup-row">Longitude: ${c.lng.toFixed(6)}</div>`;
  }
+ if(item.notes)extra+=`<div class="popup-row">Notes: ${esc(item.notes)}</div>`;
 
- if(item.notes){
-  rows+=`<div class="popup-row">Notes: ${escapeHtml(item.notes)}</div>`;
- }
+ const link=c?`https://www.google.com/maps?q=${c.lat},${c.lng}`:"";
 
- const url=item.locationUrl||"";
- const mapLink=coords?
-  `https://www.google.com/maps?q=${coords.lat},${coords.lng}`:"";
-
- return `
- <div>
-  <div class="popup-tag">${escapeHtml(type)}</div>
-  <div class="popup-title">${escapeHtml(name)}</div>
-  ${rows}
-  ${mapLink?`<div style="margin-top:8px"><a href="${mapLink}" target="_blank" rel="noopener" style="color:#69d7b0;font-size:11px">Open in Google Maps ↗</a></div>`:""}
+ return `<div>
+  <div class="popup-tag">${esc(iconFor(item))} ${esc(type)}</div>
+  <div class="popup-title">${esc(nameOf(item))}</div>
+  ${extra}
+  ${link?`<p><a class="popup-link" target="_blank" rel="noopener" href="${link}">Open Google Maps ↗</a></p>`:""}
  </div>`;
 }
 
 /* ================= MARKERS ================= */
+
+let markerObjects=[];
 
 function renderMarkers(){
  if(!mapReady)return;
@@ -924,146 +683,126 @@ function renderMarkers(){
  markerLayer.clearLayers();
  markerObjects=[];
 
- const visible=db.locations.filter(isLocationVisible);
+ db.locations.filter(locationVisible).forEach(item=>{
+  const c=coordsOf(item);
+  if(!c)return;
 
- visible.forEach(item=>{
-  const coords=getCoords(item);
-  if(!coords)return;
-
-  const marker=L.marker([coords.lat,coords.lng],{
-   icon:makeLocationIcon(item),
-   keyboard:true,
-   title:getName(item),
+  const marker=L.marker([c.lat,c.lng],{
+   icon:markerIcon(item),
+   title:nameOf(item),
    riseOnHover:true
-  });
+  }).addTo(markerLayer);
 
-  marker.bindPopup(makePopup(item),{
-   maxWidth:280,
-   closeButton:true
-  });
-
-  marker.addTo(markerLayer);
+  marker.bindPopup(popupHtml(item),{maxWidth:280});
   markerObjects.push({item,marker});
  });
-
  renderStats();
 }
 
 /* ================= CONNECTION STYLE ================= */
 
-function getConnectionStyle(connection){
- const type=getConnectionType(connection);
- const settings=db.settings||{};
+function connectionStyle(c){
+ const s=db.settings||{};
+ const type=String(c.type||"Wire").toLowerCase();
 
- let color=settings.wireColor||"#16c784";
- let weight=Number(settings.wireWeight)||3;
- let opacity=settings.wireOpacity===undefined?.95:Number(settings.wireOpacity);
- let style=settings.wireStyle||"solid";
+ let color=s.wireColor||"#16a777";
+ let weight=Number(s.wireWeight)||3;
+ let opacity=s.wireOpacity===undefined?.95:Number(s.wireOpacity);
+ let style=s.wireStyle||"solid";
 
  if(type==="fiber"){
-  color=settings.fiberColor||settings.wireFiberColor||"#3c9dff";
-  weight=Number(settings.fiberWeight)||4;
-  opacity=settings.fiberOpacity===undefined?1:Number(settings.fiberOpacity);
-  style=settings.fiberStyle||"solid";
+  color=s.fiberColor||s.wireFiberColor||"#287fdb";
+  weight=Number(s.fiberWeight)||4;
+  opacity=s.fiberOpacity===undefined?1:Number(s.fiberOpacity);
+  style=s.fiberStyle||"solid";
  }else if(type==="drop"){
-  color=settings.dropColor||settings.wireDropColor||"#f3b64b";
-  weight=Number(settings.dropWeight)||2;
-  opacity=settings.dropOpacity===undefined?1:Number(settings.dropOpacity);
-  style=settings.dropStyle||"dashed";
+  color=s.dropColor||s.wireDropColor||"#e5a12b";
+  weight=Number(s.dropWeight)||2;
+  opacity=s.dropOpacity===undefined?1:Number(s.dropOpacity);
+  style=s.dropStyle||"dashed";
  }
 
- const dashMap={
-  solid:null,
-  dashed:"8 7",
-  dotted:"2 7",
-  dash:"8 7",
-  dot:"2 7"
+ const dash={
+  solid:null,dashed:"8 7",dotted:"2 7",dash:"8 7",dot:"2 7"
  };
 
  return {
-  color,
-  weight:Math.max(1,Math.min(12,weight)),
+  color,weight:Math.max(1,Math.min(12,weight)),
   opacity:Math.max(0,Math.min(1,opacity)),
-  dashArray:dashMap[String(style).toLowerCase()]??null,
-  lineCap:"round",
-  lineJoin:"round"
+  dashArray:dash[String(style).toLowerCase()]??null,
+  lineCap:"round",lineJoin:"round"
  };
 }
 
-/* ================= CONNECTION VISIBILITY ================= */
-
-function connectionTypeVisible(type){
- const t=String(type||"wire").toLowerCase();
-
- if(t==="fiber")return document.getElementById("showFiber").checked;
- if(t==="drop")return document.getElementById("showDrop").checked;
+function connectionEnabled(type){
+ type=String(type||"wire").toLowerCase();
+ if(type==="fiber")return document.getElementById("showFiber").checked;
+ if(type==="drop")return document.getElementById("showDrop").checked;
  return document.getElementById("showWire").checked;
+}
+
+/* ================= DIRECTION ARROWS ================= */
+
+function fallbackArrow(from,to,color){
+ const midLat=(from.lat+to.lat)/2;
+ const midLng=(from.lng+to.lng)/2;
+
+ const icon=L.divIcon({
+  className:"",
+  html:`<div style="font-size:20px;font-weight:900;color:${esc(color)};text-shadow:0 0 3px white,0 0 5px black">➤</div>`,
+  iconSize:[22,22],
+  iconAnchor:[11,11]
+ });
+
+ return L.marker([midLat,midLng],{
+  icon,interactive:false,keyboard:false
+ }).addTo(connectionLayer);
 }
 
 function renderConnections(){
  if(!mapReady)return;
 
  connectionLayer.clearLayers();
- connectionObjects=[];
 
  if(!document.getElementById("showConnections").checked)return;
 
- const showArrows=document.getElementById("showArrows").checked;
+ const arrowsEnabled=document.getElementById("showArrows").checked;
 
- db.connections.forEach(connection=>{
-  const fromId=getConnectionFrom(connection);
-  const toId=getConnectionTo(connection);
-
-  const from=findLocation(fromId);
-  const to=findLocation(toId);
-
+ db.connections.forEach(c=>{
+  const from=findLocation(fromOf(c));
+  const to=findLocation(toOf(c));
   if(!from||!to)return;
 
-  const fromCoords=getCoords(from);
-  const toCoords=getCoords(to);
+  const a=coordsOf(from),b=coordsOf(to);
+  if(!a||!b)return;
 
-  if(!fromCoords||!toCoords)return;
-
-  // Both endpoints must be inside the Polygon Area Lock.
-  if(!isInsideArea(from)||!isInsideArea(to))return;
-
-  // Respect type visibility and search filters.
-  if(visibleTypes[normalizeType(from.type)]===false)return;
-  if(visibleTypes[normalizeType(to.type)]===false)return;
-
+  if(!insideArea(from)||!insideArea(to))return;
+  if(visibleTypes[typeOf(from.type)]===false)return;
+  if(visibleTypes[typeOf(to.type)]===false)return;
   if(!matchesSearch(from)&&!matchesSearch(to))return;
 
-  const type=getConnectionType(connection);
-  if(!connectionTypeVisible(type))return;
+  const type=String(c.type||"Wire").toLowerCase();
+  if(!connectionEnabled(type))return;
 
-  const style=getConnectionStyle(connection);
+  const style=connectionStyle(c);
+  const line=L.polyline([[a.lat,a.lng],[b.lat,b.lng]],style).addTo(connectionLayer);
 
-  const line=L.polyline([
-   [fromCoords.lat,fromCoords.lng],
-   [toCoords.lat,toCoords.lng]
-  ],style).addTo(connectionLayer);
+  line.bindPopup(`<div>
+   <div class="popup-tag">${esc(type.toUpperCase())}</div>
+   <div class="popup-title">${esc(c.name||"Connection")}</div>
+   <div class="popup-row"><b>From:</b> ${esc(nameOf(from))}</div>
+   <div class="popup-row"><b>To:</b> ${esc(nameOf(to))}</div>
+   <div class="popup-row">Direction: ${esc(nameOf(from))} ➜ ${esc(nameOf(to))}</div>
+  </div>`);
 
-  const connectionName=connection.name||type.toUpperCase();
-
-  line.bindPopup(`
-   <div>
-    <div class="popup-tag">${escapeHtml(type.toUpperCase())}</div>
-    <div class="popup-title">${escapeHtml(connectionName)}</div>
-    <div class="popup-row"><b>From:</b> ${escapeHtml(getName(from))}</div>
-    <div class="popup-row"><b>To:</b> ${escapeHtml(getName(to))}</div>
-    <div class="popup-row">Direction: ${escapeHtml(getName(from))} → ${escapeHtml(getName(to))}</div>
-   </div>
-  `);
-
-  // Direction arrow follows source -> destination.
-  if(showArrows&&typeof line.setStyle==="function"){
+  if(arrowsEnabled){
    if(typeof L.polylineDecorator==="function"){
-    const arrow=L.polylineDecorator(line,{
+    L.polylineDecorator(line,{
      patterns:[{
       offset:"65%",
       repeat:0,
       symbol:L.Symbol.arrowHead({
-       pixelSize:11,
+       pixelSize:12,
        polygon:true,
        pathOptions:{
         color:style.color,
@@ -1074,29 +813,9 @@ function renderConnections(){
       })
      }]
     }).addTo(connectionLayer);
-
-    connectionObjects.push({line,arrow,connection});
    }else{
-    // Fallback if the decorator plugin does not load.
-    const midLat=(fromCoords.lat+toCoords.lat)/2;
-    const midLng=(fromCoords.lng+toCoords.lng)/2;
-
-    const arrowIcon=L.divIcon({
-     className:"",
-     html:`<div class="direction-arrow">➤</div>`,
-     iconSize:[22,22],
-     iconAnchor:[11,11]
-    });
-
-    const arrowMarker=L.marker([midLat,midLng],{
-     icon:arrowIcon,
-     interactive:false
-    }).addTo(connectionLayer);
-
-    connectionObjects.push({line,arrow:arrowMarker,connection});
+    fallbackArrow(a,b,style.color);
    }
-  }else{
-   connectionObjects.push({line,connection});
   }
  });
 }
@@ -1104,94 +823,61 @@ function renderConnections(){
 /* ================= STATS ================= */
 
 function renderStats(){
- const count=type=>db.locations.filter(x=>
-  normalizeType(x.type).toLowerCase()===type.toLowerCase()
+ const count=t=>db.locations.filter(x=>
+  typeOf(x.type).toLowerCase()===t.toLowerCase()
  ).length;
 
- const visibleCount=db.connections.filter(c=>{
-  const from=findLocation(getConnectionFrom(c));
-  const to=findLocation(getConnectionTo(c));
-  return from&&to&&isInsideArea(from)&&isInsideArea(to);
+ const connections=db.connections.filter(c=>{
+  const a=findLocation(fromOf(c)),b=findLocation(toOf(c));
+  return a&&b&&insideArea(a)&&insideArea(b);
  }).length;
 
  document.getElementById("totalCustomers").textContent=count("Customer");
  document.getElementById("totalPoles").textContent=count("Pole");
  document.getElementById("totalSwitches").textContent=count("Switch");
- document.getElementById("totalConnections").textContent=visibleCount;
+ document.getElementById("totalConnections").textContent=connections;
 }
 
-/* ================= SEARCH ================= */
-
-function searchLocations(){
- searchTerm=document.getElementById("mapSearch").value.trim().toLowerCase();
-
- renderMarkers();
- renderConnections();
-
- if(searchTerm){
-  const found=markerObjects;
-  if(found.length===1){
-   map.setView(found[0].marker.getLatLng(),17);
-   found[0].marker.openPopup();
-  }
- }
-}
-
-/* ================= FIT / RESET ================= */
+/* ================= FIT MAP ================= */
 
 function fitVisibleLocations(){
- if(!mapReady)return;
+ const points=db.locations.filter(locationVisible).map(x=>{
+  const c=coordsOf(x);
+  return c?[c.lat,c.lng]:null;
+ }).filter(Boolean);
 
- const points=db.locations
-  .filter(isLocationVisible)
-  .map(x=>{
-   const c=getCoords(x);
-   return c?[c.lat,c.lng]:null;
-  })
-  .filter(Boolean);
-
- const area=getLockedArea();
+ const area=lockedArea();
 
  if(points.length){
   const bounds=L.latLngBounds(points.map(p=>L.latLng(p[0],p[1])));
-  if(area){
-   const areaBounds=getPolygonBounds(area.points);
-   bounds.extend(areaBounds);
-  }
+  if(area)bounds.extend(L.latLngBounds(area.points));
   map.fitBounds(bounds,{padding:[40,40],maxZoom:17});
  }else if(area){
-  map.fitBounds(getPolygonBounds(area.points),{padding:[40,40]});
+  map.fitBounds(L.latLngBounds(area.points),{padding:[35,35]});
  }else{
   map.setView([22.3569,91.7832],12);
  }
 }
 
 function resetMapView(){
- const area=getLockedArea();
-
- if(area){
-  map.fitBounds(getPolygonBounds(area.points),{padding:[35,35]});
- }else{
-  map.setView([22.3569,91.7832],12);
- }
+ const area=lockedArea();
+ if(area)map.fitBounds(L.latLngBounds(area.points),{padding:[35,35]});
+ else map.setView([22.3569,91.7832],12);
 }
 
-/* ================= RENDER ALL ================= */
+/* ================= RENDER ================= */
 
-function renderEverything(){
+function renderAll(){
  if(!mapReady)initMap();
 
- renderTypeFilters();
- renderAreaLock();
+ renderFilters();
+ drawArea();
  renderMarkers();
  renderConnections();
  renderStats();
 
- // Keep map focused on the permitted area when one is configured.
- const area=getLockedArea();
-
- if(area){
-  map.fitBounds(getPolygonBounds(area.points),{padding:[30,30]});
+ if(lockedArea()){
+  map.fitBounds(L.latLngBounds(lockedArea().points),{padding:[35,35]});
  }else if(db.locations.length){
   fitVisibleLocations();
  }
@@ -1202,51 +888,35 @@ function renderEverything(){
 function toggleSidebar(){
  document.getElementById("sidebar").classList.toggle("open");
 }
-
-function navigateParent(page){
+function goToEntry(){
  if(window.parent&&window.parent!==window){
-  window.parent.postMessage({
-   type:"ONE_ONLINE_NAVIGATE",
-   page:page
-  },"*");
+  window.parent.postMessage({type:"ONE_ONLINE_NAVIGATE",page:"map-entry"},"*");
+ }else{
+  location.href="map-entry.html";
  }
 }
-
-function goToEntry(){
- navigateParent("map-entry");
-}
-
 function goToSettings(){
- navigateParent("map-setting");
-}
-
-function setMessage(message){
- document.getElementById("mapMessage").textContent=message;
+ if(window.parent&&window.parent!==window){
+  window.parent.postMessage({type:"ONE_ONLINE_NAVIGATE",page:"map-setting"},"*");
+ }else{
+  location.href="map-setting.html";
+ }
 }
 
 /* ================= START ================= */
 
 loadLocal();
 initMap();
-renderEverything();
+renderAll();
 
 window.addEventListener("load",()=>{
- setTimeout(()=>{
-  if(map)map.invalidateSize();
- },300);
-
+ setTimeout(()=>map.invalidateSize(),250);
  loadMapData();
 });
 
 window.addEventListener("resize",()=>{
  if(map)setTimeout(()=>map.invalidateSize(),150);
 });
-
-// Refresh map after returning from Map Entry or Map Settings.
-window.addEventListener("focus",()=>{
- if(mapReady)loadMapData();
-});
 </script>
-
 </body>
 </html>
