@@ -5,125 +5,60 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Map Settings | ONE ONLINE</title>
-
 <style>
 :root{
- --bg:#0b1220;
- --panel:#111c2e;
- --panel2:#172338;
- --text:#e8f0fc;
- --muted:#91a3bd;
- --line:#26364d;
- --primary:#168bfa;
- --green:#16a34a;
- --red:#ef4444;
+ --bg:#0b1220;--panel:#111c2e;--panel2:#172338;
+ --text:#e8f0fc;--muted:#91a3bd;--line:#26364d;
+ --primary:#168bfa;--green:#16a34a;--red:#dc2626;
 }
 *{box-sizing:border-box}
-body{
- margin:0;padding:18px;
- background:var(--bg);color:var(--text);
- font-family:Arial,sans-serif;
-}
+body{margin:0;padding:16px;background:var(--bg);color:var(--text);font-family:Arial,sans-serif}
 .container{max-width:1100px;margin:auto}
-.header{
- display:flex;align-items:center;justify-content:space-between;
- gap:12px;flex-wrap:wrap;margin-bottom:20px;
-}
+.header{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px}
 h1{font-size:23px;margin:0}
-.subtitle{font-size:12px;color:var(--muted);margin-top:6px}
-.card{
- background:var(--panel);
- border:1px solid var(--line);
- border-radius:13px;
- padding:17px;
- margin-bottom:15px;
-}
-.card h2{font-size:16px;margin:0 0 15px}
-.grid{
- display:grid;
- grid-template-columns:repeat(2,minmax(0,1fr));
- gap:13px;
-}
+h2{font-size:16px;margin:0 0 15px}
+.subtitle,.note{font-size:12px;color:var(--muted);line-height:1.6}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:17px;margin-bottom:15px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
 .field{display:flex;flex-direction:column;gap:7px;min-width:0}
 label{font-size:12px;color:#b8c8dd;font-weight:700}
 input,select,textarea{
- width:100%;min-width:0;
- background:#0b1526;color:#f1f5f9;
- border:1px solid #34445c;
- border-radius:8px;
- padding:11px;
- outline:none;
- font-size:14px;
+ width:100%;min-width:0;background:#0b1526;color:#f1f5f9;
+ border:1px solid #34445c;border-radius:8px;padding:11px;
+ outline:none;font-size:14px;
 }
 input:focus,select:focus,textarea:focus{border-color:var(--primary)}
 input[type=color]{height:43px;padding:4px}
 input[type=checkbox]{width:18px;height:18px}
 input[type=range]{padding:0}
-textarea{min-height:100px;resize:vertical}
-button{
- border:0;border-radius:8px;padding:11px 15px;
- background:var(--primary);color:white;
- font-size:13px;font-weight:700;cursor:pointer;
-}
+textarea{min-height:95px;resize:vertical}
+button{border:0;border-radius:8px;padding:11px 15px;background:var(--primary);color:white;font-size:13px;font-weight:700;cursor:pointer}
 button.secondary{background:#334155}
 button.success{background:var(--green)}
 button.danger{background:#991b1b}
 .actions{display:flex;gap:9px;flex-wrap:wrap}
-.note{font-size:12px;color:var(--muted);line-height:1.6}
+.toggle{display:flex;align-items:center;gap:9px;background:var(--panel2);padding:11px;border-radius:8px;margin-bottom:8px}
 .type-list{display:grid;gap:10px}
-.type-row{
- display:grid;
- grid-template-columns:65px 1fr 110px 1fr 75px;
- gap:9px;align-items:center;
- padding:10px;background:var(--panel2);
- border:1px solid var(--line);border-radius:10px;
-}
-.type-preview{
- display:flex;align-items:center;justify-content:center;
- width:48px;height:48px;
- background:transparent!important;
- font-size:30px;
- filter:drop-shadow(0 1px 2px #0008);
-}
+.type-row{display:grid;grid-template-columns:55px 1fr 100px 90px 70px;gap:9px;align-items:center;padding:10px;background:var(--panel2);border:1px solid var(--line);border-radius:10px}
+.type-preview{display:flex;align-items:center;justify-content:center;width:48px;height:48px;background:transparent;font-size:30px;filter:drop-shadow(0 1px 2px #0008)}
 .type-row input{padding:9px}
-.line-box{
- border:1px solid var(--line);
- background:var(--panel2);
- border-radius:10px;
- padding:13px;margin-bottom:10px;
-}
+.line-box{border:1px solid var(--line);background:var(--panel2);border-radius:10px;padding:13px;margin-bottom:10px}
 .line-title{font-size:14px;font-weight:700;margin-bottom:12px}
-.toggle{
- display:flex;align-items:center;gap:9px;
- background:var(--panel2);padding:11px;border-radius:8px;
-}
+.preview-map{background:#172338;border:1px dashed #52647e;border-radius:10px;padding:20px;text-align:center}
+.preview-symbol{display:inline-flex;align-items:center;justify-content:center;width:60px;height:60px;background:transparent;font-size:42px;filter:drop-shadow(0 1px 2px #000)}
 .status{font-size:12px;color:var(--muted);margin-top:10px}
-.status.ok{color:#4ade80}
-.status.err{color:#f87171}
-.preview-map{
- background:#172338;border:1px dashed #52647e;
- border-radius:10px;padding:20px;text-align:center;
-}
-.preview-symbol{
- display:inline-flex;align-items:center;justify-content:center;
- width:60px;height:60px;background:transparent;
- font-size:42px;filter:drop-shadow(0 1px 2px #000);
-}
+.status.ok{color:#4ade80}.status.err{color:#f87171}
 @media(max-width:650px){
- body{padding:12px}
- .grid{grid-template-columns:1fr}
- .type-row{
-  grid-template-columns:52px 1fr 85px;
- }
- .type-row .type-color{grid-column:2}
- .type-row .type-delete{grid-column:3;grid-row:2}
- .type-row .type-name{grid-column:2}
- .type-row .type-icon{grid-column:3;grid-row:1}
- .type-preview{grid-row:1 / span 2}
+ body{padding:11px}.grid{grid-template-columns:1fr}
+ .type-row{grid-template-columns:48px 1fr 85px}
+ .type-preview{grid-row:1/span 2}
+ .type-name{grid-column:2}
+ .type-icon{grid-column:3;grid-row:1}
+ .type-color{grid-column:2}
+ .type-delete{grid-column:3;grid-row:2}
 }
 </style>
 </head>
-
 <body>
 <div class="container">
 
@@ -134,12 +69,12 @@ button.danger{background:#991b1b}
   </div>
   <div class="actions">
    <button class="secondary" onclick="loadSettings()">Refresh</button>
-   <button class="success" onclick="saveAllSettings()">Save All Settings</button>
+   <button class="success" onclick="saveAllSettings()">Save All</button>
   </div>
  </div>
 
  <div class="card">
-  <h2>Map Display</h2>
+  <h2>Map Display Settings</h2>
   <div class="grid">
    <div class="field">
     <label>Map Layer</label>
@@ -150,7 +85,7 @@ button.danger{background:#991b1b}
     </select>
    </div>
    <div class="field">
-    <label>Zoom Level</label>
+    <label>Default Zoom Level</label>
     <input id="zoomLevel" type="number" min="1" max="21" value="13">
    </div>
    <div class="field">
@@ -162,31 +97,22 @@ button.danger{background:#991b1b}
     <input id="centerLng" type="number" step="any">
    </div>
    <div class="field">
-    <label>Marker Size: <span id="markerSizeText">36</span> px</label>
-    <input id="markerSize" type="range" min="18" max="64" value="36"
-     oninput="markerSizeText.textContent=this.value">
+    <label>Base Marker Size: <span id="markerSizeText">36</span> px</label>
+    <input id="markerSize" type="range" min="18" max="64" value="36">
    </div>
-   <div class="field">
+   <div>
     <label>Display Options</label>
-    <div class="toggle">
-     <input id="showMarkerLabels" type="checkbox" checked>
-     <span>Show Marker Labels</span>
-    </div>
-    <div class="toggle">
-     <input id="showWires" type="checkbox" checked>
-     <span>Show Connections</span>
-    </div>
+    <div class="toggle"><input id="showMarkerLabels" type="checkbox" checked><span>Show Marker Labels</span></div>
+    <div class="toggle"><input id="showWires" type="checkbox" checked><span>Show Connections</span></div>
    </div>
   </div>
-  <div class="note" style="margin-top:12px">
-   Marker-এর ব্যাকগ্রাউন্ড Transparent থাকবে। শুধু Icon/Emoji দেখাবে।
-  </div>
+  <p class="note">Map Zoom Out করলে Logo ছোট হবে, Zoom In করলে সামান্য বড় হবে। Marker Background Transparent থাকবে।</p>
  </div>
 
  <div class="card">
   <h2>Point Symbol Settings</h2>
   <div id="typeList" class="type-list"></div>
-  <div class="actions" style="margin-top:14px">
+  <div class="actions" style="margin-top:13px">
    <button onclick="addNewType()">+ Add New Symbol Type</button>
   </div>
   <div class="preview-map" style="margin-top:15px">
@@ -202,23 +128,20 @@ button.danger{background:#991b1b}
 
  <div class="card">
   <h2>Area Lock / Boundary</h2>
-  <div class="toggle" style="margin-bottom:12px">
+  <div class="toggle">
    <input id="areaEnabled" type="checkbox">
    <span>Enable Area Boundary</span>
   </div>
   <div class="field">
-   <label>Polygon Points (JSON)</label>
+   <label>Polygon Points JSON</label>
    <textarea id="areaPoints" placeholder='[{"lat":23.8103,"lng":90.4125},{"lat":23.811,"lng":90.413},{"lat":23.809,"lng":90.414}]'></textarea>
   </div>
-  <p class="note">
-   কমপক্ষে ৩টি Point দিতে হবে। শুধু Boundary Line দেখা যাবে, ভেতরে কোনো কালো Mask থাকবে না।
-  </p>
+  <p class="note">কমপক্ষে ৩টি Latitude/Longitude Point দিন। শুধু Boundary Line দেখা যাবে।</p>
  </div>
 
  <div class="card">
-  <h2>Hidden Point Types</h2>
+  <h2>Hide Point Types</h2>
   <div id="hiddenTypes" class="grid"></div>
-  <p class="note">যে Type Hide করবেন, Map-এ সেই Type-এর Point দেখা যাবে না।</p>
  </div>
 
  <div class="card">
@@ -226,71 +149,43 @@ button.danger{background:#991b1b}
   <div class="actions">
    <button class="secondary" onclick="exportBackup()">Export Backup</button>
    <button class="secondary" onclick="document.getElementById('backupFile').click()">Import Backup</button>
-   <input id="backupFile" type="file" accept=".json,application/json" hidden onchange="importBackup(event)">
+   <input id="backupFile" type="file" accept=".json,application/json" hidden>
   </div>
-  <p class="note">Backup-এ Map Settings, Symbol এবং Connection Settings থাকবে।</p>
  </div>
 
  <div class="card">
   <div class="actions">
    <button class="success" onclick="saveAllSettings()">Save All Settings</button>
-   <button class="secondary" onclick="loadSettings()">Reload From Sheet</button>
+   <button class="secondary" onclick="loadSettings()">Reload</button>
   </div>
   <div id="status" class="status">Ready</div>
  </div>
-
 </div>
 
 <script>
 "use strict";
-
-const MAP_API =
-"https://script.google.com/macros/s/AKfycbxmDzfnY3LpvfvHjC4usnZiBT4BX4KZIjVoCGcSULikoTKQaC_mj7cbG_zUaiTyZ4sb8w/exec";
-
+const MAP_API="https://script.google.com/macros/s/AKfycbxmDzfnY3LpvfvHjC4usnZiBT4BX4KZIjVoCGcSULikoTKQaC_mj7cbG_zUaiTyZ4sb8w/exec";
 const CACHE_KEY="ONE_ONLINE_MAP_DATA_V1";
 
 const DEFAULT_SETTINGS={
- mapType:"road",
- centerLat:23.8103,
- centerLng:90.4125,
- zoomLevel:13,
- markerSize:36,
- showMarkerLabels:true,
- showWires:true,
- hiddenTypes:[],
- wireColor:"#f59e0b",
- wireWeight:3,
- wireOpacity:.95,
- wireStyle:"solid",
- fiberColor:"#2563eb",
- fiberWeight:4,
- fiberOpacity:1,
- fiberStyle:"solid",
- dropColor:"#16a34a",
- dropWeight:2,
- dropOpacity:.95,
- dropStyle:"solid",
- lockedArea:{enabled:false,points:[]},
- _customTypes:[]
+ mapType:"road",centerLat:23.8103,centerLng:90.4125,zoomLevel:13,
+ markerSize:36,showMarkerLabels:true,showWires:true,hiddenTypes:[],
+ wireColor:"#f59e0b",wireWeight:3,wireOpacity:.95,wireStyle:"solid",
+ fiberColor:"#2563eb",fiberWeight:4,fiberOpacity:1,fiberStyle:"solid",
+ dropColor:"#16a34a",dropWeight:2,dropOpacity:.95,dropStyle:"solid",
+ lockedArea:{enabled:false,points:[]},_customTypes:[]
 };
-
 const DEFAULT_TYPES=[
  {name:"Customer",icon:"👤",color:"#2563eb"},
  {name:"Pole",icon:"🗼",color:"#f59e0b"},
  {name:"Switch",icon:"🔀",color:"#16a34a"},
  {name:"Pull",icon:"📍",color:"#9333ea"}
 ];
-
 let mapData={locations:[],connections:[],settings:{},customTypes:[]};
-let settings={...DEFAULT_SETTINGS};
-let types=[];
-
+let settings={...DEFAULT_SETTINGS},types=[];
 const $=id=>document.getElementById(id);
 
-function safeJSON(value,fallback){
- try{return JSON.parse(value)}catch(e){return fallback}
-}
-
+function safeJSON(v,f){try{return JSON.parse(v)}catch(e){return f}}
 function normalizeData(raw){
  if(raw?.data&&!raw.locations)raw=raw.data;
  return {
@@ -300,318 +195,190 @@ function normalizeData(raw){
   customTypes:Array.isArray(raw?.customTypes)?raw.customTypes:[]
  };
 }
-
-function setStatus(message,type=""){
- $("status").textContent=message;
+function setStatus(msg,type=""){
+ $("status").textContent=msg;
  $("status").className="status "+type;
 }
+function escapeHTML(v){
+ return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+function validColor(v){return /^#[0-9a-f]{6}$/i.test(v||"")?v:"#64748b"}
 
 async function loadSettings(){
- setStatus("Loading settings...");
+ setStatus("Loading...");
  try{
-  const response=await fetch(MAP_API+"?action=getMapData&v="+Date.now(),{
-   method:"GET",cache:"no-store"
-  });
-  if(!response.ok)throw new Error("API error");
-  mapData=normalizeData(await response.json());
+  const r=await fetch(MAP_API+"?action=getMapData&v="+Date.now(),{cache:"no-store"});
+  if(!r.ok)throw new Error("API error");
+  mapData=normalizeData(await r.json());
   localStorage.setItem(CACHE_KEY,JSON.stringify(mapData));
- }catch(error){
+ }catch(e){
   const cached=safeJSON(localStorage.getItem(CACHE_KEY),null);
-  if(cached)mapData=normalizeData(cached);
-  else{
-   setStatus("Data load failed: "+error.message,"err");
-   return;
-  }
+  if(!cached){setStatus("Load failed: "+e.message,"err");return}
+  mapData=normalizeData(cached);
  }
  settings={...DEFAULT_SETTINGS,...mapData.settings};
- if(!Array.isArray(settings.hiddenTypes))settings.hiddenTypes=[];
- if(!settings.lockedArea)settings.lockedArea={enabled:false,points:[]};
-
- const custom=[
-  ...(mapData.customTypes||[]),
-  ...(settings._customTypes||[])
- ];
+ const custom=[...(mapData.customTypes||[]),...(settings._customTypes||[])];
  types=DEFAULT_TYPES.map(x=>({...x}));
- custom.forEach(item=>{
-  const name=item.name||item.type;
-  if(!name)return;
-  const index=types.findIndex(x=>x.name.toLowerCase()===String(name).toLowerCase());
-  const normalized={
-   name:String(name),
-   icon:item.icon||"📍",
-   color:item.color||"#64748b"
-  };
-  if(index>=0)types[index]=normalized;
-  else types.push(normalized);
+ custom.forEach(x=>{
+  const name=x.name||x.type;if(!name)return;
+  const obj={name:String(name),icon:x.icon||"📍",color:validColor(x.color)};
+  const i=types.findIndex(t=>t.name.toLowerCase()===obj.name.toLowerCase());
+  if(i>=0)types[i]=obj;else types.push(obj);
  });
-
- fillForm();
- renderTypes();
- renderLineSettings();
- renderHiddenTypes();
- setStatus("Settings loaded successfully","ok");
+ fillForm();renderTypes();renderLineSettings();renderHiddenTypes();
+ setStatus("Settings loaded","ok");
 }
-
 function fillForm(){
- [
-  "mapType","centerLat","centerLng","zoomLevel","markerSize"
- ].forEach(id=>$(id).value=settings[id]??DEFAULT_SETTINGS[id]);
-
+ ["mapType","centerLat","centerLng","zoomLevel","markerSize"].forEach(id=>$(id).value=settings[id]??DEFAULT_SETTINGS[id]);
  $("markerSizeText").textContent=$("markerSize").value;
  $("showMarkerLabels").checked=settings.showMarkerLabels!==false;
  $("showWires").checked=settings.showWires!==false;
  $("areaEnabled").checked=!!settings.lockedArea?.enabled;
  $("areaPoints").value=JSON.stringify(settings.lockedArea?.points||[],null,2);
 }
-
 function renderTypes(){
  $("typeList").innerHTML="";
- types.forEach((type,index)=>{
-  const row=document.createElement("div");
-  row.className="type-row";
+ types.forEach((t,i)=>{
+  const row=document.createElement("div");row.className="type-row";
   row.innerHTML=`
-   <div class="type-preview" id="preview_${index}"></div>
-   <input class="type-name" id="type_name_${index}" value="${escapeAttr(type.name)}" placeholder="Type name">
-   <input class="type-icon" id="type_icon_${index}" value="${escapeAttr(type.icon)}" maxlength="12" placeholder="Emoji">
-   <input class="type-color" id="type_color_${index}" type="color" value="${validColor(type.color)}">
-   <button class="danger type-delete" onclick="deleteType(${index})">Delete</button>
-  `;
+   <div class="type-preview" id="preview_${i}">${escapeHTML(t.icon)}</div>
+   <input class="type-name" id="type_name_${i}" value="${escapeHTML(t.name)}" placeholder="Type name">
+   <input class="type-icon" id="type_icon_${i}" value="${escapeHTML(t.icon)}" maxlength="12" placeholder="Icon">
+   <input class="type-color" id="type_color_${i}" type="color" value="${validColor(t.color)}">
+   <button class="danger type-delete" data-delete="${i}">Delete</button>`;
   $("typeList").appendChild(row);
-  $("preview_"+index).textContent=type.icon;
-  row.querySelector("#type_icon_"+index).addEventListener("input",e=>{
-   $("preview_"+index).textContent=e.target.value||"📍";
+  row.querySelector("[data-delete]").onclick=()=>deleteType(i);
+  row.querySelector("#type_icon_"+i).oninput=e=>{
+   $("preview_"+i).textContent=e.target.value||"📍";
    $("symbolPreview").textContent=e.target.value||"📍";
-  });
-  row.querySelector("#type_name_"+index).addEventListener("input",()=>{
-   renderHiddenTypes();
-  });
+  };
  });
  $("symbolPreview").textContent=types[0]?.icon||"📍";
 }
-
-function escapeAttr(value){
- return String(value??"").replace(/[&<>"']/g,c=>({
-  "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
- }[c]));
-}
-
-function validColor(value){
- return /^#[0-9a-f]{6}$/i.test(value||"")?value:"#64748b";
-}
-
 function readTypes(){
  const result=[];
- types.forEach((type,index)=>{
-  const name=$("type_name_"+index)?.value.trim();
-  const icon=$("type_icon_"+index)?.value.trim();
-  const color=$("type_color_"+index)?.value;
-  if(name)result.push({name,icon:icon||"📍",color:color||"#64748b"});
+ types.forEach((t,i)=>{
+  const name=$("type_name_"+i)?.value.trim();
+  if(name)result.push({
+   name,icon:$("type_icon_"+i)?.value.trim()||"📍",
+   color:$("type_color_"+i)?.value||"#64748b"
+  });
  });
  return result;
 }
-
 function addNewType(){
- types=readTypes();
- types.push({
-  name:"New Type",
-  icon:"📍",
-  color:"#9333ea"
- });
- renderTypes();
- renderHiddenTypes();
+ types=readTypes();types.push({name:"New Type",icon:"📍",color:"#9333ea"});
+ renderTypes();renderHiddenTypes();
 }
-
-function deleteType(index){
+function deleteType(i){
  if(!confirm("এই Symbol Type মুছে ফেলবেন?"))return;
- types=readTypes();
- types.splice(index,1);
- renderTypes();
- renderHiddenTypes();
+ types=readTypes();types.splice(i,1);renderTypes();renderHiddenTypes();
 }
-
 function renderLineSettings(){
  const lines=[
-  {key:"wire",title:"Wire",color:"#f59e0b",weight:3,opacity:.95,style:"solid"},
-  {key:"fiber",title:"Fiber",color:"#2563eb",weight:4,opacity:1,style:"solid"},
-  {key:"drop",title:"Drop",color:"#16a34a",weight:2,opacity:.95,style:"solid"}
+  {key:"wire",title:"Wire",color:"#f59e0b",weight:3,opacity:.95},
+  {key:"fiber",title:"Fiber",color:"#2563eb",weight:4,opacity:1},
+  {key:"drop",title:"Drop",color:"#16a34a",weight:2,opacity:.95}
  ];
- $("lineSettings").innerHTML=lines.map(line=>`
+ $("lineSettings").innerHTML=lines.map(x=>`
   <div class="line-box">
-   <div class="line-title">${line.title} Connection</div>
+   <div class="line-title">${x.title} Connection</div>
    <div class="grid">
-    <div class="field">
-     <label>Line Color</label>
-     <input type="color" id="${line.key}Color" value="${validColor(settings[line.key+"Color"]||line.color)}">
-    </div>
-    <div class="field">
-     <label>Line Weight</label>
-     <input type="number" id="${line.key}Weight" min="1" max="15" value="${Number(settings[line.key+"Weight"]??line.weight)}">
-    </div>
-    <div class="field">
-     <label>Opacity (0 - 1)</label>
-     <input type="number" id="${line.key}Opacity" min="0" max="1" step=".05" value="${Number(settings[line.key+"Opacity"]??line.opacity)}">
-    </div>
-    <div class="field">
-     <label>Line Style</label>
-     <select id="${line.key}Style">
-      <option value="solid">Solid</option>
-      <option value="dashed">Dashed</option>
-      <option value="dotted">Dotted</option>
-     </select>
-    </div>
+    <div class="field"><label>Line Color</label><input id="${x.key}Color" type="color" value="${validColor(settings[x.key+"Color"]||x.color)}"></div>
+    <div class="field"><label>Line Weight</label><input id="${x.key}Weight" type="number" min="1" max="15" value="${Number(settings[x.key+"Weight"]??x.weight)}"></div>
+    <div class="field"><label>Opacity (0–1)</label><input id="${x.key}Opacity" type="number" min="0" max="1" step=".05" value="${Number(settings[x.key+"Opacity"]??x.opacity)}"></div>
+    <div class="field"><label>Line Style</label><select id="${x.key}Style"><option value="solid">Solid</option><option value="dashed">Dashed</option><option value="dotted">Dotted</option></select></div>
    </div>
-  </div>
- `).join("");
-
- lines.forEach(line=>{
-  $(line.key+"Style").value=settings[line.key+"Style"]||"solid";
- });
+  </div>`).join("");
+ lines.forEach(x=>$(x.key+"Style").value=settings[x.key+"Style"]||"solid");
 }
-
 function renderHiddenTypes(){
  const selected=settings.hiddenTypes||[];
- const current=readTypes();
- $("hiddenTypes").innerHTML=current.map((type,index)=>`
+ $("hiddenTypes").innerHTML=readTypes().map(t=>`
   <label class="toggle">
-   <input type="checkbox" class="hidden-type"
-    value="${escapeAttr(type.name)}"
-    ${selected.some(x=>String(x).toLowerCase()===type.name.toLowerCase())?"checked":""}>
-   <span>${escapeHTML(type.icon)} ${escapeHTML(type.name)}</span>
-  </label>
- `).join("");
+   <input type="checkbox" class="hidden-type" value="${escapeHTML(t.name)}"
+    ${selected.some(x=>String(x).toLowerCase()===t.name.toLowerCase())?"checked":""}>
+   <span>${escapeHTML(t.icon)} ${escapeHTML(t.name)}</span>
+  </label>`).join("");
 }
-
-function escapeHTML(value){
- return String(value??"").replace(/[&<>"']/g,c=>({
-  "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
- }[c]));
-}
-
 function collectSettings(){
- const result={...settings};
-
- [
-  "mapType","centerLat","centerLng","zoomLevel","markerSize"
- ].forEach(id=>{
-  result[id]=id==="mapType"?$(id).value:Number($(id).value);
+ const s={...settings};
+ s.mapType=$("mapType").value;
+ ["centerLat","centerLng","zoomLevel","markerSize"].forEach(id=>s[id]=Number($(id).value));
+ s.showMarkerLabels=$("showMarkerLabels").checked;
+ s.showWires=$("showWires").checked;
+ ["wire","fiber","drop"].forEach(k=>{
+  s[k+"Color"]=$(k+"Color").value;
+  s[k+"Weight"]=Number($(k+"Weight").value);
+  s[k+"Opacity"]=Number($(k+"Opacity").value);
+  s[k+"Style"]=$(k+"Style").value;
  });
-
- result.showMarkerLabels=$("showMarkerLabels").checked;
- result.showWires=$("showWires").checked;
-
- ["wire","fiber","drop"].forEach(key=>{
-  result[key+"Color"]=$(key+"Color").value;
-  result[key+"Weight"]=Number($(key+"Weight").value);
-  result[key+"Opacity"]=Number($(key+"Opacity").value);
-  result[key+"Style"]=$(key+"Style").value;
- });
-
- result.hiddenTypes=[
-  ...document.querySelectorAll(".hidden-type:checked")
- ].map(x=>x.value);
-
- let points=safeJSON($("areaPoints").value,[]);
- if(!Array.isArray(points))points=[];
- result.lockedArea={
+ s.hiddenTypes=[...document.querySelectorAll(".hidden-type:checked")].map(x=>x.value);
+ const points=safeJSON($("areaPoints").value,[]);
+ if(!Array.isArray(points))throw new Error("Area Points JSON সঠিক নয়");
+ s.lockedArea={
   enabled:$("areaEnabled").checked,
-  points:points.map(p=>({
-   lat:Number(p.lat),
-   lng:Number(p.lng)
-  })).filter(p=>Number.isFinite(p.lat)&&Number.isFinite(p.lng))
+  points:points.map(p=>({lat:Number(p.lat),lng:Number(p.lng)}))
+   .filter(p=>Number.isFinite(p.lat)&&Number.isFinite(p.lng))
  };
-
- const currentTypes=readTypes();
- result._customTypes=currentTypes;
- return result;
+ s._customTypes=readTypes();
+ return s;
 }
-
 async function saveAllSettings(){
- const currentSettings=collectSettings();
- const currentTypes=readTypes();
-
- if(!Number.isFinite(currentSettings.centerLat)||
-    !Number.isFinite(currentSettings.centerLng)){
-  setStatus("Center Latitude/Longitude সঠিক দিন","err");
-  return;
+ let s;
+ try{s=collectSettings()}catch(e){setStatus(e.message,"err");return}
+ if(!Number.isFinite(s.centerLat)||!Number.isFinite(s.centerLng)){
+  setStatus("Latitude/Longitude সঠিক দিন","err");return;
  }
-
- if(currentSettings.lockedArea.enabled&&currentSettings.lockedArea.points.length<3){
-  setStatus("Area Boundary-এর জন্য কমপক্ষে ৩টি Point দিন","err");
-  return;
+ if(s.lockedArea.enabled&&s.lockedArea.points.length<3){
+  setStatus("Boundary-এর জন্য কমপক্ষে ৩টি Point দিন","err");return;
  }
-
+ const customTypes=readTypes();
  const payload={
   action:"saveMapData",
   locations:mapData.locations||[],
   connections:mapData.connections||[],
-  settings:currentSettings,
-  customTypes:currentTypes
+  settings:s,
+  customTypes
  };
-
- setStatus("Saving settings...");
+ setStatus("Saving...");
  try{
-  const response=await fetch(MAP_API,{
+  const r=await fetch(MAP_API,{
    method:"POST",
    headers:{"Content-Type":"text/plain;charset=utf-8"},
    body:JSON.stringify(payload)
   });
-  const result=await response.json();
-  if(result.success===false||result.error){
-   throw new Error(result.message||result.error||"Save failed");
-  }
-
-  settings=currentSettings;
-  mapData.settings=currentSettings;
-  mapData.customTypes=currentTypes;
+  const result=await r.json();
+  if(result.success===false||result.error)throw new Error(result.message||result.error||"Save failed");
+  settings=s;mapData.settings=s;mapData.customTypes=customTypes;
   localStorage.setItem(CACHE_KEY,JSON.stringify(mapData));
-  setStatus("Settings saved successfully!","ok");
- }catch(error){
-  console.error(error);
-  setStatus("Save failed: "+error.message,"err");
- }
+  setStatus("All settings saved successfully","ok");
+ }catch(e){console.error(e);setStatus("Save failed: "+e.message,"err")}
 }
-
 function exportBackup(){
- const backup={
-  settings:collectSettings(),
-  customTypes:readTypes(),
-  exportedAt:new Date().toISOString()
- };
+ let backup;
+ try{backup={settings:collectSettings(),customTypes:readTypes(),exportedAt:new Date().toISOString()}}
+ catch(e){setStatus(e.message,"err");return}
  const blob=new Blob([JSON.stringify(backup,null,2)],{type:"application/json"});
- const url=URL.createObjectURL(blob);
- const a=document.createElement("a");
- a.href=url;
- a.download="one-online-map-settings-backup.json";
- a.click();
+ const url=URL.createObjectURL(blob),a=document.createElement("a");
+ a.href=url;a.download="one-online-map-settings-backup.json";a.click();
  URL.revokeObjectURL(url);
 }
-
-function importBackup(event){
- const file=event.target.files?.[0];
- if(!file)return;
+$("backupFile").addEventListener("change",event=>{
+ const file=event.target.files?.[0];if(!file)return;
  const reader=new FileReader();
  reader.onload=()=>{
-  const backup=safeJSON(reader.result,null);
-  if(!backup){
-   setStatus("Invalid backup file","err");
-   return;
-  }
-  if(backup.settings){
-   settings={...DEFAULT_SETTINGS,...backup.settings};
-  }
-  if(Array.isArray(backup.customTypes)){
-   types=backup.customTypes;
-  }
-  fillForm();
-  renderTypes();
-  renderLineSettings();
-  renderHiddenTypes();
-  setStatus("Backup imported. Save All Settings চাপুন।","ok");
+  const b=safeJSON(reader.result,null);
+  if(!b){setStatus("Invalid backup file","err");return}
+  settings={...DEFAULT_SETTINGS,...(b.settings||{})};
+  if(Array.isArray(b.customTypes))types=b.customTypes;
+  else types=DEFAULT_TYPES.map(x=>({...x}));
+  fillForm();renderTypes();renderLineSettings();renderHiddenTypes();
+  setStatus("Backup loaded. Save All চাপুন।","ok");
  };
- reader.readAsText(file);
- event.target.value="";
-}
-
+ reader.readAsText(file);event.target.value="";
+});
+$("markerSize").addEventListener("input",()=>{$("markerSizeText").textContent=$("markerSize").value});
 loadSettings();
 </script>
 </body>
