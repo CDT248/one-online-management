@@ -4,919 +4,251 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>ONE ONLINE | Network Map</title>
-
+<title>Map | ONE ONLINE</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root{
- --bg:#0b1220;--panel:#111c2e;--panel2:#172338;
- --text:#e8f0fc;--muted:#91a3bd;--line:#293a53;
- --green:#16a777;
-}
+:root{--bg:#0b1220;--panel:#111c2e;--panel2:#172338;--text:#e8f0fc;--muted:#91a2bb;--line:#26364d;--primary:#168bfa}
 *{box-sizing:border-box}
-body{margin:0;font-family:Arial,sans-serif;background:var(--bg);color:var(--text)}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,Arial,sans-serif}
 button,input{font:inherit}
 button{cursor:pointer}
-
-.app{height:100vh;min-height:500px;display:flex;flex-direction:column}
-.topbar{
- height:64px;flex-shrink:0;background:var(--panel);
- border-bottom:1px solid var(--line);
- display:flex;align-items:center;justify-content:space-between;
- padding:9px 15px;gap:10px;z-index:500
-}
-.brand{display:flex;align-items:center;gap:10px}
-.logo{
- width:40px;height:40px;border-radius:12px;
- background:linear-gradient(135deg,#087f5b,#20c997);
- display:grid;place-items:center;color:white;font-size:22px;font-weight:900
-}
-.brand h2{font-size:16px;margin:0 0 3px}
-.brand p{font-size:10px;color:var(--muted);margin:0}
+.app{height:100vh;display:flex;flex-direction:column}
+.top{min-height:62px;background:var(--panel);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:10px 16px;gap:10px;flex-wrap:wrap}
+.brand{font-weight:800;font-size:16px}.brand small{display:block;color:var(--muted);font-size:10px;letter-spacing:1px;margin-top:3px}
 .actions{display:flex;gap:7px;flex-wrap:wrap}
-.btn{
- padding:9px 12px;border:1px solid var(--line);
- border-radius:8px;background:var(--panel2);color:var(--text);
- font-size:12px;font-weight:700
-}
-.btn.primary{background:#087f5b;border-color:#087f5b;color:white}
-.btn:hover{filter:brightness(1.15)}
-
-.main{display:flex;flex:1;min-height:0;position:relative}
-.sidebar{
- width:270px;flex:0 0 270px;background:var(--panel);
- border-right:1px solid var(--line);padding:13px;
- overflow-y:auto;z-index:400
-}
-.section{
- padding:12px;background:var(--panel2);
- border:1px solid var(--line);border-radius:11px;margin-bottom:12px
-}
-.section h3{font-size:13px;margin:0 0 12px}
-.section-title{display:flex;justify-content:space-between;align-items:center;gap:8px}
-.muted{font-size:11px;color:var(--muted)}
-.stat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
-.stat{padding:10px;background:#0d192b;border:1px solid var(--line);border-radius:8px}
-.stat strong{display:block;font-size:21px}
-.stat span{font-size:10px;color:var(--muted)}
-.search{
- width:100%;padding:10px;border:1px solid var(--line);
- background:#0b1729;color:white;border-radius:8px;outline:none;font-size:12px
-}
-.filter-item{
- display:flex;align-items:center;justify-content:space-between;
- padding:8px 0;border-bottom:1px solid #ffffff0c;font-size:12px;gap:8px
-}
-.filter-item:last-child{border:0}
-.filter-item label{display:flex;align-items:center;gap:8px;cursor:pointer}
-.filter-item input{accent-color:#16b887}
-.count{font-size:10px;padding:3px 8px;border-radius:20px;background:#263b54}
-.legend-item{display:flex;align-items:center;gap:9px;font-size:11px;margin:9px 0}
-.legend-line{width:28px;border-top:3px solid}
-.map-area{flex:1;min-width:0;position:relative;background:#e8edf2}
-#map{height:100%;width:100%;min-height:400px;background:#e8edf2;z-index:1}
-
-/* Map controls */
-.map-tools{
- position:absolute;top:12px;left:12px;right:12px;
- display:flex;justify-content:space-between;gap:8px;
- pointer-events:none;z-index:300
-}
-.tool-group{display:flex;gap:6px;flex-wrap:wrap;pointer-events:auto}
-.tool-btn{
- border:1px solid #b8c5d1;background:#fff;color:#24364b;
- border-radius:8px;padding:9px 11px;font-size:11px;font-weight:800;
- box-shadow:0 2px 8px #0002
-}
-.tool-btn:hover{background:#f0f7ff}
-.map-status{
- position:absolute;bottom:14px;left:12px;z-index:300;
- background:#fff;color:#34465a;border:1px solid #d4dce5;
- border-radius:8px;padding:8px 11px;font-size:11px;
- box-shadow:0 2px 8px #0002;pointer-events:none
-}
-
-/* Beautiful icon-only markers */
-.map-marker{
- width:38px;height:42px;display:flex;align-items:center;justify-content:center;
- position:relative;background:transparent;border:0;
- filter:drop-shadow(0 2px 2px #0005)
-}
-.map-marker .bubble{
- width:34px;height:34px;border-radius:12px;
- display:flex;align-items:center;justify-content:center;
- font-size:20px;border:2px solid white;
- box-shadow:0 2px 7px #0004
-}
-.map-marker.customer .bubble{background:linear-gradient(135deg,#0b9b70,#18c995)}
-.map-marker.pole .bubble{background:linear-gradient(135deg,#e49a1c,#ffc34f)}
-.map-marker.switch .bubble{background:linear-gradient(135deg,#2877d4,#65a9ff)}
-.map-marker.custom .bubble{background:linear-gradient(135deg,#8155ce,#bd8aff)}
-.map-marker .pin-tip{
- position:absolute;bottom:0;width:9px;height:9px;
- transform:rotate(45deg);z-index:-1;border-radius:1px
-}
-.map-marker.customer .pin-tip{background:#0b9b70}
-.map-marker.pole .pin-tip{background:#e49a1c}
-.map-marker.switch .pin-tip{background:#2877d4}
-.map-marker.custom .pin-tip{background:#8155ce}
-
-/* Popup */
-.leaflet-popup-content-wrapper,.leaflet-popup-tip{background:#fff;color:#172338}
-.leaflet-popup-content{margin:13px;min-width:180px}
-.popup-title{font-size:14px;font-weight:800;margin-bottom:7px;color:#172338}
-.popup-row{font-size:11px;line-height:1.7;color:#52647a}
-.popup-tag{display:inline-block;background:#e2f7ef;color:#087f5b;padding:4px 8px;border-radius:20px;font-size:10px;margin-bottom:7px}
-.popup-link{color:#087f5b;font-weight:700;font-size:11px}
-.leaflet-control-zoom a{background:white!important;color:#26384b!important}
-.leaflet-control-attribution{background:#ffffffd9!important;color:#536579!important}
-.leaflet-control-attribution a{color:#087f5b!important}
-.mobile-toggle{display:none}
-
+.btn{border:1px solid var(--line);background:var(--panel2);color:var(--text);padding:9px 12px;border-radius:8px;font-size:12px;font-weight:600}
+.btn.primary{background:var(--primary);border-color:var(--primary);color:white}
+.main{display:grid;grid-template-columns:290px minmax(0,1fr);flex:1;min-height:0}
+.sidebar{background:var(--panel);border-right:1px solid var(--line);padding:14px;overflow:auto}
+#map{height:100%;width:100%;background:#dce5ec;z-index:1}
+.search{width:100%;padding:11px;background:#0b1628;color:white;border:1px solid var(--line);border-radius:8px;margin-bottom:12px}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:15px}
+.stat{background:var(--panel2);padding:11px;border:1px solid var(--line);border-radius:9px}
+.stat b{display:block;font-size:20px}.stat small{color:var(--muted);font-size:10px}
+.section{border-top:1px solid var(--line);padding-top:13px;margin-top:13px}
+.section h3{font-size:12px;margin:0 0 10px}
+.filter{display:flex;align-items:center;gap:8px;margin:9px 0;font-size:12px;color:#cbd5e1}
+.filter input{accent-color:var(--primary)}
+.filter .dot{width:10px;height:10px;border-radius:50%;display:inline-block}
+.connection-row{display:flex;align-items:center;gap:8px;margin:9px 0;font-size:12px}
+.connection-row input{accent-color:var(--primary)}
+.legend-line{width:22px;border-top:3px solid}
+.status{font-size:11px;color:var(--muted);line-height:1.6;margin-top:12px}
+.marker{display:flex;align-items:center;justify-content:center;border:2px solid white;border-radius:50%;box-shadow:0 2px 8px #0008;font-size:17px}
+.leaflet-popup-content-wrapper{border-radius:10px}
+.popup{min-width:170px;color:#172033;font:12px Inter,Arial}
+.popup h3{font-size:14px;margin:0 0 8px}
+.popup div{margin:4px 0}
+.popup button{border:0;background:#168bfa;color:white;border-radius:6px;padding:6px 9px;margin-top:8px}
 @media(max-width:760px){
- .topbar{padding:8px 10px}
- .brand h2{font-size:14px}
- .brand p{font-size:9px}
- .logo{width:35px;height:35px}
- .actions .btn{padding:8px;font-size:10px}
- .mobile-toggle{display:block}
- .sidebar{
-  position:absolute;top:0;bottom:0;left:0;
-  width:275px;max-width:85vw;
-  transform:translateX(-105%);transition:transform .2s;
-  box-shadow:8px 0 25px #0005
- }
- .sidebar.open{transform:translateX(0)}
- .map-tools{top:8px;left:7px;right:7px}
- .tool-btn{padding:8px;font-size:10px}
- .map-status{left:7px;bottom:10px}
+ .main{grid-template-columns:1fr;grid-template-rows:auto minmax(0,1fr)}
+ .sidebar{max-height:220px;border-right:0;border-bottom:1px solid var(--line)}
+ #map{min-height:350px}
+ .app{height:100dvh}
 }
 </style>
 </head>
-
 <body>
 <div class="app">
-
-<header class="topbar">
- <div class="brand">
-  <div class="logo">O</div>
-  <div>
-   <h2>ONE ONLINE</h2>
-   <p>NETWORK MAP MANAGEMENT</p>
+ <header class="top">
+  <div class="brand">ONE ONLINE <small>NETWORK MAP</small></div>
+  <div class="actions">
+   <button class="btn" onclick="fitAll()">Fit All</button>
+   <button class="btn" onclick="resetView()">Reset View</button>
+   <button class="btn" onclick="goEntry()">+ Map Entry</button>
+   <button class="btn primary" onclick="goSettings()">Map Settings</button>
   </div>
- </div>
- <div class="actions">
-  <button class="btn mobile-toggle" onclick="toggleSidebar()">☰</button>
-  <button class="btn" onclick="loadMapData()">↻ Refresh</button>
-  <button class="btn" onclick="goToEntry()">＋ Entry</button>
-  <button class="btn primary" onclick="goToSettings()">⚙ Settings</button>
- </div>
-</header>
-
-<main class="main">
-
-<aside class="sidebar" id="sidebar">
-
- <div class="section">
-  <div class="section-title">
-   <h3>Map Overview</h3>
-   <span class="muted" id="loadStatus">Loading</span>
-  </div>
-  <div class="stat-grid">
-   <div class="stat"><strong id="totalCustomers">0</strong><span>Customers</span></div>
-   <div class="stat"><strong id="totalPoles">0</strong><span>Poles</span></div>
-   <div class="stat"><strong id="totalSwitches">0</strong><span>Switches</span></div>
-   <div class="stat"><strong id="totalConnections">0</strong><span>Connections</span></div>
-  </div>
- </div>
-
- <div class="section">
-  <h3>Search Location</h3>
-  <input id="mapSearch" class="search" placeholder="Search name, IP, number..." oninput="searchLocations()">
- </div>
-
- <div class="section">
-  <h3>Location Visibility</h3>
-  <div id="typeFilters"></div>
- </div>
-
- <div class="section">
-  <h3>Connection Visibility</h3>
-  <div class="filter-item">
-   <label><input type="checkbox" id="showConnections" checked onchange="renderConnections()"> Show Connections</label>
-  </div>
-  <div class="filter-item">
-   <label><input type="checkbox" id="showWire" checked onchange="renderConnections()"> Wire</label>
-  </div>
-  <div class="filter-item">
-   <label><input type="checkbox" id="showFiber" checked onchange="renderConnections()"> Fiber</label>
-  </div>
-  <div class="filter-item">
-   <label><input type="checkbox" id="showDrop" checked onchange="renderConnections()"> Drop</label>
-  </div>
-  <div class="filter-item">
-   <label><input type="checkbox" id="showArrows" checked onchange="renderConnections()"> Direction Arrows</label>
-  </div>
- </div>
-
- <div class="section">
-  <h3>Map Style</h3>
-  <div class="filter-item">
-   <label><input type="radio" name="mapStyle" value="road" checked onchange="changeMapStyle(this.value)"> Normal Map</label>
-  </div>
-  <div class="filter-item">
-   <label><input type="radio" name="mapStyle" value="satellite" onchange="changeMapStyle(this.value)"> Satellite</label>
-  </div>
-  <div class="filter-item">
-   <label><input type="radio" name="mapStyle" value="terrain" onchange="changeMapStyle(this.value)"> Terrain</label>
-  </div>
- </div>
-
- <div class="section">
-  <h3>Connection Legend</h3>
-  <div class="legend-item"><span class="legend-line" style="border-color:#16a777"></span> Wire</div>
-  <div class="legend-item"><span class="legend-line" style="border-color:#287fdb"></span> Fiber</div>
-  <div class="legend-item"><span class="legend-line" style="border-color:#e5a12b"></span> Drop</div>
-  <div class="legend-item">➜ Direction of Connection</div>
- </div>
-
- <div class="section">
-  <h3>Area Lock</h3>
-  <div class="muted" id="areaStatus">No Polygon Area Lock</div>
-  <button class="btn" style="width:100%;margin-top:10px" onclick="fitVisibleLocations()">Fit Locations</button>
- </div>
-
-</aside>
-
-<section class="map-area">
- <div id="map"></div>
-
- <div class="map-tools">
-  <div class="tool-group">
-   <button class="tool-btn" onclick="fitVisibleLocations()">◎ Fit All</button>
-   <button class="tool-btn" onclick="resetMapView()">⌖ Reset View</button>
-  </div>
-  <div class="tool-group">
-   <button class="tool-btn" onclick="goToSettings()">⚙ Settings</button>
-  </div>
- </div>
-
- <div class="map-status" id="mapMessage">Loading Map...</div>
-</section>
-
-</main>
+ </header>
+ <main class="main">
+  <aside class="sidebar">
+   <input id="search" class="search" placeholder="Search customer, pole, switch..." oninput="renderMarkers()">
+   <div class="stats">
+    <div class="stat"><b id="totalLocations">0</b><small>LOCATIONS</small></div>
+    <div class="stat"><b id="totalConnections">0</b><small>CONNECTIONS</small></div>
+   </div>
+   <div class="section"><h3>LOCATION FILTER</h3><div id="typeFilters"></div></div>
+   <div class="section">
+    <h3>CONNECTION FILTER</h3>
+    <label class="connection-row"><input type="checkbox" id="showWire" checked onchange="renderConnections()"> Wire</label>
+    <label class="connection-row"><input type="checkbox" id="showFiber" checked onchange="renderConnections()"> Fiber</label>
+    <label class="connection-row"><input type="checkbox" id="showDrop" checked onchange="renderConnections()"> Drop</label>
+   </div>
+   <div class="section">
+    <h3>MAP INFORMATION</h3>
+    <div class="status" id="mapStatus">Loading map data...</div>
+   </div>
+  </aside>
+  <div id="map"></div>
+ </main>
 </div>
-
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="https://unpkg.com/leaflet-polylinedecorator@1.7.0/dist/leaflet.polylineDecorator.js"></script>
-
+<script src="https://unpkg.com/leaflet-polylinedecorator@1.7.0/dist/leaflet.polylineDecorator.min.js"></script>
 <script>
-/* ================= CONFIG ================= */
-
 const API_URL="https://script.google.com/macros/s/AKfycbxmDzfnY3LpvfvHjC4usnZiBT4BX4KZIjVoCGcSULikoTKQaC_mj7cbG_zUaiTyZ4sb8w/exec";
 const STORAGE_KEY="ONE_ONLINE_MAP_DATA_V1";
-
+const DEFAULT_TYPES=[
+ {id:"customer",name:"Customer",icon:"👤",color:"#168bfa"},
+ {id:"pole",name:"Pole",icon:"🗼",color:"#f59e0b"},
+ {id:"switch",name:"Switch",icon:"🔀",color:"#10b981"}
+];
 let db={locations:[],connections:[],settings:{},customTypes:[]};
-let map=null,baseLayer=null;
-let markerLayer=null,connectionLayer=null;
-let areaMaskLayer=null,areaBoundaryLayer=null;
-let mapReady=false;
-let visibleTypes={};
-let searchTerm="";
-
-const TILE={
- road:{
-  url:"https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-  attribution:'© <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a>'
- },
- satellite:{
-  url:"https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-  attribution:"Tiles © Esri"
- },
- terrain:{
-  url:"https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",
-  attribution:"© OpenTopoMap"
- }
-};
-
-/* ================= HELPERS ================= */
-
-function esc(v){
- return String(v??"").replace(/[&<>"']/g,c=>({
-  "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
- })[c]);
+let map,tileLayer,markerLayer=L.layerGroup(),connectionLayer=L.layerGroup(),areaLayer=L.layerGroup();
+let markerRefs=[];
+const $=id=>document.getElementById(id);
+const num=(v,d=0)=>Number.isFinite(Number(v))?Number(v):d;
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+function normalizeType(s){return String(s||"").trim().toLowerCase().replace(/[\s_-]+/g,"")}
+function getTypes(){return [...DEFAULT_TYPES,...(db.customTypes||[]).map((t,i)=>({id:String(t.id||"custom_"+i),name:t.name||"Custom",icon:t.icon||"📍",color:t.color||"#a855f7"}))]}
+function typeFor(item){
+ const raw=item.type||item.Type||item.locationType||item.category||"Customer";
+ return getTypes().find(t=>normalizeType(t.id)===normalizeType(raw)||normalizeType(t.name)===normalizeType(raw))||{id:String(raw).toLowerCase(),name:raw,icon:item.icon||"📍",color:item.color||"#64748b"};
 }
-function typeOf(v){
- const t=String(v||"").trim().toLowerCase();
- if(t==="customer")return "Customer";
- if(t==="pole")return "Pole";
- if(t==="switch")return "Switch";
- const custom=db.customTypes.find(x=>
-  String(x.name||"").toLowerCase()===t||
-  String(x.id||"").toLowerCase()===t
- );
- return custom?custom.name:(v||"Other");
+function coords(item){
+ const lat=num(item.lat??item.latitude??item.Latitude,NaN);
+ const lng=num(item.lng??item.longitude??item.Longitude,NaN);
+ return Number.isFinite(lat)&&Number.isFinite(lng)&&Math.abs(lat)<=90&&Math.abs(lng)<=180?[lat,lng]:null;
 }
-function nameOf(x){
- return x?.name||x?.customerName||x?.locationNumber||"Unnamed";
+function itemName(x){return x.name||x.Name||x.customerName||x.Customer||"Unnamed location"}
+function itemId(x){return String(x.id??x.ID??x.locationId??"")}
+function getSettings(){return db.settings||{}}
+function hiddenTypes(){return getSettings().hiddenTypes||[]}
+function isTypeVisible(t){return !hiddenTypes().some(x=>normalizeType(x)===normalizeType(t.id)||normalizeType(x)===normalizeType(t.name))}
+function tileURL(type){
+ if(type==="satellite")return "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}";
+ if(type==="terrain")return "https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png";
+ return "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
 }
-function coordsOf(x){
- if(!x)return null;
- const lat=Number(x.lat??x.latitude);
- const lng=Number(x.lng??x.longitude);
- if(!Number.isFinite(lat)||!Number.isFinite(lng))return null;
- if(lat < -90||lat > 90||lng < -180||lng > 180)return null;
- return {lat,lng};
+function setTiles(){
+ const s=getSettings(),type=s.mapType||"road";
+ if(tileLayer)map.removeLayer(tileLayer);
+ tileLayer=L.tileLayer(tileURL(type),{maxZoom:19,attribution:type==="satellite"?"Tiles © Esri":"© OpenStreetMap contributors"}).addTo(map);
 }
-function findLocation(id){
- return db.locations.find(x=>String(x.id)===String(id));
-}
-function fromOf(c){
- return c.from??c.fromId??c.source??c.start??"";
-}
-function toOf(c){
- return c.to??c.toId??c.target??c.end??"";
-}
-function setMessage(t){
- document.getElementById("mapMessage").textContent=t;
-}
-
-/* ================= LOCAL DATA ================= */
-
-function saveLocal(){
- try{localStorage.setItem(STORAGE_KEY,JSON.stringify(db));}catch(e){}
-}
-function loadLocal(){
- try{
-  const d=JSON.parse(localStorage.getItem(STORAGE_KEY)||"{}");
-  db.locations=Array.isArray(d.locations)?d.locations:[];
-  db.connections=Array.isArray(d.connections)?d.connections:[];
-  db.settings=d.settings||{};
-  db.customTypes=Array.isArray(d.customTypes)?d.customTypes:[];
- }catch(e){}
-}
-
-/* ================= SERVER ================= */
-
-async function getRemote(){
- const r=await fetch(API_URL+"?action=getMapData&t="+Date.now(),{cache:"no-store"});
- if(!r.ok)throw new Error("Server connection failed");
- const result=await r.json();
- if(result.success===false)throw new Error(result.message||"Data load failed");
- const d=result.data||result;
- return {
-  locations:Array.isArray(d.locations)?d.locations:[],
-  connections:Array.isArray(d.connections)?d.connections:[],
-  settings:d.settings||{},
-  customTypes:Array.isArray(d.customTypes)?d.customTypes:[]
- };
-}
-async function loadMapData(){
- setMessage("Loading data...");
- document.getElementById("loadStatus").textContent="Loading";
- try{
-  db=await getRemote();
-  saveLocal();
-  renderAll();
-  document.getElementById("loadStatus").textContent="Online";
-  setMessage("Map loaded successfully.");
- }catch(e){
-  console.error(e);
-  loadLocal();
-  renderAll();
-  document.getElementById("loadStatus").textContent="Offline";
-  setMessage("Showing saved data. Server could not be reached.");
- }
-}
-
-/* ================= MAP ================= */
-
 function initMap(){
- if(mapReady)return;
-
- map=L.map("map",{
-  zoomControl:true,
-  preferCanvas:true,
-  minZoom:3,
-  zoomSnap:.5
- }).setView([22.3569,91.7832],12);
-
- markerLayer=L.layerGroup().addTo(map);
- connectionLayer=L.layerGroup().addTo(map);
-
- mapReady=true;
- changeMapStyle("road");
+ const s=getSettings();
+ map=L.map("map").setView([num(s.centerLat,22.3569),num(s.centerLng,91.7832)],num(s.zoomLevel,13));
+ setTiles();markerLayer.addTo(map);connectionLayer.addTo(map);areaLayer.addTo(map);
+ map.on("zoomend",()=>{});
 }
-
-function changeMapStyle(style){
- if(!mapReady)return;
- if(baseLayer)map.removeLayer(baseLayer);
-
- const cfg=TILE[style]||TILE.road;
- baseLayer=L.tileLayer(cfg.url,{
-  attribution:cfg.attribution,
-  maxZoom:20,
-  subdomains:"abc"
- }).addTo(map);
-
- baseLayer.bringToBack();
+function markerIcon(item,t){
+ const size=Math.max(12,Math.min(60,num(getSettings().markerSize,28)));
+ const icon=item.icon||t.icon||"📍",color=item.color||t.color||"#168bfa";
+ return L.divIcon({className:"",html:`<div class="marker" style="width:${size+10}px;height:${size+10}px;background:${esc(color)};font-size:${Math.max(11,size*.62)}px">${esc(icon)}</div>`,iconSize:[size+10,size+10],iconAnchor:[(size+10)/2,(size+10)/2]});
 }
-
-/* ================= ICONS ================= */
-
-function iconFor(item){
- const type=typeOf(item.type);
- if(item.icon)return String(item.icon);
-
- if(type==="Customer")return "🏠";
- if(type==="Pole")return "⚡";
- if(type==="Switch")return "🔀";
-
- const custom=db.customTypes.find(x=>
-  String(x.name||"").toLowerCase()===String(type).toLowerCase()
- );
- return custom?.icon||"📌";
+function markerPopup(item,t){
+ const name=itemName(item),address=item.address||item.Address||"",phone=item.phone||item.Phone||"",ip=item.ip||item.IP||"";
+ return `<div class="popup"><h3>${esc(name)}</h3><div><b>Type:</b> ${esc(t.name)}</div>${ip?`<div><b>IP:</b> ${esc(ip)}</div>`:""}${phone?`<div><b>Phone:</b> ${esc(phone)}</div>`:""}${address?`<div><b>Address:</b> ${esc(address)}</div>`:""}<div><b>Location ID:</b> ${esc(itemId(item)||"—")}</div></div>`;
 }
-
-function markerIcon(item){
- const type=typeOf(item.type);
- let cls="custom";
- if(type==="Customer")cls="customer";
- if(type==="Pole")cls="pole";
- if(type==="Switch")cls="switch";
-
- return L.divIcon({
-  className:"",
-  html:`<div class="map-marker ${cls}">
-   <div class="bubble">${esc(iconFor(item))}</div>
-   <div class="pin-tip"></div>
-  </div>`,
-  iconSize:[38,42],
-  iconAnchor:[19,38],
-  popupAnchor:[0,-34]
+function renderTypeFilters(){
+ const root=$("typeFilters");root.innerHTML="";
+ const actual=new Set(db.locations.map(x=>normalizeType(typeFor(x).id)));
+ getTypes().filter(t=>actual.has(normalizeType(t.id))).forEach(t=>{
+  const label=document.createElement("label");label.className="filter";
+  const input=document.createElement("input");input.type="checkbox";input.checked=isTypeVisible(t);
+  input.onchange=()=>{const hidden=new Set(hiddenTypes());if(input.checked)hidden.delete(t.id);else hidden.add(t.id);db.settings.hiddenTypes=[...hidden];renderMarkers();};
+  const dot=document.createElement("span");dot.className="dot";dot.style.background=t.color;
+  const text=document.createElement("span");text.textContent=t.name;
+  label.append(input,dot,text);root.append(label);
  });
 }
-
-/* ================= POLYGON AREA ================= */
-
-function lockedArea(){
- const s=db.settings||{};
- const a=s.lockedArea||s.areaLock||{};
-
- if(a.enabled===false||s.areaLockEnabled===false)return null;
-
- if(Array.isArray(a.points)&&a.points.length>=3){
-  const points=a.points.map(p=>[
-   Number(p.lat??p.latitude),
-   Number(p.lng??p.longitude)
-  ]).filter(p=>p.every(Number.isFinite));
-
-  if(points.length>=3)return {points};
- }
-
- if(a.southWest&&a.northEast){
-  const sw=a.southWest,ne=a.northEast;
-  const south=Number(sw.lat??sw.latitude);
-  const west=Number(sw.lng??sw.longitude);
-  const north=Number(ne.lat??ne.latitude);
-  const east=Number(ne.lng??ne.longitude);
-
-  if([south,west,north,east].every(Number.isFinite)){
-   return {points:[
-    [south,west],[south,east],[north,east],[north,west]
-   ]};
-  }
- }
-
- if(Array.isArray(s.lockedAreaPoints)&&s.lockedAreaPoints.length>=3){
-  const points=s.lockedAreaPoints.map(p=>[
-   Number(p.lat??p.latitude),Number(p.lng??p.longitude)
-  ]);
-  if(points.length>=3&&points.every(p=>p.every(Number.isFinite))){
-   return {points};
-  }
- }
- return null;
+function renderMarkers(){
+ markerLayer.clearLayers();markerRefs=[];
+ const query=$("search").value.trim().toLowerCase(),s=getSettings();
+ db.locations.forEach(item=>{
+  const pos=coords(item);if(!pos)return;
+  const t=typeFor(item);if(!isTypeVisible(t))return;
+  const searchable=[itemName(item),item.phone,item.ip,item.address,t.name].join(" ").toLowerCase();
+  if(query&&!searchable.includes(query))return;
+  const marker=L.marker(pos,{icon:markerIcon(item,t)});
+  marker.bindPopup(markerPopup(item,t));
+  if(s.showMarkerLabels!==false)marker.bindTooltip(itemName(item),{direction:"top",offset:[0,-12]});
+  marker.addTo(markerLayer);markerRefs.push({marker,item});
+ });
+ $("totalLocations").textContent=db.locations.length;
 }
-
-function insidePolygon(point,polygon){
- let inside=false;
- const x=point.lng,y=point.lat;
-
- for(let i=0,j=polygon.length-1;i<polygon.length;j=i++){
-  const xi=polygon[i][1],yi=polygon[i][0];
-  const xj=polygon[j][1],yj=polygon[j][0];
-
-  const crosses=((yi>y)!==(yj>y))&&
-   (x<(xj-xi)*(y-yi)/(yj-yi+1e-12)+xi);
-
-  if(crosses)inside=!inside;
+function connectionStyle(type){
+ const s=getSettings(),t=String(type||"wire").toLowerCase();
+ const prefix=t.includes("fiber")?"fiber":t.includes("drop")?"drop":"wire";
+ const defaults={wire:{color:"#00d4ff",weight:3,opacity:.9,style:"solid"},fiber:{color:"#a855f7",weight:3,opacity:.9,style:"solid"},drop:{color:"#f59e0b",weight:2,opacity:.9,style:"dashed"}};
+ const d=defaults[prefix];
+ return {color:s[prefix+"Color"]||d.color,weight:num(s[prefix+"Weight"],d.weight),opacity:num(s[prefix+"Opacity"],d.opacity),dashArray:(s[prefix+"Style"]||d.style)==="dashed"?"8 7":(s[prefix+"Style"]||d.style)==="dotted"?"2 7":null};
+}
+function findLocation(ref){
+ return db.locations.find(x=>String(x.id??x.ID??x.locationId)===String(ref)||itemName(x)===String(ref));
+}
+function connectionKind(c){const t=String(c.type||c.connectionType||"wire").toLowerCase();return t.includes("fiber")?"fiber":t.includes("drop")?"drop":"wire"}
+function renderConnections(){
+ connectionLayer.clearLayers();
+ const s=getSettings();if(s.showWires===false)return;
+ db.connections.forEach(c=>{
+  const kind=connectionKind(c);
+  if(!$("show"+kind.charAt(0).toUpperCase()+kind.slice(1)).checked)return;
+  const from=findLocation(c.from??c.fromId??c.source),to=findLocation(c.to??c.toId??c.target);
+  if(!from||!to)return;
+  const a=coords(from),b=coords(to);if(!a||!b)return;
+  const style=connectionStyle(kind);
+  const line=L.polyline([a,b],style).addTo(connectionLayer);
+  const label=c.name||c.label||kind.toUpperCase();
+  if(label)line.bindTooltip(esc(label));
+  if(c.direction!==false&&c.directed!==false&&L.polylineDecorator){
+   L.polylineDecorator(line,{patterns:[{offset:"75%",repeat:0,symbol:L.Symbol.arrowHead({pixelSize:9,polygon:false,pathOptions:{color:style.color,weight:2,opacity:style.opacity}})}]}).addTo(connectionLayer);
+  }
+ });
+ $("totalConnections").textContent=db.connections.length;
+}
+function getAreaPoints(){
+ const a=getSettings().lockedArea||getSettings().areaLock||{};
+ if(Array.isArray(a.points))return a.points.map(p=>Array.isArray(p)?[num(p[0]),num(p[1])]:[num(p.lat),num(p.lng)]).filter(p=>p.every(Number.isFinite));
+ if(a.southWest&&a.northEast){const sw=a.southWest,ne=a.northEast;return [[num(sw.lat),num(sw.lng)],[num(ne.lat),num(sw.lng)],[num(ne.lat),num(ne.lng)],[num(sw.lat),num(ne.lng)]]}
+ return [];
+}
+function pointInside(point,poly){
+ let inside=false;const x=point[1],y=point[0];
+ for(let i=0,j=poly.length-1;i<poly.length;j=i++){
+  const xi=poly[i][1],yi=poly[i][0],xj=poly[j][1],yj=poly[j][0];
+  const intersect=((yi>y)!==(yj>y))&&(x<(xj-xi)*(y-yi)/(yj-yi)+xi);
+  if(intersect)inside=!inside;
  }
  return inside;
 }
-
-function insideArea(item){
- const c=coordsOf(item);
- if(!c)return false;
- const a=lockedArea();
- return !a||insidePolygon(c,a.points);
-}
-
 function drawArea(){
- if(areaMaskLayer){map.removeLayer(areaMaskLayer);areaMaskLayer=null;}
- if(areaBoundaryLayer){map.removeLayer(areaBoundaryLayer);areaBoundaryLayer=null;}
-
- const a=lockedArea();
-
- if(!a){
-  document.getElementById("areaStatus").textContent="No Polygon Area Lock";
-  return;
+ areaLayer.clearLayers();const a=getSettings().lockedArea||{};
+ const pts=getAreaPoints();
+ if(!a.enabled||pts.length<3)return;
+ L.polygon(pts,{color:"#16a34a",weight:2,fill:false,dashArray:"7 6"}).addTo(areaLayer);
+ // Keep the map bright: no world-sized dark mask is applied.
+}
+function applySettings(){
+ const s=getSettings();
+ setTiles();
+ if(s.showWires===false){$("showWire").checked=false;$("showFiber").checked=false;$("showDrop").checked=false;}
+ renderTypeFilters();renderMarkers();renderConnections();drawArea();
+ if(s.centerLat!=null&&s.centerLng!=null)map.setView([num(s.centerLat,22.3569),num(s.centerLng,91.7832)],num(s.zoomLevel,map.getZoom()));
+}
+async function loadData(){
+ try{
+  const r=await fetch(API_URL+"?action=getMapData&t="+Date.now());
+  if(!r.ok)throw Error("Server request failed");
+  const result=await r.json();if(result.success===false)throw Error(result.message||"Load failed");
+  const data=result.data||result;
+  db={locations:Array.isArray(data.locations)?data.locations:[],connections:Array.isArray(data.connections)?data.connections:[],settings:data.settings||{},customTypes:Array.isArray(data.customTypes)?data.customTypes:[]};
+  localStorage.setItem(STORAGE_KEY,JSON.stringify(db));
+  $("mapStatus").textContent="Google Sheet থেকে সর্বশেষ Map Data লোড হয়েছে।";
+ }catch(e){
+  try{const local=JSON.parse(localStorage.getItem(STORAGE_KEY)||"{}");db={locations:local.locations||[],connections:local.connections||[],settings:local.settings||{},customTypes:local.customTypes||[]};$("mapStatus").textContent="Server পাওয়া যায়নি। Local backup data দেখানো হচ্ছে।";}
+  catch(x){$("mapStatus").textContent="Map data load করা যায়নি: "+e.message;}
  }
-
- const points=a.points;
- const bounds=L.latLngBounds(points);
-
- /*
-  * FIX: use a proper outer ring + reversed inner ring.
-  * Low opacity keeps the map outside the polygon visible too.
-  * The polygon hole keeps the permitted area completely clear.
-  */
- const outer=[
-  [-89.9,-179.9],
-  [-89.9,179.9],
-  [89.9,179.9],
-  [89.9,-179.9]
- ];
- const hole=[...points].reverse();
-
- areaMaskLayer=L.polygon([outer,hole],{
-  stroke:false,
-  fill:true,
-  fillColor:"#24364a",
-  fillOpacity:.20,
-  fillRule:"evenodd",
-  interactive:false
- }).addTo(map);
-
- areaBoundaryLayer=L.polygon(points,{
-  color:"#0ca879",
-  weight:3,
-  opacity:1,
-  fill:false,
-  dashArray:"7 6",
-  interactive:false
- }).addTo(map);
-
- document.getElementById("areaStatus").textContent=
-  "Polygon Lock Active · "+points.length+" Corners";
+ applySettings();
 }
-
-/* ================= TYPE FILTER ================= */
-
-function allTypes(){
- return [...new Set(db.locations.map(x=>typeOf(x.type)))].sort((a,b)=>{
-  const order=["Customer","Pole","Switch"];
-  const ai=order.indexOf(a),bi=order.indexOf(b);
-  if(ai!==-1||bi!==-1)return (ai<0?99:ai)-(bi<0?99:bi);
-  return a.localeCompare(b);
- });
+function fitAll(){
+ const pts=markerRefs.map(x=>x.marker.getLatLng());
+ if(pts.length)map.fitBounds(L.latLngBounds(pts),{padding:[35,35],maxZoom:17});
 }
-
-function renderFilters(){
- const types=allTypes();
- types.forEach(t=>{
-  if(visibleTypes[t]===undefined)visibleTypes[t]=true;
- });
-
- Object.keys(visibleTypes).forEach(t=>{
-  if(!types.includes(t))delete visibleTypes[t];
- });
-
- document.getElementById("typeFilters").innerHTML=types.map(t=>{
-  const n=db.locations.filter(x=>typeOf(x.type)===t).length;
-  return `<div class="filter-item">
-   <label>
-    <input type="checkbox" ${visibleTypes[t]!==false?"checked":""}
-     onchange="toggleType('${esc(t)}',this.checked)">
-    ${esc(iconFor({type:t}))} ${esc(t)}
-   </label>
-   <span class="count">${n}</span>
-  </div>`;
- }).join("")||'<div class="muted">No location types found.</div>';
-}
-
-function toggleType(type,value){
- visibleTypes[type]=value;
- renderMarkers();
- renderConnections();
-}
-
-/* ================= SEARCH ================= */
-
-function matchesSearch(item){
- if(!searchTerm)return true;
- const text=[
-  item.name,item.customerName,item.customerIp,item.ip,
-  item.locationNumber,item.address,item.customerAddress,
-  item.type,item.notes
- ].join(" ").toLowerCase();
- return text.includes(searchTerm);
-}
-
-function locationVisible(item){
- const type=typeOf(item.type);
- return visibleTypes[type]!==false&&
-  matchesSearch(item)&&insideArea(item)&&!!coordsOf(item);
-}
-
-function searchLocations(){
- searchTerm=document.getElementById("mapSearch").value.trim().toLowerCase();
- renderMarkers();
- renderConnections();
-
- if(searchTerm&&markerObjects.length===1){
-  map.setView(markerObjects[0].marker.getLatLng(),17);
-  markerObjects[0].marker.openPopup();
- }
-}
-
-/* ================= POPUPS ================= */
-
-function popupHtml(item){
- const c=coordsOf(item);
- const type=typeOf(item.type);
- let extra="";
-
- if(item.customerIp||item.ip){
-  extra+=`<div class="popup-row">IP: ${esc(item.customerIp||item.ip)}</div>`;
- }
- if(item.locationNumber){
-  extra+=`<div class="popup-row">Number: ${esc(item.locationNumber)}</div>`;
- }
- if(item.customerAddress||item.address){
-  extra+=`<div class="popup-row">Address: ${esc(item.customerAddress||item.address)}</div>`;
- }
- if(c){
-  extra+=`<div class="popup-row">Latitude: ${c.lat.toFixed(6)}</div>`;
-  extra+=`<div class="popup-row">Longitude: ${c.lng.toFixed(6)}</div>`;
- }
- if(item.notes)extra+=`<div class="popup-row">Notes: ${esc(item.notes)}</div>`;
-
- const link=c?`https://www.google.com/maps?q=${c.lat},${c.lng}`:"";
-
- return `<div>
-  <div class="popup-tag">${esc(iconFor(item))} ${esc(type)}</div>
-  <div class="popup-title">${esc(nameOf(item))}</div>
-  ${extra}
-  ${link?`<p><a class="popup-link" target="_blank" rel="noopener" href="${link}">Open Google Maps ↗</a></p>`:""}
- </div>`;
-}
-
-/* ================= MARKERS ================= */
-
-let markerObjects=[];
-
-function renderMarkers(){
- if(!mapReady)return;
-
- markerLayer.clearLayers();
- markerObjects=[];
-
- db.locations.filter(locationVisible).forEach(item=>{
-  const c=coordsOf(item);
-  if(!c)return;
-
-  const marker=L.marker([c.lat,c.lng],{
-   icon:markerIcon(item),
-   title:nameOf(item),
-   riseOnHover:true
-  }).addTo(markerLayer);
-
-  marker.bindPopup(popupHtml(item),{maxWidth:280});
-  markerObjects.push({item,marker});
- });
- renderStats();
-}
-
-/* ================= CONNECTION STYLE ================= */
-
-function connectionStyle(c){
- const s=db.settings||{};
- const type=String(c.type||"Wire").toLowerCase();
-
- let color=s.wireColor||"#16a777";
- let weight=Number(s.wireWeight)||3;
- let opacity=s.wireOpacity===undefined?.95:Number(s.wireOpacity);
- let style=s.wireStyle||"solid";
-
- if(type==="fiber"){
-  color=s.fiberColor||s.wireFiberColor||"#287fdb";
-  weight=Number(s.fiberWeight)||4;
-  opacity=s.fiberOpacity===undefined?1:Number(s.fiberOpacity);
-  style=s.fiberStyle||"solid";
- }else if(type==="drop"){
-  color=s.dropColor||s.wireDropColor||"#e5a12b";
-  weight=Number(s.dropWeight)||2;
-  opacity=s.dropOpacity===undefined?1:Number(s.dropOpacity);
-  style=s.dropStyle||"dashed";
- }
-
- const dash={
-  solid:null,dashed:"8 7",dotted:"2 7",dash:"8 7",dot:"2 7"
- };
-
- return {
-  color,weight:Math.max(1,Math.min(12,weight)),
-  opacity:Math.max(0,Math.min(1,opacity)),
-  dashArray:dash[String(style).toLowerCase()]??null,
-  lineCap:"round",lineJoin:"round"
- };
-}
-
-function connectionEnabled(type){
- type=String(type||"wire").toLowerCase();
- if(type==="fiber")return document.getElementById("showFiber").checked;
- if(type==="drop")return document.getElementById("showDrop").checked;
- return document.getElementById("showWire").checked;
-}
-
-/* ================= DIRECTION ARROWS ================= */
-
-function fallbackArrow(from,to,color){
- const midLat=(from.lat+to.lat)/2;
- const midLng=(from.lng+to.lng)/2;
-
- const icon=L.divIcon({
-  className:"",
-  html:`<div style="font-size:20px;font-weight:900;color:${esc(color)};text-shadow:0 0 3px white,0 0 5px black">➤</div>`,
-  iconSize:[22,22],
-  iconAnchor:[11,11]
- });
-
- return L.marker([midLat,midLng],{
-  icon,interactive:false,keyboard:false
- }).addTo(connectionLayer);
-}
-
-function renderConnections(){
- if(!mapReady)return;
-
- connectionLayer.clearLayers();
-
- if(!document.getElementById("showConnections").checked)return;
-
- const arrowsEnabled=document.getElementById("showArrows").checked;
-
- db.connections.forEach(c=>{
-  const from=findLocation(fromOf(c));
-  const to=findLocation(toOf(c));
-  if(!from||!to)return;
-
-  const a=coordsOf(from),b=coordsOf(to);
-  if(!a||!b)return;
-
-  if(!insideArea(from)||!insideArea(to))return;
-  if(visibleTypes[typeOf(from.type)]===false)return;
-  if(visibleTypes[typeOf(to.type)]===false)return;
-  if(!matchesSearch(from)&&!matchesSearch(to))return;
-
-  const type=String(c.type||"Wire").toLowerCase();
-  if(!connectionEnabled(type))return;
-
-  const style=connectionStyle(c);
-  const line=L.polyline([[a.lat,a.lng],[b.lat,b.lng]],style).addTo(connectionLayer);
-
-  line.bindPopup(`<div>
-   <div class="popup-tag">${esc(type.toUpperCase())}</div>
-   <div class="popup-title">${esc(c.name||"Connection")}</div>
-   <div class="popup-row"><b>From:</b> ${esc(nameOf(from))}</div>
-   <div class="popup-row"><b>To:</b> ${esc(nameOf(to))}</div>
-   <div class="popup-row">Direction: ${esc(nameOf(from))} ➜ ${esc(nameOf(to))}</div>
-  </div>`);
-
-  if(arrowsEnabled){
-   if(typeof L.polylineDecorator==="function"){
-    L.polylineDecorator(line,{
-     patterns:[{
-      offset:"65%",
-      repeat:0,
-      symbol:L.Symbol.arrowHead({
-       pixelSize:12,
-       polygon:true,
-       pathOptions:{
-        color:style.color,
-        fillColor:style.color,
-        fillOpacity:1,
-        weight:1
-       }
-      })
-     }]
-    }).addTo(connectionLayer);
-   }else{
-    fallbackArrow(a,b,style.color);
-   }
-  }
- });
-}
-
-/* ================= STATS ================= */
-
-function renderStats(){
- const count=t=>db.locations.filter(x=>
-  typeOf(x.type).toLowerCase()===t.toLowerCase()
- ).length;
-
- const connections=db.connections.filter(c=>{
-  const a=findLocation(fromOf(c)),b=findLocation(toOf(c));
-  return a&&b&&insideArea(a)&&insideArea(b);
- }).length;
-
- document.getElementById("totalCustomers").textContent=count("Customer");
- document.getElementById("totalPoles").textContent=count("Pole");
- document.getElementById("totalSwitches").textContent=count("Switch");
- document.getElementById("totalConnections").textContent=connections;
-}
-
-/* ================= FIT MAP ================= */
-
-function fitVisibleLocations(){
- const points=db.locations.filter(locationVisible).map(x=>{
-  const c=coordsOf(x);
-  return c?[c.lat,c.lng]:null;
- }).filter(Boolean);
-
- const area=lockedArea();
-
- if(points.length){
-  const bounds=L.latLngBounds(points.map(p=>L.latLng(p[0],p[1])));
-  if(area)bounds.extend(L.latLngBounds(area.points));
-  map.fitBounds(bounds,{padding:[40,40],maxZoom:17});
- }else if(area){
-  map.fitBounds(L.latLngBounds(area.points),{padding:[35,35]});
- }else{
-  map.setView([22.3569,91.7832],12);
- }
-}
-
-function resetMapView(){
- const area=lockedArea();
- if(area)map.fitBounds(L.latLngBounds(area.points),{padding:[35,35]});
- else map.setView([22.3569,91.7832],12);
-}
-
-/* ================= RENDER ================= */
-
-function renderAll(){
- if(!mapReady)initMap();
-
- renderFilters();
- drawArea();
- renderMarkers();
- renderConnections();
- renderStats();
-
- if(lockedArea()){
-  map.fitBounds(L.latLngBounds(lockedArea().points),{padding:[35,35]});
- }else if(db.locations.length){
-  fitVisibleLocations();
- }
-}
-
-/* ================= NAVIGATION ================= */
-
-function toggleSidebar(){
- document.getElementById("sidebar").classList.toggle("open");
-}
-function goToEntry(){
- if(window.parent&&window.parent!==window){
-  window.parent.postMessage({type:"ONE_ONLINE_NAVIGATE",page:"map-entry"},"*");
- }else{
-  location.href="map-entry.html";
- }
-}
-function goToSettings(){
- if(window.parent&&window.parent!==window){
-  window.parent.postMessage({type:"ONE_ONLINE_NAVIGATE",page:"map-setting"},"*");
- }else{
-  location.href="map-setting.html";
- }
-}
-
-/* ================= START ================= */
-
-loadLocal();
-initMap();
-renderAll();
-
-window.addEventListener("load",()=>{
- setTimeout(()=>map.invalidateSize(),250);
- loadMapData();
-});
-
-window.addEventListener("resize",()=>{
- if(map)setTimeout(()=>map.invalidateSize(),150);
-});
+function resetView(){const s=getSettings();map.setView([num(s.centerLat,22.3569),num(s.centerLng,91.7832)],num(s.zoomLevel,13))}
+function goSettings(){window.parent.postMessage({type:"ONE_ONLINE_NAVIGATE",page:"map-setting"},"*")}
+function goEntry(){window.parent.postMessage({type:"ONE_ONLINE_NAVIGATE",page:"map-entry"},"*")}
+initMap();loadData();
+window.addEventListener("storage",e=>{if(e.key===STORAGE_KEY)loadData()});
 </script>
 </body>
 </html>
