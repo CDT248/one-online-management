@@ -4,384 +4,431 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>ONE ONLINE | Network Map</title>
+<title>ONE ONLINE | Map</title>
+
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+
 <style>
 *{box-sizing:border-box}
-html,body{width:100%;height:100%;margin:0;padding:0;overflow:hidden}
-body{background:#e5e7eb;font-family:Arial,sans-serif}
-#map{position:fixed;inset:0;width:100%;height:100%;height:100dvh;background:#e5e7eb}
-.leaflet-container{width:100%;height:100%;font-family:Arial,sans-serif}
-.map-marker{display:flex;align-items:center;justify-content:center;border-radius:50%;border:2px solid #fff;box-shadow:0 2px 7px #0006;font-size:19px;line-height:1}
-.map-label{background:#fff;color:#172033;border:1px solid #d1d5db;border-radius:5px;padding:3px 6px;font-size:11px;font-weight:700;box-shadow:0 1px 4px #0003;white-space:nowrap}
-.leaflet-tooltip.map-label:before{display:none}
-.leaflet-popup-content-wrapper{border-radius:9px}
-.leaflet-popup-content{font-size:13px;line-height:1.6;margin:10px 13px}
-.leaflet-popup-content b{font-size:14px}
-.loading{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:#f3f4f6;color:#374151;font-size:14px;z-index:2000}
+html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden}
+#map{position:fixed;inset:0;width:100%;height:100%;background:#e5e7eb}
+
+/* Transparent point symbols */
+.map-marker{
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ width:36px;
+ height:36px;
+ background:transparent!important;
+ border:0!important;
+ border-radius:0!important;
+ box-shadow:none!important;
+ font-size:28px;
+ line-height:1;
+ filter:drop-shadow(0 1px 2px rgba(0,0,0,.55));
+}
+.map-marker img{
+ width:100%;
+ height:100%;
+ object-fit:contain;
+ background:transparent;
+}
+.marker-label{
+ background:rgba(15,23,42,.88);
+ color:#fff;
+ border:1px solid rgba(255,255,255,.25);
+ border-radius:5px;
+ padding:2px 6px;
+ font-size:11px;
+ font-weight:700;
+ white-space:nowrap;
+ box-shadow:0 2px 7px #0004;
+}
+.leaflet-tooltip.marker-label:before{display:none}
+.leaflet-control-attribution{font-size:9px!important}
+.leaflet-popup-content-wrapper{border-radius:10px}
+.leaflet-popup-content{margin:10px 13px;font-size:13px}
+.loading{
+ position:fixed;z-index:9999;inset:0;display:flex;
+ align-items:center;justify-content:center;
+ background:#0b1220;color:white;font:600 14px Arial;
+}
 .loading.hide{display:none}
 </style>
 </head>
+
 <body>
+<div id="loading" class="loading">Loading Map...</div>
 <div id="map"></div>
-<div class="loading" id="loading">Loading Network Map...</div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="https://unpkg.com/leaflet-polylinedecorator@1.7.0/dist/leaflet.polylineDecorator.js"></script>
+<script src="https://unpkg.com/leaflet-polylinedecorator@1.6.0/dist/leaflet.polylineDecorator.min.js"></script>
+
 <script>
-const API_URL="https://script.google.com/macros/s/AKfycbxmDzfnY3LpvfvHjC4usnZiBT4BX4KZIjVoCGcSULikoTKQaC_mj7cbG_zUaiTyZ4sb8w/exec";
-const STORAGE_KEY="ONE_ONLINE_MAP_DATA_V1";
+"use strict";
 
-let db={locations:[],connections:[],settings:{},customTypes:[]};
-let map=null;
-let markerLayers=[];
-let connectionLayers=[];
-let areaLayer=null;
+const MAP_API =
+"https://script.google.com/macros/s/AKfycbxmDzfnY3LpvfvHjC4usnZiBT4BX4KZIjVoCGcSULikoTKQaC_mj7cbG_zUaiTyZ4sb8w/exec";
 
-const value=(obj,keys,fallback="")=>{
- for(const key of keys){
-  if(obj&&obj[key]!==undefined&&obj[key]!==null&&obj[key]!=="")return obj[key];
- }
- return fallback;
+const CACHE_KEY = "ONE_ONLINE_MAP_DATA_V1";
+
+const DEFAULT_SETTINGS = {
+ mapType:"road",
+ centerLat:23.8103,
+ centerLng:90.4125,
+ zoomLevel:13,
+ markerSize:36,
+ showMarkerLabels:true,
+ showWires:true,
+ hiddenTypes:[],
+ wireColor:"#f59e0b",
+ wireWeight:3,
+ wireOpacity:0.95,
+ wireStyle:"solid",
+ fiberColor:"#2563eb",
+ fiberWeight:4,
+ fiberOpacity:1,
+ fiberStyle:"solid",
+ dropColor:"#16a34a",
+ dropWeight:2,
+ dropOpacity:0.95,
+ dropStyle:"solid",
+ lockedArea:{enabled:false,points:[]},
+ _customTypes:[]
 };
 
-function escapeHTML(value){
- return String(value??"").replace(/[&<>"']/g,ch=>({
-  "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
- }[ch]));
+let map;
+let markerLayer;
+let connectionLayer;
+let areaLayer;
+let allData={locations:[],connections:[],settings:{},customTypes:[]};
+let settings={...DEFAULT_SETTINGS};
+
+const $=id=>document.getElementById(id);
+
+function safeJSON(value,fallback){
+ try{return JSON.parse(value)}catch(e){return fallback}
 }
 
-function locationType(item){
- return String(value(item,["type","Type","locationType","Location Type"],"Other"));
-}
-function locationName(item){
- return String(value(item,["name","Name","customerName","Customer Name"],"Unnamed"));
-}
-function locationId(item){
- return String(value(item,["id","ID","locationId","Location ID","locationNumber","Location Number"],""));
-}
-function latitude(item){
- return Number(value(item,["lat","latitude","Latitude"],NaN));
-}
-function longitude(item){
- return Number(value(item,["lng","longitude","Longitude","long"],NaN));
-}
-function isValidLocation(item){
- return Number.isFinite(latitude(item))&&Number.isFinite(longitude(item));
-}
-function getExtraData(item){
- if(item.data&&typeof item.data==="object")return item.data;
- try{return JSON.parse(item["Data JSON"]||item.dataJson||"{}")}
- catch(e){return {}}
-}
-function getCustomType(type){
- return db.customTypes.find(x=>
-  String(x.name||x.type||"").toLowerCase()===String(type).toLowerCase()
- )||{};
-}
-function getTypeIcon(item){
- const type=locationType(item);
- const custom=getCustomType(type);
- return value(item,["icon","Icon"],custom.icon||({
-  Customer:"👤",Pole:"🗼",Switch:"🔀"
- }[type]||"📍"));
-}
-function getTypeColor(item){
- const custom=getCustomType(locationType(item));
- return value(item,["color","Color"],custom.color||({
-  Customer:"#168b70",Pole:"#e59b25",Switch:"#3287e8"
- }[locationType(item)]||"#168b70"));
-}
-
-function normalizeData(response){
- const data=response&&response.data?response.data:response||{};
- db.locations=Array.isArray(data.locations)?data.locations:[];
- db.connections=Array.isArray(data.connections)?data.connections:[];
- db.settings=data.settings&&typeof data.settings==="object"?data.settings:{};
- db.customTypes=Array.isArray(data.customTypes)?data.customTypes:
-  (Array.isArray(db.settings._customTypes)?db.settings._customTypes:[]);
-}
-
-function createMap(){
- const s=db.settings;
- const centerLat=Number(s.centerLat)||22.3569;
- const centerLng=Number(s.centerLng)||91.7832;
- const zoom=Number(s.zoomLevel)||12;
-
- map=L.map("map",{
-  zoomControl:false,
-  attributionControl:false,
-  scrollWheelZoom:true,
-  doubleClickZoom:true,
-  touchZoom:true,
-  dragging:true,
-  tap:true
- }).setView([centerLat,centerLng],zoom);
-
- const layers={
-  road:L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{
-   maxZoom:20
-  }),
-  satellite:L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",{
-   maxZoom:19
-  }),
-  terrain:L.tileLayer("https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",{
-   maxZoom:17
-  })
+function normalizeData(raw){
+ if(raw && raw.data && !raw.locations) raw=raw.data;
+ return {
+  locations:Array.isArray(raw?.locations)?raw.locations:[],
+  connections:Array.isArray(raw?.connections)?raw.connections:[],
+  settings:raw?.settings && typeof raw.settings==="object"?raw.settings:{},
+  customTypes:Array.isArray(raw?.customTypes)?raw.customTypes:[]
  };
-
- let selected=String(s.mapType||"road").toLowerCase();
- if(selected==="esri")selected="satellite";
- if(!layers[selected])selected="road";
- layers[selected].addTo(map);
 }
 
-function clearMapLayers(){
- markerLayers.forEach(layer=>map.removeLayer(layer));
- connectionLayers.forEach(layer=>map.removeLayer(layer));
- markerLayers=[];
- connectionLayers=[];
- if(areaLayer){
-  map.removeLayer(areaLayer);
-  areaLayer=null;
- }
+function getCache(){
+ try{
+  const raw=localStorage.getItem(CACHE_KEY);
+  return raw?normalizeData(JSON.parse(raw)):null;
+ }catch(e){return null}
 }
 
-function getAreaPoints(){
- const s=db.settings;
- const area=s.lockedArea||s.areaLock||{};
- if(Array.isArray(area.points)){
-  return area.points.map(p=>[
-   Number(p.lat??p[0]),Number(p.lng??p[1])
-  ]).filter(p=>p.every(Number.isFinite));
- }
- if(area.southWest&&area.northEast){
-  const sw=area.southWest,ne=area.northEast;
-  return [
-   [Number(sw.lat),Number(sw.lng)],
-   [Number(sw.lat),Number(ne.lng)],
-   [Number(ne.lat),Number(ne.lng)],
-   [Number(ne.lat),Number(sw.lng)]
-  ];
- }
- if(Array.isArray(s.lockedAreaPoints)){
-  return s.lockedAreaPoints.map(p=>[
-   Number(p.lat??p[0]),Number(p.lng??p[1])
-  ]).filter(p=>p.every(Number.isFinite));
- }
- return [];
+function saveCache(data){
+ try{localStorage.setItem(CACHE_KEY,JSON.stringify(data))}catch(e){}
 }
 
-function insidePolygon(lat,lng,points){
- const area=db.settings.lockedArea||db.settings.areaLock||{};
- if(!area.enabled||points.length<3)return true;
-
- let inside=false;
- for(let i=0,j=points.length-1;i<points.length;j=i++){
-  const xi=points[i][1],yi=points[i][0];
-  const xj=points[j][1],yj=points[j][0];
-  const cross=((yi>lat)!==(yj>lat))&&
-   (lng<(xj-xi)*(lat-yi)/(yj-yi)+xi);
-  if(cross)inside=!inside;
+async function loadData(){
+ let cached=getCache();
+ if(cached){
+  allData=cached;
+  applySettings();
+  renderMap();
  }
- return inside;
-}
-
-function drawAreaBoundary(){
- const area=db.settings.lockedArea||db.settings.areaLock||{};
- const points=getAreaPoints();
- if(area.enabled&&points.length>=3){
-  areaLayer=L.polygon(points,{
-   color:area.color||"#eab308",
-   weight:Number(area.weight)||3,
-   opacity:.95,
-   fill:false,
-   dashArray:"8 6",
-   interactive:false
-  }).addTo(map);
+ try{
+  const response=await fetch(MAP_API+"?action=getMapData&v="+Date.now(),{
+   method:"GET",
+   cache:"no-store"
+  });
+  if(!response.ok)throw new Error("API response error");
+  const result=normalizeData(await response.json());
+  allData=result;
+  saveCache(result);
+  applySettings();
+  renderMap();
+ }catch(error){
+  console.error(error);
+  if(!cached)showError("Map data load করা যায়নি। Internet/API connection পরীক্ষা করুন।");
  }
+ $("loading").classList.add("hide");
 }
 
-function getPopup(item){
- const extra=getExtraData(item);
- const phone=value(item,["phone","Phone"],extra.phone||"—");
- const address=value(item,["address","Address"],extra.address||"—");
- const locationNumber=value(item,["locationNumber","Location Number"],"—");
-
- return `
- <b>${escapeHTML(locationName(item))}</b><br>
- Type: ${escapeHTML(locationType(item))}<br>
- Location No: ${escapeHTML(locationNumber)}<br>
- Phone: ${escapeHTML(phone)}<br>
- Address: ${escapeHTML(address)}
- `;
+function applySettings(){
+ settings={...DEFAULT_SETTINGS,...(allData.settings||{})};
+ if(!Array.isArray(settings.hiddenTypes))settings.hiddenTypes=[];
+ if(!Array.isArray(settings._customTypes))settings._customTypes=[];
+ if(!settings.lockedArea)settings.lockedArea={enabled:false,points:[]};
 }
 
-function drawMarkers(){
- const hidden=Array.isArray(db.settings.hiddenTypes)?db.settings.hiddenTypes:[];
- const areaPoints=getAreaPoints();
- const markerSize=Math.max(20,Math.min(64,Number(db.settings.markerSize)||34));
+function initMap(){
+ map=L.map("map",{zoomControl:true,preferCanvas:true});
 
- db.locations.filter(isValidLocation).forEach(item=>{
-  const type=locationType(item);
+ const road=L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{
+  maxZoom:21,attribution:"&copy; OpenStreetMap"
+ });
+ const satellite=L.tileLayer(
+  "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+  {maxZoom:20,attribution:"Tiles &copy; Esri"}
+ );
+ const terrain=L.tileLayer(
+  "https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",
+  {maxZoom:17,attribution:"&copy; OpenTopoMap"}
+ );
 
-  if(hidden.includes(type))return;
-  if(!insidePolygon(latitude(item),longitude(item),areaPoints))return;
+ window.mapLayers={road,satellite,terrain};
+ markerLayer=L.layerGroup().addTo(map);
+ connectionLayer=L.layerGroup().addTo(map);
+ areaLayer=L.layerGroup().addTo(map);
+
+ map.setView([settings.centerLat,settings.centerLng],settings.zoomLevel);
+ setMapLayer();
+}
+
+function setMapLayer(){
+ if(!map)return;
+ Object.values(window.mapLayers).forEach(layer=>{
+  if(map.hasLayer(layer))map.removeLayer(layer);
+ });
+ const selected=window.mapLayers[settings.mapType]||window.mapLayers.road;
+ selected.addTo(map);
+}
+
+function escapeHTML(value){
+ return String(value??"").replace(/[&<>"']/g,c=>({
+  "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+ }[c]));
+}
+
+function getTypeName(item){
+ return String(item.type||item.Type||"Customer");
+}
+
+function getTypeConfig(type){
+ const custom=[...(allData.customTypes||[]),...(settings._customTypes||[])];
+ const found=custom.find(x=>
+  String(x.name||x.type||"").toLowerCase()===String(type).toLowerCase()
+ );
+ if(found)return found;
+
+ const defaults={
+  Customer:{icon:"👤",color:"#2563eb"},
+  Pole:{icon:"🗼",color:"#f59e0b"},
+  Switch:{icon:"🔀",color:"#16a34a"},
+  Pull:{icon:"📍",color:"#9333ea"}
+ };
+ return defaults[type]||{icon:"📍",color:"#64748b"};
+}
+
+function getPointIcon(item){
+ const type=getTypeName(item);
+ const config=getTypeConfig(type);
+ return item.icon||item.Icon||config.icon||"📍";
+}
+
+function getPointName(item){
+ return item.name||item.Name||item.customerName||item["Customer Name"]||"Unnamed";
+}
+
+function getPointNumber(item){
+ return item.locationNumber||item.location_number||item["Location Number"]||item.number||"";
+}
+
+function getCoordinates(item){
+ const lat=Number(item.latitude??item.lat??item.Latitude);
+ const lng=Number(item.longitude??item.lng??item.Longitude);
+ if(!Number.isFinite(lat)||!Number.isFinite(lng))return null;
+ if(lat===0&&lng===0)return null;
+ return [lat,lng];
+}
+
+function getMarkerSize(){
+ return Math.max(18,Math.min(64,Number(settings.markerSize)||36));
+}
+
+function renderMarkers(){
+ markerLayer.clearLayers();
+
+ const hidden=(settings.hiddenTypes||[]).map(x=>String(x).toLowerCase());
+
+ allData.locations.forEach(item=>{
+  const type=getTypeName(item);
+  if(hidden.includes(type.toLowerCase()))return;
+
+  const coords=getCoordinates(item);
+  if(!coords)return;
+
+  const iconText=getPointIcon(item);
+  const size=getMarkerSize();
 
   const icon=L.divIcon({
    className:"",
-   html:`<div class="map-marker" style="
-    width:${markerSize}px;
-    height:${markerSize}px;
-    background:${escapeHTML(getTypeColor(item))};
-   ">${escapeHTML(getTypeIcon(item))}</div>`,
-   iconSize:[markerSize,markerSize],
-   iconAnchor:[markerSize/2,markerSize/2]
+   html:`<div class="map-marker" style="width:${size}px;height:${size}px;font-size:${Math.round(size*.78)}px">${escapeHTML(iconText)}</div>`,
+   iconSize:[size,size],
+   iconAnchor:[size/2,size/2]
   });
 
-  const marker=L.marker([latitude(item),longitude(item)],{
-   icon,
-   keyboard:false
-  }).addTo(map);
+  const marker=L.marker(coords,{icon});
+  const name=getPointName(item);
+  const number=getPointNumber(item);
+  const typeText=escapeHTML(type);
 
-  marker.bindPopup(getPopup(item));
+  marker.bindPopup(`
+   <div>
+    <b>${escapeHTML(name)}</b><br>
+    Type: ${typeText}
+    ${number?`<br>Location Number: ${escapeHTML(number)}`:""}
+    <br>Lat: ${coords[0]}<br>Lng: ${coords[1]}
+   </div>
+  `);
 
-  if(db.settings.showMarkerLabels!==false){
-   marker.bindTooltip(escapeHTML(locationName(item)),{
+  if(settings.showMarkerLabels){
+   marker.bindTooltip(escapeHTML(number||name),{
     permanent:true,
-    direction:"top",
-    offset:[0,-markerSize/2-5],
-    className:"map-label"
+    direction:"bottom",
+    offset:[0,Math.round(size/2)],
+    className:"marker-label"
    });
   }
-  markerLayers.push(marker);
- });
-}
 
-function findLocation(key){
- return db.locations.find(item=>{
-  const values=[
-   locationId(item),
-   locationName(item),
-   String(value(item,["locationNumber","Location Number"],""))
-  ];
-  return values.some(v=>v!==""&&String(v)===String(key));
+  marker.addTo(markerLayer);
  });
 }
 
 function getConnectionStyle(type){
- const s=db.settings;
- const key=String(type||"Wire").toLowerCase();
- const defaults={
-  wire:{color:"#f59e0b",weight:3,opacity:.9,style:"solid"},
-  fiber:{color:"#16a3fa",weight:4,opacity:.95,style:"solid"},
-  drop:{color:"#d946ef",weight:2,opacity:.9,style:"dashed"}
- };
- const d=defaults[key]||defaults.wire;
- const style=s[key+"Style"]||d.style;
+ const t=String(type||"wire").toLowerCase();
+ if(t.includes("fiber")){
+  return {
+   color:settings.fiberColor,
+   weight:Number(settings.fiberWeight)||4,
+   opacity:Number(settings.fiberOpacity)||1,
+   style:settings.fiberStyle
+  };
+ }
+ if(t.includes("drop")){
+  return {
+   color:settings.dropColor,
+   weight:Number(settings.dropWeight)||2,
+   opacity:Number(settings.dropOpacity)||.95,
+   style:settings.dropStyle
+  };
+ }
  return {
-  color:s[key+"Color"]||d.color,
-  weight:Number(s[key+"Weight"])||d.weight,
-  opacity:Number(s[key+"Opacity"]??d.opacity),
-  dashArray:style==="dashed"?"8 7":style==="dotted"?"2 7":null
+  color:settings.wireColor,
+  weight:Number(settings.wireWeight)||3,
+  opacity:Number(settings.wireOpacity)||.95,
+  style:settings.wireStyle
  };
 }
 
-function drawConnections(){
- if(db.settings.showWires===false)return;
+function findLocation(id){
+ return allData.locations.find(x=>
+  String(x.id??x.ID)===String(id)
+ );
+}
 
- db.connections.forEach(connection=>{
-  const type=String(value(connection,["type","Type"],"Wire"));
-  const key=type.toLowerCase();
+function renderConnections(){
+ connectionLayer.clearLayers();
+ if(settings.showWires===false)return;
 
-  if(db.settings[key+"Visible"]===false)return;
+ (allData.connections||[]).forEach(connection=>{
+  const from=findLocation(connection.from??connection.fromId);
+  const to=findLocation(connection.to??connection.toId);
+  if(!from||!to)return;
 
-  const from=findLocation(value(connection,["from","From","fromId","source"],""));
-  const to=findLocation(value(connection,["to","To","toId","target"],""));
+  const a=getCoordinates(from),b=getCoordinates(to);
+  if(!a||!b)return;
 
-  if(!from||!to||!isValidLocation(from)||!isValidLocation(to))return;
-
+  const type=connection.type||"Wire";
   const style=getConnectionStyle(type);
-  const points=[
-   [latitude(from),longitude(from)],
-   [latitude(to),longitude(to)]
-  ];
+  const dash=style.style==="dashed"?"10 8":
+             style.style==="dotted"?"2 7":null;
 
-  const line=L.polyline(points,style).addTo(map);
-  line.bindPopup(`
-   <b>${escapeHTML(value(connection,["name","Name"],type+" Connection"))}</b><br>
-   ${escapeHTML(locationName(from))} → ${escapeHTML(locationName(to))}<br>
-   Type: ${escapeHTML(type)}
-  `);
-  connectionLayers.push(line);
+  const line=L.polyline([a,b],{
+   color:style.color,
+   weight:style.weight,
+   opacity:style.opacity,
+   dashArray:dash,
+   lineCap:"round",
+   lineJoin:"round"
+  }).addTo(connectionLayer);
 
-  if(db.settings.showConnectionArrows!==false&&L.polylineDecorator){
-   const arrow=L.polylineDecorator(line,{
+  const lineName=connection.name||type;
+  line.bindPopup(`<b>${escapeHTML(lineName)}</b><br>${escapeHTML(type)}`);
+
+  if(L.polylineDecorator){
+   L.polylineDecorator(line,{
     patterns:[{
-     offset:"50%",
+     offset:"75%",
      repeat:0,
      symbol:L.Symbol.arrowHead({
       pixelSize:10,
       polygon:true,
       pathOptions:{
        color:style.color,
-       fillOpacity:1,
+       fillOpacity:style.opacity,
        weight:1
       }
      })
     }]
-   }).addTo(map);
-   connectionLayers.push(arrow);
+   }).addTo(connectionLayer);
   }
  });
 }
 
+function renderArea(){
+ areaLayer.clearLayers();
+ const area=settings.lockedArea||{};
+ if(!area.enabled||!Array.isArray(area.points)||area.points.length<3)return;
+
+ const points=area.points.map(p=>[
+  Number(p.lat),Number(p.lng)
+ ]).filter(p=>Number.isFinite(p[0])&&Number.isFinite(p[1]));
+
+ if(points.length<3)return;
+
+ L.polygon(points,{
+  color:"#ef4444",
+  weight:2,
+  opacity:.9,
+  fill:false,
+  interactive:false,
+  dashArray:"7 6"
+ }).addTo(areaLayer);
+}
+
 function renderMap(){
- clearMapLayers();
- drawAreaBoundary();
- drawConnections();
- drawMarkers();
-
- const allLayers=[...markerLayers,...connectionLayers.filter(x=>typeof x.getBounds==="function")];
-
- if(allLayers.length){
-  const group=L.featureGroup(allLayers);
-  const bounds=group.getBounds();
-  if(bounds.isValid()){
-   map.fitBounds(bounds.pad(.12),{maxZoom:16});
-  }
- }else{
-  map.setView([
-   Number(db.settings.centerLat)||22.3569,
-   Number(db.settings.centerLng)||91.7832
-  ],Number(db.settings.zoomLevel)||12);
- }
-
- setTimeout(()=>map.invalidateSize(),250);
+ if(!map)return;
+ setMapLayer();
+ renderArea();
+ renderConnections();
+ renderMarkers();
 }
 
-async function loadMap(){
- try{
-  const response=await fetch(API_URL+"?action=getMapData&t="+Date.now());
-  if(!response.ok)throw new Error("Server error");
-  normalizeData(await response.json());
-  localStorage.setItem(STORAGE_KEY,JSON.stringify(db));
- }catch(error){
-  const saved=localStorage.getItem(STORAGE_KEY);
-  if(saved){
-   normalizeData(JSON.parse(saved));
-  }else{
-   document.getElementById("loading").textContent="Map data could not be loaded.";
-   return;
-  }
- }
-
- createMap();
- renderMap();
- document.getElementById("loading").classList.add("hide");
+function showError(message){
+ $("loading").textContent=message;
+ $("loading").classList.remove("hide");
 }
 
-loadMap();
+initMap();
+loadData();
+
+window.addEventListener("storage",event=>{
+ if(event.key===CACHE_KEY&&event.newValue){
+  const updated=safeJSON(event.newValue,null);
+  if(updated){
+   allData=normalizeData(updated);
+   applySettings();
+   renderMap();
+  }
+ }
+});
+
+/* Refresh map data periodically */
+setInterval(loadData,60000);
 </script>
 </body>
 </html>
