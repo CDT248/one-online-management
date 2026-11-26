@@ -6,249 +6,248 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Map | ONE ONLINE</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet-polylinedecorator@1.7.0/dist/leaflet.polylineDecorator.css">
 <style>
-:root{--bg:#0b1220;--panel:#111c2e;--panel2:#172338;--text:#e8f0fc;--muted:#91a2bb;--line:#26364d;--primary:#168bfa}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,Arial,sans-serif}
-button,input{font:inherit}
-button{cursor:pointer}
-.app{height:100vh;display:flex;flex-direction:column}
-.top{min-height:62px;background:var(--panel);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:10px 16px;gap:10px;flex-wrap:wrap}
-.brand{font-weight:800;font-size:16px}.brand small{display:block;color:var(--muted);font-size:10px;letter-spacing:1px;margin-top:3px}
-.actions{display:flex;gap:7px;flex-wrap:wrap}
-.btn{border:1px solid var(--line);background:var(--panel2);color:var(--text);padding:9px 12px;border-radius:8px;font-size:12px;font-weight:600}
-.btn.primary{background:var(--primary);border-color:var(--primary);color:white}
-.main{display:grid;grid-template-columns:290px minmax(0,1fr);flex:1;min-height:0}
-.sidebar{background:var(--panel);border-right:1px solid var(--line);padding:14px;overflow:auto}
-#map{height:100%;width:100%;background:#dce5ec;z-index:1}
-.search{width:100%;padding:11px;background:#0b1628;color:white;border:1px solid var(--line);border-radius:8px;margin-bottom:12px}
-.stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:15px}
-.stat{background:var(--panel2);padding:11px;border:1px solid var(--line);border-radius:9px}
-.stat b{display:block;font-size:20px}.stat small{color:var(--muted);font-size:10px}
-.section{border-top:1px solid var(--line);padding-top:13px;margin-top:13px}
-.section h3{font-size:12px;margin:0 0 10px}
-.filter{display:flex;align-items:center;gap:8px;margin:9px 0;font-size:12px;color:#cbd5e1}
-.filter input{accent-color:var(--primary)}
-.filter .dot{width:10px;height:10px;border-radius:50%;display:inline-block}
-.connection-row{display:flex;align-items:center;gap:8px;margin:9px 0;font-size:12px}
-.connection-row input{accent-color:var(--primary)}
-.legend-line{width:22px;border-top:3px solid}
-.status{font-size:11px;color:var(--muted);line-height:1.6;margin-top:12px}
-.marker{display:flex;align-items:center;justify-content:center;border:2px solid white;border-radius:50%;box-shadow:0 2px 8px #0008;font-size:17px}
-.leaflet-popup-content-wrapper{border-radius:10px}
-.popup{min-width:170px;color:#172033;font:12px Inter,Arial}
-.popup h3{font-size:14px;margin:0 0 8px}
-.popup div{margin:4px 0}
-.popup button{border:0;background:#168bfa;color:white;border-radius:6px;padding:6px 9px;margin-top:8px}
-@media(max-width:760px){
- .main{grid-template-columns:1fr;grid-template-rows:auto minmax(0,1fr)}
- .sidebar{max-height:220px;border-right:0;border-bottom:1px solid var(--line)}
- #map{min-height:350px}
- .app{height:100dvh}
-}
+:root{--bg:#0b1220;--panel:#111c2e;--panel2:#172338;--line:#26364d;--text:#e8f0fc;--muted:#91a3bd;--primary:#168b70;--blue:#3287e8}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px Arial,sans-serif}
+button,input,select{font:inherit}button{cursor:pointer;border:0;border-radius:8px;padding:9px 12px;background:var(--primary);color:white;font-weight:700}
+button.secondary{background:#26364d}button.danger{background:#b93848}
+.layout{display:grid;grid-template-columns:310px 1fr;height:100vh;min-height:500px}
+.sidebar{background:var(--panel);border-right:1px solid var(--line);display:flex;flex-direction:column;min-height:0;z-index:500}
+.brand{padding:17px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}
+.brand b{font-size:17px}.brand small{display:block;color:var(--muted);font-size:10px;letter-spacing:2px;margin-top:4px}
+.tools{padding:12px;display:grid;gap:9px;border-bottom:1px solid var(--line)}
+input,select{background:#0b1525;color:var(--text);border:1px solid var(--line);border-radius:8px;padding:10px;width:100%;outline:none}
+.row{display:flex;gap:7px}.row>*{flex:1;min-width:0}
+.filters{display:flex;gap:6px;flex-wrap:wrap}.filter{background:#26364d;padding:7px 9px;font-size:12px}.filter.active{background:var(--primary)}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;padding:10px}
+.stat{background:var(--panel2);padding:9px;border-radius:8px;text-align:center}.stat b{display:block;font-size:18px}.stat small{color:var(--muted)}
+.list{overflow:auto;flex:1;padding:8px}
+.item{padding:10px;margin-bottom:7px;background:var(--panel2);border:1px solid var(--line);border-radius:9px;cursor:pointer}
+.item:hover{border-color:var(--primary)}.item b{display:block}.item small{color:var(--muted)}
+.bottom{padding:10px;border-top:1px solid var(--line);display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.main{position:relative;min-width:0}.top{position:absolute;z-index:600;top:12px;left:12px;right:12px;display:flex;gap:7px;flex-wrap:wrap;pointer-events:none}
+.top>*{pointer-events:auto}.top button{box-shadow:0 2px 10px #0004}.top .spacer{flex:1}
+#map{height:100%;width:100%;background:#dbe5e8}
+.status{position:absolute;z-index:600;bottom:14px;left:14px;background:#111c2eec;color:white;padding:8px 12px;border-radius:8px;max-width:80%;font-size:12px}
+.leaflet-popup-content-wrapper,.leaflet-popup-tip{background:#111c2e;color:#e8f0fc}
+.leaflet-popup-content{margin:12px;min-width:160px}.leaflet-popup-content small{color:#9eb0c8}
+.pin{display:flex;align-items:center;justify-content:center;border-radius:50%;border:2px solid white;box-shadow:0 2px 7px #0008;font-size:17px}
+@media(max-width:760px){.layout{grid-template-columns:1fr;grid-template-rows:45vh 55vh;height:100dvh}.sidebar{grid-row:2;border-right:0;border-top:1px solid var(--line)}.main{grid-row:1}.brand{padding:9px 13px}.brand b{font-size:14px}.tools{padding:8px;gap:6px}.stats{padding:6px}.list{max-height:100px}.bottom{padding:7px}.top{top:7px;left:7px;right:7px}.top button{padding:7px 9px;font-size:12px}}
 </style>
 </head>
 <body>
-<div class="app">
- <header class="top">
-  <div class="brand">ONE ONLINE <small>NETWORK MAP</small></div>
-  <div class="actions">
-   <button class="btn" onclick="fitAll()">Fit All</button>
-   <button class="btn" onclick="resetView()">Reset View</button>
-   <button class="btn" onclick="goEntry()">+ Map Entry</button>
-   <button class="btn primary" onclick="goSettings()">Map Settings</button>
+<div class="layout">
+<aside class="sidebar">
+ <div class="brand"><div><b>ONE ONLINE | MAP</b><small>NETWORK LOCATION MANAGEMENT</small></div><button class="secondary" onclick="goPage('map-setting')">⚙</button></div>
+ <div class="tools">
+  <input id="search" placeholder="Search name, customer, location number..." oninput="renderList()">
+  <div class="filters" id="typeFilters"></div>
+  <div class="row">
+   <select id="connectionFilter" onchange="renderConnections()">
+    <option value="all">All Connections</option><option value="Wire">Wire</option><option value="Fiber">Fiber</option><option value="Drop">Drop</option>
+   </select>
+   <button class="secondary" onclick="refreshData()">↻ Refresh</button>
   </div>
- </header>
- <main class="main">
-  <aside class="sidebar">
-   <input id="search" class="search" placeholder="Search customer, pole, switch..." oninput="renderMarkers()">
-   <div class="stats">
-    <div class="stat"><b id="totalLocations">0</b><small>LOCATIONS</small></div>
-    <div class="stat"><b id="totalConnections">0</b><small>CONNECTIONS</small></div>
-   </div>
-   <div class="section"><h3>LOCATION FILTER</h3><div id="typeFilters"></div></div>
-   <div class="section">
-    <h3>CONNECTION FILTER</h3>
-    <label class="connection-row"><input type="checkbox" id="showWire" checked onchange="renderConnections()"> Wire</label>
-    <label class="connection-row"><input type="checkbox" id="showFiber" checked onchange="renderConnections()"> Fiber</label>
-    <label class="connection-row"><input type="checkbox" id="showDrop" checked onchange="renderConnections()"> Drop</label>
-   </div>
-   <div class="section">
-    <h3>MAP INFORMATION</h3>
-    <div class="status" id="mapStatus">Loading map data...</div>
-   </div>
-  </aside>
-  <div id="map"></div>
- </main>
+  <div class="row">
+   <button class="secondary" onclick="locateMe()">◎ My Location</button>
+   <button class="secondary" onclick="fitAll()">Fit All</button>
+  </div>
+  <div class="row">
+   <button class="secondary" onclick="toggleMeasure()">📏 Measure</button>
+   <button class="secondary" onclick="exportData()">⇩ Export JSON</button>
+  </div>
+ </div>
+ <div class="stats">
+  <div class="stat"><b id="totalLocations">0</b><small>Locations</small></div>
+  <div class="stat"><b id="totalConnections">0</b><small>Links</small></div>
+  <div class="stat"><b id="totalTypes">0</b><small>Types</small></div>
+ </div>
+ <div class="list" id="locationList"><div class="item">Loading map data...</div></div>
+ <div class="bottom">
+  <button onclick="goPage('map-entry')">＋ Map Entry</button>
+  <button class="secondary" onclick="goPage('map-setting')">Map Settings</button>
+ </div>
+</aside>
+<main class="main">
+ <div class="top">
+  <button class="secondary" onclick="changeLayer('road')">Road</button>
+  <button class="secondary" onclick="changeLayer('satellite')">Satellite</button>
+  <button class="secondary" onclick="changeLayer('terrain')">Terrain</button>
+  <span class="spacer"></span>
+  <button class="secondary" onclick="toggleFullscreen()">⛶ Fullscreen</button>
+ </div>
+ <div id="map"></div>
+ <div class="status" id="status">Loading map...</div>
+</main>
 </div>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="https://unpkg.com/leaflet-polylinedecorator@1.7.0/dist/leaflet.polylineDecorator.min.js"></script>
+<script src="https://unpkg.com/leaflet-polylinedecorator@1.7.0/dist/leaflet.polylineDecorator.js"></script>
 <script>
 const API_URL="https://script.google.com/macros/s/AKfycbxmDzfnY3LpvfvHjC4usnZiBT4BX4KZIjVoCGcSULikoTKQaC_mj7cbG_zUaiTyZ4sb8w/exec";
 const STORAGE_KEY="ONE_ONLINE_MAP_DATA_V1";
-const DEFAULT_TYPES=[
- {id:"customer",name:"Customer",icon:"👤",color:"#168bfa"},
- {id:"pole",name:"Pole",icon:"🗼",color:"#f59e0b"},
- {id:"switch",name:"Switch",icon:"🔀",color:"#10b981"}
-];
 let db={locations:[],connections:[],settings:{},customTypes:[]};
-let map,tileLayer,markerLayer=L.layerGroup(),connectionLayer=L.layerGroup(),areaLayer=L.layerGroup();
-let markerRefs=[];
-const $=id=>document.getElementById(id);
-const num=(v,d=0)=>Number.isFinite(Number(v))?Number(v):d;
+let map,markers=[],lines=[],areaLayer=null,myMarker=null,measurePoints=[],measureLayer=null;
+let activeTypes=new Set(),measureMode=false,currentLayer=null;
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-function normalizeType(s){return String(s||"").trim().toLowerCase().replace(/[\s_-]+/g,"")}
-function getTypes(){return [...DEFAULT_TYPES,...(db.customTypes||[]).map((t,i)=>({id:String(t.id||"custom_"+i),name:t.name||"Custom",icon:t.icon||"📍",color:t.color||"#a855f7"}))]}
-function typeFor(item){
- const raw=item.type||item.Type||item.locationType||item.category||"Customer";
- return getTypes().find(t=>normalizeType(t.id)===normalizeType(raw)||normalizeType(t.name)===normalizeType(raw))||{id:String(raw).toLowerCase(),name:raw,icon:item.icon||"📍",color:item.color||"#64748b"};
+const val=(o,keys,def="")=>{for(const k of keys)if(o&&o[k]!==undefined&&o[k]!==null&&o[k]!=="")return o[k];return def};
+function setStatus(s){document.getElementById("status").textContent=s}
+function goPage(page){window.parent.postMessage({type:"ONE_ONLINE_NAVIGATE",page},"*")}
+function typeName(x){return String(val(x,["type","Type","locationType","Location Type"],"Other"))}
+function nameOf(x){return String(val(x,["name","Name","customerName","Customer Name"],"Unnamed"))}
+function idOf(x){return String(val(x,["id","ID","locationId","Location ID","locationNumber","Location Number"],""))}
+function latOf(x){return Number(val(x,["lat","latitude","Latitude"],NaN))}
+function lngOf(x){return Number(val(x,["lng","longitude","Longitude","long"],NaN))}
+function dataOf(x){if(x.data&&typeof x.data==="object")return x.data;try{return JSON.parse(x["Data JSON"]||x.dataJson||"{}")}catch(e){return {}}}
+function validLoc(x){return Number.isFinite(latOf(x))&&Number.isFinite(lngOf(x))}
+function customType(t){return db.customTypes.find(x=>String(x.name||x.type).toLowerCase()===String(t).toLowerCase())||{}}
+function typeIcon(t,x){return val(x,["icon","Icon"],customType(t).icon||({Customer:"👤",Pole:"🗼",Switch:"🔀"}[t]||"📍"))}
+function typeColor(t,x){return val(x,["color","Color"],customType(t).color||"#168b70")}
+function locationByKey(key){return db.locations.find(x=>[idOf(x),nameOf(x),String(val(x,["locationNumber","Location Number"],""))].some(v=>v&&String(v)===String(key)))}
+function normalizeDb(d){
+ d=d&&d.data?d.data:d||{};
+ db.locations=Array.isArray(d.locations)?d.locations:[];
+ db.connections=Array.isArray(d.connections)?d.connections:[];
+ db.settings=d.settings&&typeof d.settings==="object"?d.settings:{};
+ db.customTypes=Array.isArray(d.customTypes)?d.customTypes:(Array.isArray(db.settings._customTypes)?db.settings._customTypes:[]);
 }
-function coords(item){
- const lat=num(item.lat??item.latitude??item.Latitude,NaN);
- const lng=num(item.lng??item.longitude??item.Longitude,NaN);
- return Number.isFinite(lat)&&Number.isFinite(lng)&&Math.abs(lat)<=90&&Math.abs(lng)<=180?[lat,lng]:null;
-}
-function itemName(x){return x.name||x.Name||x.customerName||x.Customer||"Unnamed location"}
-function itemId(x){return String(x.id??x.ID??x.locationId??"")}
-function getSettings(){return db.settings||{}}
-function hiddenTypes(){return getSettings().hiddenTypes||[]}
-function isTypeVisible(t){return !hiddenTypes().some(x=>normalizeType(x)===normalizeType(t.id)||normalizeType(x)===normalizeType(t.name))}
-function tileURL(type){
- if(type==="satellite")return "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}";
- if(type==="terrain")return "https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png";
- return "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
-}
-function setTiles(){
- const s=getSettings(),type=s.mapType||"road";
- if(tileLayer)map.removeLayer(tileLayer);
- tileLayer=L.tileLayer(tileURL(type),{maxZoom:19,attribution:type==="satellite"?"Tiles © Esri":"© OpenStreetMap contributors"}).addTo(map);
-}
-function initMap(){
- const s=getSettings();
- map=L.map("map").setView([num(s.centerLat,22.3569),num(s.centerLng,91.7832)],num(s.zoomLevel,13));
- setTiles();markerLayer.addTo(map);connectionLayer.addTo(map);areaLayer.addTo(map);
- map.on("zoomend",()=>{});
-}
-function markerIcon(item,t){
- const size=Math.max(12,Math.min(60,num(getSettings().markerSize,28)));
- const icon=item.icon||t.icon||"📍",color=item.color||t.color||"#168bfa";
- return L.divIcon({className:"",html:`<div class="marker" style="width:${size+10}px;height:${size+10}px;background:${esc(color)};font-size:${Math.max(11,size*.62)}px">${esc(icon)}</div>`,iconSize:[size+10,size+10],iconAnchor:[(size+10)/2,(size+10)/2]});
-}
-function markerPopup(item,t){
- const name=itemName(item),address=item.address||item.Address||"",phone=item.phone||item.Phone||"",ip=item.ip||item.IP||"";
- return `<div class="popup"><h3>${esc(name)}</h3><div><b>Type:</b> ${esc(t.name)}</div>${ip?`<div><b>IP:</b> ${esc(ip)}</div>`:""}${phone?`<div><b>Phone:</b> ${esc(phone)}</div>`:""}${address?`<div><b>Address:</b> ${esc(address)}</div>`:""}<div><b>Location ID:</b> ${esc(itemId(item)||"—")}</div></div>`;
-}
-function renderTypeFilters(){
- const root=$("typeFilters");root.innerHTML="";
- const actual=new Set(db.locations.map(x=>normalizeType(typeFor(x).id)));
- getTypes().filter(t=>actual.has(normalizeType(t.id))).forEach(t=>{
-  const label=document.createElement("label");label.className="filter";
-  const input=document.createElement("input");input.type="checkbox";input.checked=isTypeVisible(t);
-  input.onchange=()=>{const hidden=new Set(hiddenTypes());if(input.checked)hidden.delete(t.id);else hidden.add(t.id);db.settings.hiddenTypes=[...hidden];renderMarkers();};
-  const dot=document.createElement("span");dot.className="dot";dot.style.background=t.color;
-  const text=document.createElement("span");text.textContent=t.name;
-  label.append(input,dot,text);root.append(label);
- });
-}
-function renderMarkers(){
- markerLayer.clearLayers();markerRefs=[];
- const query=$("search").value.trim().toLowerCase(),s=getSettings();
- db.locations.forEach(item=>{
-  const pos=coords(item);if(!pos)return;
-  const t=typeFor(item);if(!isTypeVisible(t))return;
-  const searchable=[itemName(item),item.phone,item.ip,item.address,t.name].join(" ").toLowerCase();
-  if(query&&!searchable.includes(query))return;
-  const marker=L.marker(pos,{icon:markerIcon(item,t)});
-  marker.bindPopup(markerPopup(item,t));
-  if(s.showMarkerLabels!==false)marker.bindTooltip(itemName(item),{direction:"top",offset:[0,-12]});
-  marker.addTo(markerLayer);markerRefs.push({marker,item});
- });
- $("totalLocations").textContent=db.locations.length;
-}
-function connectionStyle(type){
- const s=getSettings(),t=String(type||"wire").toLowerCase();
- const prefix=t.includes("fiber")?"fiber":t.includes("drop")?"drop":"wire";
- const defaults={wire:{color:"#00d4ff",weight:3,opacity:.9,style:"solid"},fiber:{color:"#a855f7",weight:3,opacity:.9,style:"solid"},drop:{color:"#f59e0b",weight:2,opacity:.9,style:"dashed"}};
- const d=defaults[prefix];
- return {color:s[prefix+"Color"]||d.color,weight:num(s[prefix+"Weight"],d.weight),opacity:num(s[prefix+"Opacity"],d.opacity),dashArray:(s[prefix+"Style"]||d.style)==="dashed"?"8 7":(s[prefix+"Style"]||d.style)==="dotted"?"2 7":null};
-}
-function findLocation(ref){
- return db.locations.find(x=>String(x.id??x.ID??x.locationId)===String(ref)||itemName(x)===String(ref));
-}
-function connectionKind(c){const t=String(c.type||c.connectionType||"wire").toLowerCase();return t.includes("fiber")?"fiber":t.includes("drop")?"drop":"wire"}
-function renderConnections(){
- connectionLayer.clearLayers();
- const s=getSettings();if(s.showWires===false)return;
- db.connections.forEach(c=>{
-  const kind=connectionKind(c);
-  if(!$("show"+kind.charAt(0).toUpperCase()+kind.slice(1)).checked)return;
-  const from=findLocation(c.from??c.fromId??c.source),to=findLocation(c.to??c.toId??c.target);
-  if(!from||!to)return;
-  const a=coords(from),b=coords(to);if(!a||!b)return;
-  const style=connectionStyle(kind);
-  const line=L.polyline([a,b],style).addTo(connectionLayer);
-  const label=c.name||c.label||kind.toUpperCase();
-  if(label)line.bindTooltip(esc(label));
-  if(c.direction!==false&&c.directed!==false&&L.polylineDecorator){
-   L.polylineDecorator(line,{patterns:[{offset:"75%",repeat:0,symbol:L.Symbol.arrowHead({pixelSize:9,polygon:false,pathOptions:{color:style.color,weight:2,opacity:style.opacity}})}]}).addTo(connectionLayer);
-  }
- });
- $("totalConnections").textContent=db.connections.length;
-}
-function getAreaPoints(){
- const a=getSettings().lockedArea||getSettings().areaLock||{};
- if(Array.isArray(a.points))return a.points.map(p=>Array.isArray(p)?[num(p[0]),num(p[1])]:[num(p.lat),num(p.lng)]).filter(p=>p.every(Number.isFinite));
- if(a.southWest&&a.northEast){const sw=a.southWest,ne=a.northEast;return [[num(sw.lat),num(sw.lng)],[num(ne.lat),num(sw.lng)],[num(ne.lat),num(ne.lng)],[num(sw.lat),num(ne.lng)]]}
- return [];
-}
-function pointInside(point,poly){
- let inside=false;const x=point[1],y=point[0];
- for(let i=0,j=poly.length-1;i<poly.length;j=i++){
-  const xi=poly[i][1],yi=poly[i][0],xj=poly[j][1],yj=poly[j][0];
-  const intersect=((yi>y)!==(yj>y))&&(x<(xj-xi)*(y-yi)/(yj-yi)+xi);
-  if(intersect)inside=!inside;
- }
- return inside;
-}
-function drawArea(){
- areaLayer.clearLayers();const a=getSettings().lockedArea||{};
- const pts=getAreaPoints();
- if(!a.enabled||pts.length<3)return;
- L.polygon(pts,{color:"#16a34a",weight:2,fill:false,dashArray:"7 6"}).addTo(areaLayer);
- // Keep the map bright: no world-sized dark mask is applied.
-}
-function applySettings(){
- const s=getSettings();
- setTiles();
- if(s.showWires===false){$("showWire").checked=false;$("showFiber").checked=false;$("showDrop").checked=false;}
- renderTypeFilters();renderMarkers();renderConnections();drawArea();
- if(s.centerLat!=null&&s.centerLng!=null)map.setView([num(s.centerLat,22.3569),num(s.centerLng,91.7832)],num(s.zoomLevel,map.getZoom()));
-}
-async function loadData(){
+async function refreshData(){
+ setStatus("Refreshing map data...");
  try{
   const r=await fetch(API_URL+"?action=getMapData&t="+Date.now());
-  if(!r.ok)throw Error("Server request failed");
-  const result=await r.json();if(result.success===false)throw Error(result.message||"Load failed");
-  const data=result.data||result;
-  db={locations:Array.isArray(data.locations)?data.locations:[],connections:Array.isArray(data.connections)?data.connections:[],settings:data.settings||{},customTypes:Array.isArray(data.customTypes)?data.customTypes:[]};
+  if(!r.ok)throw Error("Server response "+r.status);
+  normalizeDb(await r.json());
   localStorage.setItem(STORAGE_KEY,JSON.stringify(db));
-  $("mapStatus").textContent="Google Sheet থেকে সর্বশেষ Map Data লোড হয়েছে।";
+  drawAll();setStatus("Connected • Data updated");
  }catch(e){
-  try{const local=JSON.parse(localStorage.getItem(STORAGE_KEY)||"{}");db={locations:local.locations||[],connections:local.connections||[],settings:local.settings||{},customTypes:local.customTypes||[]};$("mapStatus").textContent="Server পাওয়া যায়নি। Local backup data দেখানো হচ্ছে।";}
-  catch(x){$("mapStatus").textContent="Map data load করা যায়নি: "+e.message;}
+  try{normalizeDb(JSON.parse(localStorage.getItem(STORAGE_KEY)||"{}"));drawAll();setStatus("Offline mode • Showing saved data");}
+  catch(x){setStatus("Could not load map data: "+e.message)}
  }
- applySettings();
 }
-function fitAll(){
- const pts=markerRefs.map(x=>x.marker.getLatLng());
- if(pts.length)map.fitBounds(L.latLngBounds(pts),{padding:[35,35],maxZoom:17});
+function initMap(){
+ map=L.map("map",{zoomControl:true}).setView([Number(db.settings.centerLat)||22.3569,Number(db.settings.centerLng)||91.7832],Number(db.settings.zoomLevel)||12);
+ const tiles={
+  road:L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:20,attribution:"© OpenStreetMap"}),
+  satellite:L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",{maxZoom:19,attribution:"Tiles © Esri"}),
+  terrain:L.tileLayer("https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",{maxZoom:17,attribution:"© OpenTopoMap"})
+ };
+ window.mapTiles=tiles;changeLayer(db.settings.mapType||"road");
+ map.on("click",onMapClick);
 }
-function resetView(){const s=getSettings();map.setView([num(s.centerLat,22.3569),num(s.centerLng,91.7832)],num(s.zoomLevel,13))}
-function goSettings(){window.parent.postMessage({type:"ONE_ONLINE_NAVIGATE",page:"map-setting"},"*")}
-function goEntry(){window.parent.postMessage({type:"ONE_ONLINE_NAVIGATE",page:"map-entry"},"*")}
-initMap();loadData();
-window.addEventListener("storage",e=>{if(e.key===STORAGE_KEY)loadData()});
+function changeLayer(k){
+ if(!map)return;k=String(k).toLowerCase();if(k==="satellite"||k==="esri")k="satellite";else if(k==="terrain")k="terrain";else k="road";
+ if(currentLayer)map.removeLayer(currentLayer);currentLayer=window.mapTiles[k];if(currentLayer)currentLayer.addTo(map);
+}
+function clearLayers(){markers.forEach(x=>map.removeLayer(x));lines.forEach(x=>map.removeLayer(x));markers=[];lines=[];if(areaLayer){map.removeLayer(areaLayer);areaLayer=null}}
+function getAreaPoints(){
+ const a=db.settings.lockedArea||db.settings.areaLock;
+ if(!a)return [];
+ if(Array.isArray(a.points))return a.points.map(p=>[Number(p.lat??p[0]),Number(p.lng??p[1])]).filter(p=>p.every(Number.isFinite));
+ if(a.southWest&&a.northEast){const s=a.southWest,n=a.northEast;return [[s.lat,s.lng],[s.lat,n.lng],[n.lat,n.lng],[n.lat,s.lng]]}
+ if(Array.isArray(db.settings.lockedAreaPoints))return db.settings.lockedAreaPoints.map(p=>[Number(p.lat??p[0]),Number(p.lng??p[1])]);
+ return [];
+}
+function insideArea(lat,lng,pts){
+ if(!(db.settings.lockedArea||{}).enabled||pts.length<3)return true;
+ let inside=false;for(let i=0,j=pts.length-1;i<pts.length;j=i++){
+  const xi=pts[i][1],yi=pts[i][0],xj=pts[j][1],yj=pts[j][0];
+  const cross=((yi>lat)!==(yj>lat))&&(lng<(xj-xi)*(lat-yi)/(yj-yi)+xi);if(cross)inside=!inside;
+ }return inside;
+}
+function drawArea(){
+ const a=db.settings.lockedArea||db.settings.areaLock,pts=getAreaPoints();
+ if(a&&a.enabled&&pts.length>=3)areaLayer=L.polygon(pts,{color:"#eab308",weight:3,fill:false,dashArray:"8 6"}).addTo(map);
+}
+function markerPopup(x){
+ const d=dataOf(x);
+ return `<b>${esc(nameOf(x))}</b><hr><small>Type:</small> ${esc(typeName(x))}<br><small>Location No:</small> ${esc(val(x,["locationNumber","Location Number"],"—"))}<br><small>ID:</small> ${esc(idOf(x)||"—")}<br><small>Phone:</small> ${esc(val(x,["phone","Phone"],d.phone||"—"))}<br><small>Address:</small> ${esc(val(x,["address","Address"],d.address||"—"))}<br><small>Notes:</small> ${esc(val(x,["notes","Notes"],"—"))}`;
+}
+function drawMarkers(){
+ const hidden=Array.isArray(db.settings.hiddenTypes)?db.settings.hiddenTypes:[];
+ const pts=getAreaPoints();
+ db.locations.filter(validLoc).forEach(x=>{
+  const t=typeName(x);if(hidden.includes(t)||activeTypes.size&&!activeTypes.has(t))return;
+  if(!insideArea(latOf(x),lngOf(x),pts))return;
+  const size=Math.max(20,Math.min(64,Number(db.settings.markerSize)||34));
+  const icon=L.divIcon({className:"",html:`<div class="pin" style="width:${size}px;height:${size}px;background:${esc(typeColor(t,x))}">${esc(typeIcon(t,x))}</div>`,iconSize:[size,size],iconAnchor:[size/2,size/2]});
+  const m=L.marker([latOf(x),lngOf(x)],{icon}).bindPopup(markerPopup(x)).addTo(map);
+  m.on("click",()=>{if(measureMode)addMeasurePoint(latOf(x),lngOf(x))});
+  markers.push(m);
+  if(db.settings.showMarkerLabels!==false){const label=L.tooltip({permanent:true,direction:"top",offset:[0,-size/2-4],className:"map-label"}).setContent(esc(nameOf(x)));m.bindTooltip(label)}
+ });
+}
+function connectionStyle(type){
+ const s=db.settings,p=String(type||"Wire").toLowerCase();
+ return {color:s[p+"Color"]||({wire:"#f59e0b",fiber:"#16a3fa",drop:"#d946ef"}[p]||"#f59e0b"),weight:Number(s[p+"Weight"])||({wire:3,fiber:4,drop:2}[p]||3),opacity:Number(s[p+"Opacity"]??.9),dashArray:({solid:null,dashed:"8 7",dotted:"2 7"}[s[p+"Style"]||"solid"]||null)};
+}
+function renderConnections(){
+ lines.forEach(x=>map.removeLayer(x));lines=[];
+ if(db.settings.showWires===false)return;
+ const only=document.getElementById("connectionFilter")?.value||"all";
+ db.connections.forEach(c=>{
+  const type=String(val(c,["type","Type"],"Wire"));if(only!=="all"&&type.toLowerCase()!==only.toLowerCase())return;
+  const settingKey=type.toLowerCase()+"Visible";
+  if(db.settings[settingKey]===false)return;
+  const from=locationByKey(val(c,["from","From","fromId","source"],""));
+  const to=locationByKey(val(c,["to","To","toId","target"],""));
+  if(!from||!to||!validLoc(from)||!validLoc(to))return;
+  const opts=connectionStyle(type),poly=L.polyline([[latOf(from),lngOf(from)],[latOf(to),lngOf(to)]],opts).addTo(map);
+  const popup=`<b>${esc(val(c,["name","Name"],type+" Connection"))}</b><br>${esc(nameOf(from))} → ${esc(nameOf(to))}<br><small>${esc(type)}</small>`;
+  poly.bindPopup(popup);lines.push(poly);
+  if(db.settings.showConnectionArrows!==false&&L.polylineDecorator){
+   const dec=L.polylineDecorator(poly,{patterns:[{offset:"50%",repeat:0,symbol:L.Symbol.arrowHead({pixelSize:10,polygon:true,pathOptions:{color:opts.color,fillOpacity:1,weight:1}})}]}).addTo(map);lines.push(dec);
+  }
+ });
+}
+function drawAll(){
+ if(!map)initMap();clearLayers();
+ const types=[...new Set(db.locations.map(typeName))];
+ types.forEach(t=>{if(!activeTypes.has(t))activeTypes.add(t)});
+ drawArea();drawMarkers();renderConnections();renderList();renderTypeFilters();
+ document.getElementById("totalLocations").textContent=db.locations.length;
+ document.getElementById("totalConnections").textContent=db.connections.length;
+ document.getElementById("totalTypes").textContent=types.length;
+ if(db.settings.centerLat&&db.settings.centerLng)map.setView([Number(db.settings.centerLat),Number(db.settings.centerLng)],Number(db.settings.zoomLevel)||map.getZoom());
+ setTimeout(()=>map.invalidateSize(),150);
+}
+function renderTypeFilters(){
+ const box=document.getElementById("typeFilters");box.innerHTML="";
+ [...new Set(db.locations.map(typeName))].forEach(t=>{
+  const b=document.createElement("button");b.className="filter "+(activeTypes.has(t)?"active":"");b.textContent=t;
+  b.onclick=()=>{if(activeTypes.has(t))activeTypes.delete(t);else activeTypes.add(t);drawAll()};box.appendChild(b);
+ });
+}
+function renderList(){
+ const q=(document.getElementById("search")?.value||"").toLowerCase(),box=document.getElementById("locationList");
+ const list=db.locations.filter(x=>[nameOf(x),typeName(x),idOf(x),val(x,["locationNumber","Location Number"]),val(x,["phone","Phone"])].join(" ").toLowerCase().includes(q));
+ box.innerHTML=list.length?list.map((x,i)=>`<div class="item" data-index="${db.locations.indexOf(x)}"><b>${esc(typeIcon(typeName(x),x))} ${esc(nameOf(x))}</b><small>${esc(typeName(x))} · ${esc(val(x,["locationNumber","Location Number"],idOf(x)))}</small></div>`).join(""):"<div class='item'>No matching locations found.</div>";
+ box.querySelectorAll(".item[data-index]").forEach(el=>el.onclick=()=>{const x=db.locations[Number(el.dataset.index)];if(validLoc(x)){map.setView([latOf(x),lngOf(x)],17);const m=markers.find(m=>m.getLatLng().lat===latOf(x)&&m.getLatLng().lng===lngOf(x));if(m)m.openPopup()}});
+}
+function fitAll(){const group=L.featureGroup([...markers,...lines.filter(x=>x.getBounds)]);if(group.getLayers().length)map.fitBounds(group.getBounds().pad(.15));else map.setView([22.3569,91.7832],12)}
+function locateMe(){
+ if(!navigator.geolocation){setStatus("Geolocation is not supported.");return}
+ setStatus("Finding your location...");
+ navigator.geolocation.getCurrentPosition(p=>{
+  const ll=[p.coords.latitude,p.coords.longitude];if(myMarker)map.removeLayer(myMarker);
+  myMarker=L.marker(ll).addTo(map).bindPopup("Your current location").openPopup();map.setView(ll,17);setStatus("Your location found");
+ },e=>setStatus("Location permission denied or unavailable."),{enableHighAccuracy:true,timeout:12000});
+}
+function toggleFullscreen(){const el=document.querySelector(".main");if(!document.fullscreenElement)el.requestFullscreen?.();else document.exitFullscreen?.();setTimeout(()=>map.invalidateSize(),300)}
+function toggleMeasure(){measureMode=!measureMode;measurePoints=[];if(measureLayer){map.removeLayer(measureLayer);measureLayer=null}setStatus(measureMode?"Distance mode: select two map points":"Distance mode off")}
+function onMapClick(e){if(measureMode)addMeasurePoint(e.latlng.lat,e.latlng.lng)}
+function addMeasurePoint(lat,lng){
+ if(!measureMode)return;measurePoints.push([lat,lng]);
+ if(measurePoints.length===1){setStatus("Select the second point");return}
+ const a=L.latLng(measurePoints[0]),b=L.latLng(measurePoints[1]),m=a.distanceTo(b);
+ if(measureLayer)map.removeLayer(measureLayer);
+ measureLayer=L.layerGroup([L.polyline([a,b],{color:"#ef4444",weight:4,dashArray:"7 6"}),L.marker(a),L.marker(b)]).addTo(map);
+ setStatus("Distance: "+(m>=1000?(m/1000).toFixed(3)+" km":m.toFixed(1)+" m"));measureMode=false;measurePoints=[];
+}
+function exportData(){
+ const blob=new Blob([JSON.stringify(db,null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");
+ a.href=url;a.download="one-online-map-backup-"+new Date().toISOString().slice(0,10)+".json";a.click();URL.revokeObjectURL(url);
+}
+refreshData();
 </script>
 </body>
 </html>
