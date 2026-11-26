@@ -5,1039 +5,639 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Map Entry | ONE ONLINE</title>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-
 <style>
 :root{
-  --bg:#0b1220;--panel:#111c2e;--panel2:#172338;
-  --text:#e8f0fc;--muted:#91a3bd;--line:#293a53;
-  --primary:#168b68;--danger:#e05252;--input:#0b1729;
-  --shadow:0 12px 35px rgba(0,0,0,.2);
+ --bg:#0b1220;--panel:#111c2e;--panel2:#172338;
+ --text:#e8f0fc;--muted:#91a3bd;--line:#26364d;
+ --primary:#168bfa;--green:#16a34a;--red:#dc2626;
 }
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--text);font-family:Arial,Helvetica,sans-serif}
-button,input,select,textarea{font:inherit}
-button{cursor:pointer}
-.container{max-width:1200px;margin:auto;padding:22px}
-.topbar{display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:22px;flex-wrap:wrap}
-.brand{display:flex;align-items:center;gap:12px}
-.logo{width:46px;height:46px;border-radius:13px;background:linear-gradient(135deg,#087f5b,#16b887);display:grid;place-items:center;font-size:23px;font-weight:900;color:white}
-.brand h2{font-size:19px;margin:0 0 4px}
-.brand p{font-size:12px;color:var(--muted);margin:0}
-.top-actions{display:flex;gap:8px;flex-wrap:wrap}
-.btn{border:1px solid var(--line);border-radius:9px;padding:10px 14px;background:var(--panel2);color:var(--text);font-weight:700}
-.btn.primary{background:var(--primary);border-color:var(--primary);color:#fff}
-.btn.danger{background:#57232b;border-color:#81343e;color:#ffdce0}
-.btn.small{padding:7px 10px;font-size:12px}
-.btn:disabled{opacity:.5;cursor:not-allowed}
-.layout{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(300px,.9fr);gap:18px;align-items:start}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:15px;padding:19px;box-shadow:var(--shadow);margin-bottom:18px;min-width:0}
-.card-title{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:17px}
-.card-title h3{font-size:16px;margin:0}
-.card-title span{font-size:11px;color:var(--muted)}
-.field{margin-bottom:14px}
-label{display:block;font-size:12px;color:#c5d3e7;font-weight:700;margin-bottom:7px}
-input,select,textarea{width:100%;background:var(--input);color:var(--text);border:1px solid var(--line);border-radius:9px;padding:12px;outline:none;min-width:0}
-input:focus,select:focus,textarea:focus{border-color:#1ca77d;box-shadow:0 0 0 2px rgba(28,167,125,.12)}
-textarea{resize:vertical;min-height:75px}
-input::placeholder,textarea::placeholder{color:#687d99}
-.help{color:var(--muted);font-size:11px;line-height:1.6;margin-top:6px}
-.required{color:#ff7777}
-.type-info{border:1px solid #245743;background:rgba(18,135,94,.10);border-radius:10px;padding:12px;margin-bottom:15px;font-size:12px;color:#b9e8d7;line-height:1.6}
-.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.form-grid .field{margin-bottom:12px}
-.form-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:8px}
-.status{display:none;padding:11px 13px;border-radius:9px;font-size:12px;line-height:1.5;margin-top:13px}
-.status.success{display:block;background:#123c30;color:#b9f3dc}
-.status.error{display:block;background:#48242b;color:#ffd0d5}
-.status.info{display:block;background:#17354b;color:#c6eaff}
-#previewMap{height:250px;width:100%;border-radius:11px;border:1px solid var(--line);z-index:1}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:15px}
-.stat{background:var(--panel2);padding:12px;border:1px solid var(--line);border-radius:10px}
-.stat strong{font-size:21px;display:block}
-.stat span{font-size:11px;color:var(--muted)}
-.list-item{border:1px solid var(--line);background:var(--panel2);padding:12px;border-radius:10px;margin-bottom:9px}
-.list-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
-.item-name{font-size:13px;font-weight:800;word-break:break-word}
-.item-meta{font-size:11px;color:var(--muted);margin-top:5px;line-height:1.6}
-.tag{display:inline-block;padding:4px 8px;border-radius:20px;background:#234237;color:#a9efd3;font-size:10px;font-weight:700}
-.tag.pole{background:#493a20;color:#ffdf9a}
-.tag.switch{background:#243c61;color:#b9d9ff}
-.item-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
-.empty{text-align:center;padding:22px 10px;color:var(--muted);font-size:12px;border:1px dashed var(--line);border-radius:10px}
-.search{margin-bottom:12px}
-.connection-card{border:1px solid var(--line);background:var(--panel2);border-radius:11px;padding:13px;margin:10px 0}
-.connection-card h4{font-size:13px;margin:0 0 8px}
-.connection-card p{font-size:11px;color:var(--muted);margin:5px 0;line-height:1.5}
-.nearby-list{display:grid;gap:8px;margin-top:10px}
-.nearby-option{display:flex;align-items:center;gap:10px;padding:11px;border:1px solid var(--line);background:#0d192b;border-radius:9px;cursor:pointer}
-.nearby-option.selected{border-color:#10b981;background:#123c30}
-.nearby-option input{width:17px;height:17px;accent-color:#10b981;flex:0 0 auto}
-.nearby-info{flex:1;min-width:0}
-.nearby-info strong{display:block;font-size:12px;overflow-wrap:anywhere}
-.nearby-info small{display:block;color:var(--muted);font-size:10px;margin-top:4px}
-.distance{font-size:11px;color:#8de7c5;white-space:nowrap}
-.category-heading{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:16px}
-.category-heading strong{font-size:13px}
-.category-heading span{font-size:10px;color:var(--muted)}
-.connection-preview{padding:12px;background:#0b1729;border:1px solid var(--line);border-radius:10px;margin-top:12px}
-.connection-preview strong{font-size:12px}
-.path{display:flex;gap:7px;align-items:center;flex-wrap:wrap;margin-top:10px}
-.path-node{padding:8px 10px;background:#172b42;border:1px solid #344b65;border-radius:7px;font-size:11px;overflow-wrap:anywhere}
-.path-arrow{color:#22c58b;font-weight:900}
-.footer{text-align:center;color:var(--muted);font-size:11px;padding:12px}
-.hidden{display:none!important}
-@media(max-width:850px){.layout{grid-template-columns:1fr}}
-@media(max-width:520px){
- .container{padding:12px}.card{padding:14px}
- .form-grid{grid-template-columns:1fr}
- .stats{gap:6px}.stat{padding:9px}.stat strong{font-size:18px}
- .topbar{align-items:flex-start}.btn{padding:9px 11px}
- .distance{font-size:10px}
+body{margin:0;padding:15px;background:var(--bg);color:var(--text);font-family:Arial,sans-serif}
+.container{max-width:1100px;margin:auto}
+.header{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:18px}
+h1{font-size:23px;margin:0}
+h2{font-size:16px;margin:0 0 15px}
+.subtitle,.note{font-size:12px;color:var(--muted);line-height:1.6}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:17px;margin-bottom:15px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+.field{display:flex;flex-direction:column;gap:7px;min-width:0}
+label{font-size:12px;color:#b8c8dd;font-weight:700}
+input,select,textarea{
+ width:100%;min-width:0;background:#0b1526;color:#f1f5f9;
+ border:1px solid #34445c;border-radius:8px;padding:11px;
+ outline:none;font-size:14px;
+}
+input:focus,select:focus,textarea:focus{border-color:var(--primary)}
+input[type=color]{height:43px;padding:4px}
+textarea{min-height:75px;resize:vertical}
+button{border:0;border-radius:8px;padding:11px 15px;background:var(--primary);color:white;font-size:13px;font-weight:700;cursor:pointer}
+button.secondary{background:#334155}
+button.success{background:var(--green)}
+button.danger{background:#991b1b}
+button:disabled{opacity:.5;cursor:not-allowed}
+.actions{display:flex;gap:9px;flex-wrap:wrap}
+.status{font-size:12px;color:var(--muted);margin-top:10px;line-height:1.6}
+.status.ok{color:#4ade80}.status.err{color:#f87171}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:650px}
+th,td{padding:11px 9px;text-align:left;border-bottom:1px solid var(--line);font-size:12px}
+th{color:#9fb1c9;background:var(--panel2)}
+td{color:#e8f0fc}
+.empty{text-align:center;color:var(--muted);padding:22px}
+.point-icon{font-size:22px;background:transparent}
+.badge{display:inline-block;background:#1e3a5f;padding:4px 8px;border-radius:20px;font-size:11px}
+.section-title{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:13px}
+.count{font-size:12px;color:#93c5fd}
+@media(max-width:650px){
+ body{padding:10px}.grid{grid-template-columns:1fr}
+ .card{padding:13px}
 }
 </style>
 </head>
-
 <body>
+
 <div class="container">
 
-<header class="topbar">
-  <div class="brand">
-    <div class="logo">O</div>
-    <div>
-      <h2>ONE ONLINE</h2>
-      <p>MAP MANAGEMENT SYSTEM</p>
-    </div>
+ <div class="header">
+  <div>
+   <h1>Map Entry</h1>
+   <div class="subtitle">ONE ONLINE | Location & Connection Management</div>
   </div>
-  <div class="top-actions">
-    <button class="btn" onclick="loadData()">↻ Refresh</button>
-    <button class="btn" onclick="goToMap()">🗺 View Map</button>
+  <div class="actions">
+   <button class="secondary" onclick="loadData()">Refresh Data</button>
+   <button class="secondary" onclick="openMap()">View Map</button>
   </div>
-</header>
+ </div>
 
-<div class="stats">
-  <div class="stat"><strong id="customerCount">0</strong><span>Customers</span></div>
-  <div class="stat"><strong id="poleCount">0</strong><span>Poles</span></div>
-  <div class="stat"><strong id="switchCount">0</strong><span>Switches</span></div>
-</div>
+ <!-- ADD LOCATION -->
+ <div class="card">
+  <h2>Add New Map Location</h2>
 
-<main class="layout">
-<section>
-
-<div class="card">
-  <div class="card-title">
-    <h3 id="formTitle">＋ Add Map Location</h3>
-    <span>LOCATION ENTRY</span>
-  </div>
-
-  <form id="locationForm">
-    <div class="field">
-      <label>Select Location Type <span class="required">*</span></label>
-      <select id="locationType" required>
-        <option value="Customer">🏠 Customer</option>
-        <option value="Pole">📍 Pole</option>
-        <option value="Switch">🔀 Switch</option>
-      </select>
-      <div class="help">Customer, Pole অথবা Switch নির্বাচন করো।</div>
-    </div>
-
-    <div class="type-info" id="typeInfo"></div>
-
-    <div id="customerFields">
-      <div class="field">
-        <label>Customer IP <span class="required">*</span></label>
-        <input id="customerIp" placeholder="Example: 192.168.1.10">
-      </div>
-      <div class="field">
-        <label>Customer Name <span class="required">*</span></label>
-        <input id="customerName" placeholder="Enter customer name">
-      </div>
-      <div class="field">
-        <label>Customer Address</label>
-        <textarea id="customerAddress" placeholder="Enter customer address"></textarea>
-      </div>
-    </div>
-
-    <div id="equipmentFields" class="hidden">
-      <div class="field">
-        <label id="equipmentLabel">Pole Number / Name</label>
-        <input id="equipmentName" placeholder="Example: POLE-001">
-      </div>
-    </div>
-
-    <div id="customFields" class="hidden">
-      <div class="field">
-        <label id="customNameLabel">Location Name</label>
-        <input id="customName" placeholder="Enter location name">
-      </div>
-    </div>
-
-    <div class="field">
-      <label>Location – Google Maps URL / Coordinates <span class="required">*</span></label>
-      <textarea id="locationInput" required placeholder="Paste Google Maps URL or coordinates here..."></textarea>
-      <div class="help">
-        Google Maps URL অথবা Coordinates দিতে পারো।<br>
-        Example: 22.3569, 91.7832
-      </div>
-    </div>
-
-    <div class="field">
-      <label>Notes (Optional)</label>
-      <textarea id="notes" placeholder="Additional information..."></textarea>
-    </div>
-
-    <div class="form-actions">
-      <button class="btn primary" type="submit" id="saveBtn">💾 Save Location</button>
-      <button class="btn" type="button" onclick="resetForm()">Clear Form</button>
-    </div>
-    <div id="formStatus" class="status"></div>
-  </form>
-</div>
-
-<div class="card">
-  <div class="card-title">
-    <h3>📍 Location Preview</h3>
-    <span>MAP PREVIEW</span>
-  </div>
-  <div id="previewMap"></div>
-  <p class="help">Location URL বা Coordinates দিলে এখানে অবস্থান দেখা যাবে।</p>
-</div>
-
-<!-- AUTOMATIC CONNECTION CATEGORY -->
-<div class="card" id="connectionCategory">
-  <div class="card-title">
-    <h3>🔗 Connection</h3>
-    <span>AUTOMATIC CONNECTION</span>
-  </div>
-
-  <div class="type-info">
-    প্রথমে Customer নির্বাচন করো। Customer-এর Location অনুযায়ী কাছের Pole ও Switch নিচে দেখাবে।
-    প্রতিটি Category থেকে একটি করে নির্বাচন করতে পারবে।
-  </div>
-
-  <div class="field">
-    <label>Select Customer</label>
-    <select id="connectionCustomer">
-      <option value="">Select Customer</option>
+  <div class="grid">
+   <div class="field">
+    <label>Location Type</label>
+    <select id="pointType" onchange="typeChanged()">
+     <option value="Customer">Customer</option>
+     <option value="Pole">Pole</option>
+     <option value="Switch">Switch</option>
+     <option value="Pull">Pull</option>
     </select>
+   </div>
+
+   <div class="field">
+    <label>Location Name</label>
+    <input id="pointName" placeholder="Enter name">
+   </div>
+
+   <div class="field">
+    <label>Location Number</label>
+    <input id="locationNumber" placeholder="Example: C-001 / P-001">
+   </div>
+
+   <div class="field">
+    <label>Symbol / Emoji</label>
+    <input id="pointIcon" placeholder="👤" value="👤" maxlength="12">
+   </div>
+
+   <div class="field">
+    <label>Symbol Color</label>
+    <input id="pointColor" type="color" value="#2563eb">
+   </div>
+
+   <div class="field">
+    <label>Latitude</label>
+    <input id="latitude" type="number" step="any" placeholder="23.810300">
+   </div>
+
+   <div class="field">
+    <label>Longitude</label>
+    <input id="longitude" type="number" step="any" placeholder="90.412500">
+   </div>
+
+   <div class="field">
+    <label>Notes</label>
+    <input id="notes" placeholder="Optional details">
+   </div>
   </div>
 
-  <div id="connectionLocationInfo" class="help">
-    Customer নির্বাচন করলে তার Location এখানে দেখা যাবে।
+  <div class="actions" style="margin-top:14px">
+   <button class="secondary" onclick="getCurrentLocation()">Get Current Location</button>
+   <button class="success" onclick="addLocation()">Save Location</button>
+   <button class="secondary" onclick="clearLocationForm()">Clear Form</button>
+  </div>
+  <div id="locationStatus" class="status">Location Entry Ready</div>
+ </div>
+
+ <!-- CONNECTION -->
+ <div class="card">
+  <h2>Create Point Connection</h2>
+
+  <div class="grid">
+   <div class="field">
+    <label>From Location</label>
+    <select id="fromLocation">
+     <option value="">Select Starting Point</option>
+    </select>
+   </div>
+
+   <div class="field">
+    <label>To Location</label>
+    <select id="toLocation">
+     <option value="">Select Destination Point</option>
+    </select>
+   </div>
+
+   <div class="field">
+    <label>Connection Type</label>
+    <select id="connectionType">
+     <option value="Wire">Wire</option>
+     <option value="Fiber">Fiber</option>
+     <option value="Drop">Drop</option>
+    </select>
+   </div>
+
+   <div class="field">
+    <label>Connection Name</label>
+    <input id="connectionName" placeholder="Example: Main Wire">
+   </div>
   </div>
 
-  <div class="category-heading">
-    <strong>📍 Nearby Poles</strong>
-    <span id="poleNearbyCount">0 Found</span>
-  </div>
-  <div id="nearbyPoleList" class="nearby-list">
-    <div class="empty">Select a Customer first.</div>
+  <p class="note">
+   From এবং To Location নির্বাচন করে Connection Save করুন।
+   Pull/Switch থেকে Customer অথবা Customer থেকে Customer-ও Connect করতে পারবেন।
+  </p>
+
+  <div class="actions">
+   <button class="success" onclick="addConnection()">Create Connection</button>
+   <button class="secondary" onclick="clearConnectionForm()">Clear</button>
   </div>
 
-  <div class="category-heading">
-    <strong>🔀 Nearby Switches</strong>
-    <span id="switchNearbyCount">0 Found</span>
-  </div>
-  <div id="nearbySwitchList" class="nearby-list">
-    <div class="empty">Select a Customer first.</div>
-  </div>
+  <div id="connectionStatus" class="status">Connection Ready</div>
+ </div>
 
-  <div class="connection-preview">
-    <strong>Connection Preview</strong>
-    <div class="path" id="connectionPath">
-      <span class="help">Customer নির্বাচন করে Pole / Switch বেছে নাও।</span>
-    </div>
+ <!-- LOCATION LIST -->
+ <div class="card">
+  <div class="section-title">
+   <h2>All Map Locations</h2>
+   <span class="count" id="locationCount">0 Locations</span>
   </div>
+  <div class="field" style="margin-bottom:12px">
+   <label>Search Location</label>
+   <input id="searchLocation" placeholder="Search by name, number or type" oninput="renderLocations()">
+  </div>
+  <div class="table-wrap">
+   <table>
+    <thead>
+     <tr>
+      <th>Symbol</th><th>Name</th><th>Type</th>
+      <th>Location Number</th><th>Coordinates</th><th>Action</th>
+     </tr>
+    </thead>
+    <tbody id="locationTable">
+     <tr><td colspan="6" class="empty">Loading...</td></tr>
+    </tbody>
+   </table>
+  </div>
+ </div>
 
-  <div class="form-actions">
-    <button class="btn primary" type="button" id="saveConnectionBtn" onclick="saveAutomaticConnection()">
-      🔗 Save Connection
-    </button>
-    <button class="btn" type="button" onclick="resetConnectionSelection()">Reset Selection</button>
+ <!-- CONNECTION LIST -->
+ <div class="card">
+  <div class="section-title">
+   <h2>All Connections</h2>
+   <span class="count" id="connectionCount">0 Connections</span>
   </div>
-  <div id="connectionStatus" class="status"></div>
+  <div class="table-wrap">
+   <table>
+    <thead>
+     <tr>
+      <th>From</th><th>Connection</th><th>To</th><th>Type</th><th>Action</th>
+     </tr>
+    </thead>
+    <tbody id="connectionTable">
+     <tr><td colspan="5" class="empty">Loading...</td></tr>
+    </tbody>
+   </table>
+  </div>
+ </div>
+
+ <div class="card">
+  <h2>Data Status</h2>
+  <div id="mainStatus" class="status">Connecting to Map Database...</div>
+ </div>
+
 </div>
-
-</section>
-
-<section>
-<div class="card">
-  <div class="card-title">
-    <h3>📋 Saved Locations</h3>
-    <span id="locationTotal">0 LOCATIONS</span>
-  </div>
-  <input class="search" id="locationSearch" placeholder="Search name, IP, number..." oninput="renderLocations()">
-  <div id="locationList"><div class="empty">Loading locations...</div></div>
-</div>
-
-<div class="card">
-  <div class="card-title">
-    <h3>🔗 Saved Connections</h3>
-    <span id="connectionTotal">0 CONNECTIONS</span>
-  </div>
-  <div id="connectionList"><div class="empty">No connections found.</div></div>
-</div>
-</section>
-</main>
-
-<div class="footer">ONE ONLINE | MAP MANAGEMENT SYSTEM</div>
-</div>
-
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <script>
-/* ================= CONFIG ================= */
-const API_URL="https://script.google.com/macros/s/AKfycbxmDzfnY3LpvfvHjC4usnZiBT4BX4KZIjVoCGcSULikoTKQaC_mj7cbG_zUaiTyZ4sb8w/exec";
-const STORAGE_KEY="ONE_ONLINE_MAP_DATA_V1";
+"use strict";
 
-let db={locations:[],connections:[],settings:{},customTypes:[]};
-let editingId=null;
-let previewMap=null;
-let previewMarker=null;
-let previewReady=false;
-let isSaving=false;
+const MAP_API="https://script.google.com/macros/s/AKfycbxmDzfnY3LpvfvHjC4usnZiBT4BX4KZIjVoCGcSULikoTKQaC_mj7cbG_zUaiTyZ4sb8w/exec";
+const CACHE_KEY="ONE_ONLINE_MAP_DATA_V1";
 
-let selectedPoleId="";
-let selectedSwitchId="";
+let mapData={
+ locations:[],
+ connections:[],
+ settings:{},
+ customTypes:[]
+};
 
-/* ================= HELPERS ================= */
-function makeId(){
-  return "MAP-"+Date.now()+"-"+Math.random().toString(36).slice(2,8);
+const $=id=>document.getElementById(id);
+
+function safeJSON(v,f){
+ try{return JSON.parse(v)}catch(e){return f}
 }
-function escapeHtml(value){
-  return String(value??"").replace(/[&<>"']/g,ch=>({
-    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
-  })[ch]);
+function normalizeData(raw){
+ if(raw?.data&&!raw.locations)raw=raw.data;
+ return {
+  locations:Array.isArray(raw?.locations)?raw.locations:[],
+  connections:Array.isArray(raw?.connections)?raw.connections:[],
+  settings:raw?.settings&&typeof raw.settings==="object"?raw.settings:{},
+  customTypes:Array.isArray(raw?.customTypes)?raw.customTypes:[]
+ };
 }
-function normalizeType(type){
-  const t=String(type||"").trim().toLowerCase();
-  if(t==="customer")return "Customer";
-  if(t==="pole")return "Pole";
-  if(t==="switch")return "Switch";
-  const custom=db.customTypes.find(x=>
-    String(x.name||"").toLowerCase()===t ||
-    String(x.id||"").toLowerCase()===t
-  );
-  return custom?custom.name:(type||"Other");
+function escapeHTML(v){
+ return String(v??"").replace(/[&<>"']/g,c=>({
+  "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+ }[c]));
 }
-function getLocationName(item){
-  return item.name||item.customerName||item.locationNumber||"Unnamed Location";
+function makeId(prefix){
+ return prefix+"_"+Date.now()+"_"+Math.random().toString(36).slice(2,8);
 }
-function showStatus(id,message,type="info"){
-  const el=document.getElementById(id);
-  el.textContent=message;
-  el.className="status "+type;
+function setStatus(id,message,type=""){
+ $(id).textContent=message;
+ $(id).className="status "+type;
 }
-function hideStatus(id){
-  const el=document.getElementById(id);
-  el.textContent="";
-  el.className="status";
+function getTypeConfig(type){
+ const custom=[
+  ...(mapData.customTypes||[]),
+  ...(mapData.settings?._customTypes||[])
+ ];
+ const found=custom.find(x=>
+  String(x.name||x.type||"").toLowerCase()===String(type).toLowerCase()
+ );
+ if(found)return found;
+ const defaults={
+  Customer:{icon:"👤",color:"#2563eb"},
+  Pole:{icon:"🗼",color:"#f59e0b"},
+  Switch:{icon:"🔀",color:"#16a34a"},
+  Pull:{icon:"📍",color:"#9333ea"}
+ };
+ return defaults[type]||{icon:"📍",color:"#64748b"};
 }
-function saveLocal(){
-  try{localStorage.setItem(STORAGE_KEY,JSON.stringify(db));}catch(e){}
+function getId(item){return String(item.id??item.ID??"")}
+function getName(item){return item.name||item.Name||"Unnamed"}
+function getType(item){return item.type||item.Type||"Customer"}
+function getNumber(item){
+ return item.locationNumber||item.location_number||item["Location Number"]||"";
 }
-function readLocal(){
-  try{
-    const saved=JSON.parse(localStorage.getItem(STORAGE_KEY)||"{}");
-    db.locations=Array.isArray(saved.locations)?saved.locations:[];
-    db.connections=Array.isArray(saved.connections)?saved.connections:[];
-    db.settings=saved.settings||{};
-    db.customTypes=Array.isArray(saved.customTypes)?saved.customTypes:[];
-  }catch(e){}
+function getIcon(item){
+ return item.icon||item.Icon||getTypeConfig(getType(item)).icon;
+}
+function coords(item){
+ const lat=Number(item.latitude??item.lat??item.Latitude);
+ const lng=Number(item.longitude??item.lng??item.Longitude);
+ return Number.isFinite(lat)&&Number.isFinite(lng)?[lat,lng]:null;
+}
+function saveCache(){
+ try{localStorage.setItem(CACHE_KEY,JSON.stringify(mapData))}catch(e){}
 }
 
-/* ================= API ================= */
-async function getRemoteData(){
-  const response=await fetch(API_URL+"?action=getMapData&t="+Date.now(),{
-    method:"GET",cache:"no-store"
-  });
-  if(!response.ok)throw new Error("API request failed");
-  const result=await response.json();
-  if(result.success===false)throw new Error(result.message||"Could not load data");
-  const data=result.data||result;
-  return {
-    locations:Array.isArray(data.locations)?data.locations:[],
-    connections:Array.isArray(data.connections)?data.connections:[],
-    settings:data.settings||{},
-    customTypes:Array.isArray(data.customTypes)?data.customTypes:[]
-  };
-}
-async function saveRemoteData(){
-  const payload={
-    action:"saveMapData",
-    locations:db.locations,
-    connections:db.connections,
-    settings:db.settings,
-    customTypes:db.customTypes
-  };
-  const response=await fetch(API_URL,{
-    method:"POST",
-    headers:{"Content-Type":"text/plain;charset=utf-8"},
-    body:JSON.stringify(payload)
-  });
-  if(!response.ok)throw new Error("Server save failed");
-  const result=await response.json();
-  if(result.success===false)throw new Error(result.message||"Save failed");
-  return result;
-}
+/* Load data from Google Sheet */
 async function loadData(){
-  try{
-    const remote=await getRemoteData();
-    db=remote;
-    saveLocal();
-    renderAll();
-    showStatus("formStatus","Google Sheet থেকে Data সফলভাবে Load হয়েছে।","success");
-  }catch(error){
-    console.error(error);
-    readLocal();
-    renderAll();
-    showStatus("formStatus","Google Sheet থেকে Data Load হয়নি। Local Backup Data দেখানো হচ্ছে।","error");
-  }
-}
-
-/* ================= LOCATION TYPES ================= */
-function setupTypeOptions(){
-  const select=document.getElementById("locationType");
-  const current=select.value;
-  select.innerHTML=`
-    <option value="Customer">🏠 Customer</option>
-    <option value="Pole">📍 Pole</option>
-    <option value="Switch">🔀 Switch</option>`;
-  db.customTypes.forEach(type=>{
-    const name=String(type.name||"").trim();
-    if(!name)return;
-    const option=document.createElement("option");
-    option.value=name;
-    option.textContent=(type.icon||"📌")+" "+name;
-    select.appendChild(option);
-  });
-  if([...select.options].some(o=>o.value===current))select.value=current;
-  updateTypeFields();
-}
-function updateTypeFields(){
-  const type=document.getElementById("locationType").value;
-  const customer=type==="Customer";
-  const equipment=type==="Pole"||type==="Switch";
-  const custom=!customer&&!equipment;
-
-  document.getElementById("customerFields").classList.toggle("hidden",!customer);
-  document.getElementById("equipmentFields").classList.toggle("hidden",!equipment);
-  document.getElementById("customFields").classList.toggle("hidden",!custom);
-
-  document.getElementById("typeInfo").textContent=customer
-    ?"Customer নির্বাচন করা হয়েছে। Customer IP, Name ও Address দিতে হবে।"
-    :type==="Pole"?"Pole Number অথবা Name দিতে হবে।"
-    :type==="Switch"?"Switch Number অথবা Name দিতে হবে."
-    :type+" Name দিতে হবে।";
-
-  document.getElementById("equipmentLabel").textContent=
-    type==="Pole"?"Pole Number / Name *":"Switch Number / Name *";
-  document.getElementById("equipmentName").placeholder=
-    type==="Pole"?"Example: POLE-001":"Example: SWITCH-001";
-  document.getElementById("customNameLabel").textContent=type+" Name *";
-}
-document.getElementById("locationType").addEventListener("change",updateTypeFields);
-
-/* ================= COORDINATES ================= */
-function validCoordinates(lat,lng){
-  lat=Number(lat);lng=Number(lng);
-  if(!Number.isFinite(lat)||!Number.isFinite(lng))return null;
-  if(lat < -90 || lat > 90 || lng < -180 || lng > 180)return null;
-  return {lat,lng};
-}
-function parseCoordinates(input){
-  if(!input)return null;
-  const text=String(input).trim();
-
-  let match=text.match(/@(-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?)/);
-  if(match){
-    const c=validCoordinates(match[1],match[2]);
-    if(c)return c;
-  }
-
-  try{
-    const url=new URL(text);
-    for(const key of ["q","query","ll","center","destination"]){
-      const value=url.searchParams.get(key);
-      if(value){
-        const m=value.match(/(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)/);
-        if(m){
-          const c=validCoordinates(m[1],m[2]);
-          if(c)return c;
-        }
-      }
-    }
-  }catch(e){}
-
-  match=text.match(/(-?\d{1,2}(?:\.\d+)?)\s*,\s*(-?\d{1,3}(?:\.\d+)?)/);
-  if(match){
-    const c=validCoordinates(match[1],match[2]);
-    if(c)return c;
-  }
-  return null;
-}
-
-/* ================= PREVIEW MAP ================= */
-function initPreviewMap(){
-  if(previewReady||!window.L)return;
-  previewMap=L.map("previewMap").setView([22.3569,91.7832],12);
-  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{
-    attribution:"© OpenStreetMap contributors",maxZoom:19
-  }).addTo(previewMap);
-  previewReady=true;
-}
-function showPreview(lat,lng){
-  initPreviewMap();
-  if(!previewMap)return;
-  if(previewMarker)previewMap.removeLayer(previewMarker);
-  previewMarker=L.marker([lat,lng]).addTo(previewMap);
-  previewMap.setView([lat,lng],17);
-}
-document.getElementById("locationInput").addEventListener("input",function(){
-  const coords=parseCoordinates(this.value);
-  if(coords){
-    showPreview(coords.lat,coords.lng);
-    if(document.getElementById("locationType").value==="Customer"){
-      refreshNearbyForCustomerCoordinates(coords);
-    }
-  }
-});
-
-/* ================= SAVE LOCATION ================= */
-document.getElementById("locationForm").addEventListener("submit",async function(event){
-  event.preventDefault();
-  if(isSaving)return;
-
-  const type=document.getElementById("locationType").value;
-  const locationUrl=document.getElementById("locationInput").value.trim();
-  const coords=parseCoordinates(locationUrl);
-
-  if(!coords){
-    showStatus("formStatus","সঠিক Google Maps URL অথবা Coordinates দাও। Short maps.app.goo.gl link হলে expanded URL অথবা Coordinates ব্যবহার করো।","error");
-    return;
-  }
-
-  let name="",customerIp="",customerAddress="",locationNumber="";
-  if(type==="Customer"){
-    customerIp=document.getElementById("customerIp").value.trim();
-    name=document.getElementById("customerName").value.trim();
-    customerAddress=document.getElementById("customerAddress").value.trim();
-    if(!customerIp||!name){
-      showStatus("formStatus","Customer IP এবং Name দিতে হবে।","error");return;
-    }
-    locationNumber=customerIp;
-  }else if(type==="Pole"||type==="Switch"){
-    name=document.getElementById("equipmentName").value.trim();
-    if(!name){
-      showStatus("formStatus",type+" Number / Name দিতে হবে।","error");return;
-    }
-    locationNumber=name;
+ setStatus("mainStatus","Loading Map Database...");
+ try{
+  const r=await fetch(MAP_API+"?action=getMapData&v="+Date.now(),{cache:"no-store"});
+  if(!r.ok)throw new Error("API response "+r.status);
+  mapData=normalizeData(await r.json());
+  saveCache();
+  refreshAll();
+  setStatus("mainStatus","Connected. Map data loaded successfully.","ok");
+ }catch(e){
+  const cached=safeJSON(localStorage.getItem(CACHE_KEY),null);
+  if(cached){
+   mapData=normalizeData(cached);
+   refreshAll();
+   setStatus("mainStatus","Offline mode: showing saved local data. "+e.message,"err");
   }else{
-    name=document.getElementById("customName").value.trim();
-    if(!name){
-      showStatus("formStatus",type+" Name দিতে হবে।","error");return;
-    }
-    locationNumber=name;
+   setStatus("mainStatus","Database connection failed: "+e.message,"err");
   }
-
-  const now=new Date().toISOString();
-  const existing=editingId?db.locations.find(x=>String(x.id)===String(editingId)):null;
-  const customType=db.customTypes.find(x=>
-    String(x.name||"").toLowerCase()===String(type).toLowerCase()
-  );
-
-  const locationData={
-    id:editingId||makeId(),
-    type,name,locationNumber,
-    lat:coords.lat,lng:coords.lng,
-    latitude:coords.lat,longitude:coords.lng,
-    locationUrl,
-    customerIp,ip:customerIp,
-    customerName:type==="Customer"?name:"",
-    customerAddress,address:customerAddress,
-    notes:document.getElementById("notes").value.trim(),
-    icon:customType?.icon||existing?.icon||"",
-    color:customType?.color||existing?.color||"",
-    createdAt:existing?.createdAt||now,
-    updatedAt:now
-  };
-
-  if(editingId){
-    const index=db.locations.findIndex(x=>String(x.id)===String(editingId));
-    if(index<0){showStatus("formStatus","Location পাওয়া যায়নি।","error");return;}
-    db.locations[index]=locationData;
-  }else{
-    db.locations.push(locationData);
-  }
-
-  await persistAll(editingId?"Location Updated Successfully":"Location Saved Successfully");
-});
-
-/* ================= SAVE DATABASE ================= */
-async function persistAll(successMessage){
-  isSaving=true;
-  const saveBtn=document.getElementById("saveBtn");
-  saveBtn.disabled=true;
-  saveBtn.textContent="Saving...";
-  saveLocal();
-
-  try{
-    await saveRemoteData();
-    saveLocal();
-    renderAll();
-    resetForm();
-    showStatus("formStatus",successMessage+" — Google Sheet-এ Save হয়েছে।","success");
-  }catch(error){
-    console.error(error);
-    saveLocal();
-    renderAll();
-    showStatus("formStatus","Local Backup-এ Save হয়েছে, কিন্তু Google Sheet-এ Save হয়নি। "+error.message,"error");
-  }finally{
-    isSaving=false;
-    saveBtn.disabled=false;
-    saveBtn.textContent="💾 Save Location";
-  }
+ }
 }
 
-/* ================= EDIT LOCATION ================= */
-function editLocation(id){
-  const item=db.locations.find(x=>String(x.id)===String(id));
-  if(!item)return;
-  editingId=item.id;
-
-  setupTypeOptions();
-  const type=normalizeType(item.type);
-  const select=document.getElementById("locationType");
-  if([...select.options].some(o=>o.value===type))select.value=type;
-  updateTypeFields();
-
-  document.getElementById("customerIp").value=item.customerIp||item.ip||"";
-  document.getElementById("customerName").value=item.customerName||item.name||"";
-  document.getElementById("customerAddress").value=item.customerAddress||item.address||"";
-  document.getElementById("equipmentName").value=item.name||item.locationNumber||"";
-  document.getElementById("customName").value=item.name||"";
-  document.getElementById("locationInput").value=item.locationUrl||(item.lat+","+item.lng);
-  document.getElementById("notes").value=item.notes||"";
-
-  document.getElementById("formTitle").textContent="✎ Edit Map Location";
-  document.getElementById("saveBtn").textContent="💾 Update Location";
-  showPreview(Number(item.lat),Number(item.lng));
-  hideStatus("formStatus");
-  window.scrollTo({top:0,behavior:"smooth"});
+/* Save all map data without replacing other records */
+async function saveAllData(){
+ saveCache();
+ const payload={
+  action:"saveMapData",
+  locations:mapData.locations,
+  connections:mapData.connections,
+  settings:mapData.settings||{},
+  customTypes:mapData.customTypes||[]
+ };
+ const r=await fetch(MAP_API,{
+  method:"POST",
+  headers:{"Content-Type":"text/plain;charset=utf-8"},
+  body:JSON.stringify(payload)
+ });
+ if(!r.ok)throw new Error("Save request failed: "+r.status);
+ const result=await r.json();
+ if(result.success===false||result.error){
+  throw new Error(result.message||result.error||"Save failed");
+ }
+ saveCache();
+ return result;
 }
 
-/* ================= DELETE LOCATION ================= */
-async function deleteLocation(id){
-  const item=db.locations.find(x=>String(x.id)===String(id));
-  if(!item)return;
-  if(!confirm("এই Location Delete করতে চাও? এর সাথে যুক্ত Connections-ও Delete হবে।"))return;
-
-  db.locations=db.locations.filter(x=>String(x.id)!==String(id));
-  db.connections=db.connections.filter(c=>
-    String(c.from)!==String(id)&&String(c.to)!==String(id)
-  );
-  if(String(selectedPoleId)===String(id))selectedPoleId="";
-  if(String(selectedSwitchId)===String(id))selectedSwitchId="";
-  await persistAll("Location Deleted Successfully");
+function refreshAll(){
+ renderLocations();
+ renderConnections();
+ refreshLocationOptions();
+ typeChanged();
 }
 
-/* ================= RESET LOCATION FORM ================= */
-function resetForm(){
-  editingId=null;
-  document.getElementById("locationForm").reset();
-  document.getElementById("locationType").value="Customer";
-  updateTypeFields();
-  document.getElementById("formTitle").textContent="＋ Add Map Location";
-  document.getElementById("saveBtn").textContent="💾 Save Location";
-
-  if(previewMarker&&previewMap){
-    previewMap.removeLayer(previewMarker);
-    previewMarker=null;
-  }
-  if(previewMap)previewMap.setView([22.3569,91.7832],12);
-  hideStatus("formStatus");
+/* Point type selection */
+function typeChanged(){
+ const type=$("pointType").value;
+ const config=getTypeConfig(type);
+ $("pointIcon").value=config.icon||"📍";
+ $("pointColor").value=config.color||"#64748b";
 }
 
-/* ================= LOCATION LIST ================= */
-function renderLocations(){
-  const list=document.getElementById("locationList");
-  const search=document.getElementById("locationSearch").value.trim().toLowerCase();
+/* Add Location */
+async function addLocation(){
+ const type=$("pointType").value;
+ const name=$("pointName").value.trim();
+ const number=$("locationNumber").value.trim();
+ const lat=Number($("latitude").value);
+ const lng=Number($("longitude").value);
+ const icon=$("pointIcon").value.trim()||getTypeConfig(type).icon;
+ const color=$("pointColor").value;
+ const notes=$("notes").value.trim();
 
-  const filtered=db.locations.filter(item=>{
-    const text=[
-      item.name,item.type,item.locationNumber,item.customerIp,
-      item.ip,item.address,item.customerAddress
-    ].join(" ").toLowerCase();
-    return text.includes(search);
-  });
+ if(!name){
+  setStatus("locationStatus","Location Name দিতে হবে","err");return;
+ }
+ if(!number){
+  setStatus("locationStatus","Location Number দিতে হবে","err");return;
+ }
+ if($("latitude").value.trim()===""||$("longitude").value.trim()===""||
+    !Number.isFinite(lat)||!Number.isFinite(lng)||
+    lat < -90||lat > 90||lng < -180||lng > 180){
+  setStatus("locationStatus","সঠিক Latitude এবং Longitude দিন","err");return;
+ }
 
-  document.getElementById("locationTotal").textContent=filtered.length+" LOCATIONS";
+ const duplicate=mapData.locations.some(x=>
+  String(getNumber(x)).toLowerCase()===number.toLowerCase()
+ );
+ if(duplicate){
+  setStatus("locationStatus","এই Location Number আগে থেকেই আছে","err");return;
+ }
 
-  if(!filtered.length){
-    list.innerHTML='<div class="empty">No locations found.</div>';return;
-  }
+ const now=new Date().toISOString();
+ const item={
+  id:makeId("LOC"),
+  type:type,
+  name:name,
+  locationNumber:number,
+  latitude:lat,
+  longitude:lng,
+  icon:icon,
+  color:color,
+  notes:notes,
+  createdAt:now,
+  updatedAt:now
+ };
 
-  list.innerHTML=filtered.map(item=>{
-    const type=normalizeType(item.type);
-    const name=getLocationName(item);
-    const tagClass=type.toLowerCase()==="pole"?"pole":type.toLowerCase()==="switch"?"switch":"";
-    const details=[];
+ mapData.locations.push(item);
+ setStatus("locationStatus","Saving Location...");
 
-    if(type==="Customer"){
-      if(item.customerIp||item.ip)details.push("IP: "+(item.customerIp||item.ip));
-      if(item.customerAddress||item.address)details.push(item.customerAddress||item.address);
-    }else details.push("Number: "+(item.locationNumber||name));
-
-    details.push("Lat: "+item.lat+" | Lng: "+item.lng);
-
-    return `<div class="list-item">
-      <div class="list-head">
-        <div>
-          <div class="item-name">${escapeHtml(name)}</div>
-          <div class="item-meta">${details.map(escapeHtml).join("<br>")}</div>
-        </div>
-        <span class="tag ${tagClass}">${escapeHtml(type)}</span>
-      </div>
-      <div class="item-actions">
-        <button class="btn small" onclick="editLocation('${escapeHtml(item.id)}')">✎ Edit</button>
-        <button class="btn small" onclick="focusLocation('${escapeHtml(item.id)}')">📍 View</button>
-        <button class="btn small danger" onclick="deleteLocation('${escapeHtml(item.id)}')">Delete</button>
-      </div>
-    </div>`;
-  }).join("");
-}
-function focusLocation(id){
-  const item=db.locations.find(x=>String(x.id)===String(id));
-  if(!item)return;
-  showPreview(Number(item.lat),Number(item.lng));
-  document.getElementById("previewMap").scrollIntoView({behavior:"smooth",block:"center"});
-}
-
-/* ================= DISTANCE CALCULATION ================= */
-function getCoordinates(item){
-  const lat=Number(item.lat??item.latitude);
-  const lng=Number(item.lng??item.longitude);
-  if(!Number.isFinite(lat)||!Number.isFinite(lng))return null;
-  if(lat < -90 || lat > 90 || lng < -180 || lng > 180)return null;
-  return {lat,lng};
-}
-function distanceMeters(a,b){
-  const R=6371000;
-  const rad=x=>x*Math.PI/180;
-  const dLat=rad(b.lat-a.lat);
-  const dLng=rad(b.lng-a.lng);
-  const h=Math.sin(dLat/2)**2+
-    Math.cos(rad(a.lat))*Math.cos(rad(b.lat))*Math.sin(dLng/2)**2;
-  return 2*R*Math.asin(Math.sqrt(h));
-}
-function formatDistance(meters){
-  if(meters<1000)return Math.round(meters)+" m";
-  return (meters/1000).toFixed(2)+" km";
+ try{
+  await saveAllData();
+  refreshAll();
+  clearLocationForm();
+  setStatus("locationStatus","Location successfully saved to Map Sheet.","ok");
+ }catch(e){
+  mapData.locations=mapData.locations.filter(x=>getId(x)!==item.id);
+  saveCache();refreshAll();
+  setStatus("locationStatus","Save failed: "+e.message,"err");
+ }
 }
 
-/* ================= CUSTOMER CONNECTION SELECT ================= */
-function populateCustomerOptions(){
-  const select=document.getElementById("connectionCustomer");
-  const old=select.value;
-  const customers=db.locations.filter(x=>normalizeType(x.type)==="Customer");
-
-  select.innerHTML='<option value="">Select Customer</option>'+
-    customers.map(x=>`<option value="${escapeHtml(x.id)}">${escapeHtml(getLocationName(x))} — ${escapeHtml(x.customerIp||x.ip||"")}</option>`).join("");
-
-  if(customers.some(x=>String(x.id)===old))select.value=old;
-}
-document.getElementById("connectionCustomer").addEventListener("change",()=>{
-  selectedPoleId="";
-  selectedSwitchId="";
-  renderNearbyOptions();
-  hideStatus("connectionStatus");
-});
-
-function refreshNearbyForCustomerCoordinates(coords){
-  const selected=document.getElementById("connectionCustomer").value;
-  if(!selected)return;
-  const customer=db.locations.find(x=>String(x.id)===String(selected));
-  if(!customer)return;
-  // Preview updates only; saved customer coordinates remain unchanged until Save Location.
-  renderNearbyOptions(coords);
+/* Get Current GPS */
+function getCurrentLocation(){
+ if(!navigator.geolocation){
+  setStatus("locationStatus","এই Browser GPS support করে না","err");return;
+ }
+ setStatus("locationStatus","Getting current location...");
+ navigator.geolocation.getCurrentPosition(position=>{
+  $("latitude").value=position.coords.latitude.toFixed(7);
+  $("longitude").value=position.coords.longitude.toFixed(7);
+  setStatus("locationStatus","Current Location পাওয়া গেছে","ok");
+ },error=>{
+  setStatus("locationStatus","GPS Error: "+error.message,"err");
+ },{
+  enableHighAccuracy:true,timeout:15000,maximumAge:0
+ });
 }
 
-/* ================= NEARBY POLE / SWITCH LISTS ================= */
-function getNearbyLocations(type,customer,overrideCoords){
-  const customerCoords=overrideCoords||getCoordinates(customer);
-  if(!customerCoords)return [];
-
-  return db.locations
-    .filter(item=>
-      normalizeType(item.type)===type &&
-      String(item.id)!==String(customer.id)
-    )
-    .map(item=>{
-      const coords=getCoordinates(item);
-      if(!coords)return null;
-      return {
-        item,
-        distance:distanceMeters(customerCoords,coords)
-      };
-    })
-    .filter(Boolean)
-    .sort((a,b)=>a.distance-b.distance);
+function clearLocationForm(){
+ $("pointName").value="";
+ $("locationNumber").value="";
+ $("latitude").value="";
+ $("longitude").value="";
+ $("notes").value="";
+ typeChanged();
 }
 
-function renderNearbyOptions(overrideCoords){
-  const customerId=document.getElementById("connectionCustomer").value;
-  const poleList=document.getElementById("nearbyPoleList");
-  const switchList=document.getElementById("nearbySwitchList");
+/* Location dropdowns */
+function refreshLocationOptions(){
+ const options=mapData.locations.map(item=>{
+  const id=getId(item);
+  const label=[
+   getType(item),
+   getName(item),
+   getNumber(item)
+  ].filter(Boolean).join(" | ");
+  return `<option value="${escapeHTML(id)}">${escapeHTML(label)}</option>`;
+ }).join("");
 
-  if(!customerId){
-    poleList.innerHTML='<div class="empty">Select a Customer first.</div>';
-    switchList.innerHTML='<div class="empty">Select a Customer first.</div>';
-    document.getElementById("poleNearbyCount").textContent="0 Found";
-    document.getElementById("switchNearbyCount").textContent="0 Found";
-    document.getElementById("connectionLocationInfo").textContent="Customer নির্বাচন করলে তার Location এখানে দেখা যাবে।";
-    updateConnectionPreview();
-    return;
-  }
-
-  const customer=db.locations.find(x=>String(x.id)===String(customerId));
-  if(!customer)return;
-
-  const coords=overrideCoords||getCoordinates(customer);
-  if(!coords){
-    poleList.innerHTML='<div class="empty">Customer-এর valid Location নেই। Customer Location ঠিক করো।</div>';
-    switchList.innerHTML='<div class="empty">Customer-এর valid Location নেই।</div>';
-    updateConnectionPreview();
-    return;
-  }
-
-  document.getElementById("connectionLocationInfo").textContent=
-    "Customer: "+getLocationName(customer)+" | Location: "+coords.lat.toFixed(6)+", "+coords.lng.toFixed(6);
-
-  const poles=getNearbyLocations("Pole",customer,overrideCoords);
-  const switches=getNearbyLocations("Switch",customer,overrideCoords);
-
-  document.getElementById("poleNearbyCount").textContent=poles.length+" Found";
-  document.getElementById("switchNearbyCount").textContent=switches.length+" Found";
-
-  poleList.innerHTML=poles.length?poles.map(({item,distance})=>{
-    const selected=String(selectedPoleId)===String(item.id);
-    return `<label class="nearby-option ${selected?"selected":""}">
-      <input type="radio" name="nearbyPole" value="${escapeHtml(item.id)}"
-        ${selected?"checked":""} onchange="chooseNearbyPole(this.value)">
-      <span class="nearby-info">
-        <strong>📍 ${escapeHtml(getLocationName(item))}</strong>
-        <small>${escapeHtml(item.locationNumber||"Pole")} | ${Number(item.lat).toFixed(5)}, ${Number(item.lng).toFixed(5)}</small>
-      </span>
-      <span class="distance">${formatDistance(distance)}</span>
-    </label>`;
-  }).join(""):'<div class="empty">কোনো Pole পাওয়া যায়নি। আগে Pole Location Add করো।</div>';
-
-  switchList.innerHTML=switches.length?switches.map(({item,distance})=>{
-    const selected=String(selectedSwitchId)===String(item.id);
-    return `<label class="nearby-option ${selected?"selected":""}">
-      <input type="radio" name="nearbySwitch" value="${escapeHtml(item.id)}"
-        ${selected?"checked":""} onchange="chooseNearbySwitch(this.value)">
-      <span class="nearby-info">
-        <strong>🔀 ${escapeHtml(getLocationName(item))}</strong>
-        <small>${escapeHtml(item.locationNumber||"Switch")} | ${Number(item.lat).toFixed(5)}, ${Number(item.lng).toFixed(5)}</small>
-      </span>
-      <span class="distance">${formatDistance(distance)}</span>
-    </label>`;
-  }).join(""):'<div class="empty">কোনো Switch পাওয়া যায়নি। Switch না থাকলে এই অংশ বাদ দিতে পারো।</div>';
-
-  updateConnectionPreview();
-}
-function chooseNearbyPole(id){
-  selectedPoleId=id;
-  renderNearbyOptions();
-}
-function chooseNearbySwitch(id){
-  selectedSwitchId=id;
-  renderNearbyOptions();
+ $("fromLocation").innerHTML='<option value="">Select Starting Point</option>'+options;
+ $("toLocation").innerHTML='<option value="">Select Destination Point</option>'+options;
 }
 
-/* ================= CONNECTION PREVIEW ================= */
-function updateConnectionPreview(){
-  const customerId=document.getElementById("connectionCustomer").value;
-  const customer=db.locations.find(x=>String(x.id)===String(customerId));
-  const pole=db.locations.find(x=>String(x.id)===String(selectedPoleId));
-  const sw=db.locations.find(x=>String(x.id)===String(selectedSwitchId));
-  const path=document.getElementById("connectionPath");
+/* Add Connection */
+async function addConnection(){
+ const from=$("fromLocation").value;
+ const to=$("toLocation").value;
+ const type=$("connectionType").value;
+ const name=$("connectionName").value.trim()||type;
 
-  if(!customer){
-    path.innerHTML='<span class="help">Customer নির্বাচন করে Pole / Switch বেছে নাও।</span>';
-    return;
-  }
+ if(!from||!to){
+  setStatus("connectionStatus","From এবং To Location নির্বাচন করুন","err");return;
+ }
+ if(from===to){
+  setStatus("connectionStatus","একই Point-কে নিজের সাথে Connect করা যাবে না","err");return;
+ }
 
-  const nodes=[];
-  if(sw)nodes.push({name:getLocationName(sw),icon:"🔀"});
-  if(pole)nodes.push({name:getLocationName(pole),icon:"📍"});
-  nodes.push({name:getLocationName(customer),icon:"🏠"});
+ const fromItem=mapData.locations.find(x=>getId(x)===from);
+ const toItem=mapData.locations.find(x=>getId(x)===to);
+ if(!fromItem||!toItem){
+  setStatus("connectionStatus","Location পাওয়া যায়নি। Refresh করুন।","err");return;
+ }
 
-  if(nodes.length===1){
-    path.innerHTML='<span class="help">এখনো কোনো Pole বা Switch নির্বাচন করা হয়নি।</span>';
-    return;
-  }
+ const duplicate=mapData.connections.some(x=>
+  String(x.from??x.fromId)===from&&
+  String(x.to??x.toId)===to&&
+  String(x.type||"Wire").toLowerCase()===type.toLowerCase()
+ );
+ if(duplicate){
+  setStatus("connectionStatus","এই Connection আগে থেকেই আছে","err");return;
+ }
 
-  path.innerHTML=nodes.map((node,i)=>
-    (i?'<span class="path-arrow">➜</span>':"")+
-    `<span class="path-node">${node.icon} ${escapeHtml(node.name)}</span>`
-  ).join("");
-}
+ const item={
+  id:makeId("CON"),
+  from:from,
+  to:to,
+  type:type,
+  name:name,
+  createdAt:new Date().toISOString()
+ };
 
-/* ================= SAVE AUTOMATIC CONNECTION ================= */
-async function saveAutomaticConnection(){
-  const customerId=document.getElementById("connectionCustomer").value;
-  const customer=db.locations.find(x=>String(x.id)===String(customerId));
-  const pole=db.locations.find(x=>String(x.id)===String(selectedPoleId));
-  const sw=db.locations.find(x=>String(x.id)===String(selectedSwitchId));
+ mapData.connections.push(item);
+ setStatus("connectionStatus","Saving Connection...");
 
-  if(!customer){
-    showStatus("connectionStatus","আগে একটি Customer নির্বাচন করো।","error");return;
-  }
-  if(!pole&&!sw){
-    showStatus("connectionStatus","কমপক্ষে একটি Pole অথবা Switch নির্বাচন করো।","error");return;
-  }
-
-  const newConnections=[];
-  const now=new Date().toISOString();
-
-  // If a pole is selected, connect Pole -> Customer.
-  if(pole){
-    newConnections.push({
-      id:makeId(),
-      from:String(pole.id),
-      to:String(customer.id),
-      type:"Wire",
-      category:"Connection",
-      name:"Pole to Customer",
-      createdAt:now
-    });
-  }
-
-  // If both Switch and Pole are selected, connect Switch -> Pole.
-  // If only Switch is selected, connect Switch -> Customer.
-  if(sw){
-    newConnections.push({
-      id:makeId(),
-      from:String(sw.id),
-      to:String(pole?pole.id:customer.id),
-      type:"Fiber",
-      category:"Connection",
-      name:pole?"Switch to Pole":"Switch to Customer",
-      createdAt:now
-    });
-  }
-
-  const duplicate=newConnections.some(n=>
-    db.connections.some(old=>
-      String(old.from)===String(n.from)&&String(old.to)===String(n.to)
-    )
-  );
-  if(duplicate){
-    showStatus("connectionStatus","এই Connection-এর কিছু অংশ আগে থেকেই তৈরি আছে। Duplicate Connection তৈরি করা হয়নি।","error");
-    return;
-  }
-
-  db.connections.push(...newConnections);
-  saveLocal();
-
-  const btn=document.getElementById("saveConnectionBtn");
-  btn.disabled=true;
-  btn.textContent="Saving...";
-
-  try{
-    await saveRemoteData();
-    saveLocal();
-    renderAll();
-    selectedPoleId="";
-    selectedSwitchId="";
-    document.getElementById("connectionCustomer").value=String(customer.id);
-    renderNearbyOptions();
-    showStatus("connectionStatus","Customer Connection সফলভাবে Google Sheet-এ Save হয়েছে।","success");
-  }catch(error){
-    console.error(error);
-    showStatus("connectionStatus","Local Backup-এ Save হয়েছে, কিন্তু Google Sheet-এ Save হয়নি: "+error.message,"error");
-  }finally{
-    btn.disabled=false;
-    btn.textContent="🔗 Save Connection";
-  }
-}
-function resetConnectionSelection(){
-  selectedPoleId="";
-  selectedSwitchId="";
-  renderNearbyOptions();
-  hideStatus("connectionStatus");
-}
-
-/* ================= CONNECTION LIST ================= */
-async function deleteConnection(id){
-  if(!confirm("এই Connection Delete করতে চাও?"))return;
-  db.connections=db.connections.filter(x=>String(x.id)!==String(id));
-  await persistAll("Connection Deleted Successfully");
-}
-function renderConnections(){
-  const list=document.getElementById("connectionList");
-  document.getElementById("connectionTotal").textContent=db.connections.length+" CONNECTIONS";
-
-  if(!db.connections.length){
-    list.innerHTML='<div class="empty">No connections found.</div>';return;
-  }
-
-  list.innerHTML=db.connections.map(c=>{
-    const from=db.locations.find(x=>String(x.id)===String(c.from));
-    const to=db.locations.find(x=>String(x.id)===String(c.to));
-    const fromName=from?getLocationName(from):"Unknown";
-    const toName=to?getLocationName(to):"Unknown";
-
-    return `<div class="connection-card">
-      <h4>🔗 ${escapeHtml(c.category||"Connection")} · ${escapeHtml(c.type||"Wire")}</h4>
-      <div class="path">
-        <span class="path-node">${escapeHtml(fromName)}</span>
-        <span class="path-arrow">➜</span>
-        <span class="path-node">${escapeHtml(toName)}</span>
-      </div>
-      <p>${escapeHtml(c.name||"")}</p>
-      <button class="btn small danger" onclick="deleteConnection('${escapeHtml(c.id)}')">Delete Connection</button>
-    </div>`;
-  }).join("");
-}
-
-/* ================= STATS & RENDER ================= */
-function renderStats(){
-  const count=type=>db.locations.filter(x=>
-    normalizeType(x.type).toLowerCase()===type.toLowerCase()
-  ).length;
-  document.getElementById("customerCount").textContent=count("Customer");
-  document.getElementById("poleCount").textContent=count("Pole");
-  document.getElementById("switchCount").textContent=count("Switch");
-}
-function renderAll(){
-  setupTypeOptions();
-  renderStats();
-  renderLocations();
-  populateCustomerOptions();
-  renderNearbyOptions();
+ try{
+  await saveAllData();
   renderConnections();
+  clearConnectionForm();
+  setStatus("connectionStatus","Connection successfully saved.","ok");
+ }catch(e){
+  mapData.connections=mapData.connections.filter(x=>getId(x)!==item.id);
+  saveCache();renderConnections();
+  setStatus("connectionStatus","Save failed: "+e.message,"err");
+ }
 }
 
-/* ================= NAVIGATION ================= */
-function goToMap(){
-  if(window.parent&&window.parent!==window){
-    window.parent.postMessage({type:"ONE_ONLINE_NAVIGATE",page:"map"},"*");
-  }else{
-    window.location.href="map.html";
-  }
+function clearConnectionForm(){
+ $("fromLocation").value="";
+ $("toLocation").value="";
+ $("connectionName").value="";
+ $("connectionType").value="Wire";
 }
 
-/* ================= START ================= */
-readLocal();
-renderAll();
+/* Render Location Table */
+function renderLocations(){
+ const search=$("searchLocation").value.trim().toLowerCase();
+ const rows=mapData.locations.filter(x=>{
+  const text=[
+   getName(x),getType(x),getNumber(x),getId(x)
+  ].join(" ").toLowerCase();
+  return text.includes(search);
+ });
 
-window.addEventListener("load",()=>{
-  initPreviewMap();
-  loadData();
-});
+ $("locationCount").textContent=mapData.locations.length+" Locations";
+
+ if(!rows.length){
+  $("locationTable").innerHTML='<tr><td colspan="6" class="empty">No Location Found</td></tr>';
+  return;
+ }
+
+ $("locationTable").innerHTML=rows.map(x=>{
+  const c=coords(x);
+  return `
+   <tr>
+    <td><span class="point-icon">${escapeHTML(getIcon(x))}</span></td>
+    <td>${escapeHTML(getName(x))}</td>
+    <td><span class="badge">${escapeHTML(getType(x))}</span></td>
+    <td>${escapeHTML(getNumber(x))}</td>
+    <td>${c?c[0]+", "+c[1]:"No Coordinates"}</td>
+    <td><button class="danger" data-delete-location="${escapeHTML(getId(x))}">Delete</button></td>
+   </tr>`;
+ }).join("");
+
+ document.querySelectorAll("[data-delete-location]").forEach(btn=>{
+  btn.onclick=()=>deleteLocation(btn.dataset.deleteLocation);
+ });
+}
+
+/* Render Connections */
+function renderConnections(){
+ $("connectionCount").textContent=mapData.connections.length+" Connections";
+
+ if(!mapData.connections.length){
+  $("connectionTable").innerHTML='<tr><td colspan="5" class="empty">No Connection Found</td></tr>';
+  return;
+ }
+
+ $("connectionTable").innerHTML=mapData.connections.map(x=>{
+  const from=mapData.locations.find(p=>getId(p)===String(x.from??x.fromId));
+  const to=mapData.locations.find(p=>getId(p)===String(x.to??x.toId));
+  return `
+   <tr>
+    <td>${escapeHTML(from?getName(from):"Unknown")}</td>
+    <td>⟶ ${escapeHTML(x.name||x.type||"Connection")}</td>
+    <td>${escapeHTML(to?getName(to):"Unknown")}</td>
+    <td><span class="badge">${escapeHTML(x.type||"Wire")}</span></td>
+    <td><button class="danger" data-delete-connection="${escapeHTML(getId(x))}">Delete</button></td>
+   </tr>`;
+ }).join("");
+
+ document.querySelectorAll("[data-delete-connection]").forEach(btn=>{
+  btn.onclick=()=>deleteConnection(btn.dataset.deleteConnection);
+ });
+}
+
+/* Delete Location + its linked connections */
+async function deleteLocation(id){
+ const item=mapData.locations.find(x=>getId(x)===String(id));
+ if(!item)return;
+ if(!confirm("এই Location এবং এর সাথে যুক্ত Connection Delete করবেন?"))return;
+
+ const oldLocations=[...mapData.locations];
+ const oldConnections=[...mapData.connections];
+
+ mapData.locations=mapData.locations.filter(x=>getId(x)!==String(id));
+ mapData.connections=mapData.connections.filter(x=>
+  String(x.from??x.fromId)!==String(id)&&
+  String(x.to??x.toId)!==String(id)
+ );
+
+ try{
+  await saveAllData();
+  refreshAll();
+  setStatus("mainStatus","Location deleted successfully.","ok");
+ }catch(e){
+  mapData.locations=oldLocations;
+  mapData.connections=oldConnections;
+  saveCache();refreshAll();
+  setStatus("mainStatus","Delete failed: "+e.message,"err");
+ }
+}
+
+/* Delete Connection */
+async function deleteConnection(id){
+ if(!confirm("এই Connection Delete করবেন?"))return;
+ const old=[...mapData.connections];
+ mapData.connections=mapData.connections.filter(x=>getId(x)!==String(id));
+ try{
+  await saveAllData();
+  renderConnections();
+  setStatus("mainStatus","Connection deleted successfully.","ok");
+ }catch(e){
+  mapData.connections=old;
+  saveCache();renderConnections();
+  setStatus("mainStatus","Delete failed: "+e.message,"err");
+ }
+}
+
+/* Navigate to Map */
+function openMap(){
+ window.parent.postMessage({
+  type:"ONE_ONLINE_NAVIGATE",
+  page:"map"
+ },"*");
+}
+
+loadData();
 </script>
 </body>
 </html>
