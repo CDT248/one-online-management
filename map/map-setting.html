@@ -7,1432 +7,786 @@
 <title>Map Settings | ONE ONLINE</title>
 
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css">
 
 <style>
 :root{
-  --bg:#0b1220;--panel:#111c2e;--panel2:#17253a;
-  --line:#293951;--text:#edf4ff;--muted:#91a3bc;
-  --primary:#1685f8;--green:#16a36a;--red:#e34c5b;
+ --bg:#0b1220;--panel:#111c2e;--panel2:#172338;
+ --line:#293a52;--text:#e8f0fc;--muted:#91a3bd;
+ --primary:#1685f8;--green:#087f5b;--red:#dc3545;
 }
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,Arial,sans-serif;font-size:14px}
-button,input,select,textarea{font:inherit}
-button{cursor:pointer}
-.topbar{
-  min-height:67px;padding:11px 18px;background:#101b2c;
-  border-bottom:1px solid var(--line);display:flex;
-  align-items:center;justify-content:space-between;gap:12px;
-  position:sticky;top:0;z-index:1000
+body{margin:0;background:var(--bg);color:var(--text);font-family:Arial,sans-serif}
+button,input,select{font:inherit}
+.top{
+ padding:17px 20px;background:#101b2c;border-bottom:1px solid var(--line);
+ display:flex;justify-content:space-between;align-items:center;gap:12px
 }
-.brand{display:flex;align-items:center;gap:11px}
-.logo{
-  width:40px;height:40px;border-radius:12px;
-  background:linear-gradient(135deg,#087fdb,#16a36a);
-  display:grid;place-items:center;font-size:21px;font-weight:800
-}
-.brand h2{font-size:15px;margin:0}
-.brand small{display:block;color:var(--muted);font-size:9px;margin-top:4px;letter-spacing:1px}
-.top-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.top h2{font-size:17px;margin:0}
+.top p{font-size:11px;color:var(--muted);margin:5px 0 0}
 .btn{
-  border:1px solid var(--line);border-radius:9px;padding:9px 12px;
-  background:var(--panel2);color:var(--text);font-weight:700;font-size:12px
+ border:1px solid var(--line);background:var(--panel2);color:var(--text);
+ border-radius:8px;padding:10px 13px;font-size:12px;font-weight:700;cursor:pointer
 }
-.btn:hover{filter:brightness(1.15)}
-.btn.primary{background:var(--primary);border-color:var(--primary);color:#fff}
-.btn.success{background:var(--green);border-color:var(--green);color:white}
-.btn.danger{background:#702d39;border-color:#a94452;color:white}
-.btn.small{padding:7px 9px;font-size:11px}
-.status{font-size:11px;color:var(--muted)}
-.layout{display:grid;grid-template-columns:225px minmax(0,1fr);min-height:calc(100vh - 67px)}
-.sidebar{background:#0e1929;border-right:1px solid var(--line);padding:15px 10px}
-.side-label{font-size:10px;color:#7488a2;font-weight:800;letter-spacing:1px;padding:12px 10px 7px}
-.nav-btn{
-  width:100%;padding:11px 12px;margin:3px 0;border:0;border-radius:9px;
-  color:#afbed2;background:transparent;text-align:left;font-weight:700;font-size:12px
+.btn.primary{background:var(--primary);border-color:var(--primary);color:white}
+.btn.green{background:var(--green);border-color:var(--green);color:white}
+.btn.red{background:#7f1d1d;border-color:#991b1b;color:white}
+.layout{display:flex;min-height:calc(100vh - 70px)}
+.nav{
+ width:220px;flex-shrink:0;background:var(--panel);
+ border-right:1px solid var(--line);padding:12px
 }
-.nav-btn:hover,.nav-btn.active{background:#1b3452;color:white}
-.nav-btn.active{box-shadow:inset 3px 0 var(--primary)}
-.main{min-width:0;padding:17px}
-.page-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:15px}
-.page-head h1{font-size:21px;margin:0}
-.page-head p{color:var(--muted);font-size:11px;margin:6px 0 0}
-.badge{display:inline-block;padding:5px 9px;border-radius:30px;background:#193d5f;color:#a9d7ff;font-size:10px;font-weight:800}
-.panel{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:15px;margin-bottom:14px}
-.panel-title{font-size:14px;font-weight:800;margin:0 0 13px;display:flex;justify-content:space-between;align-items:center;gap:8px}
-.help{font-size:11px;color:var(--muted);line-height:1.7}
-.tabs{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:14px}
-.tab{padding:9px 13px;border:1px solid var(--line);border-radius:9px;background:var(--panel);color:#aebdd1;font-weight:700;font-size:12px}
-.tab.active{background:#173b61;color:white;border-color:#267ac5}
-.tab-content{display:none}
-.tab-content.active{display:block}
-.field{margin-bottom:12px}
-.field label{display:block;color:#b8c7da;font-size:11px;font-weight:700;margin-bottom:6px}
-.field input,.field select,.field textarea{
-  width:100%;background:#0c1727;border:1px solid #34465f;
-  border-radius:8px;padding:10px;color:white;outline:none
+.nav button{
+ width:100%;display:block;text-align:left;padding:12px;
+ border:0;border-radius:8px;background:transparent;color:var(--muted);
+ margin-bottom:5px;font-weight:700;font-size:12px;cursor:pointer
 }
-.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--primary)}
-.field input[type=color]{height:39px;padding:3px}
-.field input[type=checkbox]{width:auto;accent-color:var(--primary)}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.check-row{display:flex;align-items:center;gap:9px;padding:9px 0;border-bottom:1px solid #26364b}
-.check-row label{flex:1;color:#c5d2e2;font-size:12px}
-.check-row input{accent-color:var(--primary)}
-.map-shell{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#142238}
-.map-toolbar{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;padding:10px 12px;background:#142238;border-bottom:1px solid var(--line)}
-.toolbar-group{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
-#editorMap{width:100%;height:480px;background:#dce5ea}
-#areaMap{width:100%;height:510px;background:#dce5ea}
-.map-foot{padding:9px 12px;background:#111c2e;border-top:1px solid var(--line);font-size:10px;color:var(--muted);line-height:1.6}
-.editor-grid{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:13px}
-.side-panel .panel{margin-bottom:12px}
-.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.stat{background:var(--panel2);border:1px solid var(--line);border-radius:9px;padding:11px}
-.stat strong{font-size:21px;display:block}
-.stat span{font-size:10px;color:var(--muted)}
-.type-list,.connection-list{display:grid;gap:8px}
-.type-item{
-  display:grid;grid-template-columns:35px minmax(0,1fr) 32px;
-  gap:8px;align-items:center;padding:9px;border:1px solid var(--line);
-  border-radius:9px;background:var(--panel2)
+.nav button.active,.nav button:hover{background:#1c3552;color:white}
+.content{padding:20px;flex:1;min-width:0}
+.page{display:none}.page.active{display:block}
+.heading{font-size:19px;font-weight:800;margin:0 0 5px}
+.subheading{font-size:12px;color:var(--muted);margin:0 0 18px}
+.card{
+ background:var(--panel);border:1px solid var(--line);
+ border-radius:13px;padding:16px;margin-bottom:15px
 }
-.type-item input{width:100%;min-width:0;background:#0b1727;color:white;border:1px solid #34465f;padding:7px;border-radius:7px}
-.type-item button{background:#572b37;color:#ffb6bd;border:0;border-radius:7px;padding:7px}
-.type-icon{text-align:center;font-size:21px}
-.connection-item{display:flex;justify-content:space-between;align-items:center;gap:8px;background:var(--panel2);padding:9px;border-radius:8px;font-size:11px}
-.mode-note{padding:10px;border-radius:9px;background:#172d46;color:#a9d7ff;font-size:11px;line-height:1.6;margin:10px 0}
-.toggle-line{display:flex;align-items:center;justify-content:space-between;gap:10px}
-.toggle-line input{width:19px;height:19px;accent-color:var(--green)}
-#toast{
-  position:fixed;right:18px;bottom:18px;z-index:5000;
-  background:#172a40;border:1px solid #3b5877;color:white;
-  border-radius:10px;padding:12px 16px;display:none;
-  box-shadow:0 8px 30px #0008;max-width:90%;font-size:12px
+.card h3{font-size:14px;margin:0 0 13px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+.field label{display:block;font-size:11px;color:var(--muted);margin-bottom:6px}
+.field input,.field select{
+ width:100%;background:#0b1627;border:1px solid #344760;
+ color:white;padding:10px;border-radius:8px;outline:none
 }
-#toast.show{display:block}
-.leaflet-popup-content-wrapper,.leaflet-popup-tip{background:#101d30;color:#eef5ff}
-.leaflet-popup-content{margin:13px;min-width:200px;max-width:300px}
-.popup-title{font-size:14px;font-weight:800;margin-bottom:7px}
-.popup-table{width:100%;border-collapse:collapse;font-size:11px}
-.popup-table td{padding:5px 3px;border-bottom:1px solid #293b52;overflow-wrap:anywhere}
-.popup-table td:first-child{color:#91a8c3;width:40%}
-.marker-icon{display:flex;align-items:center;justify-content:center;border-radius:50%;border:2px solid white;box-shadow:0 3px 10px #0008;line-height:1}
-.fiber-flow{animation:fiberDash 0.8s linear infinite}
-@keyframes fiberDash{
-  from{stroke-dashoffset:0}
-  to{stroke-dashoffset:-28}
+.field input:focus,.field select:focus{border-color:var(--primary)}
+.help{font-size:10px;color:var(--muted);line-height:1.6;margin-top:6px}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.mapbox{
+ height:440px;border-radius:11px;overflow:hidden;
+ border:1px solid var(--line);position:relative
 }
-@media(max-width:1000px){
-  .editor-grid{grid-template-columns:1fr}
-  .side-panel{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+#drawingMap{height:100%;width:100%}
+.map-tools{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:10px}
+.type-list{display:grid;gap:8px}
+.type-row{
+ display:grid;grid-template-columns:45px 1fr 1fr auto auto;
+ gap:8px;align-items:center;background:var(--panel2);
+ border:1px solid var(--line);padding:9px;border-radius:9px
 }
-@media(max-width:700px){
-  .layout{grid-template-columns:1fr}
-  .sidebar{display:flex;overflow:auto;padding:7px;gap:4px;border-right:0;border-bottom:1px solid var(--line)}
-  .side-label{display:none}
-  .nav-btn{white-space:nowrap;width:auto;margin:0;padding:9px 10px;font-size:10px}
-  .main{padding:10px}
-  .topbar{padding:9px 11px}
-  .brand h2{font-size:12px}
-  .top-actions .btn{padding:8px;font-size:10px}
-  #editorMap{height:55vh;min-height:350px}
-  #areaMap{height:55vh;min-height:360px}
-  .side-panel{grid-template-columns:1fr}
-  .grid2{grid-template-columns:1fr 1fr}
-  .page-head h1{font-size:18px}
+.type-row input{
+ min-width:0;width:100%;padding:8px;border-radius:7px;
+ background:#0b1627;border:1px solid #344760;color:white
+}
+.type-row button{padding:8px;border:0;border-radius:7px;cursor:pointer}
+.icon-preview{font-size:25px;text-align:center}
+.connection-list{display:grid;gap:8px;margin-top:12px}
+.connection-row{
+ background:var(--panel2);padding:10px;border-radius:8px;
+ display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:12px
+}
+.check{display:flex;gap:8px;align-items:center;font-size:12px;color:var(--text)}
+.check input{width:16px;height:16px}
+.color-input{height:39px;padding:3px!important}
+.notice{
+ padding:10px 12px;background:#172b42;border:1px solid #29496c;
+ color:#b9d9ff;border-radius:8px;font-size:11px;line-height:1.6;margin-bottom:12px
+}
+.status{font-size:11px;color:#8fd4ae;margin-left:8px}
+@media(max-width:800px){
+ .layout{display:block}
+ .nav{width:100%;display:flex;overflow-x:auto;border-right:0;border-bottom:1px solid var(--line)}
+ .nav button{width:auto;white-space:nowrap;margin:0 4px}
+ .content{padding:13px}
+ .grid{grid-template-columns:1fr}
+ .type-row{grid-template-columns:38px 1fr 1fr}
+ .type-row button{grid-row:auto}
+ .top{padding:13px}
+ .mapbox{height:360px}
 }
 </style>
 </head>
-
 <body>
 
-<header class="topbar">
-  <div class="brand">
-    <div class="logo">O</div>
-    <div>
-      <h2>ONE ONLINE</h2>
-      <small>NETWORK MAP CONTROL CENTER</small>
-    </div>
-  </div>
-  <div class="top-actions">
-    <span class="status" id="saveStatus">Loading...</span>
-    <button class="btn" onclick="refreshData()">↻ Refresh</button>
-    <button class="btn primary" onclick="saveAll()">Save All</button>
-  </div>
+<header class="top">
+ <div>
+  <h2>ONE ONLINE — Map Settings</h2>
+  <p>Manage map display, icons, allowed area and network connections</p>
+ </div>
+ <div class="row">
+  <button class="btn primary" id="saveAll">Save All Settings</button>
+ </div>
 </header>
 
 <div class="layout">
-<aside class="sidebar">
-  <div class="side-label">MAP CONTROL</div>
-  <button class="nav-btn active" data-tab="editor">🗺 Map Preview</button>
-  <button class="nav-btn" data-tab="area">⬡ Area Lock Map</button>
-  <button class="nav-btn" data-tab="display">⚙ Map Display</button>
-  <button class="nav-btn" data-tab="icons">📍 Icon Settings</button>
-  <button class="nav-btn" data-tab="connections">〰 Fiber & Connections</button>
-  <button class="nav-btn" data-tab="visibility">👁 Visibility</button>
-  <button class="nav-btn" data-tab="backup">💾 Backup</button>
-</aside>
+ <nav class="nav">
+  <button class="active" data-page="display">🗺 Map Display</button>
+  <button data-page="icons">🎯 Icon Settings</button>
+  <button data-page="area">📍 District & Zone</button>
+  <button data-page="connections">🔗 Connections</button>
+  <button data-page="cables">🧵 Wire Settings</button>
+ </nav>
 
-<main class="main">
-  <div class="page-head">
-    <div>
-      <h1>Map Settings</h1>
-      <p>Manage your network locations, fiber connections and map boundary.</p>
+ <main class="content">
+
+ <!-- MAP DISPLAY -->
+ <section class="page active" id="page-display">
+  <h2 class="heading">Map Display Settings</h2>
+  <p class="subheading">Set map type, starting point, zoom and visible map area.</p>
+
+  <div class="card">
+   <h3>Default Map View</h3>
+   <div class="grid">
+    <div class="field">
+     <label>Default Map Type</label>
+     <select id="mapType">
+      <option value="road">Road Map</option>
+      <option value="satellite">Satellite</option>
+      <option value="terrain">Terrain</option>
+     </select>
     </div>
-    <span class="badge" id="dbBadge">MAP SYSTEM</span>
+    <div class="field">
+     <label>Default Zoom Level</label>
+     <input id="zoomLevel" type="number" min="3" max="22" value="14">
+    </div>
+    <div class="field">
+     <label>Default Latitude</label>
+     <input id="centerLat" type="number" step="any">
+    </div>
+    <div class="field">
+     <label>Default Longitude</label>
+     <input id="centerLng" type="number" step="any">
+    </div>
+   </div>
+   <p class="help">Map-এর উপর নিচের “Set Default Point” বাটন চালু করে যেকোনো জায়গায় ক্লিক করলে সেই জায়গাটি Default Map Point হবে।</p>
   </div>
 
-  <!-- MAP PREVIEW -->
-  <section class="tab-content active" id="tab-editor">
-    <div class="editor-grid">
-      <div class="map-shell">
-        <div class="map-toolbar">
-          <div class="toolbar-group">
-            <span class="badge" id="modeBadge">NORMAL MODE</span>
-            <button class="btn small" onclick="fitEditorPoints()">Fit Points</button>
-            <button class="btn small" onclick="startConnect()">Pull → Customer</button>
-          </div>
-          <div class="toolbar-group">
-            <select class="btn small" id="editorMapType" onchange="changeMapType(editorMap,this.value)">
-              <option value="road">Road</option>
-              <option value="satellite">Satellite</option>
-              <option value="terrain">Terrain</option>
-            </select>
-            <button class="btn small" onclick="cancelEditorMode()">Cancel</button>
-          </div>
-        </div>
-        <div id="editorMap"></div>
-        <div class="map-foot" id="editorInstruction">
-          Click a point to view all its information. Drag a marker to change its location.
-        </div>
-      </div>
+  <div class="card">
+   <h3>Map Drawing & Preview</h3>
+   <div class="notice">
+    Polygon আঁকতে Polygon Tool ব্যবহার করুন। Area Save করলে Map পেজে Polygon-এর বাইরের জায়গা আড়াল হবে এবং নির্ধারিত এলাকার বাইরে Map সরানো সীমাবদ্ধ থাকবে।
+   </div>
+   <div class="map-tools">
+    <button class="btn primary" id="setHome">📌 Set Default Point</button>
+    <button class="btn" id="drawArea">⬡ Draw Allowed Area</button>
+    <button class="btn" id="editArea">✎ Edit Drawing</button>
+    <button class="btn red" id="clearArea">Clear Drawing</button>
+    <label class="check"><input type="checkbox" id="areaEnabled"> Enable Area Restriction</label>
+   </div>
+   <div class="mapbox"><div id="drawingMap"></div></div>
+   <p class="help" id="mapClickHelp">Map-এর উপর ক্লিক করে Default Point নির্ধারণ করুন অথবা Polygon আঁকুন।</p>
+  </div>
 
-      <div class="side-panel">
-        <div class="panel">
-          <h3 class="panel-title">Map Overview</h3>
-          <div class="stat-grid">
-            <div class="stat"><strong id="totalPoints">0</strong><span>Total Points</span></div>
-            <div class="stat"><strong id="totalWires">0</strong><span>Connections</span></div>
-            <div class="stat"><strong id="totalCustomers">0</strong><span>Customers</span></div>
-            <div class="stat"><strong id="totalPulls">0</strong><span>Pull Points</span></div>
-          </div>
-        </div>
-        <div class="panel">
-          <h3 class="panel-title">Connection Mode</h3>
-          <div class="mode-note" id="connectInfo">
-            Press Pull → Customer. Then select a Pull marker and a Customer marker.
-          </div>
-        </div>
-        <div class="panel">
-          <h3 class="panel-title">Selected Location</h3>
-          <div class="help" id="selectedInfo">Click a marker to view its information.</div>
-        </div>
-      </div>
+  <div class="card">
+   <h3>Map Visibility</h3>
+   <div class="grid">
+    <label class="check"><input type="checkbox" id="showWires" checked> Show Network Connections</label>
+    <label class="check"><input type="checkbox" id="showLabels"> Show Location Names</label>
+   </div>
+   <div class="field" style="margin-top:14px">
+    <label>Marker Size</label>
+    <input id="markerSize" type="range" min="20" max="55" value="30">
+   </div>
+  </div>
+ </section>
+
+ <!-- ICONS -->
+ <section class="page" id="page-icons">
+  <h2 class="heading">Icon Settings</h2>
+  <p class="subheading">Add, edit or delete location types and their map icons.</p>
+
+  <div class="card">
+   <h3>Add New Icon Type</h3>
+   <div class="grid">
+    <div class="field"><label>Type Name</label><input id="newTypeName" placeholder="Example: ONU"></div>
+    <div class="field"><label>Icon / Emoji</label><input id="newTypeIcon" placeholder="Example: 📡"></div>
+    <div class="field"><label>Icon Color</label><input id="newTypeColor" class="color-input" type="color" value="#2563eb"></div>
+   </div>
+   <div style="margin-top:12px"><button class="btn primary" id="addType">+ Add Icon Type</button></div>
+  </div>
+
+  <div class="card">
+   <h3>Available Icons</h3>
+   <div class="type-list" id="typeList"></div>
+  </div>
+ </section>
+
+ <!-- AREA -->
+ <section class="page" id="page-area">
+  <h2 class="heading">District & Zone Settings</h2>
+  <p class="subheading">Name your operating district and zone and define the allowed map boundary.</p>
+
+  <div class="card">
+   <h3>Operating Area</h3>
+   <div class="grid">
+    <div class="field"><label>District Name</label><input id="districtName" placeholder="Example: Chattogram"></div>
+    <div class="field"><label>Zone Name</label><input id="zoneName" placeholder="Example: Halishahar Zone"></div>
+    <div class="field"><label>Area / Thana</label><input id="areaName" placeholder="Example: Halishahar"></div>
+    <div class="field"><label>Area Note</label><input id="areaNote" placeholder="Optional note"></div>
+   </div>
+   <div class="notice" style="margin-top:14px">
+    District, Zone ও Area নাম এখানে সংরক্ষণ হবে। বাস্তবে কোন জায়গা Map-এ অনুমোদিত হবে তা Map Display-এর Drawing Map-এ Polygon এঁকে নির্ধারণ করতে হবে।
+   </div>
+   <label class="check"><input type="checkbox" id="blurOutside"> Outside Area Mask / Hide</label>
+  </div>
+ </section>
+
+ <!-- CONNECTIONS -->
+ <section class="page" id="page-connections">
+  <h2 class="heading">Manual Connections</h2>
+  <p class="subheading">Choose two existing locations and connect them directly.</p>
+
+  <div class="card">
+   <h3>Create Connection</h3>
+   <div class="grid">
+    <div class="field"><label>From Location</label><select id="connectionFrom"></select></div>
+    <div class="field"><label>To Location</label><select id="connectionTo"></select></div>
+    <div class="field"><label>Connection Category</label><select id="connectionType"></select></div>
+    <div class="field"><label>Connection Name</label><input id="connectionName" placeholder="Example: Pull to Customer"></div>
+   </div>
+   <div style="margin-top:12px" class="row">
+    <button class="btn primary" id="addConnection">+ Create Connection</button>
+    <span class="help">From → To দিকটি সংরক্ষিত থাকবে।</span>
+   </div>
+  </div>
+
+  <div class="card">
+   <h3>Saved Connections</h3>
+   <div id="connectionList" class="connection-list"></div>
+  </div>
+ </section>
+
+ <!-- CABLES -->
+ <section class="page" id="page-cables">
+  <h2 class="heading">Wire & Fiber Settings</h2>
+  <p class="subheading">Create and manage connection categories such as Main Fiber, Customer Fiber and UTP.</p>
+
+  <div class="card">
+   <h3>Add Cable Category</h3>
+   <div class="grid">
+    <div class="field"><label>Category Name</label><input id="newCableName" placeholder="Example: Main Fiber"></div>
+    <div class="field"><label>Line Color</label><input id="newCableColor" type="color" class="color-input" value="#2563eb"></div>
+    <div class="field"><label>Line Weight</label><input id="newCableWeight" type="number" min="1" max="12" value="4"></div>
+    <div class="field"><label>Line Style</label>
+     <select id="newCableStyle">
+      <option value="solid">Solid</option>
+      <option value="dashed">Dashed</option>
+      <option value="dotted">Dotted Animated</option>
+     </select>
     </div>
-  </section>
+   </div>
+   <div style="margin-top:12px"><button class="btn primary" id="addCable">+ Add Category</button></div>
+  </div>
 
-  <!-- AREA LOCK MAP: SEPARATE MAP -->
-  <section class="tab-content" id="tab-area">
-    <div class="panel">
-      <h3 class="panel-title">
-        <span>Area Lock — Separate Boundary Map</span>
-        <span class="badge" id="areaBadge">LOCK OFF</span>
-      </h3>
-      <p class="help">
-        এই Map থেকেই তোমার Network-এর এলাকা নির্ধারণ করবে। Map-এ ক্লিক করে Boundary Point বসাও।
-        কমপক্ষে ৩টি Point দিয়ে একটি Area তৈরি করো। Area Lock চালু করলে Main Map এই Boundary ব্যবহার করবে।
-      </p>
-      <div class="check-row toggle-line">
-        <label for="areaEnabled"><b>Enable Area Lock</b></label>
-        <input type="checkbox" id="areaEnabled">
-      </div>
-      <div class="map-shell" style="margin-top:13px">
-        <div class="map-toolbar">
-          <div class="toolbar-group">
-            <span class="badge" id="areaModeBadge">VIEW MODE</span>
-            <button class="btn success small" onclick="startAreaDrawing()">＋ Draw Boundary</button>
-            <button class="btn small" onclick="undoAreaPoint()">↶ Undo</button>
-            <button class="btn danger small" onclick="clearArea()">Clear</button>
-          </div>
-          <div class="toolbar-group">
-            <select class="btn small" id="areaMapType" onchange="changeMapType(areaMap,this.value)">
-              <option value="road">Road</option>
-              <option value="satellite">Satellite</option>
-              <option value="terrain">Terrain</option>
-            </select>
-            <button class="btn small" onclick="fitArea()">Fit Area</button>
-            <button class="btn small" onclick="stopAreaDrawing()">Done</button>
-          </div>
-        </div>
-        <div id="areaMap"></div>
-        <div class="map-foot" id="areaInstruction">
-          Click Draw Boundary, then click the map to add boundary points. Click Done when finished.
-        </div>
-      </div>
-      <div class="grid2" style="margin-top:13px">
-        <div class="stat">
-          <strong id="areaPointsCount">0</strong>
-          <span>Boundary Points</span>
-        </div>
-        <div class="stat">
-          <strong id="areaLockState">OFF</strong>
-          <span>Area Lock Status</span>
-        </div>
-      </div>
-      <div class="field" style="margin-top:14px">
-        <label>Boundary Coordinates (JSON)</label>
-        <textarea id="areaJSON" rows="5" placeholder='[{"lat":23.8,"lng":90.4}]'></textarea>
-      </div>
-      <div class="toolbar-group">
-        <button class="btn" onclick="applyAreaJSON()">Apply JSON</button>
-        <button class="btn" onclick="fitArea()">Fit Boundary</button>
-        <button class="btn primary" onclick="saveAll()">Save Area Lock</button>
-      </div>
-      <div class="mode-note">
-        <b>Important:</b> Area Lock-এর Boundary এই আলাদা Map-এ তৈরি হবে। Save করার পরে Main Map-এ একই Boundary দেখানো হবে।
-        Main Map-এ বাইরে Mask এবং Map Bounds সীমাবদ্ধ থাকবে।
-      </div>
+  <div class="card">
+   <h3>Existing Cable Categories</h3>
+   <div id="cableList" class="type-list"></div>
+  </div>
+
+  <div class="card">
+   <h3>Fiber Animation</h3>
+   <div class="grid">
+    <div class="field"><label>Animation Speed (seconds)</label><input id="fiberSpeed" type="number" min=".2" max="5" step=".1"></div>
+    <div class="field"><label>Flow Direction</label>
+     <select id="fiberDirection"><option value="forward">From → To</option><option value="reverse">To → From</option></select>
     </div>
-  </section>
+    <div class="field"><label>Dash Size</label><input id="fiberDashSize" type="number" min="1" max="12"></div>
+   </div>
+  </div>
+ </section>
 
-  <!-- DISPLAY -->
-  <section class="tab-content" id="tab-display">
-    <div class="panel">
-      <h3 class="panel-title">Map Display Settings</h3>
-      <div class="grid2">
-        <div class="field">
-          <label>Default Map Type</label>
-          <select id="mapType">
-            <option value="road">Road Map</option>
-            <option value="satellite">Satellite</option>
-            <option value="terrain">Terrain</option>
-          </select>
-        </div>
-        <div class="field">
-          <label>Default Zoom</label>
-          <input id="zoomLevel" type="number" min="3" max="22">
-        </div>
-        <div class="field">
-          <label>Center Latitude</label>
-          <input id="centerLat" type="number" step="any">
-        </div>
-        <div class="field">
-          <label>Center Longitude</label>
-          <input id="centerLng" type="number" step="any">
-        </div>
-        <div class="field">
-          <label>Marker Size (px)</label>
-          <input id="markerSize" type="number" min="18" max="70">
-        </div>
-      </div>
-      <div class="check-row">
-        <label for="showMarkerLabels">Show Marker Labels</label>
-        <input type="checkbox" id="showMarkerLabels">
-      </div>
-      <div class="check-row">
-        <label for="showWires">Show Connection Lines</label>
-        <input type="checkbox" id="showWires">
-      </div>
-      <button class="btn primary" onclick="saveAll()">Save Display Settings</button>
-    </div>
-  </section>
+ <div class="row" style="margin:18px 0 30px">
+  <button class="btn primary" id="saveBottom">Save All Settings</button>
+  <span class="status" id="saveStatus"></span>
+ </div>
 
-  <!-- ICONS -->
-  <section class="tab-content" id="tab-icons">
-    <div class="panel">
-      <h3 class="panel-title">Point Icon Settings</h3>
-      <div id="typeList" class="type-list"></div>
-      <hr style="border-color:var(--line);margin:17px 0">
-      <h3 class="panel-title">Add New Point Type</h3>
-      <div class="grid2">
-        <div class="field">
-          <label>Type Name</label>
-          <input id="newTypeName" placeholder="Example: Junction">
-        </div>
-        <div class="field">
-          <label>Icon</label>
-          <input id="newTypeIcon" value="📡">
-        </div>
-      </div>
-      <div class="field">
-        <label>Icon Color</label>
-        <input id="newTypeColor" type="color" value="#0ea5e9">
-      </div>
-      <button class="btn primary" onclick="addType()">+ Add Type</button>
-    </div>
-  </section>
-
-  <!-- CONNECTIONS / FIBER -->
-  <section class="tab-content" id="tab-connections">
-    <div class="panel">
-      <h3 class="panel-title">Fiber Animation Settings</h3>
-      <p class="help">
-        Fiber line-এ চলমান Dotted Animation থাকবে। এতে বোঝা যাবে Fiber Connection কোন দিকে Flow করছে।
-      </p>
-      <div class="check-row">
-        <label for="fiberAnimation">Enable Live Fiber Animation</label>
-        <input type="checkbox" id="fiberAnimation">
-      </div>
-      <div class="grid2">
-        <div class="field">
-          <label>Fiber Color</label>
-          <input id="fiberColor" type="color">
-        </div>
-        <div class="field">
-          <label>Fiber Weight</label>
-          <input id="fiberWeight" type="number" min="1" max="12">
-        </div>
-        <div class="field">
-          <label>Fiber Opacity (0–1)</label>
-          <input id="fiberOpacity" type="number" min="0" max="1" step=".05">
-        </div>
-        <div class="field">
-          <label>Dot Size / Dash Length</label>
-          <input id="fiberDashSize" type="number" min="2" max="30">
-        </div>
-        <div class="field">
-          <label>Animation Speed (seconds)</label>
-          <input id="fiberSpeed" type="number" min=".1" max="10" step=".1">
-        </div>
-        <div class="field">
-          <label>Animation Direction</label>
-          <select id="fiberDirection">
-            <option value="forward">Pull → Customer</option>
-            <option value="reverse">Customer → Pull</option>
-          </select>
-        </div>
-        <div class="field">
-          <label>Fiber Line Style</label>
-          <select id="fiberStyle">
-            <option value="animated">Animated Dotted</option>
-            <option value="solid">Solid</option>
-            <option value="dashed">Dashed</option>
-          </select>
-        </div>
-      </div>
-    </div>
-
-    <div class="panel">
-      <h3 class="panel-title">Wire / Drop Connection Settings</h3>
-      <div class="grid2">
-        <div class="field">
-          <label>Wire Color</label><input id="wireColor" type="color">
-        </div>
-        <div class="field">
-          <label>Wire Weight</label><input id="wireWeight" type="number" min="1" max="12">
-        </div>
-        <div class="field">
-          <label>Wire Opacity</label><input id="wireOpacity" type="number" min="0" max="1" step=".05">
-        </div>
-        <div class="field">
-          <label>Wire Style</label>
-          <select id="wireStyle">
-            <option value="solid">Solid</option>
-            <option value="dashed">Dashed</option>
-            <option value="dotted">Dotted</option>
-          </select>
-        </div>
-        <div class="field">
-          <label>Drop Color</label><input id="dropColor" type="color">
-        </div>
-        <div class="field">
-          <label>Drop Weight</label><input id="dropWeight" type="number" min="1" max="12">
-        </div>
-        <div class="field">
-          <label>Drop Opacity</label><input id="dropOpacity" type="number" min="0" max="1" step=".05">
-        </div>
-        <div class="field">
-          <label>Drop Style</label>
-          <select id="dropStyle">
-            <option value="solid">Solid</option>
-            <option value="dashed">Dashed</option>
-            <option value="dotted">Dotted</option>
-          </select>
-        </div>
-      </div>
-      <button class="btn primary" onclick="saveAll()">Save Connection Settings</button>
-    </div>
-
-    <div class="panel">
-      <h3 class="panel-title">Saved Connections</h3>
-      <div id="connectionList" class="connection-list"></div>
-    </div>
-  </section>
-
-  <!-- VISIBILITY -->
-  <section class="tab-content" id="tab-visibility">
-    <div class="panel">
-      <h3 class="panel-title">Point Visibility</h3>
-      <p class="help">Select which point types should be hidden from the map.</p>
-      <div id="hiddenTypes"></div>
-      <button class="btn primary" style="margin-top:14px" onclick="saveAll()">Save Visibility</button>
-    </div>
-  </section>
-
-  <!-- BACKUP -->
-  <section class="tab-content" id="tab-backup">
-    <div class="panel">
-      <h3 class="panel-title">Backup & Restore</h3>
-      <p class="help">Export or import your complete map database including locations, connections, custom types and settings.</p>
-      <div class="toolbar-group">
-        <button class="btn primary" onclick="exportBackup()">⬇ Export Full Backup</button>
-        <button class="btn" onclick="$('backupFile').click()">⬆ Import Backup</button>
-        <input id="backupFile" type="file" accept=".json,application/json" hidden>
-      </div>
-    </div>
-  </section>
-
-</main>
+ </main>
 </div>
 
-<div id="toast"></div>
-
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script>
 
 <script>
-/* =========================================
-   ONE ONLINE MAP SETTINGS - VERSION 2
-========================================= */
-
-const MAP_API="https://script.google.com/macros/s/AKfycbxmDzfnY3LpvfvHjC4usnZiBT4BX4KZIjVoCGcSULikoTKQaC_mj7cbG_zUaiTyZ4sb8w/exec";
-const CACHE_KEY="ONE_ONLINE_MAP_DATA_V1";
-
-const DEFAULT_SETTINGS={
-  mapType:"road",
-  centerLat:23.8103,
-  centerLng:90.4125,
-  zoomLevel:13,
-  markerSize:36,
-  showMarkerLabels:true,
-  showWires:true,
-  hiddenTypes:[],
-  wireColor:"#f59e0b",
-  wireWeight:3,
-  wireOpacity:.95,
-  wireStyle:"solid",
-  fiberColor:"#2563eb",
-  fiberWeight:4,
-  fiberOpacity:1,
-  fiberStyle:"animated",
-  fiberAnimation:true,
-  fiberDashSize:5,
-  fiberSpeed:.8,
-  fiberDirection:"forward",
-  dropColor:"#16a34a",
-  dropWeight:2,
-  dropOpacity:.95,
-  dropStyle:"solid",
-  lockedArea:{enabled:false,points:[]},
-  _customTypes:[]
-};
+const API="https://script.google.com/macros/s/AKfycbxmDzfnY3LpvfvHjC4usnZiBT4BX4KZIjVoCGcSULikoTKQaC_mj7cbG_zUaiTyZ4sb8w/exec";
+const CACHE="ONE_ONLINE_MAP_DATA_V1";
 
 const DEFAULT_TYPES=[
-  {name:"Customer",icon:"👤",color:"#2563eb"},
-  {name:"Pole",icon:"🗼",color:"#f59e0b"},
-  {name:"Switch",icon:"🔀",color:"#16a36a"},
-  {name:"Pull",icon:"📍",color:"#9333ea"}
+ {name:"Customer",icon:"👤",color:"#2563eb"},
+ {name:"Pole",icon:"🗼",color:"#f59e0b"},
+ {name:"Switch",icon:"🔀",color:"#16a36a"},
+ {name:"Pull",icon:"📍",color:"#9333ea"}
 ];
 
-let data={
-  locations:[],
-  connections:[],
-  settings:{...DEFAULT_SETTINGS},
-  customTypes:DEFAULT_TYPES.map(x=>({...x}))
+const DEFAULT_CABLES=[
+ {name:"Main Fiber",type:"fiber",color:"#2563eb",weight:4,style:"dotted"},
+ {name:"Customer Fiber",type:"fiber",color:"#16a36a",weight:3,style:"dotted"},
+ {name:"UTP",type:"wire",color:"#f59e0b",weight:2,style:"dashed"}
+];
+
+const DEFAULT_SETTINGS={
+ mapType:"road",centerLat:23.8103,centerLng:90.4125,zoomLevel:14,
+ markerSize:30,showMarkerLabels:false,showWires:true,hiddenTypes:[],
+ wireColor:"#f59e0b",wireWeight:3,wireOpacity:1,wireStyle:"solid",
+ fiberColor:"#2563eb",fiberWeight:4,fiberOpacity:1,fiberStyle:"dotted",
+ fiberSpeed:1,fiberDashSize:2,fiberDirection:"forward",
+ dropColor:"#16a34a",dropWeight:2,dropOpacity:1,dropStyle:"dashed",
+ displayArea:{enabled:false,points:[]},
+ lockedArea:{enabled:false,points:[]},
+ homePoint:{lat:23.8103,lng:90.4125,zoom:14},
+ district:"",zone:"",areaName:"",areaNote:"",blurOutside:true,
+ _customTypes:[],
+ _cableCategories:DEFAULT_CABLES
 };
 
-let editorMap,areaMap;
-let editorTile,areaTile;
-let editorMarkers,editorLines,editorBoundary;
-let areaBoundaryLayer,areaMarkersLayer;
-let areaPoints=[];
-let markerRefs=new Map();
-let editorMode="normal";
-let connectFrom=null;
-let dirty=false;
+let settings={...DEFAULT_SETTINGS};
+let locations=[],connections=[],customTypes=[...DEFAULT_TYPES];
+let cables=DEFAULT_CABLES.map(x=>({...x}));
+let drawMap,drawnItems;
+let drawingMode="";
+let homeMarker=null;
+let areaPolygon=null;
 
 const $=id=>document.getElementById(id);
-
-const TILE_URLS={
-  road:"https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-  satellite:"https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-  terrain:"https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png"
+const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const val=(o,keys,d="")=>{
+ for(const k of keys)if(o&&o[k]!==undefined&&o[k]!==null&&o[k]!=="")return o[k];
+ return d;
 };
+const parse=(v,d)=>{try{return typeof v==="string"?JSON.parse(v):v||d}catch(e){return d}};
+const normType=v=>String(v||"").trim().toLowerCase();
 
-const TILE_OPTIONS={
-  road:{maxZoom:22,maxNativeZoom:19,attribution:"© OpenStreetMap"},
-  satellite:{maxZoom:22,maxNativeZoom:19,attribution:"Tiles © Esri"},
-  terrain:{maxZoom:22,maxNativeZoom:17,attribution:"© OpenTopoMap"}
-};
-
-function toast(message){
-  const el=$("toast");
-  el.textContent=message;
-  el.classList.add("show");
-  clearTimeout(toast.timer);
-  toast.timer=setTimeout(()=>el.classList.remove("show"),3200);
-}
-
-function status(message){
-  $("saveStatus").textContent=message;
-}
-
-function dirtyState(){
-  dirty=true;
-  status("Unsaved changes");
-  $("dbBadge").textContent="CHANGES NOT SAVED";
-}
-
-function getValue(obj,...keys){
-  for(const key of keys){
-    if(obj && obj[key]!==undefined && obj[key]!==null && obj[key]!=="") return obj[key];
-  }
-  return "";
-}
-
-function locId(loc){return String(getValue(loc,"id","ID","Id"))}
-function locType(loc){return String(getValue(loc,"type","Type")||"Other")}
-function locName(loc){return String(getValue(loc,"name","Name")||locType(loc))}
-function locLat(loc){return Number(getValue(loc,"lat","latitude","Latitude"))}
-function locLng(loc){return Number(getValue(loc,"lng","longitude","Longitude"))}
-
-function validLoc(loc){
-  return locId(loc)!==""&&Number.isFinite(locLat(loc))&&Number.isFinite(locLng(loc));
-}
-
-function setCoords(loc,lat,lng){
-  loc.lat=lat;
-  loc.lng=lng;
-  loc.latitude=lat;
-  loc.longitude=lng;
-  if("Latitude" in loc)loc.Latitude=lat;
-  if("Longitude" in loc)loc.Longitude=lng;
-}
-
-function escapeHtml(value){
-  return String(value).replace(/[&<>"']/g,ch=>({
-    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
-  }[ch]));
-}
-
-function normalizeData(raw){
-  if(raw&&raw.data&&!raw.locations)raw=raw.data;
-  raw=raw||{};
-
-  const s=raw.settings||raw.Settings||{};
-  const types=raw.customTypes||raw.custom_types||s._customTypes||[];
-
-  data={
-    locations:Array.isArray(raw.locations||raw.Locations)?(raw.locations||raw.Locations):[],
-    connections:Array.isArray(raw.connections||raw.Connections)?(raw.connections||raw.Connections):[],
-    settings:{
-      ...DEFAULT_SETTINGS,
-      ...s,
-      lockedArea:{
-        ...DEFAULT_SETTINGS.lockedArea,
-        ...(s.lockedArea||{})
-      }
-    },
-    customTypes:Array.isArray(types)&&types.length?types:DEFAULT_TYPES.map(x=>({...x}))
-  };
-
-  if(!Array.isArray(data.settings.lockedArea.points))data.settings.lockedArea.points=[];
-  data.settings.hiddenTypes=Array.isArray(data.settings.hiddenTypes)?data.settings.hiddenTypes:[];
-  areaPoints=data.settings.lockedArea.points.map(p=>({lat:Number(p.lat),lng:Number(p.lng)}));
-}
-
-/* =========================================
-   TWO SEPARATE MAPS
-========================================= */
-
-function makeTile(map,type){
-  if(type!=="road"&&type!=="satellite"&&type!=="terrain")type="road";
-  const layer=L.tileLayer(TILE_URLS[type],TILE_OPTIONS[type]);
-  layer.addTo(map);
-  return layer;
-}
-
-function changeMapType(which,type){
-  const target=which===editorMap?editorMap:areaMap;
-  let current=which===editorMap?editorTile:areaTile;
-
-  if(current)target.removeLayer(current);
-  current=makeTile(target,type);
-
-  if(which===editorMap)editorTile=current;
-  else areaTile=current;
-}
-
-function initMaps(){
-  editorMap=L.map("editorMap",{
-    center:[23.8103,90.4125],zoom:13,
-    minZoom:3,maxZoom:22,zoomControl:true,
-    scrollWheelZoom:true,touchZoom:true,preferCanvas:true
+function initNavigation(){
+ document.querySelectorAll(".nav button").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+   document.querySelectorAll(".nav button").forEach(x=>x.classList.remove("active"));
+   document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));
+   btn.classList.add("active");
+   $("page-"+btn.dataset.page).classList.add("active");
+   if(drawMap)setTimeout(()=>drawMap.invalidateSize(true),150);
   });
+ });
+}
 
-  editorTile=makeTile(editorMap,"road");
-  editorMarkers=L.layerGroup().addTo(editorMap);
-  editorLines=L.layerGroup().addTo(editorMap);
-  editorBoundary=L.layerGroup().addTo(editorMap);
+function initDrawingMap(){
+ drawMap=L.map("drawingMap").setView([23.8103,90.4125],13);
+ const road=L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{
+  maxZoom:22,maxNativeZoom:19,attribution:"© OpenStreetMap"
+ }).addTo(drawMap);
+ const sat=L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",{
+  maxZoom:22,maxNativeZoom:19,attribution:"Tiles © Esri"
+ });
+ L.control.layers({"Road":road,"Satellite":sat}).addTo(drawMap);
 
-  areaMap=L.map("areaMap",{
-    center:[23.8103,90.4125],zoom:13,
-    minZoom:3,maxZoom:22,zoomControl:true,
-    scrollWheelZoom:true,touchZoom:true,preferCanvas:true
+ drawnItems=new L.FeatureGroup().addTo(drawMap);
+ drawMap.addControl(new L.Control.Draw({
+  position:"topleft",
+  draw:{
+   polygon:{allowIntersection:false,showArea:true,shapeOptions:{color:"#facc15",weight:3,fillOpacity:.12}},
+   rectangle:false,circle:false,circlemarker:false,marker:false,polyline:false
+  },
+  edit:{featureGroup:drawnItems,remove:true}
+ }));
+
+ drawMap.on(L.Draw.Event.CREATED,e=>{
+  drawnItems.clearLayers();
+  drawnItems.addLayer(e.layer);
+  updateAreaFromDrawing();
+ });
+ drawMap.on(L.Draw.Event.EDITED,updateAreaFromDrawing);
+ drawMap.on(L.Draw.Event.DELETED,updateAreaFromDrawing);
+
+ drawMap.on("click",e=>{
+  if(drawingMode==="home"){
+   setHomePoint(e.latlng.lat,e.latlng.lng);
+   drawingMode="";
+   $("mapClickHelp").textContent="Default Map Point saved. Click Save All Settings.";
+  }
+ });
+}
+
+function setHomePoint(lat,lng){
+ settings.homePoint={lat,lng,zoom:drawMap.getZoom()};
+ $("centerLat").value=lat;
+ $("centerLng").value=lng;
+ if(homeMarker)drawMap.removeLayer(homeMarker);
+ homeMarker=L.marker([lat,lng]).addTo(drawMap).bindPopup("Default Map Opening Point").openPopup();
+}
+
+function updateAreaFromDrawing(){
+ let points=[];
+ drawnItems.eachLayer(layer=>{
+  if(layer instanceof L.Polygon){
+   const ring=layer.getLatLngs()[0]||[];
+   points=ring.map(p=>({lat:p.lat,lng:p.lng}));
+  }
+ });
+ settings.displayArea={enabled:$("areaEnabled").checked,points};
+ settings.lockedArea={enabled:$("areaEnabled").checked,points};
+ $("mapClickHelp").textContent=points.length>=3?
+  "Allowed Area polygon ready ("+points.length+" points).":"No valid area polygon.";
+}
+
+function loadAreaDrawing(){
+ drawnItems.clearLayers();
+ const area=settings.displayArea||settings.lockedArea||{};
+ const pts=area.points||[];
+ if(pts.length>=3){
+  const layer=L.polygon(pts.map(p=>[+p.lat,+p.lng]),{
+   color:"#facc15",weight:3,fillOpacity:.12
   });
-
-  areaTile=makeTile(areaMap,"road");
-  areaBoundaryLayer=L.layerGroup().addTo(areaMap);
-  areaMarkersLayer=L.layerGroup().addTo(areaMap);
-
-  editorMap.on("click",e=>{
-    if(editorMode==="connect"){
-      toast("Select a Pull marker, then a Customer marker.");
-    }
-  });
-
-  areaMap.on("click",e=>{
-    if(areaDrawing){
-      areaPoints.push({lat:e.latlng.lat,lng:e.latlng.lng});
-      drawAreaBoundary();
-      dirtyState();
-    }
-  });
+  drawnItems.addLayer(layer);
+  drawMap.fitBounds(layer.getBounds(),{padding:[20,20]});
+ }
+ $("areaEnabled").checked=!!area.enabled;
 }
-
-function fitEditorPoints(){
-  const pts=data.locations.filter(validLoc);
-  if(!pts.length)return toast("No locations available.");
-  editorMap.fitBounds(L.latLngBounds(pts.map(p=>[locLat(p),locLng(p)])),{padding:[40,40],maxZoom:17});
-}
-
-/* =========================================
-   EDITOR MARKERS AND INFORMATION
-========================================= */
-
-function typeConfig(type){
-  return data.customTypes.find(t=>String(t.name).toLowerCase()===String(type).toLowerCase())
-    ||DEFAULT_TYPES.find(t=>String(t.name).toLowerCase()===String(type).toLowerCase())
-    ||{name:type,icon:"📍",color:"#64748b"};
-}
-
-function markerIcon(loc){
-  const cfg=typeConfig(locType(loc));
-  const size=Math.max(18,Math.min(60,(Number(data.settings.markerSize)||36)));
-  const icon=getValue(loc,"icon","Icon")||cfg.icon||"📍";
-  const color=getValue(loc,"color","Color")||cfg.color||"#2563eb";
-
-  return L.divIcon({
-    className:"",
-    html:`<div class="marker-icon" style="width:${size}px;height:${size}px;background:${escapeHtml(color)};font-size:${size*.52}px">${escapeHtml(icon)}</div>`,
-    iconSize:[size,size],
-    iconAnchor:[size/2,size/2]
-  });
-}
-
-function locationFields(loc){
-  let fields={...loc};
-  const extra=getValue(loc,"dataJson","Data JSON","data_json");
-  if(extra){
-    try{
-      const obj=typeof extra==="string"?JSON.parse(extra):extra;
-      if(obj&&typeof obj==="object")fields={...fields,...obj};
-    }catch(e){}
-  }
-  return fields;
-}
-
-function displayValue(v){
-  if(v===null||v===undefined||v==="")return "—";
-  return typeof v==="object"?JSON.stringify(v):String(v);
-}
-
-function locationPopup(loc){
-  const fields=locationFields(loc);
-  const rows=Object.entries(fields)
-    .filter(([k])=>!["dataJson","data_json","Data JSON"].includes(k))
-    .map(([k,v])=>`<tr><td>${escapeHtml(k)}</td><td>${escapeHtml(displayValue(v))}</td></tr>`)
-    .join("");
-
-  return `<div class="popup-title">${escapeHtml(locName(loc))}</div>
-    <div style="font-size:11px;color:#79bdff;margin-bottom:9px">${escapeHtml(locType(loc))}</div>
-    <table class="popup-table">${rows||"<tr><td>No extra information</td></tr>"}</table>`;
-}
-
-function renderEditorMarkers(){
-  editorMarkers.clearLayers();
-  markerRefs.clear();
-
-  const hidden=data.settings.hiddenTypes.map(x=>String(x).toLowerCase());
-
-  data.locations.forEach(loc=>{
-    if(!validLoc(loc)||hidden.includes(locType(loc).toLowerCase()))return;
-
-    const marker=L.marker([locLat(loc),locLng(loc)],{
-      icon:markerIcon(loc),draggable:true,riseOnHover:true
-    });
-
-    marker.bindPopup(()=>locationPopup(loc),{maxWidth:330});
-
-    marker.on("click",()=>{
-      $("selectedInfo").innerHTML=`
-        <b style="color:white">${escapeHtml(locName(loc))}</b>
-        <div style="color:#75baff;margin:5px 0">${escapeHtml(locType(loc))}</div>
-        ${Object.entries(locationFields(loc)).filter(([k])=>!["dataJson","data_json","Data JSON"].includes(k))
-          .map(([k,v])=>`<div style="padding:5px 0;border-bottom:1px solid #293951;overflow-wrap:anywhere">
-          <span style="color:#91a3bc">${escapeHtml(k)}:</span> ${escapeHtml(displayValue(v))}
-          </div>`).join("")}
-      `;
-
-      if(editorMode==="connect")handleConnect(loc);
-    });
-
-    marker.on("dragend",e=>{
-      const p=e.target.getLatLng();
-      setCoords(loc,p.lat,p.lng);
-      dirtyState();
-      renderEditorLines();
-      toast("Location moved. Save All to store changes.");
-    });
-
-    marker.addTo(editorMarkers);
-    markerRefs.set(locId(loc),marker);
-  });
-}
-
-/* =========================================
-   CONNECTIONS AND LIVE FIBER
-========================================= */
-
-function connectionStyle(c){
-  const type=String(getValue(c,"type","Type")||"wire").toLowerCase();
-  const s=data.settings;
-
-  if(type.includes("fiber")){
-    return {
-      color:s.fiberColor||"#2563eb",
-      weight:Number(s.fiberWeight)||4,
-      opacity:Number(s.fiberOpacity),
-      dashArray:s.fiberStyle==="solid"?null:
-        s.fiberStyle==="dashed"?"10 8":
-        `${Math.max(2,Number(s.fiberDashSize)||5)} ${Math.max(4,Number(s.fiberDashSize)||5)*2}`,
-      className:(s.fiberAnimation!==false&&s.fiberStyle!=="solid")?"fiber-flow":""
-    };
-  }
-
-  if(type.includes("drop")){
-    return {
-      color:s.dropColor||"#16a34a",
-      weight:Number(s.dropWeight)||2,
-      opacity:Number(s.dropOpacity),
-      dashArray:s.dropStyle==="dashed"?"9 7":null
-    };
-  }
-
-  return {
-    color:s.wireColor||"#f59e0b",
-    weight:Number(s.wireWeight)||3,
-    opacity:Number(s.wireOpacity),
-    dashArray:s.wireStyle==="dashed"?"10 7":s.wireStyle==="dotted"?"2 7":null
-  };
-}
-
-function renderEditorLines(){
-  editorLines.clearLayers();
-
-  if(data.settings.showWires===false)return;
-
-  data.connections.forEach(c=>{
-    const from=String(getValue(c,"from","From"));
-    const to=String(getValue(c,"to","To"));
-    const a=data.locations.find(x=>locId(x)===from);
-    const b=data.locations.find(x=>locId(x)===to);
-
-    if(!a||!b||!validLoc(a)||!validLoc(b))return;
-
-    const type=String(getValue(c,"type","Type")||"wire").toLowerCase();
-    const style=connectionStyle(c);
-
-    if(type.includes("fiber")&&data.settings.fiberDirection==="reverse"){
-      style.dashArray=style.dashArray||"5 9";
-      style.className=(style.className||"")+" fiber-flow-reverse";
-    }
-
-    L.polyline([[locLat(a),locLng(a)],[locLat(b),locLng(b)]],style)
-      .bindTooltip(
-        escapeHtml(getValue(c,"name","Name")||"Connection")+
-        "<br>"+escapeHtml(locName(a))+" → "+escapeHtml(locName(b))
-      ).addTo(editorLines);
-  });
-}
-
-/* =========================================
-   PULL TO CUSTOMER CONNECT
-========================================= */
-
-function startConnect(){
-  editorMode="connect";
-  connectFrom=null;
-  $("modeBadge").textContent="CONNECT MODE";
-  $("editorInstruction").textContent="First click a Pull marker, then click a Customer marker.";
-  $("connectInfo").textContent="Waiting for a Pull point...";
-  toast("Select a Pull marker first.");
-}
-
-function cancelEditorMode(){
-  editorMode="normal";
-  connectFrom=null;
-  $("modeBadge").textContent="NORMAL MODE";
-  $("editorInstruction").textContent="Click a marker for information. Drag a marker to move it.";
-  $("connectInfo").textContent="Connection mode inactive.";
-}
-
-function handleConnect(loc){
-  const type=locType(loc).toLowerCase();
-
-  if(!connectFrom){
-    if(type!=="pull"){
-      toast("First select a Pull marker.");
-      return;
-    }
-    connectFrom=locId(loc);
-    $("connectInfo").textContent="Pull selected: "+locName(loc)+". Now click a Customer.";
-    toast("Pull selected. Choose a Customer.");
-    return;
-  }
-
-  if(type!=="customer"){
-    toast("Now select a Customer marker.");
-    return;
-  }
-
-  if(locId(loc)===connectFrom)return;
-
-  const exists=data.connections.some(c=>
-    String(getValue(c,"from","From"))===connectFrom&&
-    String(getValue(c,"to","To"))===locId(loc)
-  );
-
-  if(exists){
-    toast("Connection already exists.");
-    return;
-  }
-
-  data.connections.push({
-    id:"CON-"+Date.now(),
-    from:connectFrom,
-    to:locId(loc),
-    type:"fiber",
-    name:"Fiber: Pull to Customer",
-    createdAt:new Date().toISOString()
-  });
-
-  dirtyState();
-  renderEditorLines();
-  renderConnectionList();
-  cancelEditorMode();
-  toast("Fiber connection created with animated flow.");
-}
-
-/* =========================================
-   SEPARATE AREA LOCK MAP
-========================================= */
-
-let areaDrawing=false;
-
-function startAreaDrawing(){
-  areaDrawing=true;
-  $("areaModeBadge").textContent="DRAWING";
-  $("areaInstruction").textContent="Click the map to add points. Add at least 3 points, then press Done.";
-  toast("Area drawing started.");
-}
-
-function stopAreaDrawing(){
-  areaDrawing=false;
-  $("areaModeBadge").textContent="VIEW MODE";
-  $("areaInstruction").textContent="Boundary drawing stopped. Enable Area Lock and Save.";
-}
-
-function drawAreaBoundary(){
-  areaBoundaryLayer.clearLayers();
-
-  if(areaPoints.length>=2){
-    L.polygon(areaPoints.map(p=>[p.lat,p.lng]),{
-      color:"#10c98a",weight:3,fillColor:"#10c98a",
-      fillOpacity:.16,dashArray:"7 5"
-    }).addTo(areaBoundaryLayer);
-  }
-
-  areaPoints.forEach((p,i)=>{
-    L.circleMarker([p.lat,p.lng],{
-      radius:6,color:"#fff",weight:2,
-      fillColor:"#16a36a",fillOpacity:1
-    }).bindTooltip("Boundary Point "+(i+1)).addTo(areaBoundaryLayer);
-  });
-
-  $("areaJSON").value=JSON.stringify(areaPoints,null,2);
-  $("areaPointsCount").textContent=areaPoints.length;
-  $("areaLockState").textContent=$("areaEnabled").checked?"ON":"OFF";
-  $("areaBadge").textContent=$("areaEnabled").checked?"LOCK ON":"LOCK OFF";
-}
-
-function undoAreaPoint(){
-  if(!areaPoints.length)return;
-  areaPoints.pop();
-  drawAreaBoundary();
-  dirtyState();
-}
-
-function clearArea(){
-  if(!confirm("Remove all area boundary points?"))return;
-  areaPoints=[];
-  drawAreaBoundary();
-  dirtyState();
-}
-
-function applyAreaJSON(){
-  try{
-    const arr=JSON.parse($("areaJSON").value);
-    if(!Array.isArray(arr))throw new Error("JSON must be an array");
-
-    const next=arr.map(p=>({lat:Number(p.lat),lng:Number(p.lng)}));
-    if(next.some(p=>!Number.isFinite(p.lat)||!Number.isFinite(p.lng))){
-      throw new Error("Invalid coordinates");
-    }
-
-    areaPoints=next;
-    drawAreaBoundary();
-    dirtyState();
-    toast("Boundary JSON applied.");
-  }catch(e){
-    toast("Invalid JSON: "+e.message);
-  }
-}
-
-function fitArea(){
-  if(areaPoints.length<3){
-    toast("Add at least 3 boundary points first.");
-    return;
-  }
-  areaMap.fitBounds(L.latLngBounds(areaPoints.map(p=>[p.lat,p.lng])),{padding:[35,35]});
-}
-
-function loadAreaOnMap(){
-  areaPoints=(data.settings.lockedArea.points||[]).map(p=>({
-    lat:Number(p.lat),lng:Number(p.lng)
-  }));
-  $("areaEnabled").checked=!!data.settings.lockedArea.enabled;
-  drawAreaBoundary();
-
-  // Show existing network points as context on the separate area map.
-  areaMarkersLayer.clearLayers();
-  data.locations.filter(validLoc).forEach(loc=>{
-    L.circleMarker([locLat(loc),locLng(loc)],{
-      radius:4,color:"#fff",weight:1,
-      fillColor:typeConfig(locType(loc)).color,fillOpacity:.9
-    }).bindTooltip(escapeHtml(locName(loc))).addTo(areaMarkersLayer);
-  });
-
-  if(areaPoints.length>=3){
-    areaMap.fitBounds(L.latLngBounds(areaPoints.map(p=>[p.lat,p.lng])),{padding:[35,35]});
-  }else if(data.locations.some(validLoc)){
-    const pts=data.locations.filter(validLoc);
-    areaMap.fitBounds(L.latLngBounds(pts.map(p=>[locLat(p),locLng(p)])),{padding:[35,35],maxZoom:16});
-  }
-}
-
-/* =========================================
-   SETTINGS FORM
-========================================= */
-
-function put(id,value){
-  if($(id))$(id).value=value??"";
-}
-function check(id,value){
-  if($(id))$(id).checked=!!value;
-}
-
-function loadForm(){
-  const s=data.settings;
-  [
-    "mapType","centerLat","centerLng","zoomLevel","markerSize",
-    "wireColor","wireWeight","wireOpacity","wireStyle",
-    "fiberColor","fiberWeight","fiberOpacity","fiberStyle",
-    "fiberDashSize","fiberSpeed","fiberDirection",
-    "dropColor","dropWeight","dropOpacity","dropStyle"
-  ].forEach(k=>put(k,s[k]));
-
-  check("showMarkerLabels",s.showMarkerLabels);
-  check("showWires",s.showWires);
-  check("fiberAnimation",s.fiberAnimation!==false);
-}
-
-function collectForm(){
-  const s={...data.settings};
-
-  [
-    "mapType","wireColor","wireStyle",
-    "fiberColor","fiberStyle","fiberDirection",
-    "dropColor","dropStyle"
-  ].forEach(k=>s[k]=$(k).value);
-
-  [
-    "centerLat","centerLng","zoomLevel","markerSize",
-    "wireWeight","wireOpacity","fiberWeight","fiberOpacity",
-    "fiberDashSize","fiberSpeed",
-    "dropWeight","dropOpacity"
-  ].forEach(k=>s[k]=Number($(k).value));
-
-  s.showMarkerLabels=$("showMarkerLabels").checked;
-  s.showWires=$("showWires").checked;
-  s.fiberAnimation=$("fiberAnimation").checked;
-
-  s.lockedArea={
-    enabled:$("areaEnabled").checked,
-    points:areaPoints.map(p=>({lat:p.lat,lng:p.lng}))
-  };
-
-  s._customTypes=data.customTypes;
-  return s;
-}
-
-/* =========================================
-   ICON SETTINGS
-========================================= */
 
 function renderTypes(){
-  const box=$("typeList");
-  box.innerHTML="";
+ $("typeList").innerHTML=customTypes.map((x,i)=>`
+  <div class="type-row">
+   <div class="icon-preview">${esc(x.icon||"📍")}</div>
+   <input value="${esc(x.name)}" data-type-name="${i}" aria-label="Type name">
+   <input value="${esc(x.icon)}" data-type-icon="${i}" aria-label="Icon">
+   <input type="color" value="${esc(x.color||"#2563eb")}" data-type-color="${i}">
+   <button class="btn red" data-type-delete="${i}">Delete</button>
+  </div>`).join("");
 
-  data.customTypes.forEach((t,index)=>{
-    const row=document.createElement("div");
-    row.className="type-item";
-    row.innerHTML=`
-      <div class="type-icon">${escapeHtml(t.icon||"📍")}</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
-        <input data-name value="${escapeHtml(t.name||"")}" placeholder="Name">
-        <input data-icon value="${escapeHtml(t.icon||"")}" placeholder="Icon">
-        <input data-color type="color" value="${escapeHtml(t.color||"#2563eb")}" style="grid-column:1/-1">
-      </div>
-      <button type="button">×</button>
-    `;
-
-    row.querySelector("[data-name]").addEventListener("change",e=>{
-      t.name=e.target.value.trim()||t.name;
-      dirtyState();renderAll();
-    });
-    row.querySelector("[data-icon]").addEventListener("change",e=>{
-      t.icon=e.target.value||"📍";
-      dirtyState();renderAll();
-    });
-    row.querySelector("[data-color]").addEventListener("input",e=>{
-      t.color=e.target.value;
-      dirtyState();renderEditorMarkers();
-    });
-    row.querySelector("button").addEventListener("click",()=>{
-      if(!confirm("Delete this type?"))return;
-      data.customTypes.splice(index,1);
-      dirtyState();renderAll();
-    });
-
-    box.appendChild(row);
+ document.querySelectorAll("[data-type-name],[data-type-icon],[data-type-color]").forEach(el=>{
+  el.addEventListener("change",()=>{
+   const i=Number(el.dataset.typeName??el.dataset.typeIcon??el.dataset.typeColor);
+   if(el.dataset.typeName!==undefined)customTypes[i].name=el.value.trim();
+   if(el.dataset.typeIcon!==undefined)customTypes[i].icon=el.value.trim();
+   if(el.dataset.typeColor!==undefined)customTypes[i].color=el.value;
   });
-}
-
-function addType(){
-  const name=$("newTypeName").value.trim();
-  if(!name)return toast("Enter a type name.");
-  if(data.customTypes.some(t=>t.name.toLowerCase()===name.toLowerCase())){
-    return toast("This type already exists.");
-  }
-
-  data.customTypes.push({
-    name,
-    icon:$("newTypeIcon").value.trim()||"📍",
-    color:$("newTypeColor").value
-  });
-
-  $("newTypeName").value="";
-  dirtyState();
-  renderAll();
-  toast("New point type added.");
-}
-
-function renderHiddenTypes(){
-  const box=$("hiddenTypes");
-  const hidden=data.settings.hiddenTypes||[];
-
-  box.innerHTML=data.customTypes.map(t=>{
-    const on=hidden.some(x=>String(x).toLowerCase()===t.name.toLowerCase());
-    return `<div class="check-row">
-      <label>${escapeHtml(t.icon||"📍")} ${escapeHtml(t.name)}</label>
-      <input type="checkbox" data-hidden="${escapeHtml(t.name)}" ${on?"checked":""}>
-    </div>`;
-  }).join("");
-
-  box.querySelectorAll("[data-hidden]").forEach(el=>{
-    el.addEventListener("change",()=>{
-      const name=el.dataset.hidden;
-      let arr=[...(data.settings.hiddenTypes||[])];
-      arr=el.checked?[...arr,name]:arr.filter(x=>x!==name);
-      data.settings.hiddenTypes=arr;
-      dirtyState();
-      renderEditorMarkers();
-      renderEditorLines();
-    });
-  });
-}
-
-/* =========================================
-   CONNECTION LIST
-========================================= */
-
-function renderConnectionList(){
-  const box=$("connectionList");
-  if(!data.connections.length){
-    box.innerHTML='<div class="help">No connections saved yet.</div>';
+ });
+ document.querySelectorAll("[data-type-delete]").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+   const i=+btn.dataset.typeDelete;
+   if(["customer","pull","switch","pole"].includes(normType(customTypes[i].name))){
+    alert("Default location types cannot be deleted. You can edit their icon and color.");
     return;
-  }
-
-  box.innerHTML=data.connections.map((c,index)=>{
-    const a=data.locations.find(x=>locId(x)===String(getValue(c,"from","From")));
-    const b=data.locations.find(x=>locId(x)===String(getValue(c,"to","To")));
-    return `<div class="connection-item">
-      <span>${escapeHtml(a?locName(a):"Unknown")} → ${escapeHtml(b?locName(b):"Unknown")}
-      <br><small style="color:#91a3bc">${escapeHtml(getValue(c,"type","Type")||"wire")}</small></span>
-      <button class="btn danger small" onclick="deleteConnection(${index})">Delete</button>
-    </div>`;
-  }).join("");
+   }
+   customTypes.splice(i,1);renderTypes();
+  });
+ });
 }
 
-function deleteConnection(index){
-  if(!confirm("Delete this connection?"))return;
-  data.connections.splice(index,1);
-  dirtyState();
-  renderEditorLines();
-  renderConnectionList();
+function renderCableTypes(){
+ $("cableList").innerHTML=cables.map((x,i)=>`
+  <div class="type-row">
+   <div class="icon-preview">〰️</div>
+   <input value="${esc(x.name)}" data-cname="${i}" aria-label="Cable name">
+   <input type="color" value="${esc(x.color)}" data-ccolor="${i}">
+   <input type="number" min="1" max="12" value="${+x.weight||3}" data-cweight="${i}">
+   <button class="btn red" data-cdelete="${i}">Delete</button>
+   <select data-cstyle="${i}">
+    <option value="solid" ${x.style==="solid"?"selected":""}>Solid</option>
+    <option value="dashed" ${x.style==="dashed"?"selected":""}>Dashed</option>
+    <option value="dotted" ${x.style==="dotted"?"selected":""}>Animated Dotted</option>
+   </select>
+  </div>`).join("");
+
+ document.querySelectorAll("[data-cname],[data-ccolor],[data-cweight],[data-cstyle]").forEach(el=>{
+  el.addEventListener("change",()=>{
+   const i=Number(el.dataset.cname??el.dataset.ccolor??el.dataset.cweight??el.dataset.cstyle);
+   if(el.dataset.cname!==undefined)cables[i].name=el.value.trim();
+   if(el.dataset.ccolor!==undefined)cables[i].color=el.value;
+   if(el.dataset.cweight!==undefined)cables[i].weight=+el.value;
+   if(el.dataset.cstyle!==undefined)cables[i].style=el.value;
+  });
+ });
+ document.querySelectorAll("[data-cdelete]").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+   cables.splice(+btn.dataset.cdelete,1);renderCableTypes();
+  });
+ });
 }
 
-/* =========================================
-   FULL RENDER
-========================================= */
+function populateLocationSelects(){
+ const opts=locations.map(x=>`<option value="${esc(x.id)}">${esc(x.name)} (${esc(x.type)})</option>`).join("");
+ $("connectionFrom").innerHTML='<option value="">Select From</option>'+opts;
+ $("connectionTo").innerHTML='<option value="">Select To</option>'+opts;
+}
+function populateCableSelect(){
+ $("connectionType").innerHTML=cables.map(x=>
+  `<option value="${esc(x.name)}">${esc(x.name)}</option>`
+ ).join("");
+}
+function renderConnections(){
+ $("connectionList").innerHTML=connections.length?connections.map((c,i)=>{
+  const a=locations.find(x=>String(x.id)===String(c.from));
+  const b=locations.find(x=>String(x.id)===String(c.to));
+  return `<div class="connection-row">
+   <span>${esc(a?.name||c.from)} → ${esc(b?.name||c.to)} <small>(${esc(c.type)})</small></span>
+   <button class="btn red" data-connection-delete="${i}">Delete</button>
+  </div>`;
+ }).join(""):'<div class="help">No connections added yet.</div>';
 
-function renderAll(){
-  loadForm();
-  renderTypes();
-  renderHiddenTypes();
-  renderEditorMarkers();
-  renderEditorLines();
-  renderConnectionList();
-  loadAreaOnMap();
-
-  $("totalPoints").textContent=data.locations.length;
-  $("totalWires").textContent=data.connections.length;
-  $("totalCustomers").textContent=data.locations.filter(x=>locType(x).toLowerCase()==="customer").length;
-  $("totalPulls").textContent=data.locations.filter(x=>locType(x).toLowerCase()==="pull").length;
-
-  $("areaLockState").textContent=data.settings.lockedArea.enabled?"ON":"OFF";
-  $("areaBadge").textContent=data.settings.lockedArea.enabled?"LOCK ON":"LOCK OFF";
-
-  changeMapType(editorMap,data.settings.mapType||"road");
-  changeMapType(areaMap,data.settings.mapType||"road");
-
-  const lat=Number(data.settings.centerLat);
-  const lng=Number(data.settings.centerLng);
-  const zoom=Math.min(22,Math.max(3,Number(data.settings.zoomLevel)||13));
-
-  editorMap.setView([
-    Number.isFinite(lat)?lat:23.8103,
-    Number.isFinite(lng)?lng:90.4125
-  ],zoom);
-
-  setTimeout(()=>{
-    editorMap.invalidateSize();
-    areaMap.invalidateSize();
-  },100);
+ document.querySelectorAll("[data-connection-delete]").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+   connections.splice(+btn.dataset.connectionDelete,1);
+   renderConnections();
+  });
+ });
 }
 
-/* =========================================
-   SAVE
-========================================= */
+function fillForm(){
+ $("mapType").value=settings.mapType||"road";
+ $("zoomLevel").value=settings.zoomLevel??14;
+ $("centerLat").value=settings.centerLat??23.8103;
+ $("centerLng").value=settings.centerLng??90.4125;
+ $("markerSize").value=settings.markerSize??30;
+ $("showWires").checked=settings.showWires!==false;
+ $("showLabels").checked=!!settings.showMarkerLabels;
+
+ $("districtName").value=settings.district||"";
+ $("zoneName").value=settings.zone||"";
+ $("areaName").value=settings.areaName||"";
+ $("areaNote").value=settings.areaNote||"";
+ $("blurOutside").checked=settings.blurOutside!==false;
+
+ $("fiberSpeed").value=settings.fiberSpeed??1;
+ $("fiberDirection").value=settings.fiberDirection||"forward";
+ $("fiberDashSize").value=settings.fiberDashSize??2;
+}
+
+function readForm(){
+ settings.mapType=$("mapType").value;
+ settings.zoomLevel=+$("zoomLevel").value||14;
+ settings.centerLat=+$("centerLat").value;
+ settings.centerLng=+$("centerLng").value;
+ settings.markerSize=+$("markerSize").value||30;
+ settings.showWires=$("showWires").checked;
+ settings.showMarkerLabels=$("showLabels").checked;
+
+ settings.district=$("districtName").value.trim();
+ settings.zone=$("zoneName").value.trim();
+ settings.areaName=$("areaName").value.trim();
+ settings.areaNote=$("areaNote").value.trim();
+ settings.blurOutside=$("blurOutside").checked;
+
+ settings.fiberSpeed=+$("fiberSpeed").value||1;
+ settings.fiberDirection=$("fiberDirection").value;
+ settings.fiberDashSize=+$("fiberDashSize").value||2;
+
+ settings.displayArea.enabled=$("areaEnabled").checked;
+ settings.lockedArea={...settings.displayArea};
+
+ settings.homePoint={
+  ...(settings.homePoint||{}),
+  lat:+$("centerLat").value,
+  lng:+$("centerLng").value,
+  zoom:settings.zoomLevel
+ };
+
+ settings._customTypes=customTypes;
+ settings._cableCategories=cables;
+
+ // Main line settings use the first matching category as defaults.
+ const mainFiber=cables.find(x=>normType(x.name).includes("main fiber"))||
+                 cables.find(x=>normType(x.type)==="fiber");
+ const wire=cables.find(x=>normType(x.type)==="wire");
+ const drop=cables.find(x=>normType(x.name).includes("customer"));
+
+ if(mainFiber){
+  settings.fiberColor=mainFiber.color;
+  settings.fiberWeight=mainFiber.weight;
+  settings.fiberStyle=mainFiber.style;
+ }
+ if(wire){
+  settings.wireColor=wire.color;
+  settings.wireWeight=wire.weight;
+  settings.wireStyle=wire.style;
+ }
+ if(drop){
+  settings.dropColor=drop.color;
+  settings.dropWeight=drop.weight;
+  settings.dropStyle=drop.style;
+ }
+}
 
 async function saveAll(){
-  try{
-    if($("areaEnabled").checked&&areaPoints.length<3){
-      return toast("Area Lock চালু করতে অন্তত ৩টি Boundary Point প্রয়োজন।");
-    }
+ readForm();
+ $("saveStatus").textContent="Saving...";
 
-    data.settings=collectForm();
-    data.settings._customTypes=data.customTypes;
+ const payload={
+  action:"saveMapData",
+  locations,
+  connections,
+  settings,
+  customTypes
+ };
 
-    const payload={
-      action:"saveMapData",
-      locations:data.locations,
-      connections:data.connections,
-      settings:data.settings,
-      customTypes:data.customTypes
-    };
-
-    localStorage.setItem(CACHE_KEY,JSON.stringify(data));
-    status("Saving...");
-
-    const response=await fetch(MAP_API,{
-      method:"POST",
-      headers:{"Content-Type":"text/plain;charset=utf-8"},
-      body:JSON.stringify(payload)
-    });
-
-    const result=await response.json();
-
-    if(result&&(result.success===false||result.error)){
-      throw new Error(result.message||result.error||"Save failed");
-    }
-
-    dirty=false;
-    status("All changes saved");
-    $("dbBadge").textContent="SAVED SUCCESSFULLY";
-    renderAll();
-    toast("All map settings saved successfully.");
-  }catch(e){
-    console.error(e);
-    localStorage.setItem(CACHE_KEY,JSON.stringify(data));
-    status("Server save failed — local copy kept");
-    toast("Save failed: "+e.message+". Local copy is kept in this browser.");
-  }
-}
-
-/* =========================================
-   BACKUP / RESTORE
-========================================= */
-
-function exportBackup(){
-  const backup={
-    app:"ONE ONLINE MAP",
-    version:2,
-    exportedAt:new Date().toISOString(),
-    locations:data.locations,
-    connections:data.connections,
-    settings:data.settings,
-    customTypes:data.customTypes
-  };
-
-  const blob=new Blob([JSON.stringify(backup,null,2)],{type:"application/json"});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement("a");
-  a.href=url;
-  a.download="one-online-map-backup-"+new Date().toISOString().slice(0,10)+".json";
-  a.click();
-  URL.revokeObjectURL(url);
-}
-
-$("backupFile").addEventListener("change",async e=>{
-  const file=e.target.files[0];
-  if(!file)return;
-
-  try{
-    const backup=JSON.parse(await file.text());
-    if(!Array.isArray(backup.locations)||!Array.isArray(backup.connections)){
-      throw new Error("Invalid backup file.");
-    }
-    if(!confirm("Replace current map data with this backup?"))return;
-
-    normalizeData(backup);
-    localStorage.setItem(CACHE_KEY,JSON.stringify(data));
-    renderAll();
-    dirtyState();
-    toast("Backup imported. Click Save All.");
-  }catch(err){
-    toast("Import error: "+err.message);
-  }finally{
-    e.target.value="";
-  }
-});
-
-/* =========================================
-   TABS
-========================================= */
-
-document.querySelectorAll(".nav-btn").forEach(btn=>{
-  btn.addEventListener("click",()=>{
-    document.querySelectorAll(".nav-btn").forEach(x=>x.classList.remove("active"));
-    document.querySelectorAll(".tab-content").forEach(x=>x.classList.remove("active"));
-
-    btn.classList.add("active");
-    $("tab-"+btn.dataset.tab).classList.add("active");
-
-    setTimeout(()=>{
-      editorMap.invalidateSize();
-      areaMap.invalidateSize();
-    },180);
+ try{
+  const response=await fetch(API,{
+   method:"POST",
+   headers:{"Content-Type":"text/plain;charset=utf-8"},
+   body:JSON.stringify(payload)
   });
-});
+  const result=await response.json();
 
-/* =========================================
-   DATA LOAD
-========================================= */
+  if(result.success===false||result.error)throw Error(result.message||result.error||"Save failed");
 
-async function getRemoteData(){
-  const response=await fetch(MAP_API+"?action=getMapData",{cache:"no-store"});
-  if(!response.ok)throw new Error("API response "+response.status);
-  return response.json();
+  const cacheData={locations,connections,settings,customTypes};
+  localStorage.setItem(CACHE,JSON.stringify(cacheData));
+  $("saveStatus").textContent="Saved successfully ✓";
+ }catch(error){
+  console.error(error);
+  $("saveStatus").textContent="Save failed: "+error.message;
+  alert("Settings save হয়নি। API response / Apps Script deployment পরীক্ষা করুন।\n"+error.message);
+ }
 }
 
 async function loadData(){
-  // Load browser cache first for faster preview.
-  try{
-    const cached=localStorage.getItem(CACHE_KEY);
-    if(cached){
-      normalizeData(JSON.parse(cached));
-      renderAll();
-      status("Showing cached data...");
-    }
-  }catch(e){}
-
-  try{
-    const remote=await getRemoteData();
-    normalizeData(remote);
-    localStorage.setItem(CACHE_KEY,JSON.stringify(data));
-    renderAll();
-    dirty=false;
-    status("Connected to Google Sheets");
-    $("dbBadge").textContent="DATABASE CONNECTED";
-  }catch(e){
-    console.error(e);
-    status("Offline / Local Cache");
-    $("dbBadge").textContent="LOCAL DATA MODE";
-    toast("Server connection failed. Showing cached data if available.");
-  }
+ try{
+  const c=localStorage.getItem(CACHE);
+  if(c)applyLoaded(JSON.parse(c));
+ }catch(e){}
+ try{
+  const r=await fetch(API+"?action=getMapData&_="+Date.now(),{cache:"no-store"});
+  if(!r.ok)throw Error("API "+r.status);
+  const d=await r.json();
+  applyLoaded(d.data||d);
+ }catch(e){
+  console.error(e);
+  $("saveStatus").textContent="Could not load live data. Cached settings, if available, are shown.";
+ }
 }
 
-async function refreshData(){
-  status("Refreshing...");
-  await loadData();
-  toast("Map data refreshed.");
+function applyLoaded(data){
+ locations=(data.locations||[]).map(r=>{
+  const extra=parse(val(r,["dataJson","Data JSON"],{}),{});
+  const x={...extra,...r};
+  return {...x,
+   id:String(val(x,["id","ID"],"")),
+   name:val(x,["name","Name"],"Unnamed"),
+   type:val(x,["type","Type"],"Customer")
+  };
+ });
+ connections=(data.connections||[]).map(r=>({
+  ...r,
+  id:String(val(r,["id","ID"],"")),
+  from:String(val(r,["from","From"],"")),
+  to:String(val(r,["to","To"],"")),
+  type:String(val(r,["type","Type"],"wire"))
+ }));
+
+ settings={...DEFAULT_SETTINGS,...(data.settings||{})};
+ customTypes=Array.isArray(data.customTypes)&&data.customTypes.length?
+  data.customTypes.map(x=>({...x})):DEFAULT_TYPES.map(x=>({...x}));
+
+ (settings._customTypes||[]).forEach(x=>{
+  if(!customTypes.some(t=>normType(t.name)===normType(x.name)))customTypes.push(x);
+ });
+
+ cables=(settings._cableCategories||DEFAULT_CABLES).map(x=>({...x}));
+ fillForm();
+ renderTypes();
+ renderCableTypes();
+ populateLocationSelects();
+ populateCableSelect();
+ renderConnections();
+ loadAreaDrawing();
+
+ const h=settings.homePoint||{};
+ if(Number.isFinite(+h.lat)&&Number.isFinite(+h.lng)){
+  setHomePoint(+h.lat,+h.lng);
+  drawMap.setView([+h.lat,+h.lng],+h.zoom||settings.zoomLevel||14);
+ }
 }
 
-/* =========================================
-   INITIALIZE
-========================================= */
+/* NAVIGATION */
+initNavigation();
+initDrawingMap();
 
-async function start(){
-  initMaps();
-  await loadData();
+/* DRAWING CONTROLS */
+$("setHome").onclick=()=>{
+ drawingMode="home";
+ $("mapClickHelp").textContent="এখন Map-এর যে জায়গায় ক্লিক করবেন সেটিই Default Map Point হবে।";
+};
+$("drawArea").onclick=()=>{
+ const drawer=new L.Draw.Polygon(drawMap,{
+  allowIntersection:false,
+  shapeOptions:{color:"#facc15",weight:3,fillOpacity:.12}
+ });
+ drawer.enable();
+ $("mapClickHelp").textContent="Map-এ ক্লিক করে Area boundary আঁকুন, শেষ করতে প্রথম Point-এ ক্লিক করুন।";
+};
+$("editArea").onclick=()=>{
+ const layers=drawnItems.getLayers();
+ if(!layers.length){alert("আগে একটি Area আঁকুন।");return}
+ new L.EditToolbar.Edit(drawMap,{featureGroup:drawnItems}).enable();
+};
+$("clearArea").onclick=()=>{
+ drawnItems.clearLayers();
+ settings.displayArea={enabled:false,points:[]};
+ settings.lockedArea={enabled:false,points:[]};
+ $("areaEnabled").checked=false;
+ $("mapClickHelp").textContent="Area drawing cleared.";
+};
+$("areaEnabled").onchange=()=>{
+ settings.displayArea.enabled=$("areaEnabled").checked;
+ settings.lockedArea={...settings.displayArea};
+};
 
-  if(!data.customTypes.length){
-    data.customTypes=DEFAULT_TYPES.map(x=>({...x}));
-  }
+/* ICON ADD */
+$("addType").onclick=()=>{
+ const name=$("newTypeName").value.trim();
+ const icon=$("newTypeIcon").value.trim();
+ const color=$("newTypeColor").value;
+ if(!name||!icon){alert("Type Name and Icon দিন।");return}
+ if(customTypes.some(x=>normType(x.name)===normType(name))){
+  alert("এই Type আগে থেকেই আছে।");return;
+ }
+ customTypes.push({name,icon,color});
+ $("newTypeName").value="";
+ $("newTypeIcon").value="";
+ renderTypes();
+};
 
-  renderAll();
-}
+/* CABLE ADD */
+$("addCable").onclick=()=>{
+ const name=$("newCableName").value.trim();
+ if(!name){alert("Cable Category Name দিন।");return}
+ if(cables.some(x=>normType(x.name)===normType(name))){
+  alert("এই Cable Category আগে থেকেই আছে।");return;
+ }
+ const style=$("newCableStyle").value;
+ cables.push({
+  name,
+  type:style==="dotted"?"fiber":"wire",
+  color:$("newCableColor").value,
+  weight:+$("newCableWeight").value||3,
+  style
+ });
+ $("newCableName").value="";
+ renderCableTypes();
+ populateCableSelect();
+};
 
-window.addEventListener("beforeunload",e=>{
-  if(dirty){
-    e.preventDefault();
-    e.returnValue="";
-  }
-});
+/* CONNECTION ADD */
+$("addConnection").onclick=()=>{
+ const from=$("connectionFrom").value;
+ const to=$("connectionTo").value;
+ const type=$("connectionType").value;
+ if(!from||!to){alert("From এবং To Location নির্বাচন করুন।");return}
+ if(from===to){alert("একই Location-এর সঙ্গে নিজেকে Connect করা যাবে না।");return}
+ const category=cables.find(x=>x.name===type);
+ connections.push({
+  id:"CON-"+Date.now()+"-"+Math.random().toString(36).slice(2,7),
+  from,to,
+  type:category?.type==="fiber"?"fiber":
+       category?.type==="drop"?"drop":"wire",
+  category:type,
+  name:$("connectionName").value.trim()||type,
+  createdAt:new Date().toISOString()
+ });
+ $("connectionName").value="";
+ renderConnections();
+};
 
-start();
+/* SAVE */
+$("saveAll").onclick=saveAll;
+$("saveBottom").onclick=saveAll;
+
+loadData();
 </script>
 </body>
 </html>
