@@ -1,1948 +1,1549 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Map Settings | ONE ONLINE</title>
 
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
 <style>
 :root{
- --bg:#0b1220;
- --panel:#111c2e;
- --panel2:#172338;
- --text:#e8f0fc;
- --muted:#91a3bd;
- --line:#26364d;
- --primary:#168bfa;
- --green:#16a34a;
- --red:#dc2626;
+  --bg:#0b1220;
+  --panel:#111c2e;
+  --panel2:#172338;
+  --line:#293951;
+  --text:#edf4ff;
+  --muted:#91a3bc;
+  --primary:#1685f8;
+  --green:#16a36a;
+  --red:#e34c5b;
+  --orange:#f59e0b;
+  --radius:14px;
 }
 *{box-sizing:border-box}
-html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:Arial,sans-serif}
-body{padding:12px}
+body{
+  margin:0;background:var(--bg);color:var(--text);
+  font-family:Inter,Arial,sans-serif;font-size:14px;
+}
 button,input,select,textarea{font:inherit}
-.container{max-width:1250px;margin:auto}
-.header{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:14px}
-h1{font-size:23px;margin:0}
-h2{font-size:16px;margin:0 0 13px}
-h3{font-size:14px;margin:0 0 10px}
-.subtitle,.note{font-size:12px;color:var(--muted);line-height:1.6}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:15px;margin-bottom:13px}
-.actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-button{border:0;border-radius:8px;padding:10px 13px;background:var(--primary);color:white;font-size:12px;font-weight:700;cursor:pointer}
-button.secondary{background:#334155}
-button.success{background:var(--green)}
-button.danger{background:#991b1b}
-button.active{background:#7c3aed;outline:2px solid #c4b5fd}
-button:disabled{opacity:.45;cursor:not-allowed}
-.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-.field{display:flex;flex-direction:column;gap:7px;min-width:0}
-label{font-size:12px;color:#b8c8dd;font-weight:700}
-input,select,textarea{
- width:100%;min-width:0;background:#0b1526;color:#f1f5f9;
- border:1px solid #34445c;border-radius:8px;padding:10px;
- outline:none;font-size:13px
+button{cursor:pointer}
+.topbar{
+  min-height:68px;padding:12px 20px;background:#101b2c;
+  border-bottom:1px solid var(--line);
+  display:flex;align-items:center;justify-content:space-between;
+  gap:12px;position:sticky;top:0;z-index:1000;
 }
-input:focus,select:focus,textarea:focus{border-color:var(--primary)}
-input[type=color]{height:42px;padding:4px}
-input[type=checkbox]{width:18px;height:18px}
-input[type=range]{padding:0}
-textarea{min-height:90px;resize:vertical}
-.toggle{display:flex;align-items:center;gap:9px;background:var(--panel2);padding:10px;border-radius:8px;margin-bottom:8px;font-size:12px}
-.toggle input{flex:0 0 18px}
-.tabs{display:flex;gap:7px;overflow-x:auto;padding:2px 0 12px;scrollbar-width:thin}
-.tab{white-space:nowrap;background:#172338;color:#cbd5e1;border:1px solid #334155}
-.tab.active{background:#1267b5;color:#fff;border-color:#168bfa}
-.section{display:none}
-.section.active{display:block}
-.status{font-size:12px;color:var(--muted);margin-top:10px;line-height:1.6}
-.status.ok{color:#4ade80}
-.status.err{color:#f87171}
-#editorMap{height:520px;width:100%;border-radius:10px;background:#26364d;z-index:1}
-.map-tools{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:10px}
-.map-help{font-size:12px;color:#cbd5e1;line-height:1.7;margin:8px 0 12px}
-.map-status{background:#0b1526;border:1px solid #34445c;padding:10px;border-radius:8px;font-size:12px;color:#bfdbfe;margin-top:10px}
+.brand{display:flex;align-items:center;gap:12px}
+.brand-logo{
+  width:40px;height:40px;border-radius:12px;
+  background:linear-gradient(135deg,#087fdb,#16a36a);
+  display:grid;place-items:center;font-size:21px;font-weight:800;
+}
+.brand h2{font-size:16px;margin:0}
+.brand small{display:block;color:var(--muted);font-size:10px;margin-top:4px}
+.top-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.btn{
+  border:1px solid var(--line);border-radius:9px;padding:9px 13px;
+  background:var(--panel2);color:var(--text);font-weight:600;
+}
+.btn:hover{filter:brightness(1.15)}
+.btn.primary{background:var(--primary);border-color:var(--primary);color:white}
+.btn.success{background:var(--green);border-color:var(--green);color:white}
+.btn.danger{background:#702d39;border-color:#a94452;color:white}
+.btn.small{padding:7px 10px;font-size:12px}
+.status{font-size:12px;color:var(--muted)}
+.layout{display:grid;grid-template-columns:235px minmax(0,1fr);min-height:calc(100vh - 68px)}
+.sidebar{
+  background:#0e1929;border-right:1px solid var(--line);
+  padding:16px 11px;
+}
+.side-label{
+  color:#71839c;font-size:10px;font-weight:800;
+  letter-spacing:1px;padding:12px 10px 7px;
+}
+.nav-btn{
+  width:100%;display:flex;align-items:center;gap:10px;
+  padding:11px 12px;margin:3px 0;border:0;border-radius:9px;
+  color:#aebdd1;background:transparent;text-align:left;font-weight:600;
+}
+.nav-btn:hover,.nav-btn.active{background:#1b3452;color:white}
+.nav-btn.active{box-shadow:inset 3px 0 var(--primary)}
+.main{min-width:0;padding:18px}
+.page-head{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:12px;flex-wrap:wrap;margin-bottom:16px;
+}
+.page-head h1{font-size:21px;margin:0}
+.page-head p{color:var(--muted);margin:6px 0 0;font-size:12px}
+.panel{
+  background:var(--panel);border:1px solid var(--line);
+  border-radius:var(--radius);padding:16px;margin-bottom:15px;
+}
+.panel-title{
+  font-size:14px;font-weight:800;margin:0 0 13px;
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+}
+.muted{color:var(--muted)}
+.tabs{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:15px}
+.tab{
+  padding:9px 13px;border:1px solid var(--line);border-radius:9px;
+  background:var(--panel);color:#aebdd1;font-weight:700;
+}
+.tab.active{background:#173b61;color:#fff;border-color:#267ac5}
+.tab-content{display:none}
+.tab-content.active{display:block}
+.editor-grid{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:14px}
+.map-panel{padding:0;overflow:hidden;min-width:0}
+.map-toolbar{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:8px;flex-wrap:wrap;padding:11px 13px;
+  background:#142238;border-bottom:1px solid var(--line);
+}
+.map-toolbar-left,.map-toolbar-right{display:flex;gap:7px;align-items:center;flex-wrap:wrap}
+#editorMap{
+  width:100%;height:590px;background:#dbe4e9;
+}
+.map-foot{
+  padding:10px 13px;color:var(--muted);font-size:11px;
+  background:#111c2e;border-top:1px solid var(--line);
+}
+.side-panel{min-width:0}
+.stat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}
+.stat{
+  background:var(--panel2);border:1px solid var(--line);
+  border-radius:10px;padding:12px;
+}
+.stat strong{font-size:22px;display:block}
+.stat span{font-size:11px;color:var(--muted)}
+.field{margin-bottom:13px}
+.field label{display:block;color:#b8c7da;font-size:12px;font-weight:700;margin-bottom:7px}
+.field input,.field select,.field textarea{
+  width:100%;background:#0c1727;border:1px solid #34465f;
+  border-radius:8px;padding:10px;color:white;outline:none;
+}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--primary)}
+.field input[type="checkbox"]{width:auto;accent-color:var(--primary)}
+.field input[type="color"]{height:40px;padding:3px}
+.row-fields{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.help{font-size:11px;color:var(--muted);line-height:1.6;margin-top:5px}
+.check-row{
+  display:flex;align-items:center;gap:9px;
+  padding:9px 0;border-bottom:1px solid #26364b;
+}
+.check-row:last-child{border:0}
+.check-row label{font-size:12px;color:#c5d2e2;flex:1}
 .type-list{display:grid;gap:9px}
-.type-row{display:grid;grid-template-columns:48px 1fr 100px 90px 70px;gap:8px;align-items:center;background:var(--panel2);border:1px solid var(--line);padding:9px;border-radius:9px}
-.type-preview{font-size:28px;text-align:center;filter:drop-shadow(0 1px 2px #0008)}
-.type-row input{padding:9px}
-.line-box{background:var(--panel2);border:1px solid var(--line);padding:12px;border-radius:10px;margin-bottom:10px}
-.line-title{font-size:13px;font-weight:700;margin-bottom:10px}
-.symbol-preview{font-size:42px;text-align:center;filter:drop-shadow(0 1px 2px #000)}
-.connection-list{display:grid;gap:8px;margin-top:12px}
-.connection-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px;background:var(--panel2);border:1px solid var(--line);border-radius:8px;font-size:12px}
-.connection-row span{min-width:0;overflow-wrap:anywhere}
-.leaflet-control-attribution{font-size:9px!important}
-.leaflet-control-zoom a{background:#111c2e!important;color:white!important;border-color:#34445c!important}
-.leaflet-tooltip.editor-label{background:#111c2e;color:white;border:1px solid #475569;border-radius:5px;font-weight:bold}
-.editor-marker{
- display:flex;align-items:center;justify-content:center;
- background:transparent!important;border:0!important;
- box-shadow:none!important;filter:drop-shadow(0 1px 2px #0009);
+.type-item{
+  display:grid;grid-template-columns:40px minmax(0,1fr) 35px;
+  gap:9px;align-items:center;padding:10px;
+  border:1px solid var(--line);border-radius:10px;background:var(--panel2);
 }
-.editor-symbol{display:flex;align-items:center;justify-content:center;background:transparent;line-height:1}
-.leaflet-marker-draggable{cursor:grab}
-.leaflet-marker-draggable:active{cursor:grabbing}
-#loading{font-size:11px;color:#93c5fd;margin-left:5px}
-@media(max-width:650px){
- body{padding:9px}
- .card{padding:11px}
- .grid{grid-template-columns:1fr}
- #editorMap{height:440px}
- .type-row{grid-template-columns:42px 1fr 80px}
- .type-preview{grid-row:1/span 2}
- .type-name{grid-column:2}
- .type-icon{grid-column:3;grid-row:1}
- .type-color{grid-column:2}
- .type-delete{grid-column:3;grid-row:2}
- h1{font-size:20px}
+.type-icon{font-size:22px;text-align:center}
+.type-item input{
+  width:100%;min-width:0;background:#0b1727;color:white;
+  border:1px solid #34465f;padding:7px;border-radius:7px;
+}
+.type-item button{background:#572b37;color:#ffb6bd;border:0;border-radius:7px;padding:7px}
+.connection-list{display:grid;gap:7px}
+.connection-item{
+  display:flex;justify-content:space-between;gap:8px;
+  align-items:center;background:var(--panel2);padding:9px;border-radius:8px;
+  font-size:12px;
+}
+.badge{
+  display:inline-block;padding:4px 7px;border-radius:20px;
+  background:#193d5f;color:#a9d7ff;font-size:10px;font-weight:700;
+}
+.hidden{display:none!important}
+#toast{
+  position:fixed;right:18px;bottom:18px;z-index:5000;
+  background:#172a40;border:1px solid #3b5877;color:white;
+  border-radius:10px;padding:12px 16px;display:none;
+  box-shadow:0 8px 30px #0008;max-width:calc(100% - 36px);
+}
+#toast.show{display:block}
+.leaflet-popup-content-wrapper,.leaflet-popup-tip{background:#101d30;color:#eef5ff}
+.leaflet-popup-content{margin:13px;min-width:210px;max-width:300px}
+.popup-title{font-size:15px;font-weight:800;margin-bottom:8px}
+.popup-type{color:#75baff;font-size:11px;font-weight:700;margin-bottom:10px}
+.popup-table{width:100%;border-collapse:collapse;font-size:11px}
+.popup-table td{padding:5px 3px;border-bottom:1px solid #293b52;vertical-align:top;overflow-wrap:anywhere}
+.popup-table td:first-child{color:#91a8c3;width:40%}
+.marker-icon{
+  display:flex;align-items:center;justify-content:center;
+  border-radius:50%;border:2px solid white;
+  box-shadow:0 3px 10px #0008;background:#142238;
+  font-size:19px;line-height:1;
+}
+.marker-icon.selected{outline:4px solid #fbbf24}
+.connection-mode{background:#553b13!important;border-color:#b98523!important;color:#ffe2a3!important}
+.area-mode{background:#164b3b!important;border-color:#258c69!important;color:#b5ffe2!important}
+@media(max-width:1000px){
+  .editor-grid{grid-template-columns:1fr}
+  .side-panel{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+  .side-panel .panel{margin:0}
+}
+@media(max-width:700px){
+  .layout{grid-template-columns:1fr}
+  .sidebar{display:flex;overflow:auto;padding:7px;gap:5px;border-right:0;border-bottom:1px solid var(--line)}
+  .side-label{display:none}
+  .nav-btn{white-space:nowrap;width:auto;margin:0;padding:9px 11px;font-size:11px}
+  .main{padding:11px}
+  .topbar{padding:10px 12px}
+  .brand h2{font-size:13px}
+  .top-actions .btn{padding:8px 9px;font-size:11px}
+  #editorMap{height:60vh;min-height:390px}
+  .side-panel{grid-template-columns:1fr}
+  .page-head h1{font-size:18px}
 }
 </style>
 </head>
 
 <body>
-<div class="container">
 
- <div class="header">
-  <div>
-   <h1>Map Settings</h1>
-   <div class="subtitle">ONE ONLINE | Interactive Map Control Panel</div>
-  </div>
-  <div class="actions">
-   <span id="loading">Loading...</span>
-   <button class="secondary" onclick="loadSettings()">Refresh</button>
-   <button class="success" onclick="saveAllSettings()">Save All</button>
-  </div>
- </div>
-
- <div class="tabs">
-  <button class="tab active" data-tab="editor">🗺️ Live Map Editor</button>
-  <button class="tab" data-tab="area">📍 Map Area</button>
-  <button class="tab" data-tab="display">🌍 Map Display</button>
-  <button class="tab" data-tab="icons">🎨 Icon Settings</button>
-  <button class="tab" data-tab="wires">〰️ Wire Settings</button>
-  <button class="tab" data-tab="visibility">👁️ Visibility</button>
-  <button class="tab" data-tab="backup">💾 Backup</button>
- </div>
-
- <!-- LIVE MAP EDITOR -->
- <section class="section active" id="section-editor">
-  <div class="card">
-   <h2>Live Map Editor</h2>
-   <p class="map-help">
-    ম্যাপের Customer, Pull, Switch অথবা Pole আঙুল দিয়ে ধরে সরাতে পারবে।
-    Connection তৈরি করতে Connect Mode চালু করে প্রথমে একটি Source এবং পরে Destination Marker নির্বাচন করো।
-   </p>
-
-   <div class="map-tools">
-    <button id="moveModeBtn" class="active" onclick="setEditorMode('move')">✋ Move Marker</button>
-    <button id="connectModeBtn" onclick="setEditorMode('connect')">🔗 Connect Mode</button>
-    <button class="secondary" onclick="setEditorMode('view')">👁️ View Only</button>
-    <button class="secondary" onclick="undoConnection()">Undo Connection</button>
-    <button class="secondary" onclick="fitAllMarkers()">Fit All Points</button>
-   </div>
-
-   <div class="grid" style="margin-bottom:10px">
-    <div class="field">
-     <label>Connection Type</label>
-     <select id="editorConnectionType">
-      <option value="wire">Wire</option>
-      <option value="fiber">Fiber</option>
-      <option value="drop">Drop</option>
-     </select>
+<header class="topbar">
+  <div class="brand">
+    <div class="brand-logo">O</div>
+    <div>
+      <h2>ONE ONLINE</h2>
+      <small>NETWORK MAP CONTROL CENTER</small>
     </div>
-    <div class="field">
-     <label>Connection Name (Optional)</label>
-     <input id="editorConnectionName" placeholder="Example: Pull to Customer">
+  </div>
+  <div class="top-actions">
+    <span class="status" id="saveStatus">Loading map data...</span>
+    <button class="btn" onclick="refreshData()">↻ Refresh</button>
+    <button class="btn primary" onclick="saveAll()">Save All</button>
+  </div>
+</header>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="side-label">MAP CONTROL</div>
+    <button class="nav-btn active" data-tab="editor">🗺 Map Editor</button>
+    <button class="nav-btn" data-tab="display">⚙ Map Display</button>
+    <button class="nav-btn" data-tab="icons">📍 Icon Settings</button>
+    <button class="nav-btn" data-tab="connections">〰 Connections</button>
+    <button class="nav-btn" data-tab="area">⬡ Area Lock</button>
+    <button class="nav-btn" data-tab="visibility">👁 Visibility</button>
+    <button class="nav-btn" data-tab="backup">💾 Backup</button>
+  </aside>
+
+  <main class="main">
+    <div class="page-head">
+      <div>
+        <h1>Map Settings</h1>
+        <p>Manage customer locations, network points and connection lines.</p>
+      </div>
+      <span class="badge" id="dataBadge">MAP SYSTEM READY</span>
     </div>
-   </div>
 
-   <div class="map-status" id="editorStatus">
-    Move Marker Mode: Marker ধরে সরিয়ে নতুন জায়গায় বসাও।
-   </div>
+    <!-- MAP EDITOR -->
+    <section class="tab-content active" id="tab-editor">
+      <div class="editor-grid">
+        <div class="panel map-panel">
+          <div class="map-toolbar">
+            <div class="map-toolbar-left">
+              <span class="badge" id="mapModeBadge">NORMAL MODE</span>
+              <button class="btn small" onclick="fitAllPoints()">Fit All Points</button>
+              <button class="btn small" onclick="setConnectMode()">Connect Pull → Customer</button>
+              <button class="btn small" onclick="setAreaMode()">Draw Boundary</button>
+            </div>
+            <div class="map-toolbar-right">
+              <select id="quickMapType" class="btn small" onchange="changeMapType(this.value)">
+                <option value="road">Road Map</option>
+                <option value="satellite">Satellite</option>
+                <option value="terrain">Terrain</option>
+              </select>
+              <button class="btn small" onclick="cancelModes()">Cancel Mode</button>
+            </div>
+          </div>
+          <div id="editorMap"></div>
+          <div class="map-foot" id="mapInstruction">
+            Click a marker to view its full information. Drag a marker to move its location.
+            Zoom in or out using the map controls or mouse wheel.
+          </div>
+        </div>
 
-   <div id="editorMap"></div>
+        <div class="side-panel">
+          <div class="panel">
+            <h3 class="panel-title">Map Overview</h3>
+            <div class="stat-grid">
+              <div class="stat"><strong id="countLocations">0</strong><span>Total Points</span></div>
+              <div class="stat"><strong id="countConnections">0</strong><span>Connections</span></div>
+              <div class="stat"><strong id="countCustomers">0</strong><span>Customers</span></div>
+              <div class="stat"><strong id="countPulls">0</strong><span>Pull Points</span></div>
+            </div>
+          </div>
 
-   <div class="status" id="editorSaveStatus">
-    Map ready.
-   </div>
-  </div>
+          <div class="panel">
+            <h3 class="panel-title">Connection Guide</h3>
+            <p class="help">
+              1. Click <b>Connect Pull → Customer</b>.<br>
+              2. Click a Pull marker.<br>
+              3. Click the target Customer marker.<br>
+              4. The connection will appear on the map. Click Save All to save it.
+            </p>
+            <div id="connectStatus" class="help">Connection mode is inactive.</div>
+          </div>
 
-  <div class="card">
-   <h2>Connection List</h2>
-   <div class="note">এখানে তৈরি হওয়া Connection দেখা যাবে। Delete করলে Save All চাপবে।</div>
-   <div id="connectionList" class="connection-list"></div>
-  </div>
- </section>
+          <div class="panel">
+            <h3 class="panel-title">Selected Point</h3>
+            <div id="selectedInfo" class="help">Click any marker to see its information here.</div>
+            <button class="btn small" style="width:100%;margin-top:10px" onclick="centerSelected()">Center Selected Point</button>
+          </div>
 
- <!-- AREA SETTINGS -->
- <section class="section" id="section-area">
-  <div class="card">
-   <h2>Area Lock / Map Boundary</h2>
-   <p class="map-help">
-    ১. ম্যাপ Zoom করে নিজের প্রয়োজনীয় এলাকায় যাও।<br>
-    ২. Start Drawing চাপো।<br>
-    ৩. এলাকার চারপাশে ক্লিক বা ট্যাপ করে পয়েন্ট বসাও।<br>
-    ৪. কমপক্ষে ৩টি পয়েন্ট হলে Finish Area চাপো।<br>
-    ৫. Enable Area Lock চালু করে Save All করো।
-   </p>
+          <div class="panel">
+            <h3 class="panel-title">Map Information</h3>
+            <div class="help">
+              Map zoom is enabled up to level 22. When the tile provider has no higher-resolution tiles, its nearest available tile is enlarged so the map remains visible.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
 
-   <div class="actions" style="margin-bottom:10px">
-    <button id="startDrawBtn" onclick="startDrawing()">Start Drawing</button>
-    <button class="success" id="finishDrawBtn" onclick="finishDrawing()" disabled>Finish Area</button>
-    <button class="secondary" onclick="undoAreaPoint()">Undo Point</button>
-    <button class="danger" onclick="clearArea()">Clear Area</button>
-    <button class="secondary" onclick="fitArea()">Fit Area</button>
-   </div>
+    <!-- DISPLAY -->
+    <section class="tab-content" id="tab-display">
+      <div class="panel">
+        <h3 class="panel-title">Map Display Settings</h3>
+        <div class="row-fields">
+          <div class="field">
+            <label>Default Map Type</label>
+            <select id="mapType">
+              <option value="road">Road Map</option>
+              <option value="satellite">Satellite</option>
+              <option value="terrain">Terrain</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Default Zoom Level</label>
+            <input id="zoomLevel" type="number" min="2" max="22" value="13">
+          </div>
+          <div class="field">
+            <label>Center Latitude</label>
+            <input id="centerLat" type="number" step="any">
+          </div>
+          <div class="field">
+            <label>Center Longitude</label>
+            <input id="centerLng" type="number" step="any">
+          </div>
+          <div class="field">
+            <label>Marker Size (px)</label>
+            <input id="markerSize" type="number" min="18" max="70" value="36">
+          </div>
+        </div>
+        <div class="check-row">
+          <label for="showMarkerLabels">Show marker labels</label>
+          <input type="checkbox" id="showMarkerLabels" checked>
+        </div>
+        <div class="check-row">
+          <label for="showWires">Show connection lines</label>
+          <input type="checkbox" id="showWires" checked>
+        </div>
+        <button class="btn primary" onclick="saveAll()">Save Display Settings</button>
+      </div>
+    </section>
 
-   <div class="toggle">
-    <input id="areaEnabled" type="checkbox">
-    <span><b>Enable Area Lock</b> — মূল Map শুধু এই Area দেখাবে</span>
-   </div>
+    <!-- ICONS -->
+    <section class="tab-content" id="tab-icons">
+      <div class="panel">
+        <h3 class="panel-title">Point Icon Settings</h3>
+        <p class="help">Change each point type's name, icon and marker colour. Existing point information will remain unchanged.</p>
+        <div id="typeList" class="type-list"></div>
+        <div class="row-fields" style="margin-top:15px">
+          <div class="field">
+            <label>New Type Name</label>
+            <input id="newTypeName" placeholder="Example: Junction">
+          </div>
+          <div class="field">
+            <label>New Type Icon</label>
+            <input id="newTypeIcon" value="📡">
+          </div>
+        </div>
+        <div class="field">
+          <label>New Type Color</label>
+          <input id="newTypeColor" type="color" value="#0ea5e9">
+        </div>
+        <button class="btn primary" onclick="addNewType()">+ Add New Point Type</button>
+      </div>
+    </section>
 
-   <div class="field">
-    <label>Area Boundary JSON</label>
-    <textarea id="areaPoints" placeholder='[{"lat":23.8103,"lng":90.4125}]'></textarea>
-   </div>
+    <!-- CONNECTIONS -->
+    <section class="tab-content" id="tab-connections">
+      <div class="panel">
+        <h3 class="panel-title">Connection Line Settings</h3>
+        <p class="help">Configure the appearance of the lines connecting network points.</p>
+        <div class="row-fields">
+          <div class="field">
+            <label>Wire Color</label><input id="wireColor" type="color">
+          </div>
+          <div class="field">
+            <label>Wire Weight</label><input id="wireWeight" type="number" min="1" max="12">
+          </div>
+          <div class="field">
+            <label>Wire Opacity (0–1)</label><input id="wireOpacity" type="number" min="0" max="1" step=".05">
+          </div>
+          <div class="field">
+            <label>Wire Style</label>
+            <select id="wireStyle"><option value="solid">Solid</option><option value="dashed">Dashed</option><option value="dotted">Dotted</option></select>
+          </div>
+          <div class="field">
+            <label>Fiber Color</label><input id="fiberColor" type="color">
+          </div>
+          <div class="field">
+            <label>Fiber Weight</label><input id="fiberWeight" type="number" min="1" max="12">
+          </div>
+          <div class="field">
+            <label>Fiber Opacity</label><input id="fiberOpacity" type="number" min="0" max="1" step=".05">
+          </div>
+          <div class="field">
+            <label>Fiber Style</label>
+            <select id="fiberStyle"><option value="solid">Solid</option><option value="dashed">Dashed</option><option value="dotted">Dotted</option></select>
+          </div>
+          <div class="field">
+            <label>Drop Color</label><input id="dropColor" type="color">
+          </div>
+          <div class="field">
+            <label>Drop Weight</label><input id="dropWeight" type="number" min="1" max="12">
+          </div>
+          <div class="field">
+            <label>Drop Opacity</label><input id="dropOpacity" type="number" min="0" max="1" step=".05">
+          </div>
+          <div class="field">
+            <label>Drop Style</label>
+            <select id="dropStyle"><option value="solid">Solid</option><option value="dashed">Dashed</option><option value="dotted">Dotted</option></select>
+          </div>
+        </div>
+        <button class="btn primary" onclick="saveAll()">Save Connection Settings</button>
+        <hr style="border-color:var(--line);margin:18px 0">
+        <h3 class="panel-title">Saved Connections</h3>
+        <div id="connectionList" class="connection-list"></div>
+      </div>
+    </section>
 
-   <div class="actions" style="margin-top:10px">
-    <button class="secondary" onclick="applyAreaJSON()">Apply JSON</button>
-   </div>
-   <div class="status" id="areaStatus">Area drawing ready.</div>
-  </div>
- </section>
+    <!-- AREA -->
+    <section class="tab-content" id="tab-area">
+      <div class="panel">
+        <h3 class="panel-title">Area Boundary & Map Lock</h3>
+        <p class="help">
+          Draw a polygon on the map to define the allowed area. In the main Map page, the same boundary can be used to restrict the visible map area.
+        </p>
+        <div class="check-row">
+          <label for="areaEnabled">Enable Area Lock</label>
+          <input type="checkbox" id="areaEnabled">
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin:14px 0">
+          <button class="btn success" onclick="setAreaMode()">Start Drawing Boundary</button>
+          <button class="btn" onclick="undoAreaPoint()">Undo Last Point</button>
+          <button class="btn danger" onclick="clearArea()">Clear Boundary</button>
+          <button class="btn" onclick="fitBoundary()">Fit Boundary</button>
+        </div>
+        <div class="field">
+          <label>Boundary Points JSON</label>
+          <textarea id="areaJSON" rows="5" placeholder='[{"lat":23.8,"lng":90.4}]'></textarea>
+        </div>
+        <button class="btn" onclick="applyAreaJSON()">Apply JSON</button>
+        <p class="help" id="areaPointCount">Boundary points: 0</p>
+        <p class="help">
+          Note: Area Lock settings are saved here. The main <b>map.html</b> must also read <code>settings.lockedArea</code> and apply polygon masking and map bounds for the restriction to work there.
+        </p>
+        <button class="btn primary" onclick="saveAll()">Save Area Settings</button>
+      </div>
+    </section>
 
- <!-- DISPLAY SETTINGS -->
- <section class="section" id="section-display">
-  <div class="card">
-   <h2>Map Display Settings</h2>
-   <div class="grid">
-    <div class="field">
-     <label>Map Layer</label>
-     <select id="mapType">
-      <option value="road">Road Map</option>
-      <option value="satellite">Satellite</option>
-      <option value="terrain">Terrain</option>
-     </select>
-    </div>
-    <div class="field">
-     <label>Default Zoom Level</label>
-     <input id="zoomLevel" type="number" min="1" max="21" value="13">
-    </div>
-    <div class="field">
-     <label>Center Latitude</label>
-     <input id="centerLat" type="number" step="any">
-    </div>
-    <div class="field">
-     <label>Center Longitude</label>
-     <input id="centerLng" type="number" step="any">
-    </div>
-    <div class="field">
-     <label>Base Marker Size: <span id="markerSizeText">36</span> px</label>
-     <input id="markerSize" type="range" min="18" max="64" value="36">
-    </div>
-   </div>
+    <!-- VISIBILITY -->
+    <section class="tab-content" id="tab-visibility">
+      <div class="panel">
+        <h3 class="panel-title">Point Visibility</h3>
+        <p class="help">Choose which point types should be hidden from the main map.</p>
+        <div id="hiddenTypes"></div>
+        <button class="btn primary" style="margin-top:15px" onclick="saveAll()">Save Visibility Settings</button>
+      </div>
+    </section>
 
-   <div style="margin-top:12px">
-    <div class="toggle">
-     <input id="showMarkerLabels" type="checkbox" checked>
-     <span>Show Marker Labels</span>
-    </div>
-    <div class="toggle">
-     <input id="showWires" type="checkbox" checked>
-     <span>Show Connections</span>
-    </div>
-   </div>
-   <p class="note">ম্যাপের Zoom অনুযায়ী Marker-এর Size পরিবর্তিত হবে।</p>
-  </div>
- </section>
-
- <!-- ICON SETTINGS -->
- <section class="section" id="section-icons">
-  <div class="card">
-   <h2>Point Symbol Settings</h2>
-   <div id="typeList" class="type-list"></div>
-   <div class="actions" style="margin-top:12px">
-    <button onclick="addNewType()">+ Add New Symbol Type</button>
-   </div>
-   <div style="text-align:center;background:var(--panel2);padding:14px;border-radius:10px;margin-top:12px">
-    <div class="symbol-preview" id="symbolPreview">👤</div>
-    <div class="note">Transparent Symbol Preview</div>
-   </div>
-  </div>
- </section>
-
- <!-- WIRE SETTINGS -->
- <section class="section" id="section-wires">
-  <div class="card">
-   <h2>Connection Line Settings</h2>
-   <div id="lineSettings"></div>
-  </div>
- </section>
-
- <!-- VISIBILITY -->
- <section class="section" id="section-visibility">
-  <div class="card">
-   <h2>Hide Point Types</h2>
-   <div class="note">যে ধরনের Marker লুকাতে চাও, সেগুলো নির্বাচন করো।</div>
-   <div id="hiddenTypes" class="grid" style="margin-top:12px"></div>
-  </div>
- </section>
-
- <!-- BACKUP -->
- <section class="section" id="section-backup">
-  <div class="card">
-   <h2>Backup & Restore</h2>
-   <p class="note">Map Settings, Locations এবং Connections-এর Backup তৈরি বা Restore করতে পারবে।</p>
-   <div class="actions">
-    <button class="secondary" onclick="exportBackup()">Export Full Backup</button>
-    <button class="secondary" onclick="$('backupFile').click()">Import Backup</button>
-    <input id="backupFile" type="file" accept=".json,application/json" hidden>
-   </div>
-  </div>
- </section>
-
- <div class="card">
-  <div class="actions">
-   <button class="success" onclick="saveAllSettings()">Save All Settings & Map</button>
-   <button class="secondary" onclick="loadSettings()">Reload Data</button>
-  </div>
-  <div id="status" class="status">Ready</div>
- </div>
-
+    <!-- BACKUP -->
+    <section class="tab-content" id="tab-backup">
+      <div class="panel">
+        <h3 class="panel-title">Backup & Restore</h3>
+        <p class="help">Export or restore your complete map data, including points, connections, settings and custom point types.</p>
+        <div style="display:flex;gap:9px;flex-wrap:wrap">
+          <button class="btn primary" onclick="exportBackup()">⬇ Export Full Backup</button>
+          <button class="btn" onclick="document.getElementById('backupFile').click()">⬆ Import Backup</button>
+          <input id="backupFile" type="file" accept=".json,application/json" hidden>
+        </div>
+      </div>
+    </section>
+  </main>
 </div>
 
+<div id="toast"></div>
+
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
 <script>
-"use strict";
+/* ==============================
+   ONE ONLINE MAP SETTINGS
+============================== */
 
-/* =====================================================
-   DATABASE CONFIG
-===================================================== */
+const MAP_API = "https://script.google.com/macros/s/AKfycbxmDzfnY3LpvfvHjC4usnZiBT4BX4KZIjVoCGcSULikoTKQaC_mj7cbG_zUaiTyZ4sb8w/exec";
+const CACHE_KEY = "ONE_ONLINE_MAP_DATA_V1";
 
-const MAP_API =
-"https://script.google.com/macros/s/AKfycbxmDzfnY3LpvfvHjC4usnZiBT4BX4KZIjVoCGcSULikoTKQaC_mj7cbG_zUaiTyZ4sb8w/exec";
-
-const CACHE_KEY="ONE_ONLINE_MAP_DATA_V1";
-
-const DEFAULT_SETTINGS={
- mapType:"road",
- centerLat:23.8103,
- centerLng:90.4125,
- zoomLevel:13,
- markerSize:36,
- showMarkerLabels:true,
- showWires:true,
- hiddenTypes:[],
-
- wireColor:"#f59e0b",
- wireWeight:3,
- wireOpacity:.95,
- wireStyle:"solid",
-
- fiberColor:"#2563eb",
- fiberWeight:4,
- fiberOpacity:1,
- fiberStyle:"solid",
-
- dropColor:"#16a34a",
- dropWeight:2,
- dropOpacity:.95,
- dropStyle:"solid",
-
- lockedArea:{enabled:false,points:[]},
- _customTypes:[]
+const DEFAULT_SETTINGS = {
+  mapType:"road",
+  centerLat:23.8103,
+  centerLng:90.4125,
+  zoomLevel:13,
+  markerSize:36,
+  showMarkerLabels:true,
+  showWires:true,
+  hiddenTypes:[],
+  wireColor:"#f59e0b",
+  wireWeight:3,
+  wireOpacity:.95,
+  wireStyle:"solid",
+  fiberColor:"#2563eb",
+  fiberWeight:4,
+  fiberOpacity:1,
+  fiberStyle:"solid",
+  dropColor:"#16a34a",
+  dropWeight:2,
+  dropOpacity:.95,
+  dropStyle:"solid",
+  lockedArea:{enabled:false,points:[]},
+  _customTypes:[]
 };
 
-const DEFAULT_TYPES=[
- {name:"Customer",icon:"👤",color:"#2563eb"},
- {name:"Pole",icon:"🗼",color:"#f59e0b"},
- {name:"Switch",icon:"🔀",color:"#16a34a"},
- {name:"Pull",icon:"📍",color:"#9333ea"}
+const DEFAULT_TYPES = [
+  {name:"Customer",icon:"👤",color:"#2563eb"},
+  {name:"Pole",icon:"🗼",color:"#f59e0b"},
+  {name:"Switch",icon:"🔀",color:"#16a34a"},
+  {name:"Pull",icon:"📍",color:"#9333ea"}
 ];
 
-
-/* =====================================================
-   STATE
-===================================================== */
-
-let mapData={
- locations:[],
- connections:[],
- settings:{},
- customTypes:[]
+let map;
+let mapData = {
+  locations:[],
+  connections:[],
+  settings:{...DEFAULT_SETTINGS},
+  customTypes:[]
 };
 
-let settings={...DEFAULT_SETTINGS};
-let types=[];
+let markerLayer;
+let connectionLayer;
+let areaLayer;
+let markerRefs = new Map();
+let selectedLocationId = null;
+let mode = "normal";
+let connectFromId = null;
+let areaPoints = [];
+let dirty = false;
 
-let editorMap=null;
-let tileLayers={};
-let editorMarkers=[];
-let editorLines=[];
-let areaLayers=[];
-let draftPoints=[];
-let drawing=false;
+const $ = id => document.getElementById(id);
 
-let editorMode="move";
-let connectionSource=null;
-let previewLine=null;
-let pendingConnectionUndo=null;
+function toast(message){
+  const el=$("toast");
+  el.textContent=message;
+  el.classList.add("show");
+  clearTimeout(toast.timer);
+  toast.timer=setTimeout(()=>el.classList.remove("show"),3200);
+}
 
-let isLoading=false;
+function setStatus(message){
+  $("saveStatus").textContent=message;
+}
 
-const $=id=>document.getElementById(id);
+function markDirty(){
+  dirty=true;
+  setStatus("Unsaved changes");
+  $("dataBadge").textContent="CHANGES NOT SAVED";
+}
 
+function getValue(obj,...keys){
+  for(const key of keys){
+    if(obj && obj[key]!==undefined && obj[key]!==null && obj[key]!=="") return obj[key];
+  }
+  return "";
+}
 
-/* =====================================================
-   COMMON HELPERS
-===================================================== */
+function locationId(loc){
+  return String(getValue(loc,"id","ID","Id"));
+}
+function locationType(loc){
+  return String(getValue(loc,"type","Type") || "Other");
+}
+function locationName(loc){
+  return String(getValue(loc,"name","Name") || locationType(loc));
+}
+function locationLat(loc){
+  return Number(getValue(loc,"lat","latitude","Latitude"));
+}
+function locationLng(loc){
+  return Number(getValue(loc,"lng","longitude","Longitude"));
+}
+function validLocation(loc){
+  return locationId(loc)!=="" &&
+    Number.isFinite(locationLat(loc)) &&
+    Number.isFinite(locationLng(loc));
+}
 
-function safeJSON(value,fallback){
- try{return JSON.parse(value)}
- catch(e){return fallback}
+function setLocationCoords(loc,lat,lng){
+  loc.lat=lat;
+  loc.lng=lng;
+  loc.latitude=lat;
+  loc.longitude=lng;
+  if("Latitude" in loc) loc.Latitude=lat;
+  if("Longitude" in loc) loc.Longitude=lng;
 }
 
 function normalizeData(raw){
- if(raw?.data&&!raw.locations)raw=raw.data;
+  if(raw && raw.data && !raw.locations) raw=raw.data;
+  raw=raw || {};
 
- return {
-  locations:Array.isArray(raw?.locations)?raw.locations:[],
-  connections:Array.isArray(raw?.connections)?raw.connections:[],
-  settings:raw?.settings&&typeof raw.settings==="object"?raw.settings:{},
-  customTypes:Array.isArray(raw?.customTypes)?raw.customTypes:[]
- };
-}
+  let locations=raw.locations || raw.Locations || [];
+  let connections=raw.connections || raw.Connections || [];
+  let settings=raw.settings || raw.Settings || {};
 
-function escapeHTML(value){
- return String(value??"").replace(/[&<>"']/g,c=>({
-  "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
- }[c]));
-}
+  if(!Array.isArray(locations)) locations=[];
+  if(!Array.isArray(connections)) connections=[];
 
-function validColor(value){
- return /^#[0-9a-f]{6}$/i.test(value||"")?value:"#64748b";
-}
-
-function setStatus(id,message,type=""){
- $(id).textContent=message;
- $(id).className="status "+type;
-}
-
-function setLoading(value){
- $("loading").textContent=value?"Loading...":"";
-}
-
-function normalizeType(value){
- return String(value||"").trim().toLowerCase();
-}
-
-function numberValue(value,fallback){
- const n=Number(value);
- return Number.isFinite(n)?n:fallback;
-}
-
-function firstValue(obj,keys,fallback=""){
- for(const key of keys){
-  if(obj&&obj[key]!==undefined&&obj[key]!==null&&obj[key]!==""){
-   return obj[key];
-  }
- }
- return fallback;
-}
-
-
-/* =====================================================
-   TABS
-===================================================== */
-
-document.querySelectorAll(".tab").forEach(button=>{
- button.addEventListener("click",()=>{
-  document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
-  document.querySelectorAll(".section").forEach(x=>x.classList.remove("active"));
-
-  button.classList.add("active");
-  $("section-"+button.dataset.tab).classList.add("active");
-
-  if(button.dataset.tab==="editor"&&editorMap){
-   setTimeout(()=>editorMap.invalidateSize(true),100);
-  }
- });
-});
-
-
-/* =====================================================
-   LOCATION DATA COMPATIBILITY
-===================================================== */
-
-function getExtra(location){
- let data=location?.data??location?.Data??location?.["Data JSON"];
-
- if(typeof data==="string"){
-  data=safeJSON(data,{});
- }
-
- return data&&typeof data==="object"?data:{};
-}
-
-function getLocationInfo(location){
-
- const extra=getExtra(location);
-
- const lat=numberValue(firstValue(location,[
-  "lat","latitude","Latitude","LAT"
- ],firstValue(extra,["lat","latitude","Latitude"],null)),null);
-
- const lng=numberValue(firstValue(location,[
-  "lng","lon","longitude","Longitude","LNG"
- ],firstValue(extra,["lng","lon","longitude"],null)),null);
-
- return {
-  raw:location,
-  extra,
-  id:String(firstValue(location,[
-   "id","ID","locationId","Location ID"
-  ],firstValue(extra,["id","ID"],""))),
-  name:String(firstValue(location,[
-   "name","Name","customerName","Customer Name"
-  ],firstValue(extra,["name","Name","customerName"],"Unnamed"))),
-  type:String(firstValue(location,[
-   "type","Type","category","Category"
-  ],firstValue(extra,["type","Type","category"],"Customer"))),
-  icon:String(firstValue(location,[
-   "icon","Icon"
-  ],firstValue(extra,["icon","Icon"],""))),
-  color:String(firstValue(location,[
-   "color","Color"
-  ],firstValue(extra,["color","Color"],""))),
-  locationNumber:String(firstValue(location,[
-   "locationNumber","Location Number","location_number"
-  ],firstValue(extra,["locationNumber","Location Number"],""))),
-  lat,lng
- };
-}
-
-function validCoordinates(lat,lng){
- return Number.isFinite(lat)&&
-        Number.isFinite(lng)&&
-        Math.abs(lat)<=90&&
-        Math.abs(lng)<=180&&
-        !(lat===0&&lng===0);
-}
-
-function setLocationCoordinates(location,lat,lng){
-
- /*
-  Preserve all existing fields.
-  Update existing coordinate keys where possible.
-  Keep extra customer information untouched.
- */
-
- const latKeys=["lat","latitude","Latitude","LAT"];
- const lngKeys=["lng","lon","longitude","Longitude","LNG"];
-
- const latKey=latKeys.find(k=>Object.prototype.hasOwnProperty.call(location,k));
- const lngKey=lngKeys.find(k=>Object.prototype.hasOwnProperty.call(location,k));
-
- location[latKey||"Latitude"]=lat;
- location[lngKey||"Longitude"]=lng;
-
- const extra=getExtra(location);
-
- if(Object.keys(extra).length){
-  const extraLatKey=latKeys.find(k=>Object.prototype.hasOwnProperty.call(extra,k));
-  const extraLngKey=lngKeys.find(k=>Object.prototype.hasOwnProperty.call(extra,k));
-
-  extra[extraLatKey||"lat"]=lat;
-  extra[extraLngKey||"lng"]=lng;
-
-  if(typeof location.data==="string"){
-   location.data=JSON.stringify(extra);
-  }else if(typeof location.Data==="string"){
-   location.Data=JSON.stringify(extra);
-  }else if(location["Data JSON"]!==undefined){
-   location["Data JSON"]=JSON.stringify(extra);
-  }else{
-   location.data=extra;
-  }
- }
-
- location.updatedAt=new Date().toISOString();
-}
-
-
-/* =====================================================
-   TYPES
-===================================================== */
-
-function buildTypes(){
-
- types=DEFAULT_TYPES.map(x=>({...x}));
-
- const custom=[
-  ...(mapData.customTypes||[]),
-  ...(settings._customTypes||[])
- ];
-
- custom.forEach(item=>{
-  const name=item.name||item.type;
-  if(!name)return;
-
-  const obj={
-   name:String(name),
-   icon:String(item.icon||"📍"),
-   color:validColor(item.color)
+  const merged={...DEFAULT_SETTINGS,...settings};
+  merged.lockedArea={
+    ...DEFAULT_SETTINGS.lockedArea,
+    ...(settings.lockedArea || {})
   };
+  merged.lockedArea.points=Array.isArray(merged.lockedArea.points)
+    ? merged.lockedArea.points : [];
 
-  const index=types.findIndex(t=>
-   normalizeType(t.name)===normalizeType(obj.name)
+  const types=raw.customTypes || raw.custom_types ||
+    settings._customTypes || [];
+
+  mapData={
+    locations,
+    connections,
+    settings:merged,
+    customTypes:Array.isArray(types) && types.length
+      ? types : DEFAULT_TYPES.map(x=>({...x}))
+  };
+}
+
+async function fetchRemote(){
+  const response=await fetch(MAP_API+"?action=getMapData",{
+    method:"GET",
+    cache:"no-store"
+  });
+  if(!response.ok) throw new Error("Server response "+response.status);
+  return await response.json();
+}
+
+async function loadData(){
+  // Show cached map immediately for faster loading.
+  try{
+    const cached=localStorage.getItem(CACHE_KEY);
+    if(cached){
+      normalizeData(JSON.parse(cached));
+      renderEverything();
+      setStatus("Showing saved local data...");
+    }
+  }catch(e){}
+
+  try{
+    const remote=await fetchRemote();
+    normalizeData(remote);
+    localStorage.setItem(CACHE_KEY,JSON.stringify(mapData));
+    renderEverything();
+    dirty=false;
+    setStatus("Connected to map database");
+    $("dataBadge").textContent="DATABASE CONNECTED";
+  }catch(error){
+    console.error(error);
+    setStatus("Offline / API connection failed");
+    $("dataBadge").textContent="LOCAL DATA MODE";
+    toast("Server data could not be loaded. Showing available local data.");
+  }
+}
+
+async function refreshData(){
+  setStatus("Refreshing...");
+  await loadData();
+  toast("Map data refreshed");
+}
+
+/* ==============================
+   MAP INITIALIZATION
+============================== */
+
+const TILE_LAYERS={
+  road:L.tileLayer(
+    "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+    {
+      maxZoom:22,
+      maxNativeZoom:19,
+      attribution:"© OpenStreetMap contributors"
+    }
+  ),
+  satellite:L.tileLayer(
+    "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+    {
+      maxZoom:22,
+      maxNativeZoom:19,
+      attribution:"Tiles © Esri"
+    }
+  ),
+  terrain:L.tileLayer(
+    "https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",
+    {
+      maxZoom:22,
+      maxNativeZoom:17,
+      attribution:"© OpenTopoMap"
+    }
+  )
+};
+
+let activeTile=null;
+
+function initMap(){
+  if(map) return;
+
+  map=L.map("editorMap",{
+    center:[23.8103,90.4125],
+    zoom:13,
+    minZoom:3,
+    maxZoom:22,
+    zoomControl:true,
+    scrollWheelZoom:true,
+    preferCanvas:true,
+    worldCopyJump:true
+  });
+
+  markerLayer=L.layerGroup().addTo(map);
+  connectionLayer=L.layerGroup().addTo(map);
+  areaLayer=L.layerGroup().addTo(map);
+
+  changeMapType("road");
+
+  map.on("click",e=>{
+    if(mode==="area"){
+      areaPoints.push({lat:e.latlng.lat,lng:e.latlng.lng});
+      drawArea();
+      updateAreaJSON();
+      markDirty();
+    }
+  });
+
+  map.on("zoomend",()=>{
+    updateMarkerSizes();
+  });
+
+  setTimeout(()=>map.invalidateSize(),250);
+}
+
+function changeMapType(type){
+  if(!map) return;
+  if(!TILE_LAYERS[type]) type="road";
+
+  if(activeTile) map.removeLayer(activeTile);
+  activeTile=TILE_LAYERS[type];
+  activeTile.addTo(map);
+
+  if($("quickMapType")) $("quickMapType").value=type;
+  if($("mapType")) $("mapType").value=type;
+
+  // Keep markers and lines above the map tiles.
+  markerLayer?.bringToFront();
+  connectionLayer?.bringToFront();
+  areaLayer?.bringToFront();
+}
+
+function applyMapView(){
+  if(!map) return;
+  const s=mapData.settings;
+  const lat=Number(s.centerLat);
+  const lng=Number(s.centerLng);
+  const zoom=Math.min(22,Math.max(3,Number(s.zoomLevel)||13));
+
+  map.setView(
+    [Number.isFinite(lat)?lat:23.8103,Number.isFinite(lng)?lng:90.4125],
+    zoom
+  );
+  changeMapType(s.mapType || "road");
+}
+
+function fitAllPoints(){
+  const points=mapData.locations.filter(validLocation);
+  if(!points.length){
+    toast("No valid points found");
+    return;
+  }
+  const bounds=L.latLngBounds(points.map(p=>[locationLat(p),locationLng(p)]));
+  map.fitBounds(bounds,{padding:[45,45],maxZoom:17});
+}
+
+function centerSelected(){
+  const loc=mapData.locations.find(x=>locationId(x)===selectedLocationId);
+  if(!loc || !validLocation(loc)) return;
+  map.setView([locationLat(loc),locationLng(loc)],18);
+}
+
+/* ==============================
+   POINT MARKERS
+============================== */
+
+function findTypeConfig(type){
+  return mapData.customTypes.find(t=>
+    String(t.name).toLowerCase()===String(type).toLowerCase()
+  ) || DEFAULT_TYPES.find(t=>
+    String(t.name).toLowerCase()===String(type).toLowerCase()
+  ) || {name:type,icon:"📍",color:"#64748b"};
+}
+
+function markerSize(){
+  const base=Math.max(18,Math.min(70,Number(mapData.settings.markerSize)||36));
+  const zoom=map ? map.getZoom() : 13;
+  return Math.max(18,Math.min(62,base*Math.pow(2,(zoom-13)*.13)));
+}
+
+function makeMarkerIcon(loc){
+  const type=locationType(loc);
+  const cfg=findTypeConfig(type);
+  const size=markerSize();
+  const icon=getValue(loc,"icon","Icon") || cfg.icon || "📍";
+  const color=getValue(loc,"color","Color") || cfg.color || "#2563eb";
+  const selected=locationId(loc)===selectedLocationId;
+
+  return L.divIcon({
+    className:"",
+    html:`<div class="marker-icon ${selected?"selected":""}"
+      style="width:${size}px;height:${size}px;background:${color};font-size:${size*.53}px">
+      ${escapeHtml(String(icon))}
+    </div>`,
+    iconSize:[size,size],
+    iconAnchor:[size/2,size/2],
+    popupAnchor:[0,-size/2]
+  });
+}
+
+function renderMarkers(){
+  if(!map) return;
+  markerLayer.clearLayers();
+  markerRefs.clear();
+
+  const hidden=(mapData.settings.hiddenTypes || []).map(x=>String(x).toLowerCase());
+
+  mapData.locations.forEach(loc=>{
+    if(!validLocation(loc)) return;
+    if(hidden.includes(locationType(loc).toLowerCase())) return;
+
+    const marker=L.marker(
+      [locationLat(loc),locationLng(loc)],
+      {
+        icon:makeMarkerIcon(loc),
+        draggable:true,
+        autoPan:true,
+        riseOnHover:true
+      }
+    );
+
+    marker.bindPopup(()=>buildPopup(loc),{maxWidth:330});
+    marker.on("click",()=>{
+      selectedLocationId=locationId(loc);
+      renderSelectedInfo(loc);
+      updateMarkerIcons();
+    });
+
+    marker.on("dragstart",()=>{
+      if(mode!=="normal"){
+        marker.dragging.disable();
+        toast("Cancel the active mode before moving a marker.");
+      }
+    });
+
+    marker.on("dragend",e=>{
+      const pos=e.target.getLatLng();
+      setLocationCoords(loc,pos.lat,pos.lng);
+      markDirty();
+      renderSelectedInfo(loc);
+      renderConnections();
+      updateAreaJSON();
+      toast(locationName(loc)+" location moved. Click Save All to save.");
+    });
+
+    marker.addTo(markerLayer);
+    markerRefs.set(locationId(loc),marker);
+  });
+}
+
+function updateMarkerIcons(){
+  markerRefs.forEach((marker,id)=>{
+    const loc=mapData.locations.find(x=>locationId(x)===id);
+    if(loc) marker.setIcon(makeMarkerIcon(loc));
+  });
+}
+
+function updateMarkerSizes(){
+  updateMarkerIcons();
+}
+
+function escapeHtml(value){
+  return String(value).replace(/[&<>"']/g,ch=>({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  }[ch]));
+}
+
+function displayValue(value){
+  if(value===null || value===undefined || value==="") return "—";
+  if(typeof value==="object") return JSON.stringify(value);
+  return String(value);
+}
+
+function buildPopup(loc){
+  const name=locationName(loc);
+  const type=locationType(loc);
+  const cfg=findTypeConfig(type);
+
+  // Display all fields, including extra information in Data JSON.
+  let fields={...loc};
+  const dataJson=getValue(loc,"dataJson","Data JSON","data_json");
+
+  if(dataJson){
+    try{
+      const extra=typeof dataJson==="string"?JSON.parse(dataJson):dataJson;
+      if(extra && typeof extra==="object") fields={...fields,...extra};
+    }catch(e){}
+  }
+
+  const skip=new Set(["id","ID","Id","dataJson","data_json","Data JSON"]);
+  const rows=Object.entries(fields)
+    .filter(([key])=>!skip.has(key))
+    .map(([key,value])=>
+      `<tr><td>${escapeHtml(key)}</td><td>${escapeHtml(displayValue(value))}</td></tr>`
+    ).join("");
+
+  return `
+    <div class="popup-title">${escapeHtml(name)}</div>
+    <div class="popup-type">${escapeHtml(cfg.icon||"📍")} ${escapeHtml(type)}</div>
+    <table class="popup-table">
+      ${rows || "<tr><td colspan='2'>No additional information</td></tr>"}
+    </table>
+    <div style="font-size:10px;color:#91a8c3;margin-top:9px">
+      ID: ${escapeHtml(locationId(loc))}
+    </div>
+  `;
+}
+
+function renderSelectedInfo(loc){
+  const box=$("selectedInfo");
+  if(!loc){
+    box.textContent="Click any marker to see its information here.";
+    return;
+  }
+  const fields={...loc};
+  const extra=getValue(loc,"dataJson","Data JSON","data_json");
+  if(extra){
+    try{
+      Object.assign(fields,typeof extra==="string"?JSON.parse(extra):extra);
+    }catch(e){}
+  }
+  box.innerHTML=`
+    <b style="color:white">${escapeHtml(locationName(loc))}</b>
+    <div style="margin:5px 0 9px;color:#75baff">${escapeHtml(locationType(loc))}</div>
+    ${Object.entries(fields).filter(([k])=>!["dataJson","data_json","Data JSON"].includes(k))
+      .map(([k,v])=>`<div style="padding:5px 0;border-bottom:1px solid #293951;overflow-wrap:anywhere">
+        <span style="color:#91a3bc">${escapeHtml(k)}:</span>
+        ${escapeHtml(displayValue(v))}
+      </div>`).join("")}
+  `;
+}
+
+/* ==============================
+   CONNECTIONS
+============================== */
+
+function connectionStyle(connection){
+  const type=String(getValue(connection,"type","Type")||"wire").toLowerCase();
+  const s=mapData.settings;
+
+  let color=s.wireColor,weight=s.wireWeight,opacity=s.wireOpacity,style=s.wireStyle;
+
+  if(type.includes("fiber")){
+    color=s.fiberColor;weight=s.fiberWeight;opacity=s.fiberOpacity;style=s.fiberStyle;
+  }else if(type.includes("drop")){
+    color=s.dropColor;weight=s.dropWeight;opacity=s.dropOpacity;style=s.dropStyle;
+  }
+
+  let dash="";
+  if(style==="dashed") dash="10 7";
+  if(style==="dotted") dash="2 7";
+
+  return {
+    color:color || "#f59e0b",
+    weight:Number(weight)||3,
+    opacity:Number(opacity),
+    dashArray:dash || null,
+    lineCap:"round"
+  };
+}
+
+function renderConnections(){
+  if(!map) return;
+  connectionLayer.clearLayers();
+
+  if(mapData.settings.showWires===false) return;
+
+  mapData.connections.forEach(conn=>{
+    const from=String(getValue(conn,"from","From"));
+    const to=String(getValue(conn,"to","To"));
+    const a=mapData.locations.find(x=>locationId(x)===from);
+    const b=mapData.locations.find(x=>locationId(x)===to);
+
+    if(!a || !b || !validLocation(a) || !validLocation(b)) return;
+
+    const line=L.polyline(
+      [
+        [locationLat(a),locationLng(a)],
+        [locationLat(b),locationLng(b)]
+      ],
+      connectionStyle(conn)
+    );
+
+    const lineName=getValue(conn,"name","Name") || "Connection";
+    line.bindTooltip(
+      escapeHtml(lineName)+": "+escapeHtml(locationName(a))+" → "+escapeHtml(locationName(b))
+    );
+    line.addTo(connectionLayer);
+  });
+
+  connectionLayer.bringToFront();
+}
+
+function setConnectMode(){
+  mode="connect";
+  connectFromId=null;
+  $("mapModeBadge").textContent="CONNECT MODE";
+  $("mapInstruction").textContent="Select a Pull marker first, then select a Customer marker.";
+  $("connectStatus").textContent="Waiting for source Pull point...";
+  $("mapModeBadge").classList.add("connection-mode");
+  $("mapModeBadge").classList.remove("area-mode");
+  markerRefs.forEach(marker=>marker.dragging.disable());
+
+  map.off("click",areaMapClick);
+  toast("Select a Pull marker, then a Customer marker.");
+}
+
+function areaMapClick(){}
+
+function handleConnectionPoint(loc){
+  const type=locationType(loc).toLowerCase();
+
+  if(!connectFromId){
+    if(type!=="pull"){
+      toast("First select a Pull point.");
+      return;
+    }
+    connectFromId=locationId(loc);
+    $("connectStatus").textContent="Pull selected: "+locationName(loc)+". Now select a Customer.";
+    toast("Pull selected. Now click the target Customer.");
+    return;
+  }
+
+  if(locationId(loc)===connectFromId){
+    toast("Choose a different Customer point.");
+    return;
+  }
+
+  if(type!=="customer"){
+    toast("The second point must be a Customer.");
+    return;
+  }
+
+  const exists=mapData.connections.some(c=>
+    String(getValue(c,"from","From"))===connectFromId &&
+    String(getValue(c,"to","To"))===locationId(loc)
   );
 
-  if(index>=0)types[index]=obj;
-  else types.push(obj);
- });
-}
-
-function getType(typeName){
- return types.find(t=>
-  normalizeType(t.name)===normalizeType(typeName)
- )||{name:typeName,icon:"📍",color:"#64748b"};
-}
-
-function renderTypes(){
-
- $("typeList").innerHTML="";
-
- types.forEach((type,index)=>{
-
-  const row=document.createElement("div");
-  row.className="type-row";
-
-  row.innerHTML=`
-   <div class="type-preview" id="typePreview${index}">${escapeHTML(type.icon)}</div>
-   <input class="type-name" id="typeName${index}" value="${escapeHTML(type.name)}" placeholder="Type name">
-   <input class="type-icon" id="typeIcon${index}" value="${escapeHTML(type.icon)}" maxlength="12" placeholder="Icon">
-   <input class="type-color" id="typeColor${index}" type="color" value="${validColor(type.color)}">
-   <button class="danger type-delete" data-delete="${index}">Delete</button>
-  `;
-
-  $("typeList").appendChild(row);
-
-  row.querySelector("[data-delete]").onclick=()=>deleteType(index);
-
-  row.querySelector(".type-icon").addEventListener("input",e=>{
-   $("typePreview"+index).textContent=e.target.value||"📍";
-   $("symbolPreview").textContent=e.target.value||"📍";
-  });
- });
-
- $("symbolPreview").textContent=types[0]?.icon||"📍";
-
- renderHiddenTypes();
-}
-
-function readTypes(){
-
- const result=[];
-
- types.forEach((type,index)=>{
-  const name=$("typeName"+index)?.value.trim();
-  if(!name)return;
-
-  result.push({
-   name,
-   icon:$("typeIcon"+index)?.value.trim()||"📍",
-   color:$("typeColor"+index)?.value||"#64748b"
-  });
- });
-
- return result;
-}
-
-function addNewType(){
- types=readTypes();
- types.push({
-  name:"New Type",
-  icon:"📍",
-  color:"#9333ea"
- });
- renderTypes();
-}
-
-function deleteType(index){
- if(!confirm("এই Symbol Type মুছবেন?"))return;
-
- types=readTypes();
- types.splice(index,1);
- renderTypes();
-}
-
-
-/* =====================================================
-   LINE SETTINGS
-===================================================== */
-
-function renderLineSettings(){
-
- const lines=[
-  {key:"wire",title:"Wire",color:"#f59e0b",weight:3,opacity:.95},
-  {key:"fiber",title:"Fiber",color:"#2563eb",weight:4,opacity:1},
-  {key:"drop",title:"Drop",color:"#16a34a",weight:2,opacity:.95}
- ];
-
- $("lineSettings").innerHTML=lines.map(x=>`
-  <div class="line-box">
-   <div class="line-title">${x.title} Connection</div>
-   <div class="grid">
-    <div class="field">
-     <label>Color</label>
-     <input id="${x.key}Color" type="color" value="${validColor(settings[x.key+"Color"]||x.color)}">
-    </div>
-    <div class="field">
-     <label>Weight</label>
-     <input id="${x.key}Weight" type="number" min="1" max="15" value="${settings[x.key+"Weight"]??x.weight}">
-    </div>
-    <div class="field">
-     <label>Opacity</label>
-     <input id="${x.key}Opacity" type="number" min="0" max="1" step=".05" value="${settings[x.key+"Opacity"]??x.opacity}">
-    </div>
-    <div class="field">
-     <label>Line Style</label>
-     <select id="${x.key}Style">
-      <option value="solid">Solid</option>
-      <option value="dashed">Dashed</option>
-      <option value="dotted">Dotted</option>
-     </select>
-    </div>
-   </div>
-  </div>
- `).join("");
-
- lines.forEach(x=>{
-  $(x.key+"Style").value=settings[x.key+"Style"]||"solid";
- });
-}
-
-function renderHiddenTypes(){
-
- const selected=settings.hiddenTypes||[];
-
- $("hiddenTypes").innerHTML=readTypes().map(type=>`
-  <label class="toggle">
-   <input class="hidden-type" type="checkbox"
-    value="${escapeHTML(type.name)}"
-    ${selected.some(x=>normalizeType(x)===normalizeType(type.name))?"checked":""}>
-   <span>${escapeHTML(type.icon)} ${escapeHTML(type.name)}</span>
-  </label>
- `).join("");
-}
-
-
-/* =====================================================
-   MAP LAYERS
-===================================================== */
-
-function initEditorMap(){
-
- if(editorMap)return;
-
- editorMap=L.map("editorMap",{
-  zoomControl:true,
-  preferCanvas:true,
-  markerZoomAnimation:false,
-  worldCopyJump:false
- });
-
- tileLayers.road=L.tileLayer(
-  "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-  {
-   maxZoom:21,
-   keepBuffer:3,
-   updateWhenIdle:true,
-   updateWhenZooming:false,
-   attribution:"&copy; OpenStreetMap"
-  }
- );
-
- tileLayers.satellite=L.tileLayer(
-  "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-  {
-   maxZoom:20,
-   keepBuffer:3,
-   updateWhenIdle:true,
-   updateWhenZooming:false,
-   attribution:"Tiles &copy; Esri"
-  }
- );
-
- tileLayers.terrain=L.tileLayer(
-  "https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",
-  {
-   maxZoom:17,
-   keepBuffer:3,
-   updateWhenIdle:true,
-   updateWhenZooming:false,
-   attribution:"&copy; OpenTopoMap"
-  }
- );
-
- getTileLayer().addTo(editorMap);
-
- editorMap.setView(
-  [
-   numberValue(settings.centerLat,23.8103),
-   numberValue(settings.centerLng,90.4125)
-  ],
-  numberValue(settings.zoomLevel,13)
- );
-
- editorMap.on("click",e=>{
-  if(drawing){
-   addAreaPoint(e.latlng);
-  }
- });
-
- editorMap.on("moveend zoomend",()=>{
-  const c=editorMap.getCenter();
-  $("centerLat").value=c.lat.toFixed(7);
-  $("centerLng").value=c.lng.toFixed(7);
-  $("zoomLevel").value=editorMap.getZoom();
- });
-
- editorMap.on("zoomend",updateEditorMarkerSizes);
-}
-
-function getTileLayer(){
- return tileLayers[settings.mapType]||tileLayers.road;
-}
-
-function changePreviewLayer(){
-
- if(!editorMap)return;
-
- Object.values(tileLayers).forEach(layer=>{
-  if(editorMap.hasLayer(layer)){
-   editorMap.removeLayer(layer);
-  }
- });
-
- getTileLayer().addTo(editorMap);
-}
-
-
-/* =====================================================
-   EDITOR MARKERS
-===================================================== */
-
-function calculateMarkerSize(){
-
- const base=numberValue(settings.markerSize,36);
- const zoom=editorMap?editorMap.getZoom():13;
-
- const size=base*Math.pow(2,(zoom-13)*.25);
-
- return Math.max(11,Math.min(44,size));
-}
-
-function makeMarkerIcon(info){
-
- const type=getType(info.type);
- const icon=info.icon||type.icon||"📍";
- const color=validColor(info.color||type.color);
- const size=calculateMarkerSize();
-
- return L.divIcon({
-  className:"editor-marker",
-  html:`
-   <div class="editor-symbol" style="
-    width:${size}px;height:${size}px;
-    font-size:${size}px;color:${color}
-   ">${escapeHTML(icon)}</div>
-  `,
-  iconSize:[size,size],
-  iconAnchor:[size/2,size/2]
- });
-}
-
-function clearEditorMarkers(){
-
- editorMarkers.forEach(item=>{
-  if(editorMap.hasLayer(item.marker)){
-   editorMap.removeLayer(item.marker);
-  }
- });
-
- editorMarkers=[];
-}
-
-function renderEditorMarkers(){
-
- clearEditorMarkers();
-
- mapData.locations.forEach((location,index)=>{
-
-  const info=getLocationInfo(location);
-
-  if(!validCoordinates(info.lat,info.lng))return;
-
-  const marker=L.marker(
-   [info.lat,info.lng],
-   {
-    icon:makeMarkerIcon(info),
-    draggable:editorMode==="move",
-    keyboard:false,
-    riseOnHover:true
-   }
-  ).addTo(editorMap);
-
-  if(settings.showMarkerLabels!==false){
-   marker.bindTooltip(
-    escapeHTML(info.name),
-    {
-     permanent:true,
-     direction:"top",
-     offset:[0,-7],
-     className:"editor-label"
-    }
-   );
-  }
-
-  const record={
-   index,
-   location,
-   info,
-   marker
-  };
-
-  editorMarkers.push(record);
-
-  marker.on("dragstart",()=>{
-   if(editorMode!=="move"){
-    marker.dragging.disable();
-   }
-  });
-
-  marker.on("dragend",event=>{
-
-   if(editorMode!=="move")return;
-
-   const position=event.target.getLatLng();
-
-   if(!validCoordinates(position.lat,position.lng)){
-    marker.setLatLng([info.lat,info.lng]);
+  if(exists){
+    toast("This connection already exists.");
     return;
-   }
-
-   setLocationCoordinates(
-    location,
-    position.lat,
-    position.lng
-   );
-
-   info.lat=position.lat;
-   info.lng=position.lng;
-
-   setStatus(
-    "editorSaveStatus",
-    info.name+" নতুন জায়গায় সরানো হয়েছে। Save All চাপুন।",
-    "ok"
-   );
-
-   renderEditorConnections();
-  });
-
-  marker.on("click",()=>{
-   if(editorMode==="connect"){
-    handleConnectionSelection(record);
-   }
-  });
- });
-
- updateEditorMarkerSizes();
-}
-
-function updateEditorMarkerSizes(){
-
- if(!editorMap)return;
-
- editorMarkers.forEach(record=>{
-  record.marker.setIcon(makeMarkerIcon(record.info));
- });
-}
-
-
-/* =====================================================
-   EDITOR MODE
-===================================================== */
-
-function setEditorMode(mode){
-
- editorMode=mode;
-
- $("moveModeBtn").classList.toggle("active",mode==="move");
- $("connectModeBtn").classList.toggle("active",mode==="connect");
-
- connectionSource=null;
-
- if(previewLine){
-  editorMap.removeLayer(previewLine);
-  previewLine=null;
- }
-
- editorMarkers.forEach(record=>{
-  if(mode==="move"){
-   record.marker.dragging.enable();
-  }else{
-   record.marker.dragging.disable();
   }
- });
 
- if(mode==="move"){
-  $("editorStatus").textContent=
-   "Move Marker Mode: Marker আঙুল দিয়ে ধরে সরাও।";
- }else if(mode==="connect"){
-  $("editorStatus").textContent=
-   "Connect Mode: প্রথমে Source Marker, তারপর Destination Marker নির্বাচন করো।";
- }else{
-  $("editorStatus").textContent=
-   "View Only Mode: শুধু ম্যাপ দেখা যাবে।";
- }
-}
+  mapData.connections.push({
+    id:"CON-"+Date.now()+"-"+Math.random().toString(36).slice(2,7),
+    from:connectFromId,
+    to:locationId(loc),
+    type:"wire",
+    name:"Pull to Customer",
+    createdAt:new Date().toISOString()
+  });
 
-
-/* =====================================================
-   CONNECTION DATA
-===================================================== */
-
-function getConnectionId(location){
-
- return String(firstValue(location,[
-  "id","ID","locationId","Location ID"
- ],""));
-}
-
-function makeConnectionId(){
- return "MAPCON_"+Date.now()+"_"+Math.random().toString(36).slice(2,8);
-}
-
-function connectionAlreadyExists(from,to,type){
-
- return mapData.connections.some(c=>
-  String(c.from)===String(from)&&
-  String(c.to)===String(to)&&
-  String(c.type||"wire")===String(type)
- );
-}
-
-function handleConnectionSelection(record){
-
- const sourceId=getConnectionId(
-  connectionSource?.location||{}
- );
-
- const destinationId=getConnectionId(record.location);
-
- if(!destinationId){
-  setStatus("editorSaveStatus","Destination-এর ID পাওয়া যায়নি।","err");
-  return;
- }
-
- if(!connectionSource){
-
-  connectionSource=record;
-
-  $("editorStatus").textContent=
-   "Source selected: "+record.info.name+
-   " — এখন Destination Marker নির্বাচন করো।";
-
-  return;
- }
-
- if(connectionSource===record){
-  connectionSource=null;
-  $("editorStatus").textContent="Source selection cancelled.";
-  return;
- }
-
- const from=getConnectionId(connectionSource.location);
-
- if(!from){
-  setStatus("editorSaveStatus","Source-এর ID পাওয়া যায়নি।","err");
-  connectionSource=null;
-  return;
- }
-
- const type=$("editorConnectionType").value;
-
- if(connectionAlreadyExists(from,destinationId,type)){
-  setStatus("editorSaveStatus","এই Connection আগে থেকেই আছে।","err");
-  connectionSource=null;
-  return;
- }
-
- const connection={
-  id:makeConnectionId(),
-  from:from,
-  to:destinationId,
-  type:type,
-  name:$("editorConnectionName").value.trim()||
-   connectionSource.info.name+" → "+record.info.name,
-  createdAt:new Date().toISOString()
- };
-
- mapData.connections.push(connection);
-
- pendingConnectionUndo=connection.id;
- connectionSource=null;
-
- renderEditorConnections();
- renderConnectionList();
-
- $("editorStatus").textContent=
-  "Connection তৈরি হয়েছে: "+connection.name;
-
- setStatus(
-  "editorSaveStatus",
-  "Connection তৈরি হয়েছে। Save All চাপুন।",
-  "ok"
- );
-}
-
-
-/* =====================================================
-   CONNECTION LINE DRAWING
-===================================================== */
-
-function getLineSettings(type){
-
- let key="wire";
-
- if(String(type).toLowerCase().includes("fiber"))key="fiber";
- if(String(type).toLowerCase().includes("drop"))key="drop";
-
- let style=settings[key+"Style"]||"solid";
-
- return {
-  color:validColor(settings[key+"Color"]),
-  weight:numberValue(settings[key+"Weight"],3),
-  opacity:numberValue(settings[key+"Opacity"],.95),
-  dashArray:style==="dashed"?"8 7":style==="dotted"?"2 7":null
- };
-}
-
-function findEditorMarkerById(id){
-
- return editorMarkers.find(record=>
-  getConnectionId(record.location)===String(id)
- );
-}
-
-function renderEditorConnections(){
-
- editorLines.forEach(layer=>{
-  if(editorMap.hasLayer(layer))editorMap.removeLayer(layer);
- });
-
- editorLines=[];
-
- if(settings.showWires===false)return;
-
- mapData.connections.forEach(connection=>{
-
-  const from=findEditorMarkerById(connection.from);
-  const to=findEditorMarkerById(connection.to);
-
-  if(!from||!to)return;
-
-  const style=getLineSettings(connection.type);
-
-  const line=L.polyline(
-   [
-    [from.info.lat,from.info.lng],
-    [to.info.lat,to.info.lng]
-   ],
-   {
-    color:style.color,
-    weight:style.weight,
-    opacity:style.opacity,
-    dashArray:style.dashArray,
-    lineCap:"round",
-    interactive:false
-   }
-  ).addTo(editorMap);
-
-  editorLines.push(line);
- });
+  markDirty();
+  renderConnections();
+  renderConnectionList();
+  toast("Pull → Customer connection created.");
+  cancelModes();
 }
 
 function renderConnectionList(){
+  const box=$("connectionList");
+  if(!mapData.connections.length){
+    box.innerHTML='<div class="help">No connections found.</div>';
+    return;
+  }
 
- const list=$("connectionList");
-
- if(!mapData.connections.length){
-  list.innerHTML='<div class="note">কোনো Connection নেই।</div>';
-  return;
- }
-
- list.innerHTML="";
-
- mapData.connections.forEach((connection,index)=>{
-
-  const from=findEditorMarkerById(connection.from);
-  const to=findEditorMarkerById(connection.to);
-
-  const fromName=from?.info.name||connection.from;
-  const toName=to?.info.name||connection.to;
-
-  const row=document.createElement("div");
-  row.className="connection-row";
-
-  const label=document.createElement("span");
-  label.textContent=
-   fromName+" → "+toName+
-   " ("+(connection.type||"wire")+")";
-
-  const del=document.createElement("button");
-  del.className="danger";
-  del.textContent="Delete";
-
-  del.onclick=()=>{
-   if(!confirm("এই Connection মুছবেন?"))return;
-
-   mapData.connections.splice(index,1);
-   renderEditorConnections();
-   renderConnectionList();
-
-   setStatus("editorSaveStatus","Connection মুছে দেওয়া হয়েছে। Save All চাপুন।","ok");
-  };
-
-  row.append(label,del);
-  list.appendChild(row);
- });
+  box.innerHTML=mapData.connections.map((c,index)=>{
+    const a=mapData.locations.find(x=>locationId(x)===String(getValue(c,"from","From")));
+    const b=mapData.locations.find(x=>locationId(x)===String(getValue(c,"to","To")));
+    return `<div class="connection-item">
+      <span>${escapeHtml(a?locationName(a):"Unknown")} → ${escapeHtml(b?locationName(b):"Unknown")}</span>
+      <button class="btn small danger" onclick="deleteConnection(${index})">Delete</button>
+    </div>`;
+  }).join("");
 }
 
-function undoConnection(){
-
- if(!mapData.connections.length)return;
-
- const index=pendingConnectionUndo
-  ?mapData.connections.findIndex(c=>c.id===pendingConnectionUndo)
-  :mapData.connections.length-1;
-
- if(index<0)return;
-
- mapData.connections.splice(index,1);
- pendingConnectionUndo=null;
-
- renderEditorConnections();
- renderConnectionList();
-
- setStatus("editorSaveStatus","শেষ Connection Undo হয়েছে। Save All চাপুন।","ok");
+function deleteConnection(index){
+  if(!confirm("Delete this connection?")) return;
+  mapData.connections.splice(index,1);
+  markDirty();
+  renderConnections();
+  renderConnectionList();
 }
 
+/* ==============================
+   AREA BOUNDARY
+============================== */
 
-/* =====================================================
-   AREA DRAWING
-===================================================== */
-
-function startDrawing(){
-
- drawing=true;
- draftPoints=[];
-
- clearAreaLayers();
-
- $("startDrawBtn").disabled=true;
- $("finishDrawBtn").disabled=false;
-
- editorMap.getContainer().style.cursor="crosshair";
-
- setStatus("areaStatus","এখন ম্যাপে ট্যাপ করে Area Boundary আঁকো।");
-
- document.querySelector('[data-tab="area"]').click();
+function setAreaMode(){
+  mode="area";
+  $("mapModeBadge").textContent="DRAW AREA MODE";
+  $("mapModeBadge").classList.add("area-mode");
+  $("mapModeBadge").classList.remove("connection-mode");
+  $("mapInstruction").textContent="Tap or click on the map to add boundary points. Add at least 3 points.";
+  markerRefs.forEach(marker=>marker.dragging.disable());
+  toast("Click the map to add polygon boundary points.");
 }
 
-function stopDrawing(){
+function drawArea(){
+  areaLayer.clearLayers();
 
- drawing=false;
+  if(areaPoints.length>=2){
+    const polygon=L.polygon(areaPoints,{
+      color:"#20d69a",
+      weight:3,
+      fillColor:"#16a36a",
+      fillOpacity:.16,
+      dashArray:"7 5"
+    }).addTo(areaLayer);
+  }
 
- $("startDrawBtn").disabled=false;
- $("finishDrawBtn").disabled=true;
+  areaPoints.forEach((p,i)=>{
+    L.circleMarker([p.lat,p.lng],{
+      radius:5,
+      color:"#fff",
+      weight:2,
+      fillColor:"#16a36a",
+      fillOpacity:1
+    }).bindTooltip("Boundary point "+(i+1)).addTo(areaLayer);
+  });
 
- editorMap.getContainer().style.cursor="";
+  updateAreaJSON();
 }
 
-function addAreaPoint(latlng){
-
- if(!drawing)return;
-
- draftPoints.push({
-  lat:latlng.lat,
-  lng:latlng.lng
- });
-
- drawAreaDraft();
-}
-
-function drawAreaDraft(){
-
- clearAreaLayers();
-
- draftPoints.forEach((point,index)=>{
-
-  const marker=L.circleMarker(
-   [point.lat,point.lng],
-   {
-    radius:5,
-    color:"#fff",
-    weight:2,
-    fillColor:"#ef4444",
-    fillOpacity:1
-   }
-  ).addTo(editorMap);
-
-  areaLayers.push(marker);
- });
-
- if(draftPoints.length>=2){
-
-  const polygon=L.polygon(
-   draftPoints.map(p=>[p.lat,p.lng]),
-   {
-    color:"#ef4444",
-    weight:3,
-    fillColor:"#ef4444",
-    fillOpacity:.12,
-    dashArray:"7 5"
-   }
-  ).addTo(editorMap);
-
-  areaLayers.push(polygon);
- }
-
- $("areaPoints").value=JSON.stringify(draftPoints,null,2);
-
- $("areaStatus").textContent=
-  draftPoints.length+" boundary points";
-}
-
-function finishDrawing(){
-
- if(draftPoints.length<3){
-  setStatus("areaStatus","কমপক্ষে ৩টি পয়েন্ট দিতে হবে।","err");
-  return;
- }
-
- stopDrawing();
-
- $("areaEnabled").checked=true;
-
- drawAreaDraft();
-
- setStatus("areaStatus","Area তৈরি হয়েছে। Save All চাপো।","ok");
+function updateAreaJSON(){
+  $("areaJSON").value=JSON.stringify(areaPoints,null,2);
+  $("areaPointCount").textContent="Boundary points: "+areaPoints.length;
 }
 
 function undoAreaPoint(){
-
- if(!draftPoints.length)return;
-
- draftPoints.pop();
- drawAreaDraft();
+  if(!areaPoints.length) return;
+  areaPoints.pop();
+  drawArea();
+  markDirty();
 }
 
 function clearArea(){
-
- if(!confirm("Area Boundary মুছে ফেলবেন?"))return;
-
- stopDrawing();
-
- draftPoints=[];
-
- clearAreaLayers();
-
- $("areaPoints").value="[]";
- $("areaEnabled").checked=false;
-
- setStatus("areaStatus","Area cleared.","ok");
-}
-
-function validateAreaPoints(points){
-
- if(!Array.isArray(points)||points.length<3){
-  throw new Error("Area তৈরি করতে অন্তত ৩টি পয়েন্ট প্রয়োজন।");
- }
-
- const normalized=points.map(p=>({
-  lat:Number(p.lat),
-  lng:Number(p.lng)
- }));
-
- if(normalized.some(p=>
-  !Number.isFinite(p.lat)||
-  !Number.isFinite(p.lng)||
-  Math.abs(p.lat)>90||
-  Math.abs(p.lng)>180
- )){
-  throw new Error("Area-এর Latitude/Longitude সঠিক নয়।");
- }
-
- return normalized;
+  if(!confirm("Clear all boundary points?")) return;
+  areaPoints=[];
+  drawArea();
+  markDirty();
 }
 
 function applyAreaJSON(){
+  try{
+    const arr=JSON.parse($("areaJSON").value);
+    if(!Array.isArray(arr)) throw new Error("JSON must be an array");
 
- const points=safeJSON($("areaPoints").value,null);
+    areaPoints=arr.map(p=>({
+      lat:Number(p.lat),
+      lng:Number(p.lng)
+    }));
 
- try{
-  draftPoints=validateAreaPoints(points);
- }catch(e){
-  setStatus("areaStatus",e.message,"err");
-  return;
- }
+    if(areaPoints.some(p=>!Number.isFinite(p.lat)||!Number.isFinite(p.lng))){
+      throw new Error("Invalid latitude or longitude");
+    }
 
- drawAreaDraft();
-
- $("areaEnabled").checked=true;
-
- fitArea();
-
- setStatus("areaStatus","JSON Area Preview-তে Apply হয়েছে।","ok");
-}
-
-function fitArea(){
-
- if(draftPoints.length<3)return;
-
- const bounds=L.latLngBounds(
-  draftPoints.map(p=>[p.lat,p.lng])
- );
-
- editorMap.fitBounds(
-  bounds,
-  {padding:[25,25],maxZoom:18}
- );
-}
-
-function clearAreaLayers(){
-
- areaLayers.forEach(layer=>{
-  if(editorMap&&editorMap.hasLayer(layer)){
-   editorMap.removeLayer(layer);
+    drawArea();
+    markDirty();
+    toast("Boundary JSON applied.");
+  }catch(e){
+    toast("Invalid boundary JSON: "+e.message);
   }
- });
-
- areaLayers=[];
 }
 
-
-/* =====================================================
-   MAP DISPLAY SETTINGS
-===================================================== */
-
-function fillForm(){
-
- [
-  "mapType",
-  "centerLat",
-  "centerLng",
-  "zoomLevel",
-  "markerSize"
- ].forEach(id=>{
-  $(id).value=settings[id]??DEFAULT_SETTINGS[id];
- });
-
- $("markerSizeText").textContent=$("markerSize").value;
-
- $("showMarkerLabels").checked=settings.showMarkerLabels!==false;
- $("showWires").checked=settings.showWires!==false;
-
- $("areaEnabled").checked=!!settings.lockedArea?.enabled;
-
- $("areaPoints").value=JSON.stringify(
-  settings.lockedArea?.points||[],
-  null,2
- );
+function fitBoundary(){
+  if(areaPoints.length<3){
+    toast("At least 3 boundary points are required.");
+    return;
+  }
+  map.fitBounds(L.latLngBounds(areaPoints),{padding:[30,30]});
 }
 
+function loadArea(){
+  const area=mapData.settings.lockedArea || {};
+  areaPoints=Array.isArray(area.points)?area.points.map(p=>({
+    lat:Number(p.lat),lng:Number(p.lng)
+  })):[];
+  $("areaEnabled").checked=!!area.enabled;
+  drawArea();
+}
 
-/* =====================================================
-   COLLECT SETTINGS
-===================================================== */
+/* ==============================
+   SETTINGS UI
+============================== */
+
+function fillInput(id,value){
+  if($(id)) $(id).value=value ?? "";
+}
+function fillCheck(id,value){
+  if($(id)) $(id).checked=!!value;
+}
+
+function loadSettingsUI(){
+  const s=mapData.settings;
+
+  [
+    "mapType","centerLat","centerLng","zoomLevel","markerSize",
+    "wireColor","wireWeight","wireOpacity","wireStyle",
+    "fiberColor","fiberWeight","fiberOpacity","fiberStyle",
+    "dropColor","dropWeight","dropOpacity","dropStyle"
+  ].forEach(k=>fillInput(k,s[k]));
+
+  fillCheck("showMarkerLabels",s.showMarkerLabels);
+  fillCheck("showWires",s.showWires);
+  fillCheck("areaEnabled",s.lockedArea.enabled);
+
+  $("quickMapType").value=s.mapType || "road";
+}
 
 function collectSettings(){
+  const s={...mapData.settings};
 
- const result={...settings};
+  [
+    "mapType","wireColor","wireStyle","fiberColor","fiberStyle",
+    "dropColor","dropStyle"
+  ].forEach(k=>s[k]=$(k).value);
 
- result.mapType=$("mapType").value;
+  [
+    "centerLat","centerLng","zoomLevel","markerSize",
+    "wireWeight","wireOpacity","fiberWeight","fiberOpacity",
+    "dropWeight","dropOpacity"
+  ].forEach(k=>s[k]=Number($(k).value));
 
- [
-  "centerLat",
-  "centerLng",
-  "zoomLevel",
-  "markerSize"
- ].forEach(id=>{
-  result[id]=Number($(id).value);
- });
+  s.showMarkerLabels=$("showMarkerLabels").checked;
+  s.showWires=$("showWires").checked;
 
- result.showMarkerLabels=$("showMarkerLabels").checked;
- result.showWires=$("showWires").checked;
-
- ["wire","fiber","drop"].forEach(key=>{
-
-  result[key+"Color"]=$(key+"Color").value;
-  result[key+"Weight"]=Number($(key+"Weight").value);
-  result[key+"Opacity"]=Number($(key+"Opacity").value);
-  result[key+"Style"]=$(key+"Style").value;
- });
-
- result.hiddenTypes=[
-  ...document.querySelectorAll(".hidden-type:checked")
- ].map(input=>input.value);
-
- const points=safeJSON($("areaPoints").value,null);
-
- if(!Array.isArray(points)){
-  throw new Error("Area Points JSON সঠিক নয়।");
- }
-
- const normalized=points.map(p=>({
-  lat:Number(p.lat),
-  lng:Number(p.lng)
- }));
-
- if(normalized.some(p=>
-  !Number.isFinite(p.lat)||
-  !Number.isFinite(p.lng)||
-  Math.abs(p.lat)>90||
-  Math.abs(p.lng)>180
- )){
-  throw new Error("Area-এর Latitude/Longitude সঠিক নয়।");
- }
-
- result.lockedArea={
-  enabled:$("areaEnabled").checked,
-  points:normalized
- };
-
- if(result.lockedArea.enabled&&normalized.length<3){
-  throw new Error("Area Lock চালু করতে অন্তত ৩টি Point আঁকতে হবে।");
- }
-
- result._customTypes=readTypes();
-
- return result;
-}
-
-
-/* =====================================================
-   SAVE TO GOOGLE SHEET
-===================================================== */
-
-async function saveAllSettings(){
-
- let newSettings;
-
- try{
-  newSettings=collectSettings();
- }catch(error){
-  setStatus("status",error.message,"err");
-  return;
- }
-
- const customTypes=readTypes();
-
- const payload={
-  action:"saveMapData",
-  locations:mapData.locations||[],
-  connections:mapData.connections||[],
-  settings:newSettings,
-  customTypes
- };
-
- setStatus("status","Saving Map Settings and Map Data...");
- setLoading(true);
-
- try{
-
-  const response=await fetch(MAP_API,{
-   method:"POST",
-   headers:{
-    "Content-Type":"text/plain;charset=utf-8"
-   },
-   body:JSON.stringify(payload)
-  });
-
-  if(!response.ok){
-   throw new Error("HTTP "+response.status);
-  }
-
-  const result=await response.json();
-
-  if(result.success===false||result.error){
-   throw new Error(
-    result.message||result.error||"Save failed"
-   );
-  }
-
-  settings=newSettings;
-  mapData.settings=newSettings;
-  mapData.customTypes=customTypes;
-
-  localStorage.setItem(
-   CACHE_KEY,
-   JSON.stringify(mapData)
-  );
-
-  setStatus(
-   "status",
-   "All Map Settings, Locations and Connections saved successfully!",
-   "ok"
-  );
-
-  setStatus(
-   "editorSaveStatus",
-   "Map Data successfully saved to Google Sheet.",
-   "ok"
-  );
-
-  renderEditorMap();
-
- }catch(error){
-
-  console.error(error);
-
-  setStatus(
-   "status",
-   "Save failed: "+error.message,
-   "err"
-  );
-
- }finally{
-  setLoading(false);
- }
-}
-
-
-/* =====================================================
-   LOAD SETTINGS
-===================================================== */
-
-async function loadSettings(){
-
- if(isLoading)return;
-
- isLoading=true;
- setLoading(true);
-
- try{
-
-  let loaded=false;
-
-  try{
-
-   const response=await fetch(
-    MAP_API+"?action=getMapData",
-    {cache:"no-store"}
-   );
-
-   if(!response.ok){
-    throw new Error("API HTTP "+response.status);
-   }
-
-   mapData=normalizeData(await response.json());
-
-   localStorage.setItem(
-    CACHE_KEY,
-    JSON.stringify(mapData)
-   );
-
-   loaded=true;
-
-  }catch(error){
-
-   const cached=safeJSON(
-    localStorage.getItem(CACHE_KEY),
-    null
-   );
-
-   if(cached){
-    mapData=normalizeData(cached);
-    loaded=true;
-   }else{
-    throw error;
-   }
-  }
-
-  settings={
-   ...DEFAULT_SETTINGS,
-   ...(mapData.settings||{})
+  s.lockedArea={
+    enabled:$("areaEnabled").checked,
+    points:areaPoints.map(p=>({lat:p.lat,lng:p.lng}))
   };
 
-  buildTypes();
+  s._customTypes=mapData.customTypes;
+  return s;
+}
 
-  fillForm();
-  renderTypes();
-  renderLineSettings();
+function renderTypes(){
+  const box=$("typeList");
+  box.innerHTML="";
 
-  if(editorMap){
-   changePreviewLayer();
-   renderEditorMap();
+  mapData.customTypes.forEach((t,index)=>{
+    const row=document.createElement("div");
+    row.className="type-item";
+    row.innerHTML=`
+      <div class="type-icon">${escapeHtml(t.icon||"📍")}</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+        <input value="${escapeHtml(t.name||"")}" placeholder="Type name" data-name>
+        <input value="${escapeHtml(t.icon||"")}" placeholder="Icon" data-icon>
+        <input type="color" value="${escapeHtml(t.color||"#2563eb")}" data-color style="grid-column:1/-1">
+      </div>
+      <button title="Delete type">×</button>
+    `;
+
+    row.querySelector("[data-name]").addEventListener("change",e=>{
+      t.name=e.target.value.trim() || t.name;
+      markDirty();renderEverything();
+    });
+    row.querySelector("[data-icon]").addEventListener("change",e=>{
+      t.icon=e.target.value || "📍";
+      markDirty();renderEverything();
+    });
+    row.querySelector("[data-color]").addEventListener("input",e=>{
+      t.color=e.target.value;
+      markDirty();renderMarkers();
+    });
+    row.querySelector("button").addEventListener("click",()=>{
+      if(!confirm("Delete this point type? Existing points will not be deleted.")) return;
+      mapData.customTypes.splice(index,1);
+      markDirty();renderEverything();
+    });
+
+    box.appendChild(row);
+  });
+}
+
+function addNewType(){
+  const name=$("newTypeName").value.trim();
+  const icon=$("newTypeIcon").value.trim() || "📍";
+  const color=$("newTypeColor").value;
+
+  if(!name){
+    toast("Enter a point type name.");
+    return;
   }
 
-  setStatus(
-   "status",
-   loaded?"Map Settings loaded successfully.":"No Map Data found.",
-   "ok"
-  );
+  if(mapData.customTypes.some(t=>t.name.toLowerCase()===name.toLowerCase())){
+    toast("This type already exists.");
+    return;
+  }
 
- }catch(error){
-
-  console.error(error);
-
-  setStatus(
-   "status",
-   "Load failed: "+error.message,
-   "err"
-  );
-
- }finally{
-
-  isLoading=false;
-  setLoading(false);
- }
+  mapData.customTypes.push({name,icon,color});
+  $("newTypeName").value="";
+  markDirty();
+  renderEverything();
+  toast("New point type added.");
 }
 
+function renderHiddenTypes(){
+  const box=$("hiddenTypes");
+  const hidden=mapData.settings.hiddenTypes || [];
 
-/* =====================================================
-   RENDER EDITOR
-===================================================== */
+  box.innerHTML=mapData.customTypes.map(t=>{
+    const checked=hidden.some(x=>String(x).toLowerCase()===t.name.toLowerCase());
+    return `<div class="check-row">
+      <label>${escapeHtml(t.icon||"📍")} ${escapeHtml(t.name)}</label>
+      <input type="checkbox" data-hidden-type="${escapeHtml(t.name)}" ${checked?"checked":""}>
+    </div>`;
+  }).join("");
 
-function renderEditorMap(){
-
- if(!editorMap)return;
-
- changePreviewLayer();
-
- renderEditorMarkers();
-
- renderEditorConnections();
-
- renderConnectionList();
-
- setEditorMode(editorMode);
-
- clearAreaLayers();
-
- if(settings.lockedArea?.enabled&&
-    settings.lockedArea.points?.length>=3){
-
-  const points=settings.lockedArea.points;
-
-  const polygon=L.polygon(
-   points.map(p=>[p.lat,p.lng]),
-   {
-    color:"#16a34a",
-    weight:2,
-    fillColor:"#16a34a",
-    fillOpacity:.08,
-    interactive:false
-   }
-  ).addTo(editorMap);
-
-  areaLayers.push(polygon);
- }
+  box.querySelectorAll("[data-hidden-type]").forEach(el=>{
+    el.addEventListener("change",()=>{
+      const type=el.dataset.hiddenType;
+      let arr=[...(mapData.settings.hiddenTypes||[])];
+      arr=el.checked?[...arr,type]:arr.filter(x=>x!==type);
+      mapData.settings.hiddenTypes=arr;
+      markDirty();
+      renderMarkers();
+    });
+  });
 }
 
-function fitAllMarkers(){
+function renderEverything(){
+  if(!map) return;
 
- if(!editorMarkers.length)return;
-
- const bounds=L.latLngBounds(
-  editorMarkers.map(item=>[
-   item.info.lat,
-   item.info.lng
-  ])
- );
-
- editorMap.fitBounds(
-  bounds,
-  {padding:[35,35],maxZoom:18}
- );
+  loadSettingsUI();
+  loadArea();
+  renderTypes();
+  renderHiddenTypes();
+  renderMarkers();
+  renderConnections();
+  renderConnectionList();
+  updateCounts();
+  applyMapView();
 }
 
+function updateCounts(){
+  $("countLocations").textContent=mapData.locations.length;
+  $("countConnections").textContent=mapData.connections.length;
+  $("countCustomers").textContent=mapData.locations.filter(x=>locationType(x).toLowerCase()==="customer").length;
+  $("countPulls").textContent=mapData.locations.filter(x=>locationType(x).toLowerCase()==="pull").length;
+}
 
-/* =====================================================
-   BACKUP & RESTORE
-===================================================== */
+/* ==============================
+   MODES / MARKER CLICKS
+============================== */
+
+function cancelModes(){
+  mode="normal";
+  connectFromId=null;
+  $("mapModeBadge").textContent="NORMAL MODE";
+  $("mapModeBadge").classList.remove("connection-mode","area-mode");
+  $("mapInstruction").textContent="Click a marker to view its full information. Drag a marker to move its location.";
+  $("connectStatus").textContent="Connection mode is inactive.";
+
+  markerRefs.forEach(marker=>marker.dragging.enable());
+}
+
+function attachMarkerModeHandlers(){
+  markerRefs.forEach((marker,id)=>{
+    marker.off("click");
+    marker.on("click",()=>{
+      const loc=mapData.locations.find(x=>locationId(x)===id);
+      if(!loc) return;
+
+      selectedLocationId=id;
+      renderSelectedInfo(loc);
+      updateMarkerIcons();
+
+      if(mode==="connect"){
+        handleConnectionPoint(loc);
+      }
+    });
+  });
+}
+
+// Re-attach the mode-aware click handler after each marker render.
+const originalRenderMarkers=renderMarkers;
+renderMarkers=function(){
+  originalRenderMarkers();
+  attachMarkerModeHandlers();
+};
+
+/* ==============================
+   SAVE TO GOOGLE SHEETS
+============================== */
+
+async function saveAll(){
+  try{
+    mapData.settings=collectSettings();
+    mapData.customTypes=mapData.customTypes || [];
+    mapData.settings._customTypes=mapData.customTypes;
+
+    // Keep local cache available even if the server is temporarily offline.
+    localStorage.setItem(CACHE_KEY,JSON.stringify(mapData));
+
+    setStatus("Saving to database...");
+
+    const payload={
+      action:"saveMapData",
+      locations:mapData.locations,
+      connections:mapData.connections,
+      settings:mapData.settings,
+      customTypes:mapData.customTypes
+    };
+
+    const response=await fetch(MAP_API,{
+      method:"POST",
+      headers:{"Content-Type":"text/plain;charset=utf-8"},
+      body:JSON.stringify(payload)
+    });
+
+    const result=await response.json();
+
+    if(result && (result.success===false || result.error)){
+      throw new Error(result.message || result.error || "Save failed");
+    }
+
+    dirty=false;
+    setStatus("All changes saved");
+    $("dataBadge").textContent="SAVED SUCCESSFULLY";
+    renderEverything();
+    toast("Map data saved successfully.");
+  }catch(error){
+    console.error(error);
+    setStatus("Save failed — local backup kept");
+    localStorage.setItem(CACHE_KEY,JSON.stringify(mapData));
+    toast("Server save failed: "+error.message+". Your latest data is kept in this browser's local cache.");
+  }
+}
+
+/* ==============================
+   BACKUP / RESTORE
+============================== */
 
 function exportBackup(){
-
- try{
-
   const backup={
-   version:1,
-   exportedAt:new Date().toISOString(),
-   locations:mapData.locations,
-   connections:mapData.connections,
-   settings:collectSettings(),
-   customTypes:readTypes()
+    app:"ONE ONLINE MAP",
+    version:1,
+    exportedAt:new Date().toISOString(),
+    locations:mapData.locations,
+    connections:mapData.connections,
+    settings:mapData.settings,
+    customTypes:mapData.customTypes
   };
 
-  const blob=new Blob(
-   [JSON.stringify(backup,null,2)],
-   {type:"application/json"}
-  );
-
+  const blob=new Blob([JSON.stringify(backup,null,2)],{type:"application/json"});
   const url=URL.createObjectURL(blob);
-
   const a=document.createElement("a");
   a.href=url;
-  a.download="one-online-map-full-backup.json";
+  a.download="one-online-map-backup-"+new Date().toISOString().slice(0,10)+".json";
   a.click();
-
   URL.revokeObjectURL(url);
-
-  setStatus("status","Full Backup exported successfully.","ok");
-
- }catch(error){
-  setStatus("status",error.message,"err");
- }
 }
 
-$("backupFile").addEventListener("change",event=>{
+$("backupFile").addEventListener("change",async e=>{
+  const file=e.target.files[0];
+  if(!file) return;
 
- const file=event.target.files?.[0];
- if(!file)return;
+  try{
+    const backup=JSON.parse(await file.text());
+    if(!Array.isArray(backup.locations) || !Array.isArray(backup.connections)){
+      throw new Error("Backup file is missing locations or connections.");
+    }
+    if(!confirm("Import this backup? Current map data will be replaced in this editor.")) return;
 
- const reader=new FileReader();
-
- reader.onload=()=>{
-
-  const backup=safeJSON(reader.result,null);
-
-  if(!backup){
-   setStatus("status","Invalid backup file.","err");
-   return;
+    normalizeData(backup);
+    localStorage.setItem(CACHE_KEY,JSON.stringify(mapData));
+    renderEverything();
+    markDirty();
+    toast("Backup imported. Click Save All to save it to the database.");
+  }catch(error){
+    toast("Import failed: "+error.message);
+  }finally{
+    e.target.value="";
   }
-
-  if(!confirm("বর্তমান Map Data-এর জায়গায় Backup Data Load করবেন?")){
-   return;
-  }
-
-  if(Array.isArray(backup.locations)){
-   mapData.locations=backup.locations;
-  }
-
-  if(Array.isArray(backup.connections)){
-   mapData.connections=backup.connections;
-  }
-
-  settings={
-   ...DEFAULT_SETTINGS,
-   ...(backup.settings||{})
-  };
-
-  if(Array.isArray(backup.customTypes)){
-   mapData.customTypes=backup.customTypes;
-  }
-
-  buildTypes();
-  fillForm();
-  renderTypes();
-  renderLineSettings();
-
-  if(editorMap){
-   renderEditorMap();
-  }
-
-  setStatus(
-   "status",
-   "Backup loaded. এখন Save All চাপলে Google Sheet-এ সংরক্ষিত হবে।",
-   "ok"
-  );
- };
-
- reader.readAsText(file);
- event.target.value="";
 });
 
+/* ==============================
+   TAB NAVIGATION
+============================== */
 
-/* =====================================================
-   LIVE FORM EVENTS
-===================================================== */
+document.querySelectorAll(".nav-btn").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    document.querySelectorAll(".nav-btn").forEach(x=>x.classList.remove("active"));
+    document.querySelectorAll(".tab-content").forEach(x=>x.classList.remove("active"));
 
-$("markerSize").addEventListener("input",()=>{
- $("markerSizeText").textContent=$("markerSize").value;
- updateEditorMarkerSizes();
+    btn.classList.add("active");
+    $("tab-"+btn.dataset.tab).classList.add("active");
+
+    if(btn.dataset.tab==="editor" || btn.dataset.tab==="area"){
+      setTimeout(()=>map.invalidateSize(),150);
+    }
+  });
 });
 
-$("mapType").addEventListener("change",()=>{
- settings.mapType=$("mapType").value;
- changePreviewLayer();
-});
+/* ==============================
+   INITIALIZE
+============================== */
 
-$("showMarkerLabels").addEventListener("change",()=>{
- settings.showMarkerLabels=$("showMarkerLabels").checked;
- renderEditorMarkers();
-});
+async function start(){
+  initMap();
+  await loadData();
 
-$("showWires").addEventListener("change",()=>{
- settings.showWires=$("showWires").checked;
- renderEditorConnections();
-});
+  if(!mapData.customTypes || !mapData.customTypes.length){
+    mapData.customTypes=DEFAULT_TYPES.map(x=>({...x}));
+  }
 
-$("backupFile").value="";
+  renderEverything();
 
-
-/* =====================================================
-   INITIAL START
-===================================================== */
-
-async function startApp(){
-
- /*
-  Show cached data immediately when possible.
- */
-
- const cached=safeJSON(
-  localStorage.getItem(CACHE_KEY),
-  null
- );
-
- if(cached){
-
-  mapData=normalizeData(cached);
-
-  settings={
-   ...DEFAULT_SETTINGS,
-   ...(mapData.settings||{})
-  };
-
-  buildTypes();
-  fillForm();
-  renderTypes();
-  renderLineSettings();
- }
-
- initEditorMap();
-
- if(cached){
-  renderEditorMap();
- }
-
- await loadSettings();
-
- setTimeout(()=>{
-  editorMap.invalidateSize(true);
- },200);
+  // Open the map at the most useful zoom level.
+  setTimeout(()=>map.invalidateSize(),300);
 }
 
-startApp();
+window.addEventListener("beforeunload",e=>{
+  if(dirty){
+    e.preventDefault();
+    e.returnValue="";
+  }
+});
 
+start();
 </script>
 </body>
 </html>
