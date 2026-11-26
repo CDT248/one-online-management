@@ -1,302 +1,95 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Add Map Location | ONE ONLINE</title>
-
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Add Map | ONE ONLINE</title>
 
 <style>
-:root{
-  --bg:#08111f;
-  --panel:#101d30;
-  --panel2:#17263b;
-  --line:#293d57;
-  --text:#edf4ff;
-  --muted:#91a5c0;
-  --primary:#20b98a;
-  --blue:#3997ff;
-  --danger:#ff647c;
-  --warning:#e8a83e;
-}
 *{box-sizing:border-box}
+:root{
+  --bg:#0b1220;
+  --panel:#111c2e;
+  --panel2:#172338;
+  --text:#e8f0fc;
+  --muted:#8fa2bd;
+  --line:#26364d;
+  --primary:#1685ff;
+  --green:#16a36a;
+  --red:#ef4444;
+}
 body{
   margin:0;
-  padding:20px;
+  padding:22px;
   background:var(--bg);
   color:var(--text);
-  font-family:Arial,Inter,sans-serif;
+  font-family:Arial,sans-serif;
 }
-.container{max-width:1150px;margin:auto}
-.header{
-  display:flex;justify-content:space-between;
-  align-items:center;gap:12px;flex-wrap:wrap;
-  margin-bottom:20px;
-}
-.heading{font-size:22px;font-weight:850}
-.subtitle{color:var(--muted);font-size:12px;margin-top:5px}
+.container{max-width:850px;margin:auto}
+.header{margin-bottom:22px}
+.header h2{margin:0 0 7px;font-size:23px}
+.header p{margin:0;color:var(--muted);font-size:13px}
 .card{
   background:var(--panel);
   border:1px solid var(--line);
-  border-radius:14px;
-  padding:19px;
+  border-radius:13px;
+  padding:20px;
   margin-bottom:16px;
 }
-.card-title{
-  font-size:15px;font-weight:800;
-  margin-bottom:15px;
-  display:flex;align-items:center;gap:8px;
-}
+.card h3{margin:0 0 17px;font-size:16px}
 .grid{
   display:grid;
-  grid-template-columns:repeat(2,minmax(0,1fr));
+  grid-template-columns:1fr 1fr;
   gap:14px;
 }
-.field{min-width:0}
-.field.full{grid-column:1/-1}
-label{
+.field{margin-bottom:14px}
+.field label{
   display:block;
-  font-size:12px;
-  font-weight:700;
-  color:#bdcce0;
+  font-size:13px;
+  color:var(--muted);
   margin-bottom:7px;
 }
-input,select,textarea{
+input,select{
   width:100%;
-  background:#0b1728;
-  color:white;
-  border:1px solid #344a66;
-  border-radius:9px;
   padding:12px;
-  outline:none;
-  font-size:13px;
-}
-input:focus,select:focus,textarea:focus{
-  border-color:var(--primary);
-  box-shadow:0 0 0 2px rgba(32,185,138,.12);
-}
-textarea{resize:vertical;min-height:75px}
-input::placeholder,textarea::placeholder{color:#71849d}
-.row{display:flex;gap:8px;align-items:center}
-.row input{flex:1;min-width:0}
-.btn{
   border:1px solid var(--line);
   background:var(--panel2);
-  color:white;
-  border-radius:9px;
-  padding:11px 14px;
-  font-size:12px;
-  font-weight:800;
+  color:var(--text);
+  border-radius:8px;
+  outline:none;
+  font-size:14px;
+}
+input:focus,select:focus{border-color:var(--primary)}
+.full{grid-column:1/-1}
+.help{font-size:11px;color:var(--muted);margin-top:6px}
+.actions{display:flex;gap:10px;margin-top:8px}
+button{
+  border:0;
+  border-radius:8px;
+  padding:12px 18px;
   cursor:pointer;
+  font-weight:700;
+  font-size:13px;
 }
-.btn:hover{filter:brightness(1.15)}
-.btn-primary{
-  background:var(--primary);
-  border-color:var(--primary);
-  color:#061b15;
-}
-.btn-blue{
-  background:#1d5c9e;
-  border-color:#1d5c9e;
-}
-.btn-danger{
-  background:#532536;
-  border-color:#80374b;
-}
-.btn:disabled{opacity:.5;cursor:not-allowed}
-.hint{
-  color:var(--muted);
-  font-size:11px;
-  line-height:1.6;
-  margin-top:6px;
-}
-.type-preview{
-  display:flex;align-items:center;gap:10px;
-  background:#0b1728;
-  border:1px solid var(--line);
-  border-radius:9px;
-  padding:10px 12px;
-  margin-top:10px;
-}
-.type-emoji{font-size:25px}
-.type-preview small{display:block;color:var(--muted);margin-top:3px}
-
-/* MAP */
-#pickMap{
-  width:100%;
-  height:340px;
-  border-radius:11px;
-  border:1px solid var(--line);
-  overflow:hidden;
-}
-.map-actions{
-  display:flex;gap:8px;flex-wrap:wrap;
-  margin-bottom:10px;
-}
-
-/* PAIRING */
-.pair-section{
-  border:1px solid #31536a;
-  background:#0c1d2d;
-  border-radius:12px;
-  padding:15px;
-}
-.pair-heading{
-  display:flex;justify-content:space-between;
-  gap:10px;align-items:center;flex-wrap:wrap;
-  margin-bottom:7px;
-}
-.pair-title{font-weight:850;font-size:14px}
-.pair-count{
-  color:#7ee7c3;font-size:11px;
-  background:#123c32;padding:5px 9px;
-  border-radius:20px;
-}
-.pair-help{
-  color:var(--muted);font-size:11px;
-  line-height:1.6;margin-bottom:12px;
-}
-.pair-list{
-  display:grid;
-  grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:9px;
-}
-.pair-item{
-  border:1px solid #344a66;
-  background:#122238;
-  padding:12px;
-  border-radius:10px;
-  display:flex;
-  align-items:center;
-  gap:10px;
-  cursor:pointer;
-  transition:.15s;
-  min-width:0;
-}
-.pair-item:hover{border-color:var(--primary);background:#173044}
-.pair-item.selected{
-  border:2px solid var(--primary);
-  background:#123a32;
-}
-.pair-icon{
-  width:37px;height:37px;
-  border-radius:9px;
-  background:#203951;
-  display:grid;place-items:center;
-  font-size:21px;flex-shrink:0;
-}
-.pair-info{min-width:0;flex:1}
-.pair-name{
-  font-size:12px;font-weight:850;
-  overflow-wrap:anywhere;
-}
-.pair-meta{
-  color:var(--muted);font-size:10px;
-  margin-top:5px;line-height:1.5;
-}
-.pair-distance{
-  font-size:10px;color:#79e6c1;
-  margin-top:4px;font-weight:800;
-}
-.pair-check{
-  width:19px;height:19px;
-  border:1px solid #627a92;
-  border-radius:50%;
-  display:grid;place-items:center;
-  font-size:11px;flex-shrink:0;
-}
-.pair-item.selected .pair-check{
-  background:var(--primary);
-  border-color:var(--primary);
-  color:#061b15;
-}
-.no-pair{
-  padding:20px;text-align:center;
-  border:1px dashed #40556d;
-  border-radius:9px;
+.save{background:var(--primary);color:white;flex:1}
+.reset{background:var(--panel2);color:var(--text);border:1px solid var(--line)}
+.status{font-size:13px;margin-top:13px;min-height:18px}
+.success{color:#22c55e}
+.error{color:#f87171}
+.hidden{display:none!important}
+.note{
+  background:var(--panel2);
+  padding:11px;
+  border-radius:8px;
   color:var(--muted);
   font-size:12px;
-  grid-column:1/-1;
-}
-.selected-pair{
-  margin-top:12px;
-  background:#123c32;
-  border:1px solid #24785d;
-  padding:12px;
-  border-radius:9px;
-  font-size:12px;
-  display:none;
-}
-.pair-options{
-  display:flex;gap:10px;flex-wrap:wrap;
-  margin-top:13px;
-}
-.pair-options .field{flex:1;min-width:150px}
-
-/* CONNECTION PREVIEW */
-.connection-preview{
-  display:flex;align-items:center;gap:10px;
-  flex-wrap:wrap;
-  background:#0b1728;
-  border:1px solid var(--line);
-  padding:13px;
-  border-radius:10px;
-  margin-top:13px;
-  font-size:12px;
-}
-.preview-node{
-  background:#1a3048;
-  padding:8px 11px;
-  border-radius:7px;
-  font-weight:800;
-}
-.preview-line{
-  flex:1;
-  min-width:35px;
-  border-top:3px dashed var(--primary);
-}
-
-/* FOOTER */
-.footer-actions{
-  display:flex;justify-content:flex-end;
-  gap:10px;flex-wrap:wrap;
-}
-.notice{
-  padding:11px 13px;
-  background:#122c40;
-  border:1px solid #294d68;
-  border-radius:9px;
-  color:#bcd5eb;
-  font-size:11px;
   line-height:1.6;
 }
-.toast{
-  position:fixed;bottom:20px;left:50%;
-  transform:translateX(-50%);
-  z-index:5000;display:none;
-  background:#15263a;color:white;
-  border:1px solid #3a526e;
-  padding:12px 17px;border-radius:9px;
-  box-shadow:0 10px 30px #0008;
-  font-size:12px;max-width:90%;
-  text-align:center;
-}
-.loading{
-  display:none;
-  color:#7ee7c3;
-  font-size:11px;
-  margin-top:10px;
-}
-@media(max-width:700px){
-  body{padding:12px}
+@media(max-width:600px){
+  body{padding:13px}
   .grid{grid-template-columns:1fr}
-  .field.full{grid-column:auto}
-  .pair-list{grid-template-columns:1fr}
-  #pickMap{height:290px}
-  .heading{font-size:19px}
-  .card{padding:14px}
+  .full{grid-column:auto}
+  .card{padding:15px}
 }
 </style>
 </head>
@@ -305,803 +98,353 @@ input::placeholder,textarea::placeholder{color:#71849d}
 <div class="container">
 
   <div class="header">
-    <div>
-      <div class="heading">📍 Add Map Location</div>
-      <div class="subtitle">ONE ONLINE | Location Entry & Auto Pairing</div>
-    </div>
-    <button class="btn" onclick="loadData()">↻ Refresh Map Data</button>
+    <h2>🗺️ Add Map Location</h2>
+    <p>Add Customer, Pull, Switch and connect locations.</p>
   </div>
 
-  <!-- LOCATION DETAILS -->
+  <!-- LOCATION FORM -->
   <div class="card">
-    <div class="card-title">① Location Information</div>
+    <h3>📍 Location Information</h3>
 
     <div class="grid">
+
       <div class="field">
         <label>Location Type *</label>
-        <select id="locationType" onchange="onTypeChange()">
+        <select id="type" onchange="typeChanged()">
           <option value="Customer">Customer</option>
           <option value="Pull">Pull</option>
           <option value="Switch">Switch</option>
           <option value="Main Box">Main Box</option>
         </select>
-        <div class="hint">আপনি যে ধরনের Location যোগ করতে চান সেটি নির্বাচন করুন।</div>
       </div>
 
       <div class="field">
-        <label>Location Name *</label>
-        <input id="locationName" placeholder="Enter location name">
+        <label>Name *</label>
+        <input id="name" placeholder="Enter name">
       </div>
 
       <div class="field">
         <label>IP Address</label>
-        <input id="locationIP" placeholder="Example: 192.168.1.20">
+        <input id="ip" placeholder="Example: 192.168.1.1">
       </div>
 
-      <div class="field">
-        <label>Location Number *</label>
-        <input id="locationNumber" placeholder="Example: C-001 / P-001">
-      </div>
-
-      <div class="field">
-        <label>Latitude *</label>
-        <input id="latitude" type="number" step="any" placeholder="Click map or use GPS">
-      </div>
-
-      <div class="field">
-        <label>Longitude *</label>
-        <input id="longitude" type="number" step="any" placeholder="Click map or use GPS">
+      <div class="field" id="codeField">
+        <label>Customer Code *</label>
+        <input id="code" placeholder="Example: C-001">
       </div>
 
       <div class="field full">
-        <label>Notes / Details</label>
-        <textarea id="locationNotes" placeholder="Write additional information..."></textarea>
+        <label>Google Maps Location URL *</label>
+        <input id="mapUrl" placeholder="Paste Google Maps URL here">
+        <div class="help">Google Maps থেকে location link copy করে এখানে paste করুন।</div>
       </div>
-    </div>
 
-    <div class="type-preview">
-      <div class="type-emoji" id="typeEmoji">👤</div>
-      <div>
-        <strong id="typePreviewName">Customer</strong>
-        <small>Selected Location Icon</small>
-      </div>
     </div>
   </div>
 
-  <!-- LOCATION MAP -->
+  <!-- CONNECTION FORM -->
   <div class="card">
-    <div class="card-title">② Select Location on Map</div>
+    <h3>🔗 From → To Connection</h3>
 
-    <div class="map-actions">
-      <button class="btn btn-blue" onclick="getCurrentGPS()">◎ Use My Current GPS</button>
-      <button class="btn" onclick="clearCoordinates()">Clear Coordinates</button>
+    <div class="grid">
+
+      <div class="field">
+        <label>From</label>
+        <select id="from">
+          <option value="">Select From</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>To</label>
+        <select id="to">
+          <option value="">Select To</option>
+          <option value="__NEW__">New Location (This Form)</option>
+        </select>
+      </div>
+
     </div>
 
-    <div id="pickMap"></div>
-    <div class="hint">
-      ম্যাপে যে জায়গায় Location যোগ করবেন সেখানে ক্লিক করুন।
-      Latitude এবং Longitude অটোমেটিক বসে যাবে।
-    </div>
-  </div>
-
-  <!-- AUTO PAIR -->
-  <div class="card" id="pairCard">
-    <div class="card-title">③ Nearby Location — Auto Pairing</div>
-
-    <div class="pair-section">
-      <div class="pair-heading">
-        <div class="pair-title">🔗 Nearby Pull / Switch / Main Box</div>
-        <div class="pair-count" id="nearbyCount">0 Found</div>
-      </div>
-
-      <div class="pair-help" id="pairHelp">
-        Customer-এর Latitude ও Longitude দেওয়ার পর কাছাকাছি Pull,
-        Switch এবং Main Box এখানে দেখানো হবে। যেকোনো একটি নির্বাচন করুন।
-      </div>
-
-      <div class="pair-list" id="pairList">
-        <div class="no-pair">
-          প্রথমে Customer-এর Location নির্বাচন করুন।
-        </div>
-      </div>
-
-      <div class="selected-pair" id="selectedPairInfo"></div>
-
-      <div class="pair-options">
-        <div class="field">
-          <label>Search Radius</label>
-          <select id="searchRadius" onchange="renderNearbyLocations()">
-            <option value="100">100 Meter</option>
-            <option value="250" selected>250 Meter</option>
-            <option value="500">500 Meter</option>
-            <option value="1000">1 Kilometer</option>
-            <option value="2000">2 Kilometer</option>
-            <option value="5000">5 Kilometer</option>
-            <option value="all">All Locations</option>
-          </select>
-        </div>
-
-        <div class="field">
-          <label>Connection Category</label>
-          <select id="connectionCategory">
-            <option value="Fiber">Fiber</option>
-          </select>
-        </div>
-
-        <div class="field">
-          <label>Connection Direction</label>
-          <select id="connectionDirection">
-            <option value="AUTO">AUTO</option>
-            <option value="ON">ON</option>
-            <option value="OFF">OFF</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="connection-preview" id="connectionPreview" style="display:none">
-        <div class="preview-node" id="previewCustomer">Customer</div>
-        <div class="preview-line"></div>
-        <div class="preview-node" id="previewTarget">Selected Location</div>
-      </div>
-    </div>
-
-    <div class="hint">
-      Auto Pairing শুধু কাছাকাছি থাকা Location দেখাবে।
-      Pair না করতে চাইলে কোনো Location নির্বাচন করবেন না।
+    <div class="note">
+      From হলো যেখান থেকে সংযোগ আসবে। To হলো যেখানে সংযোগ যাবে।
+      Connection না করতে চাইলে দুটোই খালি রাখুন।
     </div>
   </div>
 
-  <div class="notice">
-    <strong>Important:</strong> Save করলে নতুন Location Map Locations-এ যোগ হবে।
-    Pair নির্বাচন করলে নতুন Connection-ও Map Connections-এ যোগ হবে।
-    আগের Location ও Connection মুছে ফেলা হবে না।
-  </div>
-
+  <!-- SAVE -->
   <div class="card">
-    <div class="footer-actions">
-      <button class="btn" onclick="resetForm()">Clear Form</button>
-      <button class="btn btn-primary" id="saveButton" onclick="saveLocation()">
-        ✓ Save Location
-      </button>
+    <div class="actions">
+      <button class="save" id="saveBtn" onclick="saveLocation()">SAVE LOCATION</button>
+      <button class="reset" onclick="resetForm()">RESET</button>
     </div>
-    <div class="loading" id="savingText">Saving location and connection...</div>
+    <div id="status" class="status"></div>
   </div>
 
 </div>
 
-<div class="toast" id="toast"></div>
-
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
 <script>
-/***********************************************************
- ONE ONLINE — ADD MAP LOCATION
- API: Existing separate Map Spreadsheet
-***********************************************************/
-
-const MAP_API =
+const API_URL =
 "https://script.google.com/macros/s/AKfycbxmDzfnY3LpvfvHjC4usnZiBT4BX4KZIjVoCGcSULikoTKQaC_mj7cbG_zUaiTyZ4sb8w/exec";
 
 const CACHE_KEY = "ONE_ONLINE_MAP_DATA_V1";
 
-let locations = [];
-let connections = [];
-let settings = {};
-let customTypes = [];
-let cableCategories = [];
-
-let pickMap;
-let selectedPointMarker = null;
-let selectedPairId = "";
-let nearbyLocations = [];
-let mapReady = false;
-
-const TYPE_DEFAULTS = {
-  "Customer":{icon:"👤",color:"#20b98a"},
-  "Pull":{icon:"📍",color:"#e8a83e"},
-  "Switch":{icon:"🔀",color:"#3997ff"},
-  "Main Box":{icon:"📦",color:"#a17bff"},
-  "Pole":{icon:"🗼",color:"#e8a83e"}
+let mapData = {
+  locations:[],
+  connections:[],
+  settings:{},
+  customTypes:[]
 };
 
+let loading = false;
 
-/* ---------------- HELPERS ---------------- */
+// --------------------------------
+// LOAD EXISTING MAP DATA
+// --------------------------------
+async function loadMapData(){
+  setStatus("Loading map data...");
 
-function val(obj,names,def=""){
-  for(const name of names){
-    if(obj && obj[name]!==undefined && obj[name]!==null && obj[name]!==""){
-      return obj[name];
-    }
-
-    if(obj){
-      const found=Object.keys(obj).find(
-        k=>k.toLowerCase()===name.toLowerCase()
-      );
-      if(found && obj[found]!=="" && obj[found]!==null){
-        return obj[found];
-      }
-    }
-  }
-  return def;
-}
-
-function parseJSON(value){
-  if(!value)return {};
-  if(typeof value==="object")return value;
-  try{return JSON.parse(value)}catch(e){return {}}
-}
-
-function escapeHTML(value){
-  return String(value??"").replace(/[&<>"']/g,c=>({
-    "&":"&amp;","<":"&lt;",">":"&gt;",
-    '"':"&quot;","'":"&#039;"
-  })[c]);
-}
-
-function makeId(prefix){
-  return prefix+"_"+Date.now().toString(36)+"_"+Math.random().toString(36).slice(2,8);
-}
-
-function normalizeType(value){
-  return String(value||"").trim().toLowerCase();
-}
-
-function toast(message){
-  const el=document.getElementById("toast");
-  el.textContent=message;
-  el.style.display="block";
-  clearTimeout(window.toastTimer);
-  window.toastTimer=setTimeout(()=>el.style.display="none",3200);
-}
-
-
-/* ---------------- MAP INIT ---------------- */
-
-function initMap(){
-  pickMap=L.map("pickMap").setView([23.8103,90.4125],13);
-
-  L.tileLayer(
-    "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-    {
-      maxZoom:20,
-      attribution:"© OpenStreetMap"
-    }
-  ).addTo(pickMap);
-
-  pickMap.on("click",event=>{
-    setCoordinates(event.latlng.lat,event.latlng.lng);
-  });
-
-  mapReady=true;
-}
-
-
-/* ---------------- LOAD MAP DATA ---------------- */
-
-async function loadData(){
   try{
-    const response=await fetch(
-      MAP_API+"?action=getMapData&t="+Date.now(),
-      {cache:"no-store"}
-    );
+    const response = await fetch(API_URL + "?action=getMapData");
+    const result = await response.json();
 
-    if(!response.ok)throw new Error("API Error "+response.status);
+    const data = result.data || result;
 
-    const result=await response.json();
-    const data=result.data||result;
+    mapData.locations = Array.isArray(data.locations) ? data.locations : [];
+    mapData.connections = Array.isArray(data.connections) ? data.connections : [];
+    mapData.settings = data.settings || {};
+    mapData.customTypes = data.customTypes || [];
 
-    locations=Array.isArray(data.locations)?data.locations:[];
-    connections=Array.isArray(data.connections)?data.connections:[];
-    settings=data.settings||{};
-    customTypes=data.customTypes||settings._customTypes||[];
-    cableCategories=settings._cableCategories||[];
+    localStorage.setItem(CACHE_KEY, JSON.stringify(mapData));
 
-    localStorage.setItem(CACHE_KEY,JSON.stringify({
-      locations,connections,settings,customTypes
-    }));
-
-    populateCategories();
-    updateTypeOptions();
-    toast("Map data loaded");
-    renderNearbyLocations();
+    populateConnections();
+    setStatus("Map data loaded.", true);
 
   }catch(error){
     console.error(error);
 
+    // Use previously saved cache if available
     try{
-      const cache=JSON.parse(localStorage.getItem(CACHE_KEY)||"null");
+      const cached = JSON.parse(localStorage.getItem(CACHE_KEY) || "{}");
 
-      if(cache){
-        locations=cache.locations||[];
-        connections=cache.connections||[];
-        settings=cache.settings||{};
-        customTypes=cache.customTypes||settings._customTypes||[];
-        cableCategories=settings._cableCategories||[];
-        populateCategories();
-        updateTypeOptions();
-        renderNearbyLocations();
-        toast("Using saved Map Data");
-      }else{
-        toast("Map API connection failed");
-      }
+      mapData.locations = cached.locations || [];
+      mapData.connections = cached.connections || [];
+      mapData.settings = cached.settings || {};
+      mapData.customTypes = cached.customTypes || [];
+
+      populateConnections();
+      setStatus("Loaded saved local data. Please check your connection.", false);
+
     }catch(e){
-      toast("Map data could not be loaded");
+      setStatus("Could not load map data.", false);
     }
   }
 }
 
+// --------------------------------
+// FROM / TO DROPDOWNS
+// --------------------------------
+function locationLabel(item){
+  const type = item.type || item.Type || "";
+  const name = item.name || item.Name || "";
+  const code = item.code || item.Code || "";
 
-/* ---------------- TYPE SETTINGS ---------------- */
-
-function getTypeConfig(type){
-  const key=normalizeType(type);
-
-  for(const [name,config] of Object.entries(TYPE_DEFAULTS)){
-    if(normalizeType(name)===key)return config;
-  }
-
-  const custom=Array.isArray(customTypes)
-    ?customTypes.find(x=>normalizeType(val(x,["name","Name","type"]))===key)
-    :null;
-
-  if(custom){
-    return {
-      icon:val(custom,["icon","Icon","emoji"],"📍"),
-      color:val(custom,["color","Color"],"#20b98a")
-    };
-  }
-
-  return {icon:"📍",color:"#20b98a"};
+  return [
+    type,
+    name,
+    code ? "(" + code + ")" : ""
+  ].filter(Boolean).join(" - ");
 }
 
-function updateTypeOptions(){
-  const select=document.getElementById("locationType");
-  const current=select.value;
+function getLocationId(item){
+  return String(item.id || item.ID || "");
+}
 
-  const names=[
-    "Customer","Pull","Switch","Main Box","Pole",
-    ...customTypes.map(x=>val(x,["name","Name","type"],""))
-  ].filter(Boolean);
+function populateConnections(){
+  const from = document.getElementById("from");
+  const to = document.getElementById("to");
 
-  select.innerHTML="";
+  from.innerHTML = '<option value="">Select From</option>';
+  to.innerHTML =
+    '<option value="">Select To</option>' +
+    '<option value="__NEW__">New Location (This Form)</option>';
 
-  [...new Set(names)].forEach(name=>{
-    const option=document.createElement("option");
-    option.value=name;
-    option.textContent=name;
-    select.appendChild(option);
+  mapData.locations.forEach(item=>{
+    const id = getLocationId(item);
+    if(!id) return;
+
+    const label = locationLabel(item);
+
+    const a = document.createElement("option");
+    a.value = id;
+    a.textContent = label;
+    from.appendChild(a);
+
+    const b = document.createElement("option");
+    b.value = id;
+    b.textContent = label;
+    to.appendChild(b);
   });
-
-  select.value=names.includes(current)?current:"Customer";
-  onTypeChange();
 }
 
-function onTypeChange(){
-  const type=document.getElementById("locationType").value;
-  const config=getTypeConfig(type);
+// --------------------------------
+// TYPE CHANGE
+// --------------------------------
+function typeChanged(){
+  const type = document.getElementById("type").value;
+  const codeField = document.getElementById("codeField");
 
-  document.getElementById("typeEmoji").textContent=config.icon;
-  document.getElementById("typePreviewName").textContent=type;
+  // Customer uses Code.
+  // Pull / Switch / Main Box use Name.
+  codeField.classList.toggle("hidden", type !== "Customer");
 
-  const isCustomer=normalizeType(type)==="customer";
-
-  document.getElementById("pairCard").style.display=
-    isCustomer?"block":"none";
-
-  if(!isCustomer){
-    selectedPairId="";
-  }else{
-    renderNearbyLocations();
+  if(type !== "Customer"){
+    document.getElementById("code").value = "";
   }
 }
 
+// --------------------------------
+// GOOGLE MAPS URL COORDINATES
+// --------------------------------
+function getCoordinates(url){
+  if(!url) return null;
 
-/* ---------------- CONNECTION CATEGORY ---------------- */
+  let patterns = [
+    /@(-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?)/,
+    /[?&]q=(-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?)/,
+    /[?&]ll=(-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?)/,
+    /!3d(-?\d+(?:\.\d+)?)!4d(-?\d+(?:\.\d+)?)/
+  ];
 
-function populateCategories(){
-  const select=document.getElementById("connectionCategory");
-  const previous=select.value;
+  for(const pattern of patterns){
+    const match = url.match(pattern);
 
-  const categories=cableCategories.length
-    ?cableCategories.map(x=>val(x,["name","Name","category"],"Fiber"))
-    :["Fiber","Fiber 2","UTP Cable","FTP Fiber"];
+    if(match){
+      const lat = Number(match[1]);
+      const lng = Number(match[2]);
 
-  select.innerHTML="";
-
-  [...new Set(categories)].forEach(name=>{
-    const option=document.createElement("option");
-    option.value=name;
-    option.textContent=name;
-    select.appendChild(option);
-  });
-
-  if(categories.includes(previous))select.value=previous;
-}
-
-
-/* ---------------- COORDINATES ---------------- */
-
-function setCoordinates(lat,lng){
-  lat=Number(lat);
-  lng=Number(lng);
-
-  if(!Number.isFinite(lat)||!Number.isFinite(lng)){
-    toast("Invalid coordinates");
-    return;
-  }
-
-  document.getElementById("latitude").value=lat.toFixed(7);
-  document.getElementById("longitude").value=lng.toFixed(7);
-
-  if(selectedPointMarker){
-    selectedPointMarker.setLatLng([lat,lng]);
-  }else{
-    selectedPointMarker=L.marker([lat,lng],{
-      draggable:true
-    }).addTo(pickMap);
-
-    selectedPointMarker.on("dragend",event=>{
-      const point=event.target.getLatLng();
-      setCoordinates(point.lat,point.lng);
-    });
-  }
-
-  selectedPointMarker.bindPopup("New Location").openPopup();
-
-  pickMap.setView([lat,lng],17);
-
-  renderNearbyLocations();
-}
-
-function clearCoordinates(){
-  document.getElementById("latitude").value="";
-  document.getElementById("longitude").value="";
-
-  if(selectedPointMarker){
-    pickMap.removeLayer(selectedPointMarker);
-    selectedPointMarker=null;
-  }
-
-  renderNearbyLocations();
-}
-
-function getCurrentGPS(){
-  if(!navigator.geolocation){
-    toast("GPS is not supported by your browser");
-    return;
-  }
-
-  if(!window.isSecureContext){
-    toast("GPS requires a secure HTTPS page");
-    return;
-  }
-
-  toast("Getting your current location...");
-
-  navigator.geolocation.getCurrentPosition(
-    position=>{
-      setCoordinates(
-        position.coords.latitude,
-        position.coords.longitude
-      );
-      toast("GPS location selected");
-    },
-    error=>{
-      toast(error.code===1
-        ?"Please allow location permission"
-        :"Could not get GPS location"
-      );
-    },
-    {enableHighAccuracy:true,timeout:15000,maximumAge:3000}
-  );
-}
-
-
-/* ---------------- DISTANCE ---------------- */
-
-function distanceMeters(lat1,lon1,lat2,lon2){
-  const R=6371000;
-  const toRad=value=>value*Math.PI/180;
-
-  const dLat=toRad(lat2-lat1);
-  const dLon=toRad(lon2-lon1);
-
-  const a=
-    Math.sin(dLat/2)**2+
-    Math.cos(toRad(lat1))*
-    Math.cos(toRad(lat2))*
-    Math.sin(dLon/2)**2;
-
-  return 2*R*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
-}
-
-function formatDistance(meters){
-  if(meters<1000)return Math.round(meters)+" m";
-  return (meters/1000).toFixed(2)+" km";
-}
-
-
-/* ---------------- NEARBY LOCATIONS ---------------- */
-
-function getPairableTypes(){
-  return ["pull","switch","main box"];
-}
-
-function renderNearbyLocations(){
-  const list=document.getElementById("pairList");
-  const count=document.getElementById("nearbyCount");
-  const help=document.getElementById("pairHelp");
-
-  const type=document.getElementById("locationType").value;
-
-  if(normalizeType(type)!=="customer"){
-    list.innerHTML=`<div class="no-pair">Customer নির্বাচন করলে Auto Pairing চালু হবে।</div>`;
-    count.textContent="0 Found";
-    return;
-  }
-
-  const lat=Number(document.getElementById("latitude").value);
-  const lng=Number(document.getElementById("longitude").value);
-
-  if(!Number.isFinite(lat)||!Number.isFinite(lng)){
-    list.innerHTML=`
-      <div class="no-pair">
-        প্রথমে Customer-এর Latitude ও Longitude নির্বাচন করুন।
-        তারপর কাছাকাছি Pull, Switch ও Main Box দেখাবে।
-      </div>`;
-    count.textContent="0 Found";
-    help.textContent="Customer Location নির্বাচন করার পর কাছাকাছি Network Point অটোমেটিক দেখানো হবে।";
-    return;
-  }
-
-  const radiusValue=document.getElementById("searchRadius").value;
-  const radius=radiusValue==="all"?Infinity:Number(radiusValue);
-
-  nearbyLocations=locations
-    .map(item=>{
-      const typeName=normalizeType(val(item,["Type","type","category"]));
-
-      const itemLat=Number(val(item,["Latitude","latitude","lat"],NaN));
-      const itemLng=Number(val(item,["Longitude","longitude","lng"],NaN));
-
-      if(!getPairableTypes().includes(typeName))return null;
-      if(!Number.isFinite(itemLat)||!Number.isFinite(itemLng))return null;
-
-      const distance=distanceMeters(lat,lng,itemLat,itemLng);
-
-      return {
-        raw:item,
-        id:String(val(item,["ID","id","locationId"],"")),
-        name:String(val(item,["Name","name"],"Unnamed")),
-        type:String(val(item,["Type","type"],"Other")),
-        ip:String(val(item,["IP","ip"],"")),
-        number:String(val(item,["Location Number","locationNumber"],"")),
-        lat:itemLat,
-        lng:itemLng,
-        distance
-      };
-    })
-    .filter(Boolean)
-    .filter(item=>item.id && item.distance<=radius)
-    .sort((a,b)=>a.distance-b.distance);
-
-  count.textContent=nearbyLocations.length+" Found";
-
-  if(!nearbyLocations.some(x=>x.id===selectedPairId)){
-    selectedPairId="";
-  }
-
-  if(!nearbyLocations.length){
-    list.innerHTML=`
-      <div class="no-pair">
-        এই Radius-এর মধ্যে কোনো Pull, Switch বা Main Box পাওয়া যায়নি।
-        Search Radius বাড়িয়ে দেখুন।
-      </div>`;
-    updatePairPreview();
-    return;
-  }
-
-  list.innerHTML="";
-
-  nearbyLocations.forEach(item=>{
-    const config=getTypeConfig(item.type);
-    const selected=item.id===selectedPairId;
-
-    const div=document.createElement("div");
-    div.className="pair-item"+(selected?" selected":"");
-
-    div.innerHTML=`
-      <div class="pair-icon">${escapeHTML(config.icon)}</div>
-      <div class="pair-info">
-        <div class="pair-name">${escapeHTML(item.name)}</div>
-        <div class="pair-meta">
-          ${escapeHTML(item.type)}
-          ${item.number?" · "+escapeHTML(item.number):""}
-          ${item.ip?" · "+escapeHTML(item.ip):""}
-        </div>
-        <div class="pair-distance">↔ ${formatDistance(item.distance)} away</div>
-      </div>
-      <div class="pair-check">${selected?"✓":""}</div>
-    `;
-
-    div.onclick=()=>selectPair(item.id);
-
-    list.appendChild(div);
-  });
-
-  help.textContent=
-    nearbyLocations.length+
-    "টি কাছাকাছি Pull / Switch / Main Box পাওয়া গেছে। যেকোনো একটি নির্বাচন করুন।";
-
-  updatePairPreview();
-}
-
-
-/* ---------------- SELECT PAIR ---------------- */
-
-function selectPair(id){
-  selectedPairId=selectedPairId===id?"":id;
-
-  renderNearbyLocations();
-
-  if(selectedPairId){
-    const selected=nearbyLocations.find(x=>x.id===selectedPairId);
-
-    if(selected){
-      pickMap.setView([selected.lat,selected.lng],17);
+      if(
+        Number.isFinite(lat) &&
+        Number.isFinite(lng) &&
+        lat >= -90 && lat <= 90 &&
+        lng >= -180 && lng <= 180
+      ){
+        return {lat,lng};
+      }
     }
   }
+
+  return null;
 }
 
-function updatePairPreview(){
-  const info=document.getElementById("selectedPairInfo");
-  const preview=document.getElementById("connectionPreview");
+// --------------------------------
+// SAVE DATA
+// --------------------------------
+async function saveLocation(){
+  if(loading) return;
 
-  const selected=nearbyLocations.find(x=>x.id===selectedPairId);
+  const type = document.getElementById("type").value;
+  const name = document.getElementById("name").value.trim();
+  const ip = document.getElementById("ip").value.trim();
+  const code = document.getElementById("code").value.trim();
+  const mapUrl = document.getElementById("mapUrl").value.trim();
 
-  if(!selected){
-    info.style.display="none";
-    preview.style.display="none";
+  const from = document.getElementById("from").value;
+  const to = document.getElementById("to").value;
+
+  if(!name){
+    setStatus("Please enter a name.", false);
     return;
   }
 
-  info.style.display="block";
-  info.innerHTML=`
-    <strong>✓ Pair Selected:</strong>
-    ${escapeHTML(selected.name)}
-    (${escapeHTML(selected.type)})
-    — ${formatDistance(selected.distance)} দূরে
-    <br><span style="color:#9acdbb;font-size:10px">
-      Save করলে এই Location-এর সঙ্গে Customer Connection তৈরি হবে।
-    </span>
-  `;
-
-  preview.style.display="flex";
-
-  document.getElementById("previewCustomer").textContent=
-    document.getElementById("locationName").value.trim()||"New Customer";
-
-  document.getElementById("previewTarget").textContent=selected.name;
-}
-
-
-/* ---------------- FORM VALIDATION ---------------- */
-
-function getFormData(){
-  const type=document.getElementById("locationType").value.trim();
-  const name=document.getElementById("locationName").value.trim();
-  const ip=document.getElementById("locationIP").value.trim();
-  const number=document.getElementById("locationNumber").value.trim();
-  const lat=Number(document.getElementById("latitude").value);
-  const lng=Number(document.getElementById("longitude").value);
-  const notes=document.getElementById("locationNotes").value.trim();
-
-  if(!type)return {error:"Location Type নির্বাচন করুন"};
-  if(!name)return {error:"Location Name লিখুন"};
-  if(!number)return {error:"Location Number লিখুন"};
-
-  if(!Number.isFinite(lat)||!Number.isFinite(lng)){
-    return {error:"Latitude ও Longitude নির্বাচন করুন"};
+  if(type === "Customer" && !code){
+    setStatus("Please enter Customer Code.", false);
+    return;
   }
 
-  if(Math.abs(lat)>90||Math.abs(lng)>180){
-    return {error:"Latitude / Longitude সঠিক নয়"};
+  if(!mapUrl){
+    setStatus("Please paste Google Maps URL.", false);
+    return;
   }
 
-  const duplicate=locations.find(item=>
-    String(val(item,["Location Number","locationNumber"],"")).trim().toLowerCase()
-    ===number.toLowerCase()
-  );
+  const coords = getCoordinates(mapUrl);
 
-  if(duplicate){
-    return {error:"এই Location Number আগে থেকেই ব্যবহার করা হয়েছে"};
+  if(!coords){
+    setStatus("Could not read coordinates from this URL. Use a Google Maps URL containing coordinates.", false);
+    return;
   }
 
-  const config=getTypeConfig(type);
+  if((from && !to) || (!from && to)){
+    setStatus("Please select both From and To, or leave both empty.", false);
+    return;
+  }
 
-  const now=new Date().toISOString();
+  if(from && to === "__NEW__" && !from){
+    setStatus("Please select a From location.", false);
+    return;
+  }
 
-  const newLocation={
-    id:makeId("LOC"),
+  const newId = "MAP-" + Date.now();
+
+  const now = new Date().toISOString();
+
+  const newLocation = {
+    id:newId,
     type:type,
     name:name,
     ip:ip,
-    locationNumber:number,
-    latitude:lat,
-    longitude:lng,
-    icon:config.icon,
-    color:config.color,
-    notes:notes,
+    code:type === "Customer" ? code : "",
+    latitude:coords.lat,
+    longitude:coords.lng,
+    icon:"",
+    color:"",
+    notes:"",
     createdAt:now,
-    updatedAt:now
+    updatedAt:now,
+    data:{
+      mapUrl:mapUrl,
+      code:type === "Customer" ? code : ""
+    }
   };
 
-  return {location:newLocation};
-}
+  // Keep all existing records.
+  const locations = [...mapData.locations, newLocation];
+  const connections = [...mapData.connections];
 
+  // Add connection only when From and To are selected.
+  if(from && to){
+    const targetId = to === "__NEW__" ? newId : to;
 
-/* ---------------- SAVE LOCATION + CONNECTION ---------------- */
+    if(from === targetId){
+      setStatus("From and To cannot be the same location.", false);
+      return;
+    }
 
-async function saveLocation(){
-  const button=document.getElementById("saveButton");
-  const savingText=document.getElementById("savingText");
-
-  const result=getFormData();
-
-  if(result.error){
-    toast(result.error);
-    return;
+    connections.push({
+      id:"CON-" + Date.now(),
+      from:from,
+      to:targetId,
+      type:"Fiber",
+      name:"",
+      createdAt:now
+    });
   }
 
-  const newLocation=result.location;
-
-  const isCustomer=normalizeType(newLocation.type)==="customer";
-  const selected=nearbyLocations.find(x=>x.id===selectedPairId);
-
-  if(isCustomer && selectedPairId && !selected){
-    toast("Selected Pair আর পাওয়া যাচ্ছে না। আবার নির্বাচন করুন।");
-    return;
-  }
-
-  const newLocations=[
-    ...locations,
-    newLocation
-  ];
-
-  const newConnections=[...connections];
-
-  if(isCustomer && selected){
-    const category=document.getElementById("connectionCategory").value;
-    const direction=document.getElementById("connectionDirection").value;
-
-    const connection={
-      id:makeId("CON"),
-      from:newLocation.id,
-      to:selected.id,
-      type:category,
-      category:category,
-      name:newLocation.name+" → "+selected.name,
-      direction:direction,
-      createdAt:new Date().toISOString()
-    };
-
-    newConnections.push(connection);
-  }
-
-  const payload={
+  const payload = {
     action:"saveMapData",
-    locations:newLocations,
-    connections:newConnections,
-    settings:settings,
-    customTypes:customTypes
+    locations:locations,
+    connections:connections,
+    settings:mapData.settings,
+    customTypes:mapData.customTypes
   };
 
-  button.disabled=true;
-  savingText.style.display="block";
-  button.textContent="Saving...";
+  loading = true;
+  document.getElementById("saveBtn").disabled = true;
+  document.getElementById("saveBtn").textContent = "SAVING...";
+
+  setStatus("Saving location...");
 
   try{
-    const response=await fetch(MAP_API,{
+    const response = await fetch(API_URL,{
       method:"POST",
       headers:{
         "Content-Type":"text/plain;charset=utf-8"
@@ -1109,102 +452,67 @@ async function saveLocation(){
       body:JSON.stringify(payload)
     });
 
-    if(!response.ok){
-      throw new Error("Server returned "+response.status);
+    const result = await response.json();
+
+    if(result.success === false || result.status === "error"){
+      throw new Error(result.message || "Save failed.");
     }
 
-    const responseText=await response.text();
+    // Update local data only after successful response.
+    mapData.locations = locations;
+    mapData.connections = connections;
 
-    let serverResult={};
-    try{
-      serverResult=JSON.parse(responseText);
-    }catch(e){}
+    localStorage.setItem(CACHE_KEY, JSON.stringify(mapData));
 
-    if(serverResult.success===false || serverResult.status==="error"){
-      throw new Error(serverResult.message||"Save failed");
-    }
+    setStatus("Location saved successfully!", true);
 
-    // Update the shared cache after a successful server response.
-    locations=newLocations;
-    connections=newConnections;
-
-    localStorage.setItem(CACHE_KEY,JSON.stringify({
-      locations,
-      connections,
-      settings,
-      customTypes
-    }));
-
-    toast(
-      selected
-      ?"Customer and Connection saved successfully!"
-      :"Location saved successfully!"
-    );
-
-    resetForm();
+    resetForm(false);
+    populateConnections();
 
   }catch(error){
-    console.error("Save error:",error);
-    toast("Save failed: "+error.message);
+    console.error(error);
+    setStatus("Save failed: " + error.message, false);
+
   }finally{
-    button.disabled=false;
-    button.textContent="✓ Save Location";
-    savingText.style.display="none";
+    loading = false;
+    document.getElementById("saveBtn").disabled = false;
+    document.getElementById("saveBtn").textContent = "SAVE LOCATION";
   }
 }
 
+// --------------------------------
+// RESET
+// --------------------------------
+function resetForm(clearStatus=true){
+  document.getElementById("type").value = "Customer";
+  document.getElementById("name").value = "";
+  document.getElementById("ip").value = "";
+  document.getElementById("code").value = "";
+  document.getElementById("mapUrl").value = "";
+  document.getElementById("from").value = "";
+  document.getElementById("to").value = "";
 
-/* ---------------- RESET ---------------- */
+  typeChanged();
 
-function resetForm(){
-  document.getElementById("locationName").value="";
-  document.getElementById("locationIP").value="";
-  document.getElementById("locationNumber").value="";
-  document.getElementById("locationNotes").value="";
-
-  selectedPairId="";
-  nearbyLocations=[];
-
-  clearCoordinates();
-
-  document.getElementById("locationType").value="Customer";
-  onTypeChange();
-
-  toast("Form cleared");
+  if(clearStatus) setStatus("");
 }
 
+// --------------------------------
+// STATUS
+// --------------------------------
+function setStatus(message,success=null){
+  const el = document.getElementById("status");
+  el.textContent = message;
+  el.className = "status";
 
-/* ---------------- INPUT EVENTS ---------------- */
+  if(success === true) el.classList.add("success");
+  if(success === false) el.classList.add("error");
+}
 
-document.getElementById("locationName").addEventListener("input",()=>{
-  updatePairPreview();
-});
+// INITIALIZE
+typeChanged();
+loadMapData();
 
-document.getElementById("latitude").addEventListener("input",()=>{
-  renderNearbyLocations();
-});
-
-document.getElementById("longitude").addEventListener("input",()=>{
-  renderNearbyLocations();
-});
-
-
-/* ---------------- START ---------------- */
-
-document.addEventListener("DOMContentLoaded",async()=>{
-  initMap();
-  await loadData();
-
-  setTimeout(()=>{
-    pickMap.invalidateSize();
-  },300);
-});
-
-window.addEventListener("resize",()=>{
-  if(pickMap){
-    setTimeout(()=>pickMap.invalidateSize(),150);
-  }
-});
 </script>
 </body>
 </html>
