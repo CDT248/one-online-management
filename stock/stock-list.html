@@ -1,0 +1,312 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Stock List | ONE ONLINE</title>
+
+<style>
+:root{
+  --bg:#0b1220;--panel:#111c2e;--panel2:#172338;
+  --text:#e8f0fc;--muted:#8fa2bd;--line:#26364d;
+  --primary:#1686f8;--green:#16a36a;--red:#e05252;
+  --orange:#d99026;
+}
+*{box-sizing:border-box}
+body{margin:0;padding:22px;background:var(--bg);color:var(--text);font:14px/1.5 Arial,sans-serif}
+.wrap{max-width:1250px;margin:auto}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:20px}
+.brand{display:flex;align-items:center;gap:12px}
+.logo{width:43px;height:43px;border-radius:12px;display:grid;place-items:center;background:linear-gradient(135deg,#1686f8,#16a36a);font-size:20px;font-weight:900}
+h1{font-size:23px;margin:0}
+.sub{font-size:12px;color:var(--muted)}
+.demo{padding:6px 11px;border-radius:20px;background:#26364d;color:#b8d8ff;font-size:11px;font-weight:bold}
+.nav{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+.nav a{text-decoration:none;color:var(--muted);background:var(--panel);border:1px solid var(--line);border-radius:9px;padding:9px 13px;font-weight:bold}
+.nav a.active,.nav a:hover{background:#12345a;color:white;border-color:#2367a7}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:15px}
+.stat small{color:var(--muted)}
+.stat strong{display:block;font-size:23px;margin-top:5px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:15px;padding:18px;margin-bottom:18px}
+.card h2{font-size:16px;margin:0 0 15px}
+.filters{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:15px}
+input,select{background:#0c1728;color:var(--text);border:1px solid #30435d;border-radius:9px;padding:11px 12px;outline:none;font:inherit}
+input{flex:1;min-width:200px}
+select{min-width:140px}
+input:focus,select:focus{border-color:var(--primary)}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:15px}
+.tab{border:1px solid var(--line);background:var(--panel2);color:var(--muted);padding:9px 15px;border-radius:9px;cursor:pointer;font-weight:bold}
+.tab.active{background:#12345a;color:white;border-color:#2367a7}
+.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:11px}
+table{width:100%;border-collapse:collapse;min-width:800px}
+th,td{text-align:left;padding:12px;border-bottom:1px solid var(--line)}
+th{background:#15243a;color:#aebfd5;font-size:11px;text-transform:uppercase;letter-spacing:.4px}
+td{font-size:13px}
+tr:last-child td{border-bottom:0}
+.pill{display:inline-block;padding:4px 9px;border-radius:20px;font-size:11px;font-weight:bold}
+.pill.onu{background:#153d65;color:#9bcaff}
+.pill.fiber{background:#164332;color:#9be7bc}
+.pill.good{background:#153c30;color:#a8f0ce}
+.pill.low{background:#49351b;color:#ffd18a}
+.pill.out{background:#492626;color:#ffaaaa}
+.empty{text-align:center;padding:35px;color:var(--muted)}
+.btn{border:0;border-radius:9px;padding:10px 15px;color:white;background:var(--primary);font-weight:bold;cursor:pointer}
+.btn.gray{background:#30435d}
+.note{font-size:12px;color:var(--muted);margin-top:12px}
+@media(max-width:800px){.stats{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:550px){body{padding:13px}.stats{grid-template-columns:1fr 1fr}.card{padding:13px}h1{font-size:20px}.filters input{min-width:100%}}
+</style>
+</head>
+
+<body>
+<div class="wrap">
+
+<header class="top">
+  <div class="brand">
+    <div class="logo">O</div>
+    <div>
+      <h1>Stock List</h1>
+      <div class="sub">ONE ONLINE · STOCK MANAGEMENT</div>
+    </div>
+  </div>
+  <span class="demo">DEMO MODE</span>
+</header>
+
+<nav class="nav">
+  <a href="add-stock.html">＋ Add Stock</a>
+  <a href="stock-list.html" class="active">▦ Stock List</a>
+  <a href="delete-stock.html">⌫ Delete Stock</a>
+  <a href="use-stock.html">↘ Use Stock</a>
+</nav>
+
+<div class="stats">
+  <div class="stat">
+    <small>Total Stock Items</small>
+    <strong id="totalItems">0</strong>
+  </div>
+  <div class="stat">
+    <small>Total ONU (PCS)</small>
+    <strong id="totalOnu">0</strong>
+  </div>
+  <div class="stat">
+    <small>Total Fiber (Meter)</small>
+    <strong id="totalFiber">0</strong>
+  </div>
+  <div class="stat">
+    <small>Out of Stock</small>
+    <strong id="outStock">0</strong>
+  </div>
+</div>
+
+<div class="card">
+
+  <div class="filters">
+    <input id="search" type="search"
+      placeholder="Search ONU Make, Fiber Name or Code...">
+
+    <select id="statusFilter">
+      <option value="all">All Status</option>
+      <option value="available">Available</option>
+      <option value="low">Low Stock</option>
+      <option value="out">Out of Stock</option>
+    </select>
+
+    <button class="btn gray" onclick="renderStock()">Refresh</button>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" data-type="ALL">All Stock</button>
+    <button class="tab" data-type="ONU">ONU Stock</button>
+    <button class="tab" data-type="FIBER">Fiber Stock</button>
+  </div>
+
+  <div id="tableArea"></div>
+
+</div>
+
+<p class="note">
+  Stock data is currently loaded from this browser's localStorage.
+  Google Sheets connection will be added later.
+</p>
+
+</div>
+
+<script>
+const DB_KEY='ONE_ONLINE_STOCK_DEMO_V1';
+
+let activeType='ALL';
+
+function loadStock(){
+  try{
+    return JSON.parse(localStorage.getItem(DB_KEY)||'[]');
+  }catch(e){
+    return [];
+  }
+}
+
+function money(value){
+  return Number(value||0).toLocaleString('en-BD',{
+    maximumFractionDigits:2
+  });
+}
+
+function esc(value){
+  return String(value??'').replace(/[&<>"']/g,c=>({
+    '&':'&amp;','<':'&lt;','>':'&gt;',
+    '"':'&quot;',"'":'&#39;'
+  }[c]));
+}
+
+function getStatus(qty){
+  qty=Number(qty||0);
+
+  if(qty<=0)return 'out';
+  if(qty<=5)return 'low';
+  return 'available';
+}
+
+function statusLabel(qty){
+  const status=getStatus(qty);
+
+  if(status==='out')return '<span class="pill out">Out of Stock</span>';
+  if(status==='low')return '<span class="pill low">Low Stock</span>';
+
+  return '<span class="pill good">Available</span>';
+}
+
+function updateSummary(items){
+
+  const onu=items.filter(x=>String(x.category).toUpperCase()==='ONU');
+  const fiber=items.filter(x=>String(x.category).toUpperCase()==='FIBER');
+
+  const onuQty=onu.reduce((a,x)=>a+Number(x.qty||0),0);
+  const fiberQty=fiber.reduce((a,x)=>a+Number(x.qty||0),0);
+
+  const out=items.filter(x=>Number(x.qty||0)<=0).length;
+
+  document.getElementById('totalItems').textContent=items.length;
+  document.getElementById('totalOnu').textContent=money(onuQty);
+  document.getElementById('totalFiber').textContent=money(fiberQty);
+  document.getElementById('outStock').textContent=out;
+}
+
+function renderStock(){
+
+  const all=loadStock();
+
+  updateSummary(all);
+
+  const search=document.getElementById('search')
+    .value.trim().toLowerCase();
+
+  const statusFilter=document.getElementById('statusFilter').value;
+
+  let items=all.filter(item=>{
+
+    const category=String(item.category||'').toUpperCase();
+
+    const typeMatch=activeType==='ALL'||category===activeType;
+
+    const searchMatch=[
+      item.name,item.code,item.category,item.note
+    ].join(' ').toLowerCase().includes(search);
+
+    const statusMatch=statusFilter==='all'||
+      getStatus(item.qty)===statusFilter;
+
+    return typeMatch&&searchMatch&&statusMatch;
+  });
+
+  const area=document.getElementById('tableArea');
+
+  if(!items.length){
+    area.innerHTML='<div class="empty">No stock found. Add stock from Add Stock page.</div>';
+    return;
+  }
+
+  area.innerHTML=`
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>SL</th>
+            <th>Stock Item Name</th>
+            <th>Category</th>
+            <th>Code</th>
+            <th>Quantity</th>
+            <th>Unit</th>
+            <th>Status</th>
+            <th>Added Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${items.map((item,index)=>{
+
+            const category=String(item.category||'').toUpperCase();
+
+            const categoryBadge=category==='ONU'
+              ?'<span class="pill onu">ONU</span>'
+              :'<span class="pill fiber">FIBER</span>';
+
+            const date=item.createdAt
+              ?new Date(item.createdAt).toLocaleDateString('en-GB')
+              :'—';
+
+            return `
+              <tr>
+                <td>${index+1}</td>
+                <td><b>${esc(item.name)}</b></td>
+                <td>${categoryBadge}</td>
+                <td>${esc(item.code||'—')}</td>
+                <td><b>${money(item.qty)}</b></td>
+                <td>${esc(item.unit||(category==='ONU'?'pcs':'meter'))}</td>
+                <td>${statusLabel(item.qty)}</td>
+                <td>${date}</td>
+              </tr>
+            `;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+/* CATEGORY TABS */
+
+document.querySelectorAll('.tab').forEach(tab=>{
+  tab.addEventListener('click',()=>{
+
+    document.querySelectorAll('.tab')
+      .forEach(x=>x.classList.remove('active'));
+
+    tab.classList.add('active');
+
+    activeType=tab.dataset.type;
+
+    renderStock();
+  });
+});
+
+/* SEARCH AND FILTER */
+
+document.getElementById('search')
+  .addEventListener('input',renderStock);
+
+document.getElementById('statusFilter')
+  .addEventListener('change',renderStock);
+
+/* REFRESH ON PAGE RETURN */
+
+window.addEventListener('focus',renderStock);
+window.addEventListener('storage',renderStock);
+
+/* INITIAL */
+
+renderStock();
+
+</script>
+</body>
+</html>
+=
