@@ -1,0 +1,593 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Add Earn | ONE ONLINE</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
+
+:root{
+  --bg:#0b1220;
+  --panel:#111c2e;
+  --panel2:#172338;
+  --text:#e8f0fc;
+  --muted:#8fa2bd;
+  --line:#26364d;
+  --primary:#16a36a;
+  --primary2:#087f5b;
+  --success:#22c55e;
+  --danger:#ef4444;
+}
+
+body{
+  font-family:Inter,Arial,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  padding:22px;
+}
+
+.container{
+  max-width:850px;
+  margin:auto;
+}
+
+.header{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  margin-bottom:22px;
+}
+
+.header-icon{
+  width:52px;
+  height:52px;
+  border-radius:14px;
+  background:rgba(22,163,106,.15);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:27px;
+}
+
+.header h2{
+  font-size:23px;
+  font-weight:800;
+  margin-bottom:5px;
+}
+
+.header p{
+  color:var(--muted);
+  font-size:12px;
+}
+
+.card{
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:22px;
+  margin-bottom:17px;
+}
+
+.card-title{
+  font-size:16px;
+  font-weight:700;
+  margin-bottom:20px;
+  display:flex;
+  align-items:center;
+  gap:9px;
+}
+
+.form-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:17px;
+}
+
+.field{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.field.full{
+  grid-column:1/-1;
+}
+
+label{
+  font-size:13px;
+  font-weight:600;
+  color:var(--muted);
+}
+
+.required{
+  color:#f87171;
+}
+
+input,textarea{
+  width:100%;
+  border:1px solid var(--line);
+  background:var(--panel2);
+  color:var(--text);
+  padding:13px 14px;
+  border-radius:9px;
+  outline:none;
+  font-family:inherit;
+  font-size:14px;
+  transition:.2s;
+}
+
+input:focus,textarea:focus{
+  border-color:var(--primary);
+  box-shadow:0 0 0 3px rgba(22,163,106,.10);
+}
+
+input::placeholder,textarea::placeholder{
+  color:#71839d;
+}
+
+textarea{
+  min-height:95px;
+  resize:vertical;
+}
+
+.amount-wrap{
+  position:relative;
+}
+
+.amount-wrap span{
+  position:absolute;
+  left:14px;
+  top:50%;
+  transform:translateY(-50%);
+  color:#22c55e;
+  font-weight:800;
+  font-size:17px;
+}
+
+.amount-wrap input{
+  padding-left:38px;
+  font-size:19px;
+  font-weight:700;
+}
+
+.amount-help{
+  font-size:11px;
+  color:var(--muted);
+}
+
+.preview{
+  background:rgba(22,163,106,.09);
+  border:1px solid rgba(22,163,106,.22);
+  border-radius:10px;
+  padding:15px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+}
+
+.preview-label{
+  font-size:12px;
+  color:var(--muted);
+}
+
+.preview-amount{
+  color:#22c55e;
+  font-size:22px;
+  font-weight:800;
+}
+
+.actions{
+  display:flex;
+  gap:12px;
+  margin-top:20px;
+}
+
+button{
+  border:0;
+  border-radius:9px;
+  padding:13px 20px;
+  font-size:13px;
+  font-weight:700;
+  cursor:pointer;
+  transition:.2s;
+}
+
+.save-btn{
+  background:linear-gradient(135deg,#16a36a,#087f5b);
+  color:white;
+  flex:1;
+}
+
+.save-btn:hover{
+  filter:brightness(1.1);
+  transform:translateY(-1px);
+}
+
+.save-btn:disabled{
+  opacity:.6;
+  cursor:not-allowed;
+  transform:none;
+}
+
+.reset-btn{
+  background:var(--panel2);
+  color:var(--text);
+  border:1px solid var(--line);
+}
+
+.status{
+  margin-top:15px;
+  padding:12px;
+  border-radius:8px;
+  font-size:13px;
+  display:none;
+  line-height:1.5;
+}
+
+.status.success{
+  display:block;
+  background:rgba(34,197,94,.10);
+  color:#4ade80;
+  border:1px solid rgba(34,197,94,.25);
+}
+
+.status.error{
+  display:block;
+  background:rgba(239,68,68,.10);
+  color:#f87171;
+  border:1px solid rgba(239,68,68,.25);
+}
+
+.footer-note{
+  color:var(--muted);
+  font-size:11px;
+  margin-top:15px;
+  line-height:1.6;
+}
+
+@media(max-width:600px){
+  body{padding:13px}
+  .card{padding:16px}
+  .form-grid{grid-template-columns:1fr}
+  .field.full{grid-column:auto}
+  .header h2{font-size:20px}
+  .actions{flex-direction:column}
+  .reset-btn{width:100%}
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-icon">💰</div>
+    <div>
+      <h2>Add Earn</h2>
+      <p>ONE ONLINE | Income Management</p>
+    </div>
+  </div>
+
+  <!-- FORM -->
+  <div class="card">
+
+    <div class="card-title">
+      <span>➕</span>
+      Add New Income
+    </div>
+
+    <form id="earnForm" onsubmit="submitEarn(event)">
+
+      <div class="form-grid">
+
+        <!-- CUSTOMER IP -->
+        <div class="field full">
+          <label>
+            Customer IP <span class="required">*</span>
+          </label>
+
+          <input
+            type="text"
+            id="ip"
+            placeholder="Enter customer IP address"
+            autocomplete="off"
+            required
+          >
+        </div>
+
+        <!-- DATE -->
+        <div class="field">
+          <label>
+            Earn Date <span class="required">*</span>
+          </label>
+
+          <input
+            type="date"
+            id="date"
+            required
+          >
+        </div>
+
+        <!-- BILL -->
+        <div class="field">
+          <label>
+            Bill Amount <span class="required">*</span>
+          </label>
+
+          <div class="amount-wrap">
+            <span>৳</span>
+            <input
+              type="number"
+              id="bill"
+              placeholder="0.00"
+              min="0"
+              step="0.01"
+              required
+            >
+          </div>
+
+          <div class="amount-help">
+            Enter the received income amount.
+          </div>
+        </div>
+
+        <!-- COMMENT -->
+        <div class="field full">
+          <label>Comment / Description</label>
+
+          <textarea
+            id="comment"
+            placeholder="Write a comment (optional)"
+          ></textarea>
+        </div>
+
+      </div>
+
+      <!-- AMOUNT PREVIEW -->
+      <div class="preview" style="margin-top:20px">
+        <div>
+          <div class="preview-label">Total Earn Amount</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:4px">
+            Income Summary
+          </div>
+        </div>
+
+        <div class="preview-amount" id="amountPreview">
+          ৳0.00
+        </div>
+      </div>
+
+      <!-- BUTTONS -->
+      <div class="actions">
+
+        <button
+          type="submit"
+          class="save-btn"
+          id="saveBtn"
+        >
+          💾 SAVE EARN
+        </button>
+
+        <button
+          type="button"
+          class="reset-btn"
+          onclick="resetForm()"
+        >
+          ↻ RESET
+        </button>
+
+      </div>
+
+      <div id="status" class="status"></div>
+
+      <div class="footer-note">
+        Your income information will be saved in the Earn sheet.
+        Please check the IP and amount before saving.
+      </div>
+
+    </form>
+  </div>
+
+</div>
+
+<script>
+
+// ========================================
+// API CONFIGURATION
+// ========================================
+
+const API_URL =
+"https://script.google.com/macros/s/AKfycbzGaDxG13iSKFgGQAUa9sSsE66Zetjy2kZJuEkAibXhcAHYb1gYioYC8SqooA6-e6v6/exec";
+
+
+// ========================================
+// BANGLADESH DATE
+// ========================================
+
+function getTodayDate(){
+
+  const parts = new Intl.DateTimeFormat("en-CA",{
+    timeZone:"Asia/Dhaka",
+    year:"numeric",
+    month:"2-digit",
+    day:"2-digit"
+  }).formatToParts(new Date());
+
+  const data = {};
+
+  parts.forEach(p=>{
+    data[p.type] = p.value;
+  });
+
+  return `${data.year}-${data.month}-${data.day}`;
+}
+
+
+// ========================================
+// INITIAL DATE
+// ========================================
+
+document.getElementById("date").value = getTodayDate();
+
+
+// ========================================
+// AMOUNT PREVIEW
+// ========================================
+
+document.getElementById("bill").addEventListener("input",function(){
+
+  const amount = Number(this.value) || 0;
+
+  document.getElementById("amountPreview").textContent =
+    "৳" + amount.toLocaleString("en-BD",{
+      minimumFractionDigits:2,
+      maximumFractionDigits:2
+    });
+
+});
+
+
+// ========================================
+// STATUS MESSAGE
+// ========================================
+
+function showStatus(message,type){
+
+  const status = document.getElementById("status");
+
+  status.textContent = message;
+  status.className = "status " + type;
+
+}
+
+
+// ========================================
+// SAVE EARN
+// ========================================
+
+async function submitEarn(event){
+
+  event.preventDefault();
+
+  const ip = document.getElementById("ip").value.trim();
+  const date = document.getElementById("date").value;
+  const bill = document.getElementById("bill").value;
+  const comment = document.getElementById("comment").value.trim();
+
+  if(!ip){
+    showStatus("Please enter Customer IP.","error");
+    return;
+  }
+
+  if(!date){
+    showStatus("Please select Earn Date.","error");
+    return;
+  }
+
+  if(bill === "" || !Number.isFinite(Number(bill)) || Number(bill)<0){
+    showStatus("Please enter a valid Bill Amount.","error");
+    return;
+  }
+
+  const payload = {
+    action:"addEarn",
+    ip:ip,
+    date:date,
+    bill:Number(bill),
+    comment:comment
+  };
+
+  const btn = document.getElementById("saveBtn");
+
+  btn.disabled = true;
+  btn.textContent = "SAVING...";
+
+  showStatus("Saving earn information...","success");
+
+  try{
+
+    const response = await fetch(API_URL,{
+      method:"POST",
+      headers:{
+        "Content-Type":"text/plain;charset=utf-8"
+      },
+      body:JSON.stringify(payload)
+    });
+
+    if(!response.ok){
+      throw new Error("Server connection failed.");
+    }
+
+    const result = await response.json();
+
+    if(!result.success){
+      throw new Error(result.message || "Earn could not be saved.");
+    }
+
+    showStatus(
+      "✅ Earn saved successfully! Customer IP: " + ip,
+      "success"
+    );
+
+    // Reset fields after successful save.
+    document.getElementById("earnForm").reset();
+
+    // Set today's date again.
+    document.getElementById("date").value = getTodayDate();
+
+    document.getElementById("amountPreview").textContent = "৳0.00";
+
+    document.getElementById("ip").focus();
+
+  }catch(error){
+
+    console.error(error);
+
+    showStatus(
+      "❌ Save failed: " + error.message,
+      "error"
+    );
+
+  }finally{
+
+    btn.disabled = false;
+    btn.textContent = "💾 SAVE EARN";
+
+  }
+
+}
+
+
+// ========================================
+// RESET FORM
+// ========================================
+
+function resetForm(){
+
+  document.getElementById("earnForm").reset();
+
+  document.getElementById("date").value = getTodayDate();
+
+  document.getElementById("amountPreview").textContent = "৳0.00";
+
+  document.getElementById("status").className = "status";
+  document.getElementById("status").textContent = "";
+
+}
+
+</script>
+
+</body>
+</html>
