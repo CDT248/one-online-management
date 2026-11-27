@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Add Spend | ONE ONLINE</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+<style>
+:root{
+  --bg:#f4f6fa;--surface:#ffffff;--surface2:#f8fafc;--text:#172033;
+  --muted:#78869a;--border:#e5eaf1;--primary:#087f5b;
+  --primary-soft:#e7f5ef;--danger:#dc3545;
+  --shadow:0 8px 28px rgba(20,35,55,.07);
+}
+body[data-theme="dark"]{
+  --bg:#0b1220;--surface:#111c2e;--surface2:#17243a;--text:#edf4ff;
+  --muted:#91a2ba;--border:#26364d;--primary:#10b981;
+  --primary-soft:#123b32;--danger:#f87171;--shadow:0 8px 28px rgba(0,0,0,.2);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{color-scheme:light}
+html:has(body[data-theme="dark"]){color-scheme:dark}
+body{font-family:'Inter',Arial,sans-serif;background:var(--bg);color:var(--text);padding:25px;font-size:14px;transition:background .2s,color .2s;min-height:100vh}
+button,input,textarea{font:inherit}
+.container{width:100%;max-width:850px;margin:0 auto}
+.page-header{margin-bottom:24px}
+.page-header h1{font-size:24px;font-weight:800;display:flex;align-items:center;gap:12px;color:var(--text)}
+.page-header h1 i{color:var(--primary)}
+.page-header p{color:var(--muted);font-size:12px;margin-top:8px;line-height:1.6}
+.form-card{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:15px;padding:28px;box-shadow:var(--shadow);transition:background .2s,border-color .2s}
+.form-title{display:flex;align-items:center;gap:12px;padding-bottom:20px;border-bottom:1px solid var(--border);margin-bottom:25px}
+.form-icon{width:45px;height:45px;min-width:45px;border-radius:12px;background:var(--primary-soft);color:var(--primary);display:flex;align-items:center;justify-content:center;font-size:19px}
+.form-title h2{font-size:16px;font-weight:800;color:var(--text)}
+.form-title p{color:var(--muted);font-size:11px;margin-top:5px}
+.form-group{margin-bottom:22px}
+.form-group label{display:block;font-size:12px;font-weight:700;margin-bottom:9px;color:var(--text)}
+.required{color:var(--danger)}
+.form-control{width:100%;height:47px;border:1px solid var(--border);border-radius:9px;padding:0 13px;font-size:13px;font-family:inherit;color:var(--text);background:var(--surface2);outline:none;transition:.2s}
+.form-control:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(16,185,129,.10)}
+.form-control::placeholder{color:var(--muted);opacity:.8}
+textarea.form-control{height:110px;padding:13px;resize:vertical;line-height:1.6}
+.amount-wrap{position:relative}
+.amount-wrap .currency{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--muted);font-weight:700}
+.amount-wrap input{padding-left:38px}
+.form-footer{display:flex;justify-content:flex-end;gap:12px;border-top:1px solid var(--border);padding-top:21px;margin-top:10px}
+.btn{height:45px;padding:0 21px;border:0;border-radius:9px;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:9px;transition:.2s}
+.btn-reset{background:var(--surface2);border:1px solid var(--border);color:var(--text)}
+.btn-save{min-width:145px;background:var(--primary);color:#fff}
+.btn-save:hover{opacity:.9;transform:translateY(-1px)}
+.btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
+.message{display:none;padding:12px 14px;border-radius:8px;margin-bottom:20px;font-size:12px;line-height:1.5}
+.message.success{display:block;background:#e8f7ef;color:#087443;border:1px solid #b7e5ca}
+.message.error{display:block;background:#fff0f0;color:#c92a2a;border:1px solid #ffc9c9}
+#permissionGate{max-width:850px;margin:35px auto;padding:22px;border:1px solid var(--border);border-radius:13px;background:var(--surface);color:var(--text);box-shadow:var(--shadow);line-height:1.6}
+#permissionGate h2{font-size:17px;margin-bottom:7px}
+#permissionGate p{font-size:13px;color:var(--muted)}
+body.auth-pending .container,body.auth-denied .container{display:none}
+body.auth-ready #permissionGate{display:none}
+body.auth-pending #permissionGate,body.auth-denied #permissionGate{display:block}
+.permission-note{margin:0 0 18px;padding:11px 13px;border-radius:8px;background:var(--primary-soft);color:var(--text);font-size:12px;line-height:1.5}
+@media(max-width:600px){
+ body{padding:15px}.page-header h1{font-size:21px}.form-card{padding:20px 16px}
+ .form-footer{flex-direction:column-reverse}.btn{width:100%}
+}
+</style>
+</head>
+
+<body data-theme="light" class="auth-pending">
+
+<div id="permissionGate" role="status">
+  <h2 id="gateTitle">Checking access...</h2>
+  <p id="gateMessage">Please wait while ONE ONLINE verifies your account permissions.</p>
+</div>
+
+<div class="container">
+  <div class="page-header">
+    <h1><i class="fa-solid fa-wallet"></i> Add Spend</h1>
+    <p>Add and manage your company expenses.</p>
+  </div>
+
+  <div class="form-card">
+    <div class="form-title">
+      <div class="form-icon"><i class="fa-solid fa-file-invoice-dollar"></i></div>
+      <div><h2>New Expense Entry</h2><p>Enter your expense information below</p></div>
+    </div>
+
+    <div id="messageBox" class="message" role="status"></div>
+    <div id="readOnlyNote" class="permission-note" hidden>You have View permission only. Add permission is disabled for this page.</div>
+
+    <form id="spendForm">
+      <div class="form-group">
+        <label for="spendTitle">Add Title <span class="required">*</span></label>
+        <input type="text" id="spendTitle" class="form-control" placeholder="Enter expense title" maxlength="150" required>
+      </div>
+      <div class="form-group">
+        <label for="spendAmount">Amount <span class="required">*</span></label>
+        <div class="amount-wrap">
+          <span class="currency">৳</span>
+          <input type="number" id="spendAmount" class="form-control" placeholder="Enter amount" min="0.01" step="0.01" required>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="spendDate">Expense Date <span class="required">*</span></label>
+        <input type="date" id="spendDate" class="form-control" required>
+      </div>
+      <div class="form-group">
+        <label for="spendComment">Comment</label>
+        <textarea id="spendComment" class="form-control" placeholder="Write expense details or comments..." maxlength="2000"></textarea>
+      </div>
+      <div class="form-footer">
+        <button type="reset" class="btn btn-reset" id="resetBtn"><i class="fa-solid fa-rotate-left"></i> Reset</button>
+        <button type="submit" class="btn btn-save" id="saveBtn"><i class="fa-solid fa-floppy-disk"></i> Save Spend</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+/* ==========================================
+   PAGE PERMISSIONS — ONE ONLINE
+   PAGE_CONFIG key: spend-add
+========================================== */
+const PAGE_PERMISSION_KEY = "spend-add";
+const PAGE_PERMISSION_ALIASES = ["spend-add","add-spend","add-spends","spend","spends"];
+
+const PAGE_ACCESS = {
+  authenticated:false,
+  systemAdmin:false,
+  view:false,
+  add:false
+};
+
+function permissionBool(value){
+  if(value === true || value === 1) return true;
+  return ["true","1","yes","on"].includes(String(value ?? "").trim().toLowerCase());
+}
+function normalizePermissionKey(value){
+  return String(value ?? "").trim().toLowerCase().replace(/[_\s]+/g,"-");
+}
+function isSystemAdministrator(message){
+  const role = String(message.role || message.userRole || message.profile?.role || "").toLowerCase().replace(/[\s_-]+/g,"");
+  return message.isSystemAdmin === true || message.is_system_admin === true ||
+    ["systemadmin","superadmin","systemadministrator"].includes(role);
+}
+function findPagePermission(message){
+  const permissions = message.permissions ?? message.userPermissions ?? message.user_permissions ?? [];
+  const aliases = PAGE_PERMISSION_ALIASES.map(normalizePermissionKey);
+
+  if(Array.isArray(permissions)){
+    return permissions.find(item => {
+      if(typeof item === "string") return aliases.includes(normalizePermissionKey(item));
+      if(!item || typeof item !== "object") return false;
+      const key = item.page_key ?? item.pageKey ?? item.key ?? item.page ?? item.name ?? item.permission_key;
+      return aliases.includes(normalizePermissionKey(key));
+    }) || null;
+  }
+
+  if(permissions && typeof permissions === "object"){
+    for(const key of Object.keys(permissions)){
+      if(aliases.includes(normalizePermissionKey(key))) return permissions[key];
+    }
+  }
+  return null;
+}
+function denyPage(message){
+  document.body.classList.remove("auth-pending","auth-ready");
+  document.body.classList.add("auth-denied");
+  document.getElementById("gateTitle").textContent = "Access Denied";
+  document.getElementById("gateMessage").textContent = message;
+}
+function applyAddPermission(){
+  const canAdd = PAGE_ACCESS.systemAdmin || PAGE_ACCESS.add;
+  const fields = document.querySelectorAll("#spendForm input,#spendForm textarea");
+  fields.forEach(field => { field.disabled = !canAdd; });
+  document.getElementById("saveBtn").disabled = !canAdd;
+  document.getElementById("resetBtn").disabled = !canAdd;
+  document.getElementById("readOnlyNote").hidden = canAdd;
+}
+function applyPagePermissions(message){
+  const isAdmin = isSystemAdministrator(message);
+  const permission = findPagePermission(message);
+
+  PAGE_ACCESS.authenticated = true;
+  PAGE_ACCESS.systemAdmin = isAdmin;
+
+  if(isAdmin){
+    PAGE_ACCESS.view = true;
+    PAGE_ACCESS.add = true;
+  }else{
+    if(!permission){
+      denyPage("You do not have View permission for Add Spend. Please contact your System Admin.");
+      return;
+    }
+    PAGE_ACCESS.view = permissionBool(permission.can_view ?? permission.view ?? permission.View ?? permission.canView);
+    PAGE_ACCESS.add = permissionBool(permission.can_add ?? permission.add ?? permission.Add ?? permission.canAdd);
+  }
+
+  if(!PAGE_ACCESS.view){
+    denyPage("You do not have View permission for Add Spend. Please contact your System Admin.");
+    return;
+  }
+
+  document.body.classList.remove("auth-pending","auth-denied");
+  document.body.classList.add("auth-ready");
+  applyAddPermission();
+}
+window.addEventListener("message",function(event){
+  if(event.source !== window.parent) return;
+  const data = event.data;
+  if(!data || data.type !== "ONE_ONLINE_AUTH") return;
+  applyPagePermissions(data);
+});
+/* Ask the parent to resend auth in case this child listener starts late. */
+try{
+  if(window.parent && window.parent !== window){
+    window.parent.postMessage({type:"ONE_ONLINE_AUTH_REQUEST",pageKey:PAGE_PERMISSION_KEY},"*");
+  }
+}catch(error){}
+
+/* ==========================================
+   API CONFIGURATION
+========================================== */
+const API_URL = "https://script.google.com/macros/s/AKfycbzGaDxG13iSKFgGQAUa9sSsE66Zetjy2kZJuEkAibXhcAHYb1gYioYC8SqooA6-e6v6/exec";
+
+/* ==========================================
+   ONE ONLINE INDEX THEME SYNC
+========================================== */
+(function(){
+  const THEME_KEY = "one_online_theme";
+  function normalizeTheme(theme){
+    return String(theme || "").toLowerCase().includes("dark") ? "dark" : "light";
+  }
+  function applyTheme(theme){
+    const finalTheme = normalizeTheme(theme);
+    document.body.setAttribute("data-theme",finalTheme);
+    document.documentElement.style.colorScheme = finalTheme;
+  }
+  function getParentTheme(){
+    try{
+      if(window.parent && window.parent !== window){
+        const parentTheme = window.parent.document.body.getAttribute("data-theme");
+        if(parentTheme) return normalizeTheme(parentTheme);
+      }
+    }catch(error){}
+    try{
+      const savedTheme = localStorage.getItem(THEME_KEY);
+      if(savedTheme) return normalizeTheme(savedTheme);
+    }catch(error){}
+    return "light";
+  }
+  function syncTheme(){applyTheme(getParentTheme());}
+  syncTheme();
+  try{
+    if(window.parent && window.parent !== window){
+      const parentBody = window.parent.document.body;
+      const observer = new MutationObserver(syncTheme);
+      observer.observe(parentBody,{attributes:true,attributeFilter:["data-theme"]});
+    }
+  }catch(error){}
+  window.addEventListener("message",function(event){
+    if(event.data && event.data.type === "ONE_ONLINE_THEME") applyTheme(event.data.theme);
+  });
+  window.addEventListener("focus",syncTheme);
+  window.addEventListener("pageshow",syncTheme);
+})();
+
+/* ==========================================
+   FORM SYSTEM
+========================================== */
+const form = document.getElementById("spendForm");
+const saveBtn = document.getElementById("saveBtn");
+const messageBox = document.getElementById("messageBox");
+const dateInput = document.getElementById("spendDate");
+let isSaving = false;
+
+function setTodayDate(){
+  const now = new Date();
+  const date = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().split("T")[0];
+  dateInput.value = date;
+}
+setTodayDate();
+
+function showMessage(message,type){
+  messageBox.className = "message " + type;
+  messageBox.textContent = message;
+  messageBox.style.display = "block";
+  messageBox.scrollIntoView({behavior:"smooth",block:"nearest"});
+}
+function hideMessage(){
+  messageBox.className = "message";
+  messageBox.textContent = "";
+  messageBox.style.display = "none";
+}
+function setLoading(loading){
+  isSaving = loading;
+  saveBtn.disabled = loading || (!PAGE_ACCESS.systemAdmin && !PAGE_ACCESS.add);
+  saveBtn.innerHTML = loading
+    ? '<i class="fa-solid fa-spinner fa-spin"></i> Saving...'
+    : '<i class="fa-solid fa-floppy-disk"></i> Save Spend';
+}
+document.getElementById("resetBtn").addEventListener("click",function(){
+  if(!PAGE_ACCESS.systemAdmin && !PAGE_ACCESS.add) return;
+  setTimeout(function(){setTodayDate();hideMessage();},0);
+});
+
+function sendSpendToAPI(payload){
+  return new Promise(function(resolve,reject){
+    const callbackName = "oneOnlineSpendCallback_" + Date.now() + "_" + Math.floor(Math.random() * 100000);
+    const params = new URLSearchParams();
+    params.append("action","addSpend");
+    params.append("title",payload.title);
+    params.append("amount",String(payload.amount));
+    params.append("expenseDate",payload.expenseDate);
+    params.append("comment",payload.comment);
+    params.append("callback",callbackName);
+    const script = document.createElement("script");
+    let completed = false;
+    function cleanup(){
+      if(script.parentNode) script.parentNode.removeChild(script);
+      try{delete window[callbackName];}catch(error){window[callbackName] = undefined;}
+    }
+    const timeout = setTimeout(function(){
+      if(completed) return;
+      completed = true;cleanup();
+      reject(new Error("API response timeout. Please check your Apps Script deployment."));
+    },30000);
+    window[callbackName] = function(response){
+      if(completed) return;
+      completed = true;clearTimeout(timeout);cleanup();
+      if(response && response.success) resolve(response);
+      else reject(new Error(response && response.message ? response.message : "Could not save spend."));
+    };
+    script.onerror = function(){
+      if(completed) return;
+      completed = true;clearTimeout(timeout);cleanup();
+      reject(new Error("Could not connect to Spend API. Check deployment access settings."));
+    };
+    script.src = API_URL + "?" + params.toString();
+    document.body.appendChild(script);
+  });
+}
+
+form.addEventListener("submit",async function(event){
+  event.preventDefault();
+  if(isSaving) return;
+  if(!PAGE_ACCESS.authenticated || (!PAGE_ACCESS.systemAdmin && !PAGE_ACCESS.add)){
+    showMessage("You do not have Add permission for Add Spend. Please contact your System Admin.","error");
+    return;
+  }
+  hideMessage();
+  const payload = {
+    title:document.getElementById("spendTitle").value.trim(),
+    amount:Number(document.getElementById("spendAmount").value),
+    expenseDate:dateInput.value,
+    comment:document.getElementById("spendComment").value.trim()
+  };
+  if(!payload.title){showMessage("Please enter expense title.","error");return;}
+  if(!Number.isFinite(payload.amount) || payload.amount <= 0){showMessage("Please enter a valid amount.","error");return;}
+  if(!payload.expenseDate){showMessage("Please select expense date.","error");return;}
+  setLoading(true);
+  try{
+    const response = await sendSpendToAPI(payload);
+    showMessage(response.message || "Expense saved successfully!","success");
+    form.reset();
+    setTodayDate();
+  }catch(error){
+    showMessage(error.message || "Something went wrong while saving.","error");
+  }finally{
+    setLoading(false);
+  }
+});
+</script>
+</body>
+</html>
