@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,554 +14,138 @@
 
 <style>
 :root{
-  --bg:#f4f7fb;
-  --panel:#ffffff;
-  --panel2:#f8fafc;
-  --text:#172033;
-  --muted:#718096;
-  --line:#e5eaf1;
-  --primary:#087f5b;
-  --primary-light:#e7f7f1;
-  --green:#16a36a;
-  --red:#e34d59;
-  --red-light:#fff0f0;
-  --blue:#3678e5;
-  --blue-light:#edf4ff;
-  --orange:#df8a22;
-  --shadow:0 5px 20px rgba(25,40,65,.06);
+  --bg:#f4f7fb;--panel:#fff;--panel2:#f8fafc;--text:#172033;
+  --muted:#718096;--line:#e5eaf1;--primary:#087f5b;
+  --primary-light:#e7f7f1;--green:#16a36a;--red:#e34d59;
+  --red-light:#fff0f0;--blue:#3678e5;--blue-light:#edf4ff;
+  --orange:#df8a22;--shadow:0 5px 20px rgba(25,40,65,.06);
 }
-
 *{box-sizing:border-box;margin:0;padding:0}
-
-body{
-  font-family:Inter,Arial,sans-serif;
-  background:var(--bg);
-  color:var(--text);
-  padding:22px;
-  transition:.2s;
-}
-
+body{font-family:Inter,Arial,sans-serif;background:var(--bg);color:var(--text);padding:22px;transition:.2s}
 body[data-theme="dark"]{
-  --bg:#0b1220;
-  --panel:#111c2e;
-  --panel2:#172338;
-  --text:#e8f0fc;
-  --muted:#8fa2bd;
-  --line:#26364d;
-  --primary:#20b486;
-  --primary-light:#123b34;
-  --green:#32c58b;
-  --red:#ff727d;
-  --red-light:#421e2a;
-  --blue:#75a9ff;
-  --blue-light:#1a3153;
-  --orange:#f2b45c;
-  --shadow:0 5px 20px rgba(0,0,0,.18);
+  --bg:#0b1220;--panel:#111c2e;--panel2:#172338;--text:#e8f0fc;
+  --muted:#8fa2bd;--line:#26364d;--primary:#20b486;
+  --primary-light:#123b34;--green:#32c58b;--red:#ff727d;
+  --red-light:#421e2a;--blue:#75a9ff;--blue-light:#1a3153;
+  --orange:#f2b45c;--shadow:0 5px 20px rgba(0,0,0,.18);
 }
-
 body[data-theme="funny"]{
-  --bg:#fff1fa;
-  --panel:#ffffff;
-  --panel2:#fff5fc;
-  --text:#49234e;
-  --muted:#936b99;
-  --line:#f0d9ed;
-  --primary:#a52caa;
-  --primary-light:#f8e4fa;
-  --green:#1ca879;
-  --red:#df4c83;
-  --red-light:#fff0f6;
-  --blue:#7554d9;
-  --blue-light:#f0ebff;
-  --orange:#e38b35;
-  --shadow:0 5px 20px rgba(120,40,120,.08);
+  --bg:#fff1fa;--panel:#fff;--panel2:#fff5fc;--text:#49234e;
+  --muted:#936b99;--line:#f0d9ed;--primary:#a52caa;
+  --primary-light:#f8e4fa;--green:#1ca879;--red:#df4c83;
+  --red-light:#fff0f6;--blue:#7554d9;--blue-light:#f0ebff;
+  --orange:#e38b35;--shadow:0 5px 20px rgba(120,40,120,.08);
 }
-
-button,input,select{font:inherit}
+button,input,select,textarea{font:inherit}
 button{cursor:pointer}
 .page{max-width:1500px;margin:auto}
-
-.page-header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:15px;
-  flex-wrap:wrap;
-  margin-bottom:22px;
-}
-
-.page-title h1{
-  font-size:23px;
-  font-weight:800;
-  display:flex;
-  align-items:center;
-  gap:10px;
-}
-
-.page-title p{
-  font-size:12px;
-  color:var(--muted);
-  margin-top:6px;
-}
-
+.page-header{display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap;margin-bottom:22px}
+.page-title h1{font-size:23px;font-weight:800;display:flex;align-items:center;gap:10px}
+.page-title p{font-size:12px;color:var(--muted);margin-top:6px}
 .header-actions{display:flex;gap:9px;flex-wrap:wrap}
-
-.btn{
-  border:1px solid var(--line);
-  background:var(--panel);
-  color:var(--text);
-  padding:10px 14px;
-  border-radius:9px;
-  font-size:12px;
-  font-weight:700;
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  gap:7px;
-  transition:.2s;
-}
-
-.btn:hover{
-  transform:translateY(-1px);
-  box-shadow:var(--shadow);
-}
-
-.btn-primary{
-  background:var(--primary);
-  border-color:var(--primary);
-  color:white;
-}
-
+.btn{border:1px solid var(--line);background:var(--panel);color:var(--text);padding:10px 14px;border-radius:9px;font-size:12px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:7px;transition:.2s}
+.btn:hover{transform:translateY(-1px);box-shadow:var(--shadow)}
+.btn-primary{background:var(--primary);border-color:var(--primary);color:white}
 .btn-sm{padding:7px 10px;font-size:11px}
-
-.stats{
-  display:grid;
-  grid-template-columns:repeat(4,minmax(0,1fr));
-  gap:14px;
-  margin-bottom:20px;
-}
-
-.stat-card{
-  background:var(--panel);
-  border:1px solid var(--line);
-  border-radius:13px;
-  padding:18px;
-  box-shadow:var(--shadow);
-  min-width:0;
-}
-
-.stat-top{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:10px;
-}
-
+.btn-danger{background:var(--red);border-color:var(--red);color:#fff}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:20px}
+.stat-card{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:18px;box-shadow:var(--shadow);min-width:0}
+.stat-top{display:flex;align-items:center;justify-content:space-between;gap:10px}
 .stat-label{font-size:11px;color:var(--muted);font-weight:700}
-
-.stat-icon{
-  width:35px;
-  height:35px;
-  border-radius:10px;
-  display:grid;
-  place-items:center;
-  font-size:15px;
-}
-
+.stat-icon{width:35px;height:35px;border-radius:10px;display:grid;place-items:center;font-size:15px}
 .icon-green{background:var(--primary-light);color:var(--green)}
 .icon-red{background:var(--red-light);color:var(--red)}
 .icon-blue{background:var(--blue-light);color:var(--blue)}
 .icon-orange{background:#fff4e5;color:var(--orange)}
-
-.stat-value{
-  font-size:23px;
-  font-weight:800;
-  margin-top:13px;
-  overflow-wrap:anywhere;
-}
-
+.stat-value{font-size:23px;font-weight:800;margin-top:13px;overflow-wrap:anywhere}
 .stat-sub{color:var(--muted);font-size:10px;margin-top:5px}
-
-.panel{
-  background:var(--panel);
-  border:1px solid var(--line);
-  border-radius:13px;
-  box-shadow:var(--shadow);
-  overflow:hidden;
-}
-
-.panel-header{
-  padding:17px 18px;
-  border-bottom:1px solid var(--line);
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  flex-wrap:wrap;
-  gap:12px;
-}
-
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:13px;box-shadow:var(--shadow);overflow:hidden}
+.panel-header{padding:17px 18px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
 .panel-header h2{font-size:14px;font-weight:800}
 .panel-header p{color:var(--muted);font-size:11px;margin-top:4px}
-
 .tabs{display:flex;gap:6px;flex-wrap:wrap}
-
-.tab{
-  padding:9px 13px;
-  border:1px solid var(--line);
-  background:var(--panel2);
-  color:var(--muted);
-  font-size:11px;
-  font-weight:700;
-  border-radius:8px;
-}
-
-.tab.active{
-  background:var(--primary);
-  border-color:var(--primary);
-  color:#fff;
-}
-
-.filters{
-  padding:15px 18px;
-  display:flex;
-  flex-wrap:wrap;
-  gap:10px;
-  align-items:center;
-  border-bottom:1px solid var(--line);
-}
-
-.field{
-  height:38px;
-  padding:0 11px;
-  border:1px solid var(--line);
-  background:var(--panel2);
-  color:var(--text);
-  border-radius:8px;
-  outline:none;
-  font-size:11px;
-  min-width:130px;
-}
-
+.tab{padding:9px 13px;border:1px solid var(--line);background:var(--panel2);color:var(--muted);font-size:11px;font-weight:700;border-radius:8px}
+.tab.active{background:var(--primary);border-color:var(--primary);color:#fff}
+.filters{padding:15px 18px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;border-bottom:1px solid var(--line)}
+.field{height:38px;padding:0 11px;border:1px solid var(--line);background:var(--panel2);color:var(--text);border-radius:8px;outline:none;font-size:11px;min-width:130px;width:100%}
 .field:focus{border-color:var(--primary)}
-
 .search-box{position:relative;flex:1;min-width:180px}
-.search-box i{
-  position:absolute;
-  left:12px;
-  top:13px;
-  font-size:11px;
-  color:var(--muted);
-}
+.search-box i{position:absolute;left:12px;top:13px;font-size:11px;color:var(--muted)}
 .search-box input{width:100%;padding-left:32px}
-
 .table-wrap{width:100%;overflow-x:auto}
-
-table{
-  width:100%;
-  min-width:1080px;
-  border-collapse:collapse;
-}
-
+table{width:100%;min-width:1080px;border-collapse:collapse}
 thead{background:var(--panel2)}
-
-th{
-  padding:13px 12px;
-  text-align:left;
-  font-size:10px;
-  color:var(--muted);
-  font-weight:800;
-  text-transform:uppercase;
-  letter-spacing:.4px;
-  border-bottom:1px solid var(--line);
-  white-space:nowrap;
-}
-
-td{
-  padding:13px 12px;
-  font-size:11px;
-  border-bottom:1px solid var(--line);
-  vertical-align:middle;
-}
-
+th{padding:13px 12px;text-align:left;font-size:10px;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:.4px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:13px 12px;font-size:11px;border-bottom:1px solid var(--line);vertical-align:middle}
 tbody tr:hover{background:var(--panel2)}
 tbody tr:last-child td{border-bottom:none}
-
-.type-badge{
-  display:inline-flex;
-  padding:5px 9px;
-  border-radius:20px;
-  font-size:9px;
-  font-weight:800;
-}
-
+.type-badge{display:inline-flex;padding:5px 9px;border-radius:20px;font-size:9px;font-weight:800}
 .type-badge.earn{background:var(--primary-light);color:var(--green)}
 .type-badge.spend{background:var(--red-light);color:var(--red)}
-
 .amount{font-weight:800;white-space:nowrap}
 .amount.earn{color:var(--green)}
 .amount.spend{color:var(--red)}
-
-.comment-cell{
-  max-width:180px;
-  color:var(--muted);
-  overflow:hidden;
-  text-overflow:ellipsis;
-  white-space:nowrap;
-}
-
+.comment-cell{max-width:180px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .deleted-date{color:var(--orange);font-weight:700;white-space:nowrap}
-
-.view-btn{
-  width:30px;
-  height:30px;
-  display:grid;
-  place-items:center;
-  border:none;
-  border-radius:7px;
-  background:var(--blue-light);
-  color:var(--blue);
-  flex-shrink:0;
-}
-
-.delete-btn{
-  border:1px solid var(--red);
-  background:var(--red-light);
-  color:var(--red);
-  padding:7px 9px;
-  border-radius:7px;
-  font-size:10px;
-  font-weight:800;
-  display:inline-flex;
-  align-items:center;
-  gap:6px;
-  white-space:nowrap;
-}
-
+.view-btn,.edit-btn{width:30px;height:30px;display:grid;place-items:center;border:none;border-radius:7px;flex-shrink:0}
+.view-btn{background:var(--blue-light);color:var(--blue)}
+.edit-btn{background:var(--primary-light);color:var(--green)}
+.delete-btn{border:1px solid var(--red);background:var(--red-light);color:var(--red);padding:7px 9px;border-radius:7px;font-size:10px;font-weight:800;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
 .delete-btn:hover{filter:brightness(.95)}
-
-.empty{
-  text-align:center;
-  padding:45px 15px;
-  color:var(--muted);
-  font-size:12px;
-}
-
-.empty i{
-  font-size:28px;
-  margin-bottom:12px;
-  display:block;
-  opacity:.5;
-}
-
+.empty{text-align:center;padding:45px 15px;color:var(--muted);font-size:12px}
+.empty i{font-size:28px;margin-bottom:12px;display:block;opacity:.5}
 .loading{text-align:center;padding:35px;color:var(--muted);font-size:12px}
-
-.table-footer{
-  padding:13px 18px;
-  border-top:1px solid var(--line);
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  flex-wrap:wrap;
-  gap:10px;
-}
-
+.table-footer{padding:13px 18px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
 .table-info{font-size:10px;color:var(--muted)}
-
 .pagination{display:flex;align-items:center;gap:5px}
-
-.pagination button{
-  border:1px solid var(--line);
-  background:var(--panel2);
-  color:var(--text);
-  min-width:29px;
-  height:29px;
-  border-radius:6px;
-  font-size:10px;
-  font-weight:700;
-}
-
-.pagination button.active{
-  background:var(--primary);
-  color:white;
-  border-color:var(--primary);
-}
-
+.pagination button{border:1px solid var(--line);background:var(--panel2);color:var(--text);min-width:29px;height:29px;border-radius:6px;font-size:10px;font-weight:700}
+.pagination button.active{background:var(--primary);color:white;border-color:var(--primary)}
 .pagination button:disabled{opacity:.4;cursor:not-allowed}
 
-/* VIEW MODAL */
-
-.modal-overlay{
-  position:fixed;
-  inset:0;
-  z-index:9999;
-  display:none;
-  align-items:center;
-  justify-content:center;
-  padding:15px;
-  background:rgba(5,12,25,.72);
-}
-
+/* MODALS */
+.modal-overlay{position:fixed;inset:0;z-index:9999;display:none;align-items:center;justify-content:center;padding:15px;background:rgba(5,12,25,.72)}
 .modal-overlay.show{display:flex}
-
-.modal{
-  width:100%;
-  max-width:500px;
-  max-height:90vh;
-  overflow-y:auto;
-  background:var(--panel);
-  color:var(--text);
-  border:1px solid var(--line);
-  border-radius:15px;
-  box-shadow:0 20px 70px rgba(0,0,0,.3);
-  animation:modalIn .2s ease;
-}
-
-@keyframes modalIn{
-  from{opacity:0;transform:translateY(10px)}
-  to{opacity:1;transform:translateY(0)}
-}
-
-.modal-header{
-  padding:17px 20px;
-  border-bottom:1px solid var(--line);
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-}
-
+.modal{width:100%;max-width:500px;max-height:90vh;overflow-y:auto;background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:15px;box-shadow:0 20px 70px rgba(0,0,0,.3);animation:modalIn .2s ease}
+@keyframes modalIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.modal-header{padding:17px 20px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}
 .modal-header h3{font-size:15px;font-weight:800}
-
-.modal-close{
-  border:none;
-  background:var(--panel2);
-  color:var(--muted);
-  width:30px;
-  height:30px;
-  border-radius:7px;
-}
-
+.modal-close{border:none;background:var(--panel2);color:var(--muted);width:30px;height:30px;border-radius:7px}
 .modal-body{padding:20px}
-
-.modal-footer{
-  padding:14px 20px;
-  border-top:1px solid var(--line);
-  display:flex;
-  justify-content:flex-end;
-}
-
+.modal-footer{padding:14px 20px;border-top:1px solid var(--line);display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap}
 .detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-
-.detail-item{
-  background:var(--panel2);
-  border:1px solid var(--line);
-  border-radius:9px;
-  padding:13px;
-  min-width:0;
-}
-
+.detail-item{background:var(--panel2);border:1px solid var(--line);border-radius:9px;padding:13px;min-width:0}
 .detail-item.full{grid-column:1/-1}
-.detail-label{
-  font-size:9px;
-  color:var(--muted);
-  font-weight:800;
-  text-transform:uppercase;
-  margin-bottom:7px;
-}
+.detail-label{font-size:9px;color:var(--muted);font-weight:800;text-transform:uppercase;margin-bottom:7px}
 .detail-value{font-size:13px;font-weight:700;overflow-wrap:anywhere}
-
-.toast{
-  position:fixed;
-  right:20px;
-  bottom:20px;
-  z-index:10001;
-  padding:13px 17px;
-  border-radius:9px;
-  background:#172033;
-  color:#fff;
-  font-size:12px;
-  font-weight:700;
-  box-shadow:var(--shadow);
-  opacity:0;
-  pointer-events:none;
-  transform:translateY(10px);
-  transition:.25s;
-  max-width:calc(100% - 40px);
-}
-
+.form-group{margin-bottom:14px}
+.form-group label{display:block;font-size:11px;font-weight:700;margin-bottom:7px;color:var(--text)}
+.form-group textarea{height:90px;padding:10px;resize:vertical}
+.toast{position:fixed;right:20px;bottom:20px;z-index:10001;padding:13px 17px;border-radius:9px;background:#172033;color:#fff;font-size:12px;font-weight:700;box-shadow:var(--shadow);opacity:0;pointer-events:none;transform:translateY(10px);transition:.25s;max-width:calc(100% - 40px)}
 .toast.show{opacity:1;transform:translateY(0)}
 .toast.error{background:#b52d3b}
-
-@media(max-width:900px){
-  .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
-}
-
+@media(max-width:900px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:600px){
-  body{padding:13px}
-  .page-title h1{font-size:19px}
-  .stats{gap:9px}
-  .stat-card{padding:13px}
-  .stat-value{font-size:19px}
-  .stat-icon{width:30px;height:30px}
-  .filters{padding:12px}
-  .search-box{flex-basis:100%}
-  .field{flex:1;min-width:110px}
-  .panel-header{padding:14px}
-  .detail-grid{grid-template-columns:1fr}
+  body{padding:13px}.page-title h1{font-size:19px}.stats{gap:9px}
+  .stat-card{padding:13px}.stat-value{font-size:19px}
+  .stat-icon{width:30px;height:30px}.filters{padding:12px}
+  .search-box{flex-basis:100%}.field{flex:1;min-width:110px}
+  .panel-header{padding:14px}.detail-grid{grid-template-columns:1fr}
   .detail-item.full{grid-column:auto}
 }
-
 @media print{
   body{padding:0;background:white;color:black}
-  .header-actions,.filters,.table-footer,.view-col,
-  .panel-header .tabs{display:none!important}
-  .panel,.stat-card{box-shadow:none}
-  .panel{border:1px solid #ddd}
-  .table-wrap{overflow:visible}
-  table{min-width:100%}
+  .header-actions,.filters,.table-footer,.view-col,.panel-header .tabs{display:none!important}
+  .panel,.stat-card{box-shadow:none}.panel{border:1px solid #ddd}
+  .table-wrap{overflow:visible}table{min-width:100%}
   th,td{color:#111!important}
 }
-
-/* PERMISSION ACCESS SCREEN */
-#permissionGate{
-  position:fixed;
-  inset:0;
-  z-index:20000;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:20px;
-  background:var(--bg);
-  color:var(--text);
-  text-align:center;
-}
-#permissionGate .gate-card{
-  width:100%;
-  max-width:420px;
-  padding:30px 22px;
-  background:var(--panel);
-  border:1px solid var(--line);
-  border-radius:15px;
-  box-shadow:var(--shadow);
-}
-#permissionGate .gate-icon{
-  font-size:36px;
-  color:var(--primary);
-  margin-bottom:16px;
-}
-#permissionGate h2{
-  font-size:18px;
-  margin-bottom:9px;
-}
-#permissionGate p{
-  color:var(--muted);
-  font-size:12px;
-  line-height:1.7;
-}
-#permissionGate .gate-retry{
-  margin-top:18px;
-}
-body.permission-pending .page{display:none}
-body.permission-denied .page{display:none}
+#permissionGate{position:fixed;inset:0;z-index:20000;display:flex;align-items:center;justify-content:center;padding:20px;background:var(--bg);color:var(--text);text-align:center}
+#permissionGate .gate-card{width:100%;max-width:420px;padding:30px 22px;background:var(--panel);border:1px solid var(--line);border-radius:15px;box-shadow:var(--shadow)}
+#permissionGate .gate-icon{font-size:36px;color:var(--primary);margin-bottom:16px}
+#permissionGate h2{font-size:18px;margin-bottom:9px}
+#permissionGate p{color:var(--muted);font-size:12px;line-height:1.7}
+#permissionGate .gate-retry{margin-top:18px}
+body.permission-pending .page,body.permission-denied .page{display:none}
 </style>
 </head>
 
@@ -568,92 +153,54 @@ body.permission-denied .page{display:none}
 
 <div id="permissionGate">
   <div class="gate-card">
-    <div class="gate-icon">
-      <i class="fa-solid fa-shield-halved" id="gateIcon"></i>
-    </div>
+    <div class="gate-icon"><i class="fa-solid fa-shield-halved" id="gateIcon"></i></div>
     <h2 id="gateTitle">Checking Access...</h2>
     <p id="gateMessage">Please wait while your account permissions are verified.</p>
-    <button class="btn btn-primary gate-retry" id="gateRetry"
-      onclick="requestAuthAgain()" style="display:none">
+    <button class="btn btn-primary gate-retry" id="gateRetry" onclick="requestAuthAgain()" style="display:none">
       <i class="fa-solid fa-rotate"></i> Try Again
     </button>
   </div>
 </div>
 
 <div class="page">
-
   <div class="page-header">
     <div class="page-title">
-      <h1>
-        <i class="fa-solid fa-box-archive" style="color:var(--red)"></i>
-        Deleted Earn & Spend
-      </h1>
+      <h1><i class="fa-solid fa-box-archive" style="color:var(--red)"></i> Deleted Earn & Spend</h1>
       <p>Archived transactions and deleted records history</p>
     </div>
-
     <div class="header-actions">
-      <button class="btn" onclick="loadDeletedRecords()">
-        <i class="fa-solid fa-rotate"></i> Refresh
-      </button>
-
-      <button class="btn" onclick="exportPDF()">
-        <i class="fa-solid fa-file-pdf"></i> PDF
-      </button>
-
-      <button class="btn" onclick="window.print()">
-        <i class="fa-solid fa-print"></i> Print
-      </button>
+      <button class="btn" onclick="loadDeletedRecords()"><i class="fa-solid fa-rotate"></i> Refresh</button>
+      <button class="btn" onclick="exportPDF()"><i class="fa-solid fa-file-pdf"></i> PDF</button>
+      <button class="btn" onclick="window.print()"><i class="fa-solid fa-print"></i> Print</button>
     </div>
   </div>
 
   <div class="stats">
-
     <div class="stat-card">
-      <div class="stat-top">
-        <span class="stat-label">DELETED EARN</span>
-        <span class="stat-icon icon-green"><i class="fa-solid fa-arrow-trend-up"></i></span>
-      </div>
+      <div class="stat-top"><span class="stat-label">DELETED EARN</span><span class="stat-icon icon-green"><i class="fa-solid fa-arrow-trend-up"></i></span></div>
       <div class="stat-value" id="totalDeletedEarn">৳0</div>
       <div class="stat-sub" id="earnCount">0 deleted records</div>
     </div>
-
     <div class="stat-card">
-      <div class="stat-top">
-        <span class="stat-label">DELETED SPEND</span>
-        <span class="stat-icon icon-red"><i class="fa-solid fa-arrow-trend-down"></i></span>
-      </div>
+      <div class="stat-top"><span class="stat-label">DELETED SPEND</span><span class="stat-icon icon-red"><i class="fa-solid fa-arrow-trend-down"></i></span></div>
       <div class="stat-value" id="totalDeletedSpend">৳0</div>
       <div class="stat-sub" id="spendCount">0 deleted records</div>
     </div>
-
     <div class="stat-card">
-      <div class="stat-top">
-        <span class="stat-label">TOTAL DELETED</span>
-        <span class="stat-icon icon-orange"><i class="fa-solid fa-trash-can"></i></span>
-      </div>
+      <div class="stat-top"><span class="stat-label">TOTAL DELETED</span><span class="stat-icon icon-orange"><i class="fa-solid fa-trash-can"></i></span></div>
       <div class="stat-value" id="totalDeleted">0</div>
       <div class="stat-sub">Earn + Spend archived</div>
     </div>
-
     <div class="stat-card">
-      <div class="stat-top">
-        <span class="stat-label">NET DELETED AMOUNT</span>
-        <span class="stat-icon icon-blue"><i class="fa-solid fa-scale-balanced"></i></span>
-      </div>
+      <div class="stat-top"><span class="stat-label">NET DELETED AMOUNT</span><span class="stat-icon icon-blue"><i class="fa-solid fa-scale-balanced"></i></span></div>
       <div class="stat-value" id="netDeleted">৳0</div>
       <div class="stat-sub">Deleted Earn minus Deleted Spend</div>
     </div>
-
   </div>
 
   <div class="panel">
-
     <div class="panel-header">
-      <div>
-        <h2><i class="fa-solid fa-clock-rotate-left"></i> Deleted Records History</h2>
-        <p>All archived Earn and Spend records</p>
-      </div>
-
+      <div><h2><i class="fa-solid fa-clock-rotate-left"></i> Deleted Records History</h2><p>All archived Earn and Spend records</p></div>
       <div class="tabs">
         <button class="tab active" data-type="all" onclick="setType('all',this)">All Deleted</button>
         <button class="tab" data-type="earn" onclick="setType('earn',this)">Deleted Earn</button>
@@ -662,20 +209,9 @@ body.permission-denied .page{display:none}
     </div>
 
     <div class="filters">
-
-      <div class="search-box">
-        <i class="fa-solid fa-magnifying-glass"></i>
-        <input class="field" id="searchInput"
-          placeholder="Search title, IP or comment..."
-          oninput="applyFilters()">
-      </div>
-
-      <input class="field" type="date" id="fromDate"
-        title="Transaction date from" onchange="applyFilters()">
-
-      <input class="field" type="date" id="toDate"
-        title="Transaction date to" onchange="applyFilters()">
-
+      <div class="search-box"><i class="fa-solid fa-magnifying-glass"></i><input class="field" id="searchInput" placeholder="Search title, IP or comment..." oninput="applyFilters()"></div>
+      <input class="field" type="date" id="fromDate" title="Transaction date from" onchange="applyFilters()">
+      <input class="field" type="date" id="toDate" title="Transaction date to" onchange="applyFilters()">
       <select class="field" id="sortOrder" onchange="applyFilters()">
         <option value="deletedNewest">Recently Deleted</option>
         <option value="deletedOldest">Oldest Deleted</option>
@@ -684,102 +220,100 @@ body.permission-denied .page{display:none}
         <option value="high">Amount: High to Low</option>
         <option value="low">Amount: Low to High</option>
       </select>
-
       <select class="field" id="pageSize" onchange="changePageSize()">
-        <option value="10">10 Rows</option>
-        <option value="25">25 Rows</option>
-        <option value="50">50 Rows</option>
-        <option value="100">100 Rows</option>
+        <option value="10">10 Rows</option><option value="25">25 Rows</option>
+        <option value="50">50 Rows</option><option value="100">100 Rows</option>
       </select>
-
-      <button class="btn" onclick="resetFilters()">
-        <i class="fa-solid fa-filter-circle-xmark"></i> Reset
-      </button>
-
+      <button class="btn" onclick="resetFilters()"><i class="fa-solid fa-filter-circle-xmark"></i> Reset</button>
     </div>
 
     <div class="table-wrap">
       <table>
-        <thead>
-          <tr>
-            <th>SL</th>
-            <th>Type</th>
-            <th>Title / IP</th>
-            <th>Amount</th>
-            <th>Transaction Date</th>
-            <th>Comment</th>
-            <th>Deleted At</th>
-            <th class="view-col">Actions</th>
-          </tr>
-        </thead>
-
+        <thead><tr>
+          <th>SL</th><th>Type</th><th>Title / IP</th><th>Amount</th>
+          <th>Transaction Date</th><th>Comment</th><th>Deleted At</th><th class="view-col">Actions</th>
+        </tr></thead>
         <tbody id="tableBody">
-          <tr>
-            <td colspan="8">
-              <div class="loading">
-                <i class="fa-solid fa-spinner fa-spin"></i>
-                Loading deleted records...
-              </div>
-            </td>
-          </tr>
+          <tr><td colspan="8"><div class="loading"><i class="fa-solid fa-spinner fa-spin"></i> Loading deleted records...</div></td></tr>
         </tbody>
       </table>
     </div>
-
     <div class="table-footer">
       <div class="table-info" id="tableInfo">Loading...</div>
       <div class="pagination" id="pagination"></div>
     </div>
-
   </div>
-
 </div>
 
-<div class="modal-overlay" id="viewModal" onclick="overlayClose(event)">
+<!-- VIEW MODAL -->
+<div class="modal-overlay" id="viewModal" onclick="overlayClose(event,'viewModal')">
   <div class="modal">
-
     <div class="modal-header">
       <h3><i class="fa-solid fa-eye"></i> Deleted Record Details</h3>
-      <button class="modal-close" onclick="closeModal()">
-        <i class="fa-solid fa-xmark"></i>
-      </button>
+      <button class="modal-close" onclick="closeModal('viewModal')"><i class="fa-solid fa-xmark"></i></button>
     </div>
+    <div class="modal-body"><div class="detail-grid" id="viewDetails"></div></div>
+    <div class="modal-footer"><button class="btn" onclick="closeModal('viewModal')">Close</button></div>
+  </div>
+</div>
 
-    <div class="modal-body">
-      <div class="detail-grid" id="viewDetails"></div>
+<!-- EDIT MODAL -->
+<div class="modal-overlay" id="editModal" onclick="overlayClose(event,'editModal')">
+  <div class="modal">
+    <div class="modal-header">
+      <h3><i class="fa-solid fa-pen-to-square"></i> Edit Deleted Record</h3>
+      <button class="modal-close" onclick="closeModal('editModal')"><i class="fa-solid fa-xmark"></i></button>
     </div>
-
-    <div class="modal-footer">
-      <button class="btn" onclick="closeModal()">Close</button>
-    </div>
-
+    <form id="editForm" onsubmit="saveEditedRecord(event)">
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Transaction Type</label>
+          <input class="field" id="editType" readonly>
+        </div>
+        <div class="form-group">
+          <label>Title / IP</label>
+          <input class="field" id="editTitle" maxlength="250" required>
+        </div>
+        <div class="form-group">
+          <label>Amount</label>
+          <input class="field" id="editAmount" type="number" min="0" step="0.01" required>
+        </div>
+        <div class="form-group">
+          <label>Transaction Date</label>
+          <input class="field" id="editDate" type="date" required>
+        </div>
+        <div class="form-group">
+          <label>Comment</label>
+          <textarea class="field" id="editComment"></textarea>
+        </div>
+        <input type="hidden" id="editRecordIndex">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn" onclick="closeModal('editModal')">Cancel</button>
+        <button type="submit" class="btn btn-primary" id="saveEditBtn"><i class="fa-solid fa-floppy-disk"></i> Save Changes</button>
+      </div>
+    </form>
   </div>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-
-/* ==========================================
-   CONFIGURATION
-========================================== */
-
+/* CONFIGURATION */
 const API_URL = "https://script.google.com/macros/s/AKfycbzGaDxG13iSKFgGQAUa9sSsE66Zetjy2kZJuEkAibXhcAHYb1gYioYC8SqooA6-e6v6/exec";
 
-let allRecords = [];
-let filteredRecords = [];
+let allRecords=[];
+let filteredRecords=[];
+let currentType="all";
+let currentPage=1;
+let pageSize=10;
+let busy=false;
+let deleting=false;
+let editing=false;
 
-let currentType = "all";
-let currentPage = 1;
-let pageSize = 10;
-let busy = false;
-let deleting = false;
-
-/* ==========================================
-   PERMISSION SYSTEM
-========================================== */
-
-const PAGE_PERMISSION_KEYS = [
+/* PERMISSIONS */
+const PAGE_PERMISSION_KEYS=[
+  "Dellet-spend",
   "deleted-earn-spend",
   "deleted-earn-and-spend",
   "deleted-earn-spend-history",
@@ -794,1302 +328,711 @@ const PAGE_PERMISSION_KEYS = [
   "Deleted Earn & Spend"
 ];
 
-let authReceived = false;
-let authData = null;
-let currentPermissions = {
-  view:false,
-  delete:false
-};
-
-let authWaitTimer = null;
+let authReceived=false;
+let authData=null;
+let currentPermissions={view:false,edit:false,delete:false};
+let authWaitTimer=null;
 
 function normalizePermissionKey(value){
-  return String(value || "")
-    .toLowerCase()
-    .replace(/[^a-z0-9]/g,"");
+  return String(value||"").toLowerCase().replace(/[^a-z0-9]/g,"");
 }
 
 function isTruePermission(value){
-  return value === true ||
-    value === 1 ||
-    value === "1" ||
-    String(value).toLowerCase() === "true" ||
-    String(value).toLowerCase() === "yes" ||
-    String(value).toLowerCase() === "on";
+  return value===true||value===1||value==="1"||
+    String(value).toLowerCase()==="true"||
+    String(value).toLowerCase()==="yes"||
+    String(value).toLowerCase()==="on";
 }
 
 function getAuthPayload(message){
-  if(!message || typeof message !== "object")return null;
+  if(!message||typeof message!=="object")return null;
+  return message.data||message.payload||message.auth||message.userData||message;
+}
 
-  return message.data ||
-    message.payload ||
-    message.auth ||
-    message.userData ||
-    message;
+function getUserObject(data){
+  return data&&(data.user||data.account||data.profile||data)||{};
 }
 
 function isSystemAdmin(data){
+  const user=getUserObject(data);
+  const role=String(user.role||user.userRole||user.accountRole||user.adminRole||"")
+    .toLowerCase().replace(/[\s_-]/g,"");
 
-  const user = data && (
-    data.user ||
-    data.account ||
-    data.profile ||
-    data
-  );
-
-  if(!user)return false;
-
-  const role = String(
-    user.role ||
-    user.userRole ||
-    user.accountRole ||
-    user.adminRole ||
-    ""
-  ).toLowerCase().replace(/[\s_-]/g,"");
-
-  return [
-    "systemadmin",
-    "superadmin",
-    "superadministrator"
-  ].includes(role) ||
-  user.isSystemAdmin === true ||
-  user.is_system_admin === true ||
-  user.isSuperAdmin === true ||
-  user.is_super_admin === true;
+  return ["systemadmin","superadmin","superadministrator"].includes(role)||
+    isTruePermission(user.isSystemAdmin)||
+    isTruePermission(user.is_system_admin)||
+    isTruePermission(user.isSuperAdmin)||
+    isTruePermission(user.is_super_admin);
 }
 
 function getPermissionSources(data){
+  const sources=[];
+  if(!data||typeof data!=="object")return sources;
 
-  const sources = [];
-
-  if(!data || typeof data !== "object")return sources;
-
-  const user = data.user || data.account || data.profile || {};
-
+  const user=getUserObject(data);
   [
-    data.permissions,
-    data.userPermissions,
-    data.pagePermissions,
-    data.permission,
-    data.pages,
-    user.permissions,
-    user.userPermissions,
-    user.pagePermissions,
-    user.permission,
-    user.pages
+    data.permissions,data.userPermissions,data.pagePermissions,data.permission,data.pages,
+    user.permissions,user.userPermissions,user.pagePermissions,user.permission,user.pages
   ].forEach(source=>{
-    if(source && typeof source === "object"){
-      sources.push(source);
-    }
+    if(source&&typeof source==="object")sources.push(source);
   });
-
   return sources;
 }
 
 function findPagePermission(data){
-
-  const wantedKeys = PAGE_PERMISSION_KEYS.map(normalizePermissionKey);
-  const sources = getPermissionSources(data);
+  const wanted=PAGE_PERMISSION_KEYS.map(normalizePermissionKey);
+  const sources=getPermissionSources(data);
 
   for(const source of sources){
-
     if(Array.isArray(source)){
-
       for(const item of source){
-
-        if(!item || typeof item !== "object")continue;
-
-        const key = normalizePermissionKey(
-          item.pageKey ||
-          item.page_key ||
-          item.key ||
-          item.page ||
-          item.pageName ||
-          item.page_name ||
-          item.name ||
-          item.id
+        if(!item||typeof item!=="object")continue;
+        const key=normalizePermissionKey(
+          item.pageKey||item.page_key||item.key||item.page||
+          item.pageName||item.page_name||item.name||item.id
         );
-
-        if(wantedKeys.includes(key)){
-          return item;
+        if(wanted.includes(key))return item;
+      }
+    }else{
+      for(const key of Object.keys(source)){
+        if(wanted.includes(normalizePermissionKey(key))){
+          const value=source[key];
+          if(value&&typeof value==="object")return value;
+          if(typeof value==="boolean"||typeof value==="number")return {view:value};
         }
       }
-
-      continue;
-    }
-
-    for(const key of Object.keys(source)){
-
-      if(wantedKeys.includes(normalizePermissionKey(key))){
-        return source[key];
-      }
-
     }
   }
-
   return null;
 }
 
-function permissionValue(permission, names){
-
-  if(permission === true || permission === 1)return true;
-
-  if(!permission || typeof permission !== "object")return false;
+function permissionValue(permission,names){
+  if(permission===true||permission===1)return true;
+  if(!permission||typeof permission!=="object")return false;
 
   for(const name of names){
-
     if(Object.prototype.hasOwnProperty.call(permission,name)){
       return isTruePermission(permission[name]);
     }
-
   }
-
   return false;
 }
 
 function resolvePermissions(data){
+  if(isSystemAdmin(data))return {view:true,edit:true,delete:true};
 
-  if(isSystemAdmin(data)){
-    return {
-      view:true,
-      delete:true
-    };
-  }
+  const p=findPagePermission(data);
+  if(!p)return {view:false,edit:false,delete:false};
 
-  const pagePermission = findPagePermission(data);
-
-  if(!pagePermission){
-    return {
-      view:false,
-      delete:false
-    };
-  }
-
-  const view = permissionValue(pagePermission,[
-    "view",
-    "can_view",
-    "canView",
-    "read",
-    "can_read",
-    "canRead",
-    "viewAccess",
-    "view_access"
+  const view=permissionValue(p,[
+    "view","can_view","canView","read","can_read","canRead","viewAccess","view_access"
+  ]);
+  const edit=permissionValue(p,[
+    "edit","can_edit","canEdit","update","can_update","canUpdate","editAccess","edit_access"
+  ]);
+  const del=permissionValue(p,[
+    "delete","can_delete","canDelete","permanentDelete","permanent_delete",
+    "canPermanentDelete","can_permanent_delete"
   ]);
 
-  const deletePermission = permissionValue(pagePermission,[
-    "delete",
-    "can_delete",
-    "canDelete",
-    "permanentDelete",
-    "permanent_delete",
-    "canPermanentDelete",
-    "can_permanent_delete"
-  ]);
-
-  return {
-    view:view,
-    delete:deletePermission
-  };
+  return {view:view,edit:edit,delete:del};
 }
 
 function showPermissionGate(title,message,icon="fa-shield-halved",retry=false){
-
   document.body.classList.remove("permission-pending");
   document.body.classList.add("permission-denied");
-
-  const gate = document.getElementById("permissionGate");
-
-  gate.style.display = "flex";
-
-  document.getElementById("gateTitle").textContent = title;
-  document.getElementById("gateMessage").textContent = message;
-  document.getElementById("gateIcon").className = "fa-solid " + icon;
-  document.getElementById("gateRetry").style.display =
-    retry ? "inline-flex" : "none";
+  document.getElementById("permissionGate").style.display="flex";
+  document.getElementById("gateTitle").textContent=title;
+  document.getElementById("gateMessage").textContent=message;
+  document.getElementById("gateIcon").className="fa-solid "+icon;
+  document.getElementById("gateRetry").style.display=retry?"inline-flex":"none";
 }
 
 function applyPagePermissions(data){
-
-  authReceived = true;
-  authData = data;
-
-  currentPermissions = resolvePermissions(data);
-
+  authReceived=true;
+  authData=data;
+  currentPermissions=resolvePermissions(data);
   clearTimeout(authWaitTimer);
 
   if(!currentPermissions.view){
-
-    allRecords = [];
-    filteredRecords = [];
-
+    allRecords=[];
+    filteredRecords=[];
     showPermissionGate(
       "Access Denied",
       "You do not have permission to view Deleted Earn & Spend. Please contact your System Admin.",
       "fa-lock",
       false
     );
-
     return;
   }
 
-  document.body.classList.remove(
-    "permission-pending",
-    "permission-denied"
-  );
-
-  document.getElementById("permissionGate").style.display = "none";
-
-  // The Delete button is controlled by the Delete permission.
-  renderTable();
-
-  // Load records only after View permission is confirmed.
+  document.body.classList.remove("permission-pending","permission-denied");
+  document.getElementById("permissionGate").style.display="none";
   loadDeletedRecords();
 }
 
 function hasPermission(action){
-
-  if(isSystemAdmin(authData)){
-    return true;
-  }
-
-  return currentPermissions[action] === true;
+  if(isSystemAdmin(authData))return true;
+  return currentPermissions[action]===true;
 }
 
 function requirePermission(action){
-
   if(!authReceived){
     showToast("Access is not verified yet.",true);
     return false;
   }
-
   if(!hasPermission(action)){
-
-    showToast(
-      action === "delete"
-        ? "You do not have Delete permission."
-        : "You do not have View permission.",
-      true
-    );
-
+    const labels={view:"View",edit:"Edit",delete:"Delete"};
+    showToast("You do not have "+(labels[action]||action)+" permission.",true);
     return false;
   }
-
   return true;
 }
 
 function requestAuthAgain(){
-
-  authReceived = false;
-
+  authReceived=false;
   document.body.classList.remove("permission-denied");
   document.body.classList.add("permission-pending");
 
-  showPermissionGate(
-    "Checking Access...",
-    "Please wait while your account permissions are verified.",
-    "fa-shield-halved",
-    false
-  );
+  showPermissionGate("Checking Access...","Please wait while your account permissions are verified.","fa-shield-halved",false);
 
   try{
-    window.parent.postMessage({
-      type:"ONE_ONLINE_AUTH_REQUEST"
-    },"*");
+    window.parent.postMessage({type:"ONE_ONLINE_AUTH_REQUEST"},"*");
   }catch(error){}
 
   clearTimeout(authWaitTimer);
-
-  authWaitTimer = setTimeout(()=>{
-
+  authWaitTimer=setTimeout(()=>{
     if(!authReceived){
-
       showPermissionGate(
         "Permission Data Not Received",
         "Your account permission information was not received. Please reload this page or contact your System Admin.",
         "fa-triangle-exclamation",
         true
       );
-
     }
-
   },10000);
 }
 
 window.addEventListener("message",function(event){
+  if(event.source!==window.parent)return;
+  const message=event.data;
+  if(!message||typeof message!=="object")return;
 
-  if(event.source !== window.parent)return;
-
-  const message = event.data;
-
-  if(!message || typeof message !== "object")return;
-
-  if(
-    message.type === "ONE_ONLINE_AUTH" ||
-    message.type === "ONE_ONLINE_USER" ||
-    message.type === "ONE_ONLINE_LOGIN" ||
-    message.type === "ONE_ONLINE_PERMISSIONS"
-  ){
-
-    const data = getAuthPayload(message);
-
-    applyPagePermissions(data);
-
+  if([
+    "ONE_ONLINE_AUTH",
+    "ONE_ONLINE_USER",
+    "ONE_ONLINE_LOGIN",
+    "ONE_ONLINE_PERMISSIONS"
+  ].includes(message.type)){
+    applyPagePermissions(getAuthPayload(message));
   }
 
+  if(message.type==="ONE_ONLINE_THEME"){
+    applyTheme(message.theme||message.value);
+  }
 });
 
-
-/* ==========================================
-   JSONP API
-========================================== */
-
+/* JSONP API */
 function apiCall(params){
-
   return new Promise((resolve,reject)=>{
+    const callbackName="__oo_deleted_callback_"+Date.now()+"_"+Math.floor(Math.random()*100000);
+    const query=new URLSearchParams({...params,callback:callbackName});
+    const script=document.createElement("script");
+    let finished=false;
 
-    const callbackName =
-      "__oo_deleted_callback_" +
-      Date.now() +
-      "_" +
-      Math.floor(Math.random()*100000);
-
-    const query = new URLSearchParams({
-      ...params,
-      callback:callbackName
-    });
-
-    const script = document.createElement("script");
-
-    let finished = false;
-
-    const timer = setTimeout(()=>{
-
+    const timer=setTimeout(()=>{
       finish();
       reject(new Error("Server response timeout. Please try again."));
-
     },20000);
 
     function finish(){
-
       if(finished)return;
-
-      finished = true;
+      finished=true;
       clearTimeout(timer);
       delete window[callbackName];
-
-      if(script.parentNode){
-        script.parentNode.removeChild(script);
-      }
-
+      if(script.parentNode)script.parentNode.removeChild(script);
     }
 
-    window[callbackName] = function(response){
-
+    window[callbackName]=function(response){
       finish();
-
-      if(!response || response.success === false){
-
-        reject(
-          new Error(
-            response && response.message
-              ? response.message
-              : "Request failed."
-          )
-        );
-
+      if(!response||response.success===false){
+        reject(new Error(response&&response.message?response.message:"Request failed."));
         return;
       }
-
       resolve(response);
-
     };
 
-    script.onerror = function(){
-
+    script.onerror=function(){
       finish();
       reject(new Error("Could not connect to Google Apps Script."));
-
     };
 
-    script.src = API_URL + "?" + query.toString();
-
+    script.src=API_URL+"?"+query.toString();
     document.body.appendChild(script);
-
   });
-
 }
 
-
-/* ==========================================
-   HELPERS
-========================================== */
-
+/* HELPERS */
 function money(value){
-
-  return "৳" + Number(value || 0).toLocaleString("en-BD",{
-    maximumFractionDigits:2
-  });
-
+  return "৳"+Number(value||0).toLocaleString("en-BD",{maximumFractionDigits:2});
 }
 
 function escapeHTML(value){
-
-  return String(value === undefined || value === null ? "" : value)
-    .replace(/&/g,"&amp;")
-    .replace(/</g,"&lt;")
-    .replace(/>/g,"&gt;")
-    .replace(/"/g,"&quot;")
-    .replace(/'/g,"&#039;");
-
+  return String(value===undefined||value===null?"":value)
+    .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;").replace(/'/g,"&#039;");
 }
 
 function dateText(value){
-
   if(!value)return "";
-
   return String(value).slice(0,10);
-
 }
 
 function normalizeRecord(record){
-
-  const type = String(record.type || "").toLowerCase();
-
-  const transactionDate =
-    record.expenseDate ||
-    record.date ||
-    "";
-
+  const type=String(record.type||"").toLowerCase();
   return {
-
-    row:Number(record.row || 0),
-
+    row:Number(record.row||0),
     type:type,
-
-    title:String(
-      record.title ||
-      record.ip ||
-      ""
-    ),
-
-    amount:Number(record.amount || 0),
-
-    expenseDate:dateText(transactionDate),
-
-    comment:String(record.comment || ""),
-
-    deletedAt:dateText(record.deletedAt || "")
-
+    title:String(record.title||record.ip||""),
+    amount:Number(record.amount||0),
+    expenseDate:dateText(record.expenseDate||record.date||""),
+    comment:String(record.comment||""),
+    deletedAt:dateText(record.deletedAt||"")
   };
-
 }
 
 function showToast(message,isError=false){
-
-  const toast = document.getElementById("toast");
-
-  toast.textContent = message;
-
-  toast.className = "toast show" + (isError ? " error" : "");
-
+  const toast=document.getElementById("toast");
+  toast.textContent=message;
+  toast.className="toast show"+(isError?" error":"");
   clearTimeout(showToast.timer);
-
-  showToast.timer = setTimeout(()=>{
-
-    toast.className = "toast";
-
-  },3200);
-
+  showToast.timer=setTimeout(()=>toast.className="toast",3200);
 }
 
-
-/* ==========================================
-   LOAD DELETED RECORDS
-========================================== */
-
+/* LOAD RECORDS */
 async function loadDeletedRecords(){
-
   if(!requirePermission("view"))return;
-
   if(busy)return;
+  busy=true;
 
-  busy = true;
-
-  document.getElementById("tableBody").innerHTML = `
-    <tr>
-      <td colspan="8">
-        <div class="loading">
-          <i class="fa-solid fa-spinner fa-spin"></i>
-          Loading deleted records...
-        </div>
-      </td>
-    </tr>
-  `;
+  document.getElementById("tableBody").innerHTML=`
+    <tr><td colspan="8"><div class="loading">
+    <i class="fa-solid fa-spinner fa-spin"></i> Loading deleted records...
+    </div></td></tr>`;
 
   try{
-
-    const response = await apiCall({
-      action:"getDeletedRecords",
-      type:"all"
-    });
-
-    allRecords = (response.records || [])
-      .map(normalizeRecord)
-      .filter(record=>
-        record.type === "earn" ||
-        record.type === "spend"
-      );
-
+    const response=await apiCall({action:"getDeletedRecords",type:"all"});
+    allRecords=(response.records||[]).map(normalizeRecord)
+      .filter(r=>r.type==="earn"||r.type==="spend");
     updateStats();
     applyFilters();
-
   }catch(error){
-
-    document.getElementById("tableBody").innerHTML = `
-      <tr>
-        <td colspan="8">
-          <div class="empty">
-            <i class="fa-solid fa-triangle-exclamation"></i>
-            ${escapeHTML(error.message)}
-            <br><br>
-            <button class="btn btn-primary" onclick="loadDeletedRecords()">
-              Retry
-            </button>
-          </div>
-        </td>
-      </tr>
-    `;
-
+    document.getElementById("tableBody").innerHTML=`
+      <tr><td colspan="8"><div class="empty">
+      <i class="fa-solid fa-triangle-exclamation"></i>
+      ${escapeHTML(error.message)}<br><br>
+      <button class="btn btn-primary" onclick="loadDeletedRecords()">Retry</button>
+      </div></td></tr>`;
     showToast(error.message,true);
-
   }finally{
-
-    busy = false;
-
+    busy=false;
   }
-
 }
 
-
-/* ==========================================
-   SUMMARY
-========================================== */
-
+/* SUMMARY */
 function updateStats(){
-
-  let earn = 0;
-  let spend = 0;
-  let earnCount = 0;
-  let spendCount = 0;
-
-  allRecords.forEach(record=>{
-
-    if(record.type === "earn"){
-
-      earn += record.amount;
-      earnCount++;
-
-    }else{
-
-      spend += record.amount;
-      spendCount++;
-
-    }
-
+  let earn=0,spend=0,earnCount=0,spendCount=0;
+  allRecords.forEach(r=>{
+    if(r.type==="earn"){earn+=r.amount;earnCount++;}
+    else{spend+=r.amount;spendCount++;}
   });
 
-  document.getElementById("totalDeletedEarn").textContent =
-    money(earn);
-
-  document.getElementById("totalDeletedSpend").textContent =
-    money(spend);
-
-  document.getElementById("totalDeleted").textContent =
-    allRecords.length.toLocaleString("en-BD");
-
-  document.getElementById("netDeleted").textContent =
-    money(earn-spend);
-
-  document.getElementById("earnCount").textContent =
-    earnCount + " deleted records";
-
-  document.getElementById("spendCount").textContent =
-    spendCount + " deleted records";
-
+  document.getElementById("totalDeletedEarn").textContent=money(earn);
+  document.getElementById("totalDeletedSpend").textContent=money(spend);
+  document.getElementById("totalDeleted").textContent=allRecords.length.toLocaleString("en-BD");
+  document.getElementById("netDeleted").textContent=money(earn-spend);
+  document.getElementById("earnCount").textContent=earnCount+" deleted records";
+  document.getElementById("spendCount").textContent=spendCount+" deleted records";
 }
 
-
-/* ==========================================
-   FILTERS
-========================================== */
-
+/* FILTERS */
 function setType(type,button){
-
   if(!requirePermission("view"))return;
-
-  currentType = type;
-
-  document.querySelectorAll(".tab").forEach(tab=>{
-    tab.classList.remove("active");
-  });
-
+  currentType=type;
+  document.querySelectorAll(".tab").forEach(tab=>tab.classList.remove("active"));
   button.classList.add("active");
-
-  currentPage = 1;
-
+  currentPage=1;
   applyFilters();
-
 }
 
 function applyFilters(){
-
   if(!requirePermission("view"))return;
 
-  const search = document.getElementById("searchInput")
-    .value.toLowerCase().trim();
+  const search=document.getElementById("searchInput").value.toLowerCase().trim();
+  const from=document.getElementById("fromDate").value;
+  const to=document.getElementById("toDate").value;
+  const sort=document.getElementById("sortOrder").value;
 
-  const from = document.getElementById("fromDate").value;
-  const to = document.getElementById("toDate").value;
+  filteredRecords=allRecords.filter(record=>{
+    if(currentType!=="all"&&record.type!==currentType)return false;
 
-  const sort = document.getElementById("sortOrder").value;
-
-  filteredRecords = allRecords.filter(record=>{
-
-    if(currentType !== "all" && record.type !== currentType){
-      return false;
-    }
-
-    const searchable = (
-      record.title + " " +
-      record.comment + " " +
-      record.expenseDate + " " +
-      record.deletedAt + " " +
-      record.type
-    ).toLowerCase();
-
-    if(search && !searchable.includes(search)){
-      return false;
-    }
-
-    if(from && record.expenseDate < from){
-      return false;
-    }
-
-    if(to && record.expenseDate > to){
-      return false;
-    }
-
+    const searchable=(record.title+" "+record.comment+" "+record.expenseDate+" "+record.deletedAt+" "+record.type).toLowerCase();
+    if(search&&!searchable.includes(search))return false;
+    if(from&&record.expenseDate<from)return false;
+    if(to&&record.expenseDate>to)return false;
     return true;
-
   });
 
-  if(sort === "deletedNewest"){
+  if(sort==="deletedNewest")filteredRecords.sort((a,b)=>b.deletedAt.localeCompare(a.deletedAt));
+  else if(sort==="deletedOldest")filteredRecords.sort((a,b)=>a.deletedAt.localeCompare(b.deletedAt));
+  else if(sort==="dateNewest")filteredRecords.sort((a,b)=>b.expenseDate.localeCompare(a.expenseDate));
+  else if(sort==="dateOldest")filteredRecords.sort((a,b)=>a.expenseDate.localeCompare(b.expenseDate));
+  else if(sort==="high")filteredRecords.sort((a,b)=>b.amount-a.amount);
+  else if(sort==="low")filteredRecords.sort((a,b)=>a.amount-b.amount);
 
-    filteredRecords.sort((a,b)=>
-      b.deletedAt.localeCompare(a.deletedAt)
-    );
-
-  }else if(sort === "deletedOldest"){
-
-    filteredRecords.sort((a,b)=>
-      a.deletedAt.localeCompare(b.deletedAt)
-    );
-
-  }else if(sort === "dateNewest"){
-
-    filteredRecords.sort((a,b)=>
-      b.expenseDate.localeCompare(a.expenseDate)
-    );
-
-  }else if(sort === "dateOldest"){
-
-    filteredRecords.sort((a,b)=>
-      a.expenseDate.localeCompare(b.expenseDate)
-    );
-
-  }else if(sort === "high"){
-
-    filteredRecords.sort((a,b)=>
-      b.amount-a.amount
-    );
-
-  }else if(sort === "low"){
-
-    filteredRecords.sort((a,b)=>
-      a.amount-b.amount
-    );
-
-  }
-
-  currentPage = 1;
-
+  currentPage=1;
   renderTable();
-
 }
 
 function resetFilters(){
-
   if(!requirePermission("view"))return;
-
-  document.getElementById("searchInput").value = "";
-  document.getElementById("fromDate").value = "";
-  document.getElementById("toDate").value = "";
-  document.getElementById("sortOrder").value = "deletedNewest";
-
-  currentType = "all";
-
-  document.querySelectorAll(".tab").forEach(tab=>{
-    tab.classList.toggle(
-      "active",
-      tab.dataset.type === "all"
-    );
-  });
-
+  document.getElementById("searchInput").value="";
+  document.getElementById("fromDate").value="";
+  document.getElementById("toDate").value="";
+  document.getElementById("sortOrder").value="deletedNewest";
+  currentType="all";
+  document.querySelectorAll(".tab").forEach(tab=>tab.classList.toggle("active",tab.dataset.type==="all"));
   applyFilters();
-
 }
 
 function changePageSize(){
-
   if(!requirePermission("view"))return;
-
-  pageSize = Number(
-    document.getElementById("pageSize").value
-  ) || 10;
-
-  currentPage = 1;
-
+  pageSize=Number(document.getElementById("pageSize").value)||10;
+  currentPage=1;
   renderTable();
-
 }
 
-
-/* ==========================================
-   RENDER TABLE
-========================================== */
-
+/* TABLE */
 function renderTable(){
-
   if(!hasPermission("view"))return;
 
-  const tbody = document.getElementById("tableBody");
+  const tbody=document.getElementById("tableBody");
+  const total=filteredRecords.length;
+  const totalPages=Math.max(1,Math.ceil(total/pageSize));
 
-  const total = filteredRecords.length;
+  if(currentPage>totalPages)currentPage=totalPages;
 
-  const totalPages = Math.max(
-    1,
-    Math.ceil(total/pageSize)
-  );
-
-  if(currentPage > totalPages){
-    currentPage = totalPages;
-  }
-
-  const start = (currentPage-1)*pageSize;
-
-  const end = Math.min(
-    start+pageSize,
-    total
-  );
-
-  const pageRecords = filteredRecords.slice(start,end);
+  const start=(currentPage-1)*pageSize;
+  const end=Math.min(start+pageSize,total);
+  const pageRecords=filteredRecords.slice(start,end);
 
   if(!pageRecords.length){
+    tbody.innerHTML=`<tr><td colspan="8"><div class="empty">
+      <i class="fa-solid fa-box-open"></i>No deleted records found.
+    </div></td></tr>`;
+  }else{
+    tbody.innerHTML=pageRecords.map((record,index)=>{
+      const sl=start+index+1;
+      const recordIndex=start+index;
 
-    tbody.innerHTML = `
-      <tr>
-        <td colspan="8">
-          <div class="empty">
-            <i class="fa-solid fa-box-open"></i>
-            No deleted records found.
+      return `<tr>
+        <td>${sl}</td>
+        <td><span class="type-badge ${record.type}">${record.type.toUpperCase()}</span></td>
+        <td><strong>${escapeHTML(record.title)}</strong></td>
+        <td><span class="amount ${record.type}">${record.type==="earn"?"+":"−"}${money(record.amount)}</span></td>
+        <td>${escapeHTML(record.expenseDate||"-")}</td>
+        <td><div class="comment-cell" title="${escapeHTML(record.comment)}">${escapeHTML(record.comment||"-")}</div></td>
+        <td><span class="deleted-date"><i class="fa-regular fa-clock"></i> ${escapeHTML(record.deletedAt||"-")}</span></td>
+        <td class="view-col">
+          <div style="display:flex;gap:7px;align-items:center">
+            <button class="view-btn" title="View Details" onclick="viewRecord(${recordIndex})">
+              <i class="fa-solid fa-eye"></i>
+            </button>
+
+            ${hasPermission("edit")?`
+              <button class="edit-btn" title="Edit Record" onclick="editRecord(${recordIndex})">
+                <i class="fa-solid fa-pen"></i>
+              </button>`:""}
+
+            ${record.type==="spend"&&hasPermission("delete")?`
+              <button class="delete-btn" title="Permanently Delete" onclick="permanentDeleteSpend(${recordIndex})">
+                <i class="fa-solid fa-trash-can"></i> Permanent Delete
+              </button>`:""}
           </div>
         </td>
-      </tr>
-    `;
-
-  }else{
-
-    tbody.innerHTML = pageRecords.map((record,index)=>{
-
-      const sl = start+index+1;
-      const recordIndex = start+index;
-
-      return `
-        <tr>
-
-          <td>${sl}</td>
-
-          <td>
-            <span class="type-badge ${record.type}">
-              ${record.type.toUpperCase()}
-            </span>
-          </td>
-
-          <td>
-            <strong>${escapeHTML(record.title)}</strong>
-          </td>
-
-          <td>
-            <span class="amount ${record.type}">
-              ${record.type==="earn"?"+":"−"}${money(record.amount)}
-            </span>
-          </td>
-
-          <td>${escapeHTML(record.expenseDate || "-")}</td>
-
-          <td>
-            <div class="comment-cell" title="${escapeHTML(record.comment)}">
-              ${escapeHTML(record.comment || "-")}
-            </div>
-          </td>
-
-          <td>
-            <span class="deleted-date">
-              <i class="fa-regular fa-clock"></i>
-              ${escapeHTML(record.deletedAt || "-")}
-            </span>
-          </td>
-
-          <td class="view-col">
-            <div style="display:flex;gap:7px;align-items:center">
-
-              <button class="view-btn"
-                title="View Details"
-                onclick="viewRecord(${recordIndex})">
-                <i class="fa-solid fa-eye"></i>
-              </button>
-
-              ${record.type === "spend" && hasPermission("delete") ? `
-                <button
-                  class="delete-btn"
-                  title="Permanently Delete"
-                  onclick="permanentDeleteSpend(${recordIndex})">
-                  <i class="fa-solid fa-trash-can"></i>
-                  Permanent Delete
-                </button>
-              ` : ""}
-
-            </div>
-          </td>
-
-        </tr>
-      `;
-
+      </tr>`;
     }).join("");
-
   }
 
-  document.getElementById("tableInfo").textContent =
-    total === 0
-      ? "Showing 0 records"
-      : `Showing ${start+1}–${end} of ${total} records`;
-
+  document.getElementById("tableInfo").textContent=total===0?"Showing 0 records":`Showing ${start+1}–${end} of ${total} records`;
   renderPagination(totalPages);
-
 }
 
-
-/* ==========================================
-   PAGINATION
-========================================== */
-
+/* PAGINATION */
 function renderPagination(totalPages){
-
   if(!hasPermission("view"))return;
+  const container=document.getElementById("pagination");
 
-  const container = document.getElementById("pagination");
-
-  let html = `
-    <button onclick="goPage(${currentPage-1})"
-      ${currentPage===1?"disabled":""}>
-      <i class="fa-solid fa-chevron-left"></i>
-    </button>
-  `;
-
-  const maxButtons = 5;
-
-  let first = Math.max(
-    1,
-    currentPage-Math.floor(maxButtons/2)
-  );
-
-  let last = Math.min(
-    totalPages,
-    first+maxButtons-1
-  );
-
-  if(last-first+1 < maxButtons){
-    first = Math.max(1,last-maxButtons+1);
-  }
+  let html=`<button onclick="goPage(${currentPage-1})" ${currentPage===1?"disabled":""}><i class="fa-solid fa-chevron-left"></i></button>`;
+  const maxButtons=5;
+  let first=Math.max(1,currentPage-Math.floor(maxButtons/2));
+  let last=Math.min(totalPages,first+maxButtons-1);
+  if(last-first+1<maxButtons)first=Math.max(1,last-maxButtons+1);
 
   for(let i=first;i<=last;i++){
-
-    html += `
-      <button class="${i===currentPage?"active":""}"
-        onclick="goPage(${i})">
-        ${i}
-      </button>
-    `;
-
+    html+=`<button class="${i===currentPage?"active":""}" onclick="goPage(${i})">${i}</button>`;
   }
 
-  html += `
-    <button onclick="goPage(${currentPage+1})"
-      ${currentPage===totalPages?"disabled":""}>
-      <i class="fa-solid fa-chevron-right"></i>
-    </button>
-  `;
-
-  container.innerHTML = html;
-
+  html+=`<button onclick="goPage(${currentPage+1})" ${currentPage===totalPages?"disabled":""}><i class="fa-solid fa-chevron-right"></i></button>`;
+  container.innerHTML=html;
 }
 
 function goPage(page){
-
   if(!requirePermission("view"))return;
-
-  const totalPages = Math.max(
-    1,
-    Math.ceil(filteredRecords.length/pageSize)
-  );
-
-  if(page<1 || page>totalPages)return;
-
-  currentPage = page;
-
+  const totalPages=Math.max(1,Math.ceil(filteredRecords.length/pageSize));
+  if(page<1||page>totalPages)return;
+  currentPage=page;
   renderTable();
-
 }
 
+/* EDIT RECORD */
+function editRecord(index){
+  if(!requirePermission("edit"))return;
 
-/* ==========================================
-   PERMANENT DELETE SPEND
-========================================== */
+  const record=filteredRecords[index];
+  if(!record)return;
 
-async function permanentDeleteSpend(index){
+  document.getElementById("editRecordIndex").value=index;
+  document.getElementById("editType").value=record.type.toUpperCase();
+  document.getElementById("editTitle").value=record.title;
+  document.getElementById("editAmount").value=record.amount;
+  document.getElementById("editDate").value=record.expenseDate;
+  document.getElementById("editComment").value=record.comment;
 
-  // Check Delete permission again before executing.
-  if(!requirePermission("delete"))return;
+  openModal("editModal");
+}
 
-  const record = filteredRecords[index];
+async function saveEditedRecord(event){
+  event.preventDefault();
 
-  if(!record || record.type !== "spend"){
-    showToast("Invalid Spend record.",true);
+  if(!requirePermission("edit"))return;
+  if(editing)return;
+
+  const index=Number(document.getElementById("editRecordIndex").value);
+  const record=filteredRecords[index];
+
+  if(!record){
+    showToast("Record not found. Please refresh.",true);
     return;
   }
 
+  const title=document.getElementById("editTitle").value.trim();
+  const amount=Number(document.getElementById("editAmount").value);
+  const date=document.getElementById("editDate").value;
+  const comment=document.getElementById("editComment").value.trim();
+
+  if(!title||!date||!Number.isFinite(amount)||amount<0){
+    showToast("Please enter valid record information.",true);
+    return;
+  }
+
+  if(!record.row){
+    showToast("Record row number is missing. Cannot update this record.",true);
+    return;
+  }
+
+  if(!confirm("Are you sure you want to save these changes?"))return;
+  if(!requirePermission("edit"))return;
+
+  editing=true;
+  const button=document.getElementById("saveEditBtn");
+  button.disabled=true;
+  button.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
+
+  try{
+    /*
+      Backend action required:
+      updateDeletedRecord
+
+      Parameters:
+      row, type, title, amount, date, comment
+    */
+    const response=await apiCall({
+      action:"updateDeletedRecord",
+      row:record.row,
+      type:record.type,
+      title:title,
+      amount:amount,
+      date:date,
+      comment:comment,
+      expectedTitle:record.title,
+      expectedAmount:record.amount,
+      expectedDate:record.expenseDate,
+      expectedComment:record.comment
+    });
+
+    if(!response||response.success!==true){
+      throw new Error(response&&response.message?response.message:"Record update failed.");
+    }
+
+    closeModal("editModal");
+    showToast("Record updated successfully.");
+    await loadDeletedRecords();
+
+  }catch(error){
+    showToast(error.message,true);
+  }finally{
+    editing=false;
+    button.disabled=false;
+    button.innerHTML='<i class="fa-solid fa-floppy-disk"></i> Save Changes';
+  }
+}
+
+/* PERMANENT DELETE SPEND */
+async function permanentDeleteSpend(index){
+  if(!requirePermission("delete"))return;
+
+  const record=filteredRecords[index];
+  if(!record||record.type!=="spend"){
+    showToast("Invalid Spend record.",true);
+    return;
+  }
   if(deleting){
     showToast("A delete request is already running.",true);
     return;
   }
 
-  const confirmed = confirm(
-    "PERMANENT DELETE WARNING!\n\n" +
-    "You are about to permanently delete this Spend record.\n\n" +
-    "Title: " + record.title + "\n" +
-    "Amount: " + money(record.amount) + "\n" +
-    "Date: " + record.expenseDate + "\n\n" +
-    "This action cannot be undone.\n\n" +
-    "Do you want to continue?"
+  const confirmed=confirm(
+    "PERMANENT DELETE WARNING!\n\n"+
+    "You are about to permanently delete this Spend record.\n\n"+
+    "Title: "+record.title+"\n"+
+    "Amount: "+money(record.amount)+"\n"+
+    "Date: "+record.expenseDate+"\n\n"+
+    "This action cannot be undone.\n\nDo you want to continue?"
   );
 
   if(!confirmed)return;
-
-  // Check permission once more after confirmation.
   if(!requirePermission("delete"))return;
 
-  deleting = true;
-
+  deleting=true;
   try{
-
     showToast("Permanently deleting Spend record...");
-
-    const response = await apiCall({
-
+    const response=await apiCall({
       action:"permanentDeleteSpent",
-
       row:record.row,
-
       expectedTitle:record.title,
-
       expectedAmount:record.amount,
-
       expectedDate:record.expenseDate,
-
       expectedComment:record.comment
-
     });
 
-    if(!response || response.success !== true){
-      throw new Error(
-        response && response.message
-          ? response.message
-          : "Permanent delete failed."
-      );
+    if(!response||response.success!==true){
+      throw new Error(response&&response.message?response.message:"Permanent delete failed.");
     }
 
     showToast("Spend record permanently deleted successfully.");
-
     await loadDeletedRecords();
-
   }catch(error){
-
     showToast(error.message,true);
-
   }finally{
-
-    deleting = false;
-
+    deleting=false;
   }
-
 }
 
-
-/* ==========================================
-   VIEW DETAILS
-========================================== */
-
+/* VIEW DETAILS */
 function viewRecord(index){
-
   if(!requirePermission("view"))return;
-
-  const record = filteredRecords[index];
-
+  const record=filteredRecords[index];
   if(!record)return;
 
-  const details = document.getElementById("viewDetails");
-
-  details.innerHTML = `
-
-    <div class="detail-item">
-      <div class="detail-label">Transaction Type</div>
-      <div class="detail-value">${record.type.toUpperCase()}</div>
-    </div>
-
-    <div class="detail-item">
-      <div class="detail-label">${record.type==="earn"?"IP Address":"Spend Title"}</div>
-      <div class="detail-value">${escapeHTML(record.title)}</div>
-    </div>
-
-    <div class="detail-item">
-      <div class="detail-label">Amount</div>
-      <div class="detail-value">${money(record.amount)}</div>
-    </div>
-
-    <div class="detail-item">
-      <div class="detail-label">Transaction Date</div>
-      <div class="detail-value">${escapeHTML(record.expenseDate || "-")}</div>
-    </div>
-
-    <div class="detail-item full">
-      <div class="detail-label">Comment</div>
-      <div class="detail-value">${escapeHTML(record.comment || "No comment")}</div>
-    </div>
-
-    <div class="detail-item full">
-      <div class="detail-label">Deleted At</div>
-      <div class="detail-value">${escapeHTML(record.deletedAt || "-")}</div>
-    </div>
-
-    <div class="detail-item full">
-      <div class="detail-label">Archive Sheet Row</div>
-      <div class="detail-value">${record.row || "-"}</div>
-    </div>
-
+  document.getElementById("viewDetails").innerHTML=`
+    <div class="detail-item"><div class="detail-label">Transaction Type</div><div class="detail-value">${record.type.toUpperCase()}</div></div>
+    <div class="detail-item"><div class="detail-label">${record.type==="earn"?"IP Address":"Spend Title"}</div><div class="detail-value">${escapeHTML(record.title)}</div></div>
+    <div class="detail-item"><div class="detail-label">Amount</div><div class="detail-value">${money(record.amount)}</div></div>
+    <div class="detail-item"><div class="detail-label">Transaction Date</div><div class="detail-value">${escapeHTML(record.expenseDate||"-")}</div></div>
+    <div class="detail-item full"><div class="detail-label">Comment</div><div class="detail-value">${escapeHTML(record.comment||"No comment")}</div></div>
+    <div class="detail-item full"><div class="detail-label">Deleted At</div><div class="detail-value">${escapeHTML(record.deletedAt||"-")}</div></div>
+    <div class="detail-item full"><div class="detail-label">Archive Sheet Row</div><div class="detail-value">${record.row||"-"}</div></div>
   `;
-
-  openModal();
-
+  openModal("viewModal");
 }
 
-function openModal(){
-
-  document.getElementById("viewModal").classList.add("show");
-
-  document.body.style.overflow = "hidden";
-
+function openModal(id){
+  document.getElementById(id).classList.add("show");
+  document.body.style.overflow="hidden";
 }
 
-function closeModal(){
-
-  document.getElementById("viewModal").classList.remove("show");
-
-  document.body.style.overflow = "";
-
+function closeModal(id){
+  document.getElementById(id).classList.remove("show");
+  if(!document.querySelector(".modal-overlay.show"))document.body.style.overflow="";
 }
 
-function overlayClose(event){
-
-  if(event.target.id === "viewModal"){
-    closeModal();
-  }
-
+function overlayClose(event,id){
+  if(event.target.id===id)closeModal(id);
 }
 
 document.addEventListener("keydown",event=>{
-
-  if(event.key === "Escape"){
-    closeModal();
+  if(event.key==="Escape"){
+    document.querySelectorAll(".modal-overlay.show").forEach(modal=>closeModal(modal.id));
   }
-
 });
 
-
-/* ==========================================
-   PDF EXPORT
-========================================== */
-
+/* PDF EXPORT */
 function exportPDF(){
-
   if(!requirePermission("view"))return;
-
   if(!filteredRecords.length){
-
     showToast("No records available to export.",true);
     return;
-
   }
-
-  if(!window.jspdf || !window.jspdf.jsPDF){
-
+  if(!window.jspdf||!window.jspdf.jsPDF){
     showToast("PDF library could not load.",true);
     return;
-
   }
 
-  const {jsPDF} = window.jspdf;
-
-  const doc = new jsPDF({
-    orientation:"landscape"
-  });
-
+  const {jsPDF}=window.jspdf;
+  const doc=new jsPDF({orientation:"landscape"});
   doc.setFontSize(17);
   doc.text("ONE ONLINE - Deleted Earn & Spend",14,15);
-
   doc.setFontSize(9);
+  doc.text("Generated: "+new Date().toLocaleString(),14,22);
 
-  doc.text(
-    "Generated: "+new Date().toLocaleString(),
-    14,
-    22
-  );
-
-  const rows = filteredRecords.map((record,index)=>[
-
-    index+1,
-    record.type.toUpperCase(),
-    record.title,
-    "BDT "+record.amount,
-    record.expenseDate,
-    record.comment,
-    record.deletedAt
-
+  const rows=filteredRecords.map((record,index)=>[
+    index+1,record.type.toUpperCase(),record.title,
+    "BDT "+record.amount,record.expenseDate,record.comment,record.deletedAt
   ]);
 
   doc.autoTable({
-
     startY:29,
-
-    head:[[
-      "SL",
-      "TYPE",
-      "TITLE / IP",
-      "AMOUNT",
-      "TRANSACTION DATE",
-      "COMMENT",
-      "DELETED AT"
-    ]],
-
+    head:[["SL","TYPE","TITLE / IP","AMOUNT","TRANSACTION DATE","COMMENT","DELETED AT"]],
     body:rows,
-
     theme:"grid",
-
-    styles:{
-      fontSize:7,
-      cellPadding:3
-    },
-
-    headStyles:{
-      fillColor:[8,127,91],
-      textColor:255
-    },
-
-    margin:{
-      left:14,
-      right:14
-    }
-
+    styles:{fontSize:7,cellPadding:3},
+    headStyles:{fillColor:[8,127,91],textColor:255},
+    margin:{left:14,right:14}
   });
-
   doc.save("ONE-ONLINE-Deleted-Earn-Spend.pdf");
-
 }
 
-
-/* ==========================================
-   THEME SYNC
-========================================== */
-
+/* THEME SYNC */
 function applyTheme(theme){
-
   if(!theme)return;
-
-  document.body.setAttribute(
-    "data-theme",
-    theme
-  );
-
+  document.body.setAttribute("data-theme",theme);
 }
 
 function syncTheme(){
-
   try{
-
-    const saved = localStorage.getItem("one_online_theme");
-
-    if(saved){
-      applyTheme(saved);
-    }
-
+    const saved=localStorage.getItem("one_online_theme");
+    if(saved)applyTheme(saved);
   }catch(error){}
-
 }
 
 window.addEventListener("storage",event=>{
-
-  if(event.key === "one_online_theme"){
-    applyTheme(event.newValue);
-  }
-
+  if(event.key==="one_online_theme")applyTheme(event.newValue);
 });
 
-window.addEventListener("message",event=>{
-
-  if(
-    event.data &&
-    event.data.type === "ONE_ONLINE_THEME"
-  ){
-
-    applyTheme(
-      event.data.theme ||
-      event.data.value
-    );
-
-  }
-
-});
-
-
-/* ==========================================
-   INITIALIZE
-========================================== */
-
+/* INITIALIZE */
 syncTheme();
-
-// Do not load any deleted records before View permission is verified.
 requestAuthAgain();
-
 </script>
-
 </body>
 </html>
