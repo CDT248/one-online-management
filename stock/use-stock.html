@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -267,6 +266,27 @@ th{
   z-index:100;
 }
 .toast.error{background:#4b2024;color:#fecaca;border-color:#87343d}
+
+/* PERMISSION GATE */
+.permission-gate{
+  max-width:600px;
+  margin:70px auto;
+  padding:30px;
+  text-align:center;
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:16px;
+}
+.permission-gate .gate-icon{
+  font-size:42px;
+  margin-bottom:12px;
+}
+.permission-gate h2{margin:0 0 9px}
+.permission-gate p{color:var(--muted);margin:0;line-height:1.6}
+.hidden{display:none!important}
+#appContent{display:none}
+body.auth-ready #appContent{display:block}
+
 @media(max-width:700px){
   body{padding:12px}
   .header h2{font-size:21px}
@@ -286,6 +306,25 @@ th{
 </head>
 
 <body>
+
+<!-- AUTH CHECKING -->
+<div id="authGate" class="permission-gate">
+  <div class="gate-icon">🔐</div>
+  <h2>Checking Access...</h2>
+  <p>Please wait while ONE ONLINE verifies your account permissions.</p>
+</div>
+
+<!-- ACCESS DENIED -->
+<div id="deniedGate" class="permission-gate hidden">
+  <div class="gate-icon">⛔</div>
+  <h2>Access Denied</h2>
+  <p id="deniedMessage">
+    You do not have permission to view this page.
+  </p>
+</div>
+
+<!-- MAIN APP -->
+<div id="appContent">
 <div class="container">
 
   <!-- DEMO NOTICE -->
@@ -333,19 +372,22 @@ th{
     </div>
   </div>
 
-  <div class="panel">
+  <!-- USAGE ENTRY: EDIT PERMISSION REQUIRED -->
+  <div class="panel" id="usagePanel">
     <h3 class="section-title">
       <i class="fa-solid fa-clipboard-list"></i> Stock Usage Entry
     </h3>
 
     <div class="type-options">
-      <div class="type-card active" id="onuCard" onclick="selectType('ONU')">
+      <div class="type-card active" id="onuCard"
+           onclick="selectType('ONU')">
         <i class="fa-solid fa-router"></i>
         <h3>ONU</h3>
         <p>Use ONU equipment</p>
       </div>
 
-      <div class="type-card" id="fiberCard" onclick="selectType('FIBER')">
+      <div class="type-card" id="fiberCard"
+           onclick="selectType('FIBER')">
         <i class="fa-solid fa-network-wired"></i>
         <h3>Fiber</h3>
         <p>Use fiber cable in meters</p>
@@ -414,7 +456,8 @@ th{
     </form>
   </div>
 
-  <div class="panel">
+  <!-- USAGE HISTORY: VIEW PERMISSION -->
+  <div class="panel" id="historyPanel">
     <div class="toolbar">
       <h3 class="section-title" style="margin:0">
         <i class="fa-solid fa-clock-rotate-left"></i> Usage History
@@ -448,16 +491,356 @@ th{
   </div>
 
 </div>
+</div>
 
 <div class="toast" id="toast"></div>
 
 <script>
+/* =========================================================
+   ONE ONLINE AUTH & PERMISSION SYSTEM
+========================================================= */
+
+const PAGE_PERMISSION_KEY = 'use-stock';
+
 const STOCK_KEY = "ONE_ONLINE_STOCK_DEMO_V1";
 const USE_HISTORY_KEY = "ONE_ONLINE_STOCK_USE_HISTORY_V1";
+
+let authReceived = false;
+let authData = null;
+
+let currentPermissions = {
+  view:false,
+  edit:false,
+  delete:false
+};
 
 let stockData = [];
 let useHistory = [];
 let selectedType = "ONU";
+let appInitialized = false;
+
+/* NORMALIZE */
+
+function normalizeKey(value){
+  return String(value || '')
+    .trim()
+    .toLowerCase()
+    .replace(/[_\s]+/g,'-')
+    .replace(/[^a-z0-9-]/g,'')
+    .replace(/-+/g,'-');
+}
+
+function truthy(value){
+  return value === true ||
+    value === 1 ||
+    ['true','1','yes','on'].includes(
+      String(value || '').trim().toLowerCase()
+    );
+}
+
+function getUserObject(data){
+  if(!data || typeof data !== 'object') return {};
+  return data.user || data.profile || data.account || data;
+}
+
+/* SYSTEM ADMIN */
+
+function isSystemAdmin(data){
+  if(!data) return false;
+
+  const user = getUserObject(data);
+
+  const roles = [
+    data.role,
+    data.userRole,
+    data.accountRole,
+    user.role,
+    user.user_role,
+    user.account_role
+  ];
+
+  const normalizedRoles = roles.map(normalizeKey);
+
+  return truthy(data.isSystemAdmin) ||
+    truthy(data.is_system_admin) ||
+    truthy(user.isSystemAdmin) ||
+    truthy(user.is_system_admin) ||
+    normalizedRoles.some(role =>
+      ['systemadmin','superadmin','system-admin','super-admin'].includes(role)
+    );
+}
+
+/* PERMISSION SOURCES */
+
+function getPermissionSources(data){
+  const sources = [];
+
+  if(!data || typeof data !== 'object') return sources;
+
+  [
+    data.permissions,
+    data.userPermissions,
+    data.user_permissions,
+    data.pagePermissions,
+    data.page_permissions,
+    data.permission
+  ].forEach(source=>{
+    if(source) sources.push(source);
+  });
+
+  const user = getUserObject(data);
+
+  if(user && user !== data){
+    [
+      user.permissions,
+      user.userPermissions,
+      user.user_permissions,
+      user.pagePermissions,
+      user.page_permissions
+    ].forEach(source=>{
+      if(source) sources.push(source);
+    });
+  }
+
+  return sources;
+}
+
+/* PAGE KEY MATCH */
+
+function permissionKeyMatches(key){
+  const aliases = [
+    'use-stock',
+    'usestock',
+    'stock-use',
+    'stock-usage'
+  ];
+
+  const normalized = normalizeKey(key);
+
+  return aliases.some(alias =>
+    normalizeKey(alias) === normalized
+  );
+}
+
+/* FIND PAGE PERMISSION */
+
+function findPermissionRecord(source){
+  if(!source) return null;
+
+  if(Array.isArray(source)){
+    return source.find(item=>{
+      if(!item || typeof item !== 'object') return false;
+
+      const keys = [
+        item.page_key,
+        item.pageKey,
+        item.key,
+        item.page,
+        item.name,
+        item.module
+      ];
+
+      return keys.some(permissionKeyMatches);
+    }) || null;
+  }
+
+  if(typeof source === 'object'){
+    for(const key of Object.keys(source)){
+      if(permissionKeyMatches(key)){
+        return source[key];
+      }
+    }
+
+    const directKeys = [
+      source.page_key,
+      source.pageKey,
+      source.key,
+      source.page,
+      source.name
+    ];
+
+    if(directKeys.some(permissionKeyMatches)){
+      return source;
+    }
+  }
+
+  return null;
+}
+
+/* READ PERMISSION VALUES */
+
+function permissionValue(record,action){
+  if(!record) return false;
+
+  if(typeof record === 'boolean' || typeof record === 'string'){
+    return action === 'view' && truthy(record);
+  }
+
+  const keys = {
+    view:['can_view','canView','view','view_permission'],
+    edit:['can_edit','canEdit','edit','edit_permission'],
+    delete:['can_delete','canDelete','delete','delete_permission']
+  };
+
+  return keys[action].some(key=>truthy(record[key]));
+}
+
+/* RESOLVE PERMISSIONS */
+
+function resolvePermissions(data){
+  if(isSystemAdmin(data)){
+    return {view:true,edit:true,delete:true};
+  }
+
+  const sources = getPermissionSources(data);
+
+  for(const source of sources){
+    const record = findPermissionRecord(source);
+
+    if(record){
+      return {
+        view:permissionValue(record,'view'),
+        edit:permissionValue(record,'edit'),
+        delete:permissionValue(record,'delete')
+      };
+    }
+  }
+
+  return {view:false,edit:false,delete:false};
+}
+
+/* ACCESS CONTROL */
+
+function showPermissionGate(){
+  document.body.classList.remove('auth-ready');
+
+  document.getElementById('authGate').classList.remove('hidden');
+  document.getElementById('deniedGate').classList.add('hidden');
+
+  document.getElementById('appContent').style.display='none';
+}
+
+function showPermissionDenied(message){
+  document.body.classList.remove('auth-ready');
+
+  document.getElementById('authGate').classList.add('hidden');
+  document.getElementById('appContent').style.display='none';
+
+  document.getElementById('deniedGate').classList.remove('hidden');
+
+  document.getElementById('deniedMessage').textContent=message;
+}
+
+function requirePermission(action){
+  if(!authReceived){
+    showPermissionGate();
+    return false;
+  }
+
+  if(!currentPermissions.view){
+    showPermissionDenied(
+      'Your account does not have View permission for Use Stock. Please contact your administrator.'
+    );
+    return false;
+  }
+
+  if(action && !currentPermissions[action]){
+    showToast(
+      'You do not have '+action.toUpperCase()+' permission.',
+      true
+    );
+    return false;
+  }
+
+  return true;
+}
+
+/* APPLY AUTH */
+
+function applyPagePermissions(){
+  document.getElementById('authGate').classList.add('hidden');
+
+  if(!currentPermissions.view){
+    showPermissionDenied(
+      'Your account does not have View permission for Use Stock. Please contact your administrator.'
+    );
+    return false;
+  }
+
+  document.getElementById('deniedGate').classList.add('hidden');
+
+  document.body.classList.add('auth-ready');
+  document.getElementById('appContent').style.display='block';
+
+  /* View-only user can see history and stats */
+  document.getElementById('usagePanel').style.display =
+    currentPermissions.edit ? '' : 'none';
+
+  return true;
+}
+
+/* RECEIVE AUTH MESSAGE */
+
+function handleAuthMessage(event){
+  if(event.source !== window.parent) return;
+
+  const message=event.data;
+
+  if(!message || typeof message !== 'object') return;
+  if(message.type !== 'ONE_ONLINE_AUTH') return;
+
+  const data =
+    message.data ||
+    message.payload ||
+    message.auth ||
+    message.userData ||
+    message;
+
+  authData=data;
+  authReceived=true;
+
+  currentPermissions=resolvePermissions(data);
+
+  if(!applyPagePermissions()) return;
+
+  if(!appInitialized){
+    appInitialized=true;
+    initializeApp();
+  }
+}
+
+window.addEventListener('message',handleAuthMessage);
+
+window.addEventListener('load',()=>{
+  showPermissionGate();
+
+  if(window.parent===window){
+    showPermissionDenied(
+      'This page must be opened inside the ONE ONLINE Management System.'
+    );
+  }
+});
+
+/* REQUEST AUTH AGAIN */
+
+function requestAuthAgain(){
+  if(window.parent!==window){
+    window.parent.postMessage({
+      type:'ONE_ONLINE_REQUEST_AUTH',
+      page:PAGE_PERMISSION_KEY
+    },'*');
+  }
+}
+
+setTimeout(()=>{
+  if(!authReceived){
+    requestAuthAgain();
+  }
+},1000);
+
+/* =========================================================
+   STORAGE
+========================================================= */
 
 function readStorage(key){
   try{
@@ -469,14 +852,24 @@ function readStorage(key){
 }
 
 function saveStock(){
+  if(!requirePermission('edit')) return false;
+
   localStorage.setItem(STOCK_KEY,JSON.stringify(stockData));
+  return true;
 }
 
 function saveHistory(){
+  if(!requirePermission('edit')) return false;
+
   localStorage.setItem(USE_HISTORY_KEY,JSON.stringify(useHistory));
+  return true;
 }
 
+/* LOAD DATA */
+
 function loadData(){
+  if(!requirePermission('view')) return;
+
   stockData = readStorage(STOCK_KEY);
   useHistory = readStorage(USE_HISTORY_KEY);
 
@@ -485,7 +878,13 @@ function loadData(){
   renderHistory();
 }
 
+/* =========================================================
+   STATISTICS
+========================================================= */
+
 function updateStats(){
+  if(!requirePermission('view')) return;
+
   const onu = stockData
     .filter(x=>String(x.category).toUpperCase()==="ONU")
     .reduce((sum,x)=>sum+Number(x.qty||0),0);
@@ -499,7 +898,13 @@ function updateStats(){
   document.getElementById("totalFiber").textContent=fiber+" m";
 }
 
+/* =========================================================
+   SELECT ONU / FIBER
+========================================================= */
+
 function selectType(type){
+  if(!requirePermission('edit')) return;
+
   selectedType=type;
 
   document.getElementById("onuCard").classList.toggle("active",type==="ONU");
@@ -522,7 +927,13 @@ function selectType(type){
   renderStockOptions();
 }
 
+/* =========================================================
+   STOCK OPTIONS
+========================================================= */
+
 function renderStockOptions(){
+  if(!requirePermission('view')) return;
+
   const select=document.getElementById("stockSelect");
   const previous=select.value;
 
@@ -535,9 +946,12 @@ function renderStockOptions(){
 
   items.forEach(item=>{
     const option=document.createElement("option");
+
     option.value=String(item.id);
+
     option.textContent=(item.name||"Unnamed Stock")+
       " — "+Number(item.qty||0)+" "+(item.unit||"pcs");
+
     select.appendChild(option);
   });
 
@@ -548,8 +962,13 @@ function renderStockOptions(){
   updateAvailable();
 }
 
+/* AVAILABLE QUANTITY */
+
 function updateAvailable(){
+  if(!requirePermission('view')) return;
+
   const id=document.getElementById("stockSelect").value;
+
   const item=stockData.find(x=>String(x.id)===String(id));
 
   document.getElementById("stockCode").value=item?.code||"";
@@ -557,33 +976,62 @@ function updateAvailable(){
   const qty=Number(item?.qty||0);
   const unit=item?.unit||(selectedType==="FIBER"?"meter":"pcs");
 
-  document.getElementById("availableQty").value=item?qty+" "+unit:"";
-  document.getElementById("availableDisplay").textContent=item?qty+" "+unit:"0";
+  document.getElementById("availableQty").value=
+    item?qty+" "+unit:"";
+
+  document.getElementById("availableDisplay").textContent=
+    item?qty+" "+unit:"0";
 }
 
+/* =========================================================
+   RESET FORM
+========================================================= */
+
 function resetForm(){
+  if(!requirePermission('edit')) return;
+
   document.getElementById("useForm").reset();
+
   document.getElementById("useDate").value=getLocalDate();
+
   document.getElementById("stockCode").value="";
   document.getElementById("availableQty").value="";
   document.getElementById("availableDisplay").textContent="0";
+
   renderStockOptions();
 }
+
+/* LOCAL DATE */
 
 function getLocalDate(){
   const now=new Date();
   const offset=now.getTimezoneOffset()*60000;
+
   return new Date(now.getTime()-offset).toISOString().slice(0,10);
 }
 
+/* =========================================================
+   CONFIRM USE STOCK
+========================================================= */
+
 document.getElementById("useForm").addEventListener("submit",function(e){
+
   e.preventDefault();
 
+  if(!requirePermission('edit')) return;
+
   const id=document.getElementById("stockSelect").value;
+
   const item=stockData.find(x=>String(x.id)===String(id));
 
   if(!item){
     showToast("Please select a valid stock item.",true);
+    return;
+  }
+
+  /* Verify selected item's category */
+  if(String(item.category||"").toUpperCase()!==selectedType){
+    showToast("Selected stock type does not match.",true);
     return;
   }
 
@@ -600,12 +1048,18 @@ document.getElementById("useForm").addEventListener("submit",function(e){
     return;
   }
 
+  if(selectedType==="FIBER" && !Number.isFinite(quantity)){
+    showToast("Please enter a valid fiber meter quantity.",true);
+    return;
+  }
+
   if(quantity>available){
     showToast("Not enough stock! Available: "+available,true);
     return;
   }
 
   const date=document.getElementById("useDate").value;
+
   if(!date){
     showToast("Please select usage date.",true);
     return;
@@ -628,16 +1082,22 @@ document.getElementById("useForm").addEventListener("submit",function(e){
     createdAt:new Date().toISOString()
   };
 
+  /* Reduce stock */
   item.qty=available-quantity;
 
+  /* Add usage history */
   useHistory.unshift(historyEntry);
 
-  saveStock();
-  saveHistory();
+  /* Save both datasets */
+  if(!saveStock() || !saveHistory()){
+    showToast("Could not save stock usage.",true);
+    return;
+  }
 
   showToast("Stock usage saved successfully!");
 
   document.getElementById("useForm").reset();
+
   document.getElementById("useDate").value=getLocalDate();
 
   updateStats();
@@ -645,16 +1105,29 @@ document.getElementById("useForm").addEventListener("submit",function(e){
   renderHistory();
 });
 
+/* =========================================================
+   USAGE HISTORY
+========================================================= */
+
 function renderHistory(){
+  if(!requirePermission('view')) return;
+
   const tbody=document.getElementById("historyTable");
   const empty=document.getElementById("historyEmpty");
-  const search=document.getElementById("historySearch").value.trim().toLowerCase();
+
+  const search=document.getElementById("historySearch")
+    .value.trim().toLowerCase();
 
   tbody.innerHTML="";
 
   const filtered=useHistory.filter(item=>{
     return [
-      item.name,item.code,item.category,item.usedFor,item.note,item.date
+      item.name,
+      item.code,
+      item.category,
+      item.usedFor,
+      item.note,
+      item.date
     ].some(value=>String(value||"").toLowerCase().includes(search));
   });
 
@@ -684,9 +1157,12 @@ function renderHistory(){
 
       if(i===3){
         const badge=document.createElement("span");
+
         badge.className="badge "+(
-          String(item.category).toUpperCase()==="ONU"?"badge-onu":"badge-fiber"
+          String(item.category).toUpperCase()==="ONU"
+          ?"badge-onu":"badge-fiber"
         );
+
         badge.textContent=value;
         td.appendChild(badge);
       }else{
@@ -700,25 +1176,63 @@ function renderHistory(){
   });
 }
 
+/* =========================================================
+   TOAST
+========================================================= */
+
 function showToast(message,error=false){
   const toast=document.getElementById("toast");
+
   toast.textContent=message;
   toast.className=error?"toast error":"toast";
   toast.style.display="block";
 
-  setTimeout(()=>toast.style.display="none",3000);
+  setTimeout(()=>{
+    toast.style.display="none";
+  },3000);
 }
 
+/* =========================================================
+   STORAGE / PAGE SYNC
+========================================================= */
+
 window.addEventListener("storage",function(e){
+  if(!authReceived || !currentPermissions.view) return;
+
   if(e.key===STOCK_KEY || e.key===USE_HISTORY_KEY){
     loadData();
   }
 });
 
-window.addEventListener("focus",loadData);
+window.addEventListener("focus",function(){
+  if(authReceived && currentPermissions.view){
+    loadData();
+  }
+});
 
-document.getElementById("useDate").value=getLocalDate();
-loadData();
+/* =========================================================
+   INITIALIZE ONLY AFTER AUTH
+========================================================= */
+
+function initializeApp(){
+  if(!requirePermission('view')) return;
+
+  document.getElementById("useDate").value=getLocalDate();
+
+  /* Default selection */
+  selectedType="ONU";
+
+  document.getElementById("onuCard").classList.add("active");
+  document.getElementById("fiberCard").classList.remove("active");
+
+  document.getElementById("qtyLabel").textContent="Use Quantity (PCS) *";
+
+  document.getElementById("useQty").step="1";
+  document.getElementById("useQty").min="1";
+
+  loadData();
+}
 </script>
+
 </body>
 </html>
