@@ -3,1662 +3,1182 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>Network Map | ONE ONLINE</title>
 
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
 <style>
 :root{
-  --bg:#0b1220;
-  --panel:#111c2e;
-  --panel2:#172338;
-  --text:#e8f0fc;
-  --muted:#91a2bb;
-  --line:#283950;
-  --primary:#168b68;
+ --bg:#080f1c;
+ --panel:#111c2e;
+ --panel2:#17243a;
+ --panel3:#1d2c43;
+ --text:#e8f0fc;
+ --muted:#91a2bb;
+ --line:#293a52;
+ --primary:#10b981;
+ --primary2:#087f5b;
+ --danger:#fb626b;
+ --shadow:0 8px 28px rgba(0,0,0,.28);
 }
 *{box-sizing:border-box}
-
-html,body{
-  margin:0;
-  width:100%;
-  height:100%;
-  font-family:Arial,sans-serif;
-  background:var(--bg);
-  color:var(--text);
+html,body{margin:0;width:100%;height:100%;overflow:hidden}
+body{
+ font-family:Inter,Arial,sans-serif;
+ background:var(--bg);color:var(--text);
 }
-
-body{overflow:hidden}
-
-button,input,select{font:inherit}
+button,input,select,textarea{font:inherit}
 button{cursor:pointer}
-
-/* PAGE */
-
-.map-page{
-  width:100%;
-  height:100%;
-  min-height:400px;
-  display:flex;
-  flex-direction:column;
-  overflow:hidden;
+.app{
+ height:100dvh;width:100%;
+ display:flex;flex-direction:column;
+ overflow:hidden;
 }
 
 /* HEADER */
+.header{
+ height:62px;flex-shrink:0;
+ display:flex;align-items:center;justify-content:space-between;
+ padding:0 17px;background:#101b2d;
+ border-bottom:1px solid var(--line);
+ z-index:500;
+}
+.brand{display:flex;align-items:center;gap:10px;min-width:0}
+.brand-icon{
+ width:39px;height:39px;border-radius:12px;
+ background:#123b35;border:1px solid #226b55;
+ display:grid;place-items:center;font-size:20px;
+}
+.brand-name{font-size:14px;font-weight:800;white-space:nowrap}
+.brand-sub{font-size:9px;color:var(--muted);margin-top:3px}
+.header-actions{display:flex;align-items:center;gap:7px}
+.icon-btn{
+ width:37px;height:37px;border-radius:10px;
+ border:1px solid #30435c;background:#1a2a40;
+ color:#dce8f7;font-size:17px;
+ display:grid;place-items:center;
+}
+.icon-btn:hover{background:#263a55}
+.primary-btn{
+ border:0;background:var(--primary2);color:#fff;
+ padding:10px 13px;border-radius:9px;
+ font-size:11px;font-weight:800;
+}
+.primary-btn:hover{background:#09976c}
 
-.map-header{
-  min-height:72px;
-  background:var(--panel);
-  border-bottom:1px solid var(--line);
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:10px 16px;
-  gap:12px;
-  flex-wrap:wrap;
-  z-index:600;
+/* STATS */
+.stats{
+ flex-shrink:0;display:grid;
+ grid-template-columns:repeat(4,1fr);
+ gap:9px;padding:10px 14px;
+ background:#0d1727;
+ border-bottom:1px solid var(--line);
+}
+.stat{
+ padding:9px 11px;border:1px solid var(--line);
+ background:#142136;border-radius:10px;
+ min-width:0;
+}
+.stat-label{font-size:9px;color:var(--muted);font-weight:700}
+.stat-value{font-size:19px;font-weight:800;margin-top:5px}
+.stat:nth-child(1) .stat-value{color:#5ce5b6}
+.stat:nth-child(2) .stat-value{color:#63a9ff}
+.stat:nth-child(3) .stat-value{color:#f2b75b}
+.stat:nth-child(4) .stat-value{color:#c59cff}
+
+/* TOOLBAR */
+.toolbar{
+ flex-shrink:0;display:flex;gap:8px;
+ align-items:center;padding:9px 14px;
+ background:#101b2d;border-bottom:1px solid var(--line);
+}
+.search-wrap{flex:1;position:relative;min-width:0}
+.search-wrap span{
+ position:absolute;left:11px;top:50%;
+ transform:translateY(-50%);color:#8295ad;
+}
+.search-wrap input{
+ width:100%;height:37px;
+ border:1px solid #34465e;border-radius:9px;
+ background:#0b1728;color:#e8f0fc;
+ padding:0 10px 0 33px;outline:none;font-size:11px;
+}
+.search-wrap input:focus{border-color:var(--primary)}
+.filter-select{
+ height:37px;max-width:145px;
+ border:1px solid #34465e;border-radius:9px;
+ background:#17243a;color:#e8f0fc;
+ padding:0 9px;font-size:10px;outline:none;
 }
 
-.header-left{
-  display:flex;
-  align-items:center;
-  gap:20px;
-  flex-wrap:wrap;
+/* MAP AREA */
+.map-wrap{flex:1;min-height:0;position:relative;background:#101b2b}
+#map{width:100%;height:100%;z-index:1}
+.leaflet-container{background:#0b1728;font-family:Inter,Arial,sans-serif}
+.leaflet-control-zoom a{
+ background:#142136!important;color:#e8f0fc!important;
+ border-color:#34465e!important;
+}
+.leaflet-control-attribution{font-size:8px!important}
+
+/* MAP FLOAT BUTTONS */
+.map-controls{
+ position:absolute;right:12px;top:12px;
+ z-index:400;display:flex;flex-direction:column;gap:8px;
+}
+.map-control{
+ width:40px;height:40px;border-radius:11px;
+ border:1px solid #40536d;
+ background:#142136;color:#eaf3ff;
+ box-shadow:var(--shadow);font-size:17px;
+ display:grid;place-items:center;
+}
+.map-control:active{background:#087f5b}
+.map-mode-label{
+ position:absolute;left:12px;top:12px;
+ z-index:400;background:#142136eF;
+ border:1px solid #40536d;border-radius:8px;
+ padding:8px 10px;font-size:10px;font-weight:800;
+ color:#cce8df;pointer-events:none;
+}
+.map-bottom-info{
+ position:absolute;left:12px;bottom:12px;
+ z-index:400;padding:8px 10px;
+ border:1px solid #40536d;border-radius:8px;
+ background:#142136eF;color:#b9c9dc;
+ font-size:9px;pointer-events:none;
 }
 
-.map-brand{
-  font-size:18px;
-  font-weight:800;
-  white-space:nowrap;
+/* CUSTOM MARKERS */
+.custom-marker{
+ width:36px;height:36px;border-radius:50% 50% 50% 5px;
+ transform:rotate(-45deg);
+ border:2px solid #fff;
+ display:grid;place-items:center;
+ box-shadow:0 3px 12px #0008;
+}
+.custom-marker span{
+ transform:rotate(45deg);font-size:17px;
+ filter:drop-shadow(0 1px 1px #0004);
+}
+.marker-label{
+ background:#101c2d;color:#fff;
+ border:1px solid #42546b;border-radius:5px;
+ padding:3px 6px;font-size:9px;font-weight:800;
+ white-space:nowrap;
 }
 
-.map-brand span{color:#21bd91}
-
-/* COUNTS */
-
-.map-counts{
-  display:flex;
-  align-items:center;
-  gap:8px;
+/* LIVE WIRES */
+.leaflet-overlay-pane path.wire{
+ stroke-dasharray:2 12;
+ stroke-linecap:round;
+ animation:wireFlow 1.1s linear infinite;
 }
+.leaflet-overlay-pane path.wire-static{animation:none}
+.leaflet-overlay-pane path.wire-solid{stroke-dasharray:none}
+@keyframes wireFlow{to{stroke-dashoffset:-28}}
 
-.count-item{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  padding:8px 11px;
-  border-radius:8px;
-  background:var(--panel2);
-  border:1px solid var(--line);
-  min-width:90px;
+/* SIDE / BOTTOM NAV */
+.bottom-nav{
+ flex-shrink:0;height:58px;
+ background:#101b2d;border-top:1px solid var(--line);
+ display:flex;align-items:center;justify-content:space-around;
+ z-index:500;
 }
-
-.count-icon{
-  width:29px;
-  height:29px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  border-radius:7px;
-  font-size:15px;
+.nav-btn{
+ flex:1;height:100%;border:0;background:transparent;
+ color:#8294ac;display:flex;flex-direction:column;
+ align-items:center;justify-content:center;gap:3px;
+ font-size:9px;font-weight:700;
 }
+.nav-btn span:first-child{font-size:19px}
+.nav-btn.active{color:#4de1b0}
+.nav-btn:active{background:#1c2b40}
 
-.count-item small{
-  display:block;
-  font-size:10px;
-  color:var(--muted);
+/* DRAWER */
+.drawer-overlay{
+ position:fixed;inset:0;background:#0009;
+ z-index:800;display:none;
 }
-
-.count-item strong{
-  display:block;
-  font-size:17px;
-  margin-top:2px;
+.drawer-overlay.show{display:block}
+.drawer{
+ position:absolute;top:0;right:0;
+ width:min(360px,88vw);height:100%;
+ background:#111c2e;border-left:1px solid var(--line);
+ box-shadow:var(--shadow);padding:18px;
+ overflow-y:auto;
+ transform:translateX(100%);transition:.25s;
 }
-
-.count-pole .count-icon{
-  background:#2563eb30;
-  color:#60a5fa;
+.drawer-overlay.show .drawer{transform:translateX(0)}
+.drawer-head{
+ display:flex;align-items:center;justify-content:space-between;
+ margin-bottom:17px;
 }
-
-.count-customer .count-icon{
-  background:#16a36a30;
-  color:#34d399;
+.drawer-head h3{font-size:16px;margin:0}
+.drawer-close{
+ border:1px solid #354860;background:#1b2a40;
+ color:#fff;border-radius:8px;width:32px;height:32px;
 }
-
-.count-box .count-icon{
-  background:#db8b2030;
-  color:#fbbf24;
+.drawer-section{
+ font-size:10px;color:#8fa2bd;font-weight:800;
+ margin:17px 0 9px;text-transform:uppercase;
+ letter-spacing:.6px;
 }
-
-/* BUTTONS */
-
-.header-actions{
-  display:flex;
-  align-items:center;
-  gap:7px;
-  flex-wrap:wrap;
+.drawer-item{
+ width:100%;display:flex;align-items:center;gap:10px;
+ padding:12px;border-radius:9px;
+ background:#17243a;border:1px solid #2b3e56;
+ color:#e6effb;margin-bottom:7px;text-align:left;
+ font-size:11px;font-weight:700;
 }
-
-.btn{
-  border:0;
-  border-radius:8px;
-  padding:10px 13px;
-  background:#168b68;
-  color:white;
-  font-weight:600;
-  font-size:12px;
-  white-space:nowrap;
-}
-
-.btn.blue{background:#2879d4}
-.btn.orange{background:#b87919}
-.btn.secondary{background:#293b53}
-.btn.danger{background:#bd3942}
-.btn:hover{filter:brightness(1.12)}
-
-.btn.small{
-  padding:8px 10px;
-  font-size:12px;
-}
-
-/* MAP */
-
-.map-area{
-  flex:1;
-  min-height:0;
-  position:relative;
-  width:100%;
-  background:#dce6e9;
-}
-
-#map{
-  width:100%;
-  height:100%;
-  background:#dce6e9;
-}
-
-/* MAP HINT */
-
-.map-hint{
-  position:absolute;
-  z-index:500;
-  bottom:20px;
-  left:50%;
-  transform:translateX(-50%);
-  background:#111c2ef2;
-  color:white;
-  border-radius:9px;
-  padding:11px 16px;
-  font-size:12px;
-  display:none;
-  text-align:center;
-  max-width:90%;
-}
-
-/* MARKERS */
-
-.marker{
-  width:35px;
-  height:35px;
-  border-radius:50%;
-  border:3px solid white;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  color:white;
-  font-size:17px;
-  box-shadow:0 2px 8px #0007;
-}
-
-.pole-marker{background:#2563eb}
-.customer-marker{background:#16a36a}
-.box-marker{background:#db8b20}
+.drawer-item.active{border-color:#0eaa7b;background:#12342f}
+.drawer-item span:first-child{font-size:18px}
 
 /* MODALS */
-
+.modal-overlay{
+ position:fixed;inset:0;z-index:1000;
+ background:rgba(0,0,0,.78);
+ display:none;align-items:center;justify-content:center;
+ padding:14px;
+}
+.modal-overlay.show{display:flex}
 .modal{
-  display:none;
-  position:fixed;
-  z-index:3000;
-  inset:0;
-  background:#000b;
-  align-items:center;
-  justify-content:center;
-  padding:15px;
+ width:100%;max-width:480px;max-height:90dvh;
+ overflow-y:auto;background:#142136;
+ border:1px solid #354961;border-radius:16px;
+ box-shadow:0 20px 70px #000a;padding:19px;
 }
-
-.modal.show{display:flex}
-
-.modal-content{
-  width:100%;
-  max-width:490px;
-  max-height:90%;
-  overflow-y:auto;
-  background:#111c2e;
-  border:1px solid #35465e;
-  border-radius:15px;
-  padding:20px;
-  box-shadow:0 20px 60px #0008;
-}
-
 .modal-head{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:10px;
-  margin-bottom:18px;
+ display:flex;align-items:center;justify-content:space-between;
+ gap:10px;margin-bottom:17px;
 }
-
-.modal-head h3{
-  margin:0;
-  font-size:19px;
+.modal-head h3{font-size:16px;margin:0}
+.close-btn{
+ width:30px;height:30px;border-radius:8px;
+ border:1px solid #354961;background:#203149;color:#fff;
 }
-
-.close{
-  border:0;
-  background:#293950;
-  color:white;
-  width:32px;
-  height:32px;
-  border-radius:8px;
+.field{margin-bottom:12px}
+.field label{
+ display:block;font-size:10px;font-weight:800;
+ color:#b8c8dc;margin-bottom:6px;
 }
-
-.form-group{margin-bottom:13px}
-
-.form-group label{
-  display:block;
-  font-size:12px;
-  color:#b5c5d9;
-  margin-bottom:6px;
+.field input,.field select,.field textarea{
+ width:100%;height:40px;padding:0 11px;
+ border:1px solid #354961;border-radius:8px;
+ background:#0b1728;color:#e8f0fc;
+ outline:none;font-size:11px;
 }
-
-.form-group input,
-.form-group select{
-  width:100%;
-  padding:11px;
-  background:#1c2b41;
-  color:white;
-  border:1px solid #3a4b62;
-  border-radius:8px;
-  outline:none;
+.field textarea{height:70px;padding:10px;resize:vertical}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:#10b981}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.modal-actions{
+ display:flex;gap:8px;justify-content:flex-end;
+ margin-top:17px;flex-wrap:wrap;
 }
-
-.form-group input:focus,
-.form-group select:focus{
-  border-color:#1cba8a;
+.btn{
+ border:1px solid transparent;border-radius:9px;
+ padding:10px 14px;font-size:11px;font-weight:800;
 }
-
-.form-group select option{
-  background:#1c2b41;
-  color:white;
+.btn-green{background:#087f5b;color:#fff}
+.btn-grey{background:#203149;border-color:#354961;color:#e1ebf8}
+.btn-red{background:#49232c;border-color:#72323d;color:#ffabb1}
+.help{
+ font-size:10px;color:#93a6be;
+ line-height:1.7;margin-top:7px;
 }
-
-.form-row{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:10px;
+.detail-row{
+ display:flex;justify-content:space-between;gap:15px;
+ border-bottom:1px solid #2b3d54;padding:10px 0;
+ font-size:11px;
 }
+.detail-row span:first-child{color:#91a2bb}
+.detail-row span:last-child{text-align:right;font-weight:700;word-break:break-word}
 
-.form-actions{
-  display:flex;
-  gap:8px;
-  margin-top:18px;
+/* TOAST */
+.toast{
+ position:fixed;bottom:76px;left:50%;
+ transform:translate(-50%,15px);
+ opacity:0;pointer-events:none;z-index:1500;
+ background:#173a31;color:#c8ffea;
+ border:1px solid #287c60;border-radius:10px;
+ padding:11px 16px;font-size:11px;font-weight:800;
+ box-shadow:var(--shadow);transition:.25s;
+ max-width:90%;text-align:center;
 }
+.toast.show{opacity:1;transform:translate(-50%,0)}
 
-.form-actions button{flex:1}
-
-.info-line{
-  display:flex;
-  justify-content:space-between;
-  align-items:flex-start;
-  gap:12px;
-  padding:10px 0;
-  border-bottom:1px solid var(--line);
-  font-size:13px;
-}
-
-.info-line span{color:var(--muted)}
-
-.info-line strong{
-  text-align:right;
-  overflow-wrap:anywhere;
-}
-
-.info-actions{
-  display:flex;
-  gap:8px;
-  margin-top:16px;
-  flex-wrap:wrap;
-}
-
-.info-actions button{flex:1}
-
-.menu-option{
-  width:100%;
-  margin-bottom:10px;
-  padding:14px;
-  border:1px solid var(--line);
-  border-radius:9px;
-  background:#1c2b41;
-  color:white;
-  text-align:left;
-  font-weight:700;
-}
-
-.menu-option:hover{border-color:#168b68}
-
-.menu-option small{
-  display:block;
-  color:#9eb0c6;
-  margin-top:5px;
-  font-weight:400;
-}
-
-.section-label{
-  font-size:11px;
-  font-weight:700;
-  color:#91a2bb;
-  letter-spacing:1px;
-  margin:17px 0 7px;
-}
-
-.empty{
-  color:var(--muted);
-  font-size:12px;
-  padding:10px 0;
+/* CONNECTION INFO */
+.connection-info{
+ background:#0d1b2b;border:1px solid #30435b;
+ border-radius:9px;padding:10px;margin-top:12px;
+ font-size:10px;color:#b6c8dc;line-height:1.8;
 }
 
 /* MOBILE */
-
-@media(max-width:950px){
-
-  .map-header{
-    align-items:flex-start;
-  }
-
-  .header-left{
-    gap:10px;
-  }
-
-}
-
 @media(max-width:650px){
-
-  .map-header{
-    padding:9px;
-    gap:9px;
-  }
-
-  .header-left{
-    width:100%;
-    justify-content:space-between;
-  }
-
-  .map-brand{
-    font-size:15px;
-  }
-
-  .map-counts{
-    gap:5px;
-  }
-
-  .count-item{
-    min-width:0;
-    padding:6px;
-    gap:5px;
-  }
-
-  .count-icon{
-    width:24px;
-    height:24px;
-    font-size:12px;
-  }
-
-  .count-item small{font-size:9px}
-  .count-item strong{font-size:14px}
-
-  .header-actions{
-    width:100%;
-    display:grid;
-    grid-template-columns:repeat(4,1fr);
-    gap:5px;
-  }
-
-  .header-actions .btn{
-    padding:9px 4px;
-    font-size:10px;
-    white-space:normal;
-  }
-
-  .form-row{
-    grid-template-columns:1fr;
-  }
-
-  .modal-content{
-    padding:16px;
-  }
+ .header{height:56px;padding:0 10px}
+ .brand-icon{width:35px;height:35px}
+ .brand-name{font-size:12px}
+ .brand-sub{font-size:8px}
+ .header-actions{gap:5px}
+ .header-actions .primary-btn{padding:9px 10px;font-size:10px}
+ .icon-btn{width:34px;height:34px}
+ .stats{gap:6px;padding:8px}
+ .stat{padding:8px}
+ .stat-label{font-size:8px}
+ .stat-value{font-size:16px}
+ .toolbar{padding:8px;gap:6px}
+ .filter-select{max-width:112px;font-size:9px}
+ .search-wrap input{font-size:10px}
+ .map-controls{right:9px;top:55px}
+ .map-control{width:36px;height:36px}
+ .map-mode-label{top:9px;left:9px}
+ .map-bottom-info{bottom:9px;left:9px}
+ .bottom-nav{height:60px}
+ .modal-overlay{align-items:flex-end;padding:0}
+ .modal{
+  max-width:none;border-radius:18px 18px 0 0;
+  max-height:88dvh;padding:18px 16px 25px;
+  border-bottom:0;
+ }
+ .modal-head h3{font-size:15px}
+ .two-col{gap:8px}
+ .modal-actions button{flex:1}
+}
+@media(min-width:651px){
+ .bottom-nav{height:54px}
 }
 </style>
 </head>
 
 <body>
+<div class="app">
 
-<div class="map-page">
+<header class="header">
+ <div class="brand">
+  <div class="brand-icon">🗺️</div>
+  <div>
+   <div class="brand-name">ONE ONLINE</div>
+   <div class="brand-sub">NETWORK MANAGEMENT MAP</div>
+  </div>
+ </div>
+ <div class="header-actions">
+  <button class="icon-btn" onclick="openDrawer()" title="Menu">☰</button>
+  <button class="primary-btn" onclick="openLocationModal()">＋ Add</button>
+ </div>
+</header>
 
-  <!-- HEADER -->
-  <header class="map-header">
-
-    <div class="header-left">
-
-      <div class="map-brand">
-        <span>ONE</span> ONLINE | NETWORK MAP
-      </div>
-
-      <!-- TOTAL COUNTS -->
-      <div class="map-counts">
-
-        <div class="count-item count-pole">
-          <div class="count-icon">⚡</div>
-          <div>
-            <small>POLES</small>
-            <strong id="poleCount">0</strong>
-          </div>
-        </div>
-
-        <div class="count-item count-customer">
-          <div class="count-icon">👤</div>
-          <div>
-            <small>CUSTOMERS</small>
-            <strong id="customerCount">0</strong>
-          </div>
-        </div>
-
-        <div class="count-item count-box">
-          <div class="count-icon">▣</div>
-          <div>
-            <small>SUB BOX</small>
-            <strong id="boxCount">0</strong>
-          </div>
-        </div>
-
-      </div>
-
-    </div>
-
-    <!-- ALL ACTION BUTTONS IN HEADER -->
-    <div class="header-actions">
-
-      <button class="btn secondary" onclick="resetView()">
-        ↗ Reset Map
-      </button>
-
-      <button class="btn" onclick="startAddPole()">
-        + Pole
-      </button>
-
-      <button class="btn blue" onclick="startAddCustomer()">
-        + Customer
-      </button>
-
-      <button class="btn orange" onclick="startAddBox()">
-        + Sub Box
-      </button>
-
-    </div>
-
-  </header>
-
-  <!-- CLEAN MAP -->
-  <main class="map-area">
-
-    <div id="map"></div>
-
-    <div class="map-hint" id="mapHint"></div>
-
-  </main>
-
+<div class="stats">
+ <div class="stat"><div class="stat-label">TOTAL LOCATIONS</div><div class="stat-value" id="totalCount">0</div></div>
+ <div class="stat"><div class="stat-label">MAIN / SUB BOX</div><div class="stat-value" id="boxCount">0</div></div>
+ <div class="stat"><div class="stat-label">POLES</div><div class="stat-value" id="poleCount">0</div></div>
+ <div class="stat"><div class="stat-label">CUSTOMERS</div><div class="stat-value" id="customerCount">0</div></div>
 </div>
 
-<!-- POLE MODAL -->
+<div class="toolbar">
+ <div class="search-wrap">
+  <span>⌕</span>
+  <input id="searchInput" placeholder="Search location..." oninput="drawMarkers()">
+ </div>
+ <select class="filter-select" id="typeFilter" onchange="drawMarkers()">
+  <option value="all">All Locations</option>
+ </select>
+ <button class="icon-btn" onclick="fitAll()" title="Fit all">⛶</button>
+</div>
 
-<div class="modal" id="poleModal">
- <div class="modal-content">
+<div class="map-wrap">
+ <div id="map"></div>
+ <div class="map-mode-label" id="mapModeLabel">🗺️ ROAD MAP</div>
+ <div class="map-controls">
+  <button class="map-control" onclick="zoomIn()">＋</button>
+  <button class="map-control" onclick="zoomOut()">−</button>
+  <button class="map-control" onclick="fitAll()">⛶</button>
+  <button class="map-control" onclick="openViewMenu()">🌍</button>
+ </div>
+ <div class="map-bottom-info" id="mapInfo">Tap + Add to create a location</div>
+</div>
 
-  <div class="modal-head">
-   <h3 id="poleModalTitle">Add New Pole</h3>
-   <button class="close" onclick="closeModal('poleModal')">✕</button>
+<nav class="bottom-nav">
+ <button class="nav-btn active" onclick="setNav(this,'map')"><span>🗺️</span><span>Map</span></button>
+ <button class="nav-btn" onclick="openLocationModal()"><span>📍</span><span>Add Location</span></button>
+ <button class="nav-btn" onclick="openConnectModal()"><span>🔗</span><span>Connect</span></button>
+ <button class="nav-btn" onclick="openDrawer()"><span>⚙️</span><span>More</span></button>
+</nav>
+</div>
+
+<!-- DRAWER -->
+<div class="drawer-overlay" id="drawerOverlay" onclick="if(event.target===this)closeDrawer()">
+ <div class="drawer">
+  <div class="drawer-head">
+   <h3>Map Menu</h3>
+   <button class="drawer-close" onclick="closeDrawer()">✕</button>
   </div>
 
-  <form id="poleForm">
+  <div class="drawer-section">Map Display</div>
+  <button class="drawer-item" onclick="changeView('road')"><span>🗺️</span>Road Map</button>
+  <button class="drawer-item" onclick="changeView('satellite')"><span>🛰️</span>Satellite</button>
+  <button class="drawer-item" onclick="changeView('hybrid')"><span>🌍</span>Hybrid</button>
+  <button class="drawer-item" onclick="changeView('network')"><span>📡</span>Network Only</button>
 
-   <input type="hidden" id="poleId">
+  <div class="drawer-section">Network Management</div>
+  <button class="drawer-item" onclick="closeDrawer();openLocationModal()"><span>📍</span>Add New Location</button>
+  <button class="drawer-item" onclick="closeDrawer();openConnectModal()"><span>🔗</span>Create Connection</button>
+  <button class="drawer-item" onclick="closeDrawer();openConnectionList()"><span>〰️</span>Connection List</button>
 
-   <div class="form-group">
-    <label>Pole Name / Number</label>
-    <input id="poleName" required placeholder="Example: POLE-001">
-   </div>
-
-   <div class="form-group">
-    <label>Pole Address</label>
-    <input id="poleAddress" placeholder="Pole Address">
-   </div>
-
-   <div class="form-row">
-    <div class="form-group">
-     <label>Latitude</label>
-     <input id="poleLat" type="number" step="any" required>
-    </div>
-
-    <div class="form-group">
-     <label>Longitude</label>
-     <input id="poleLng" type="number" step="any" required>
-    </div>
-   </div>
-
-   <div class="form-actions">
-    <button type="button" class="btn secondary" onclick="closeModal('poleModal')">Cancel</button>
-    <button class="btn">Save Pole</button>
-   </div>
-
-  </form>
-
+  <div class="drawer-section">Settings</div>
+  <button class="drawer-item" onclick="location.href='setting.html'"><span>⚙️</span>Map Settings</button>
+  <button class="drawer-item" onclick="closeDrawer();fitAll()"><span>⛶</span>Fit All Locations</button>
  </div>
 </div>
 
-<!-- CUSTOMER MODAL -->
-
-<div class="modal" id="customerModal">
- <div class="modal-content">
-
+<!-- LOCATION MODAL -->
+<div class="modal-overlay" id="locationModal">
+ <div class="modal">
   <div class="modal-head">
-   <h3 id="customerModalTitle">Add Customer</h3>
-   <button class="close" onclick="closeModal('customerModal')">✕</button>
+   <h3 id="locationModalTitle">＋ Add Location</h3>
+   <button class="close-btn" onclick="closeModal('locationModal')">✕</button>
   </div>
 
-  <form id="customerForm">
+  <input type="hidden" id="editLocationId">
 
-   <input type="hidden" id="customerId">
+  <div class="field">
+   <label>Location Type *</label>
+   <select id="locationType"></select>
+  </div>
 
-   <div class="form-group">
-    <label>Customer Name</label>
-    <input id="customerName" required placeholder="Customer Name">
+  <div class="field">
+   <label>Location Name *</label>
+   <input id="locationName" placeholder="Enter location name">
+  </div>
+
+  <div class="two-col">
+   <div class="field">
+    <label>Latitude *</label>
+    <input id="locationLat" type="number" step="any" placeholder="23.8103">
    </div>
-
-   <div class="form-row">
-    <div class="form-group">
-     <label>Customer IP</label>
-     <input id="customerIP" placeholder="192.168.1.10">
-    </div>
-
-    <div class="form-group">
-     <label>Connection Type</label>
-     <select id="customerType">
-      <option value="Fiber">Fiber</option>
-      <option value="UTP Cable">UTP Cable</option>
-      <option value="Wireless">Wireless</option>
-     </select>
-    </div>
+   <div class="field">
+    <label>Longitude *</label>
+    <input id="locationLng" type="number" step="any" placeholder="90.4125">
    </div>
+  </div>
 
-   <div class="form-group">
-    <label>Customer Address</label>
-    <input id="customerAddress" placeholder="Customer Address">
-   </div>
+  <div class="field">
+   <label>Location Number / Code</label>
+   <input id="locationNumber" placeholder="Example: LOC-001">
+  </div>
 
-   <div class="form-group">
-    <label>Connect Through</label>
-    <select id="customerSourceType" onchange="updateCustomerSourceOptions()">
-     <option value="pole">Pole</option>
-     <option value="box">Sub Box</option>
-    </select>
-   </div>
+  <div class="field">
+   <label>IP / Fiber Code</label>
+   <input id="locationCode" placeholder="IP or Fiber Code">
+  </div>
 
-   <div class="form-group">
-    <label>Connected Pole / Sub Box</label>
-    <select id="customerSource" required></select>
-   </div>
+  <div class="field">
+   <label>Address / Note</label>
+   <textarea id="locationNote" placeholder="Write address or note..."></textarea>
+  </div>
 
-   <div class="form-row">
-    <div class="form-group">
-     <label>Latitude</label>
-     <input id="customerLat" type="number" step="any" required>
-    </div>
+  <div class="help">💡 Latitude ও Longitude লিখতে পারো, অথবা এই ফর্ম খোলা অবস্থায় Map-এ ট্যাপ করে Location নির্বাচন করতে পারো।</div>
 
-    <div class="form-group">
-     <label>Longitude</label>
-     <input id="customerLng" type="number" step="any" required>
-    </div>
-   </div>
-
-   <div class="form-actions">
-    <button type="button" class="btn secondary" onclick="closeModal('customerModal')">Cancel</button>
-    <button class="btn">Save Customer</button>
-   </div>
-
-  </form>
-
+  <div class="modal-actions">
+   <button class="btn btn-grey" onclick="closeModal('locationModal')">Cancel</button>
+   <button class="btn btn-green" onclick="saveLocation()">Save Location</button>
+  </div>
  </div>
 </div>
 
-<!-- SUB BOX MODAL -->
-
-<div class="modal" id="boxModal">
- <div class="modal-content">
-
+<!-- CONNECT MODAL -->
+<div class="modal-overlay" id="connectModal">
+ <div class="modal">
   <div class="modal-head">
-   <h3 id="boxModalTitle">Add Sub Box</h3>
-   <button class="close" onclick="closeModal('boxModal')">✕</button>
+   <h3>🔗 Create Connection</h3>
+   <button class="close-btn" onclick="closeModal('connectModal')">✕</button>
   </div>
 
-  <form id="boxForm">
-
-   <input type="hidden" id="boxId">
-
-   <div class="form-group">
-    <label>Box Name</label>
-    <input id="boxName" required placeholder="Example: BOX-001">
-   </div>
-
-   <div class="form-row">
-    <div class="form-group">
-     <label>Fiber Name</label>
-     <input id="fiberName" placeholder="Fiber Name">
-    </div>
-
-    <div class="form-group">
-     <label>Fiber Code</label>
-     <input id="fiberCode" placeholder="Fiber Code">
-    </div>
-   </div>
-
-   <div class="form-group">
-    <label>Fiber Meter</label>
-    <input id="fiberMeter" type="number" min="0" placeholder="Fiber Meter">
-   </div>
-
-   <div class="form-group">
-    <label>Connected Pole</label>
-    <select id="boxPole" required></select>
-   </div>
-
-   <div class="form-row">
-    <div class="form-group">
-     <label>Latitude</label>
-     <input id="boxLat" type="number" step="any" required>
-    </div>
-
-    <div class="form-group">
-     <label>Longitude</label>
-     <input id="boxLng" type="number" step="any" required>
-    </div>
-   </div>
-
-   <div class="form-actions">
-    <button type="button" class="btn secondary" onclick="closeModal('boxModal')">Cancel</button>
-    <button class="btn">Save Sub Box</button>
-   </div>
-
-  </form>
-
+  <div class="field">
+   <label>From Location *</label>
+   <select id="connectFrom"></select>
+  </div>
+  <div class="field">
+   <label>To Location *</label>
+   <select id="connectTo"></select>
+  </div>
+  <div class="field">
+   <label>Connection Type</label>
+   <select id="connectType"></select>
+  </div>
+  <div class="field">
+   <label>Connection Name (Optional)</label>
+   <input id="connectName" placeholder="Example: Main Fiber Line">
+  </div>
+  <div class="help">
+   Main Box → Sub Box → Pole → Customer: প্রতিটি অংশ আলাদাভাবে Connect করো। চাইলে যেকোনো দুটি Box-এর মধ্যেও Direct Connection করতে পারবে।
+  </div>
+  <div class="modal-actions">
+   <button class="btn btn-grey" onclick="closeModal('connectModal')">Cancel</button>
+   <button class="btn btn-green" onclick="saveConnection()">Create Connection</button>
+  </div>
  </div>
 </div>
 
-<!-- INFORMATION MODAL -->
-
-<div class="modal" id="infoModal">
- <div class="modal-content">
-
+<!-- DETAILS MODAL -->
+<div class="modal-overlay" id="detailModal">
+ <div class="modal">
   <div class="modal-head">
-   <h3 id="infoTitle">Information</h3>
-   <button class="close" onclick="closeModal('infoModal')">✕</button>
+   <h3>📍 Location Details</h3>
+   <button class="close-btn" onclick="closeModal('detailModal')">✕</button>
   </div>
-
-  <div id="infoContent"></div>
-  <div class="info-actions" id="infoActions"></div>
-
+  <div id="detailContent"></div>
+  <div class="modal-actions">
+   <button class="btn btn-red" onclick="deleteCurrentLocation()">Delete</button>
+   <button class="btn btn-grey" onclick="closeModal('detailModal')">Close</button>
+   <button class="btn btn-green" onclick="editCurrentLocation()">Edit</button>
+  </div>
  </div>
 </div>
 
-<!-- ADD MENU -->
-
-<div class="modal" id="addMenu">
- <div class="modal-content" style="max-width:350px">
-
+<!-- CONNECTION LIST MODAL -->
+<div class="modal-overlay" id="connectionsModal">
+ <div class="modal">
   <div class="modal-head">
-   <h3>Add to Pole</h3>
-   <button class="close" onclick="closeModal('addMenu')">✕</button>
+   <h3>〰️ Network Connections</h3>
+   <button class="close-btn" onclick="closeModal('connectionsModal')">✕</button>
   </div>
-
-  <button class="menu-option" onclick="openCustomerFromPole()">
-   👤 Add Customer
-   <small>Connect a customer to this pole</small>
-  </button>
-
-  <button class="menu-option" onclick="openBoxFromPole()">
-   📦 Add Sub Box
-   <small>Create a new fiber distribution box</small>
-  </button>
-
+  <div id="connectionList"></div>
+  <div class="modal-actions">
+   <button class="btn btn-grey" onclick="closeModal('connectionsModal')">Close</button>
+   <button class="btn btn-green" onclick="closeModal('connectionsModal');openConnectModal()">＋ New Connection</button>
+  </div>
  </div>
 </div>
+
+<!-- VIEW MENU MODAL -->
+<div class="modal-overlay" id="viewModal">
+ <div class="modal">
+  <div class="modal-head">
+   <h3>🌍 Select Map View</h3>
+   <button class="close-btn" onclick="closeModal('viewModal')">✕</button>
+  </div>
+  <button class="drawer-item" onclick="changeView('road');closeModal('viewModal')">🗺️ Road Map</button>
+  <button class="drawer-item" onclick="changeView('satellite');closeModal('viewModal')">🛰️ Satellite</button>
+  <button class="drawer-item" onclick="changeView('hybrid');closeModal('viewModal')">🌍 Hybrid</button>
+  <button class="drawer-item" onclick="changeView('network');closeModal('viewModal')">📡 Network Only</button>
+ </div>
+</div>
+
+<div class="toast" id="toast"></div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
 <script>
+/* =====================================
+   ONE ONLINE NETWORK MAP
+   Mobile-first version
+===================================== */
 
-/* ====================================
-   ONE ONLINE NETWORK MAP DEMO
-==================================== */
+const K_ITEMS='one_online_map_items_v1';
+const K_DATA='one_online_map_data_v1';
+const K_VIEW='one_online_map_view_v1';
+const K_TYPES='one_online_map_types_v1';
+const K_CONNECTION_TYPES='one_online_connection_types_v1';
+const K_WIRE='one_online_map_wire_settings_v1';
 
-const STORAGE_KEY="one_online_network_map_demo_v2";
+const DEFAULT_TYPES=[
+ {id:'main_box',name:'Main Box',icon:'🗄️',color:'#e74c3c',enabled:true},
+ {id:'sub_box',name:'Sub Box',icon:'📦',color:'#2878d0',enabled:true},
+ {id:'pole',name:'Pole',icon:'🗼',color:'#e89b21',enabled:true},
+ {id:'customer',name:'Customer',icon:'🏠',color:'#12a66a',enabled:true}
+];
 
-let data={
-  poles:[],
-  customers:[],
-  boxes:[]
-};
+const DEFAULT_CONNECTIONS=[
+ {id:'fiber',name:'Fiber',color:'#19d69a',enabled:true},
+ {id:'cable',name:'Cable',color:'#2878d0',enabled:true},
+ {id:'wireless',name:'Wireless',color:'#e6a23c',enabled:true},
+ {id:'direct',name:'Direct Link',color:'#a855f7',enabled:true}
+];
 
+let items=[];
+let connections=[];
 let map;
-let markers={};
-let connectionLines=[];
-let activePoleId=null;
-let selectedInfo=null;
-let addMode=null;
+let markerLayer;
+let lineLayer;
+let tileLayers={};
+let currentLocationId=null;
+let addingLocation=false;
+let currentView='road';
 
-/* HELPERS */
-
-function uid(){
-  return Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+function read(key,fallback){
+ try{
+  const raw=localStorage.getItem(key);
+  return raw===null?fallback:JSON.parse(raw);
+ }catch(e){return fallback}
+}
+function write(key,value){
+ try{
+  localStorage.setItem(key,JSON.stringify(value));
+  return true;
+ }catch(e){
+  showToast('Storage error! Data could not be saved.');
+  return false;
+ }
+}
+function escapeHTML(value){
+ return String(value??'').replace(/[&<>"']/g,c=>({
+  '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+ }[c]));
+}
+function uid(prefix='id'){
+ return prefix+'_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,7);
+}
+function showToast(message){
+ const el=document.getElementById('toast');
+ el.textContent=message;
+ el.classList.add('show');
+ clearTimeout(window.toastTimer);
+ window.toastTimer=setTimeout(()=>el.classList.remove('show'),2500);
+}
+function openModal(id){document.getElementById(id).classList.add('show')}
+function closeModal(id){document.getElementById(id).classList.remove('show')}
+function openDrawer(){document.getElementById('drawerOverlay').classList.add('show')}
+function closeDrawer(){document.getElementById('drawerOverlay').classList.remove('show')}
+function setNav(btn){
+ document.querySelectorAll('.nav-btn').forEach(x=>x.classList.remove('active'));
+ if(btn)btn.classList.add('active');
 }
 
-function esc(value){
-  return String(value??"").replace(/[&<>"']/g,c=>({
-    "&":"&amp;",
-    "<":"&lt;",
-    ">":"&gt;",
-    '"':"&quot;",
-    "'":"&#39;"
-  })[c]);
-}
-
-function saveData(){
-
-  try{
-    localStorage.setItem(STORAGE_KEY,JSON.stringify(data));
-  }catch(e){
-    alert("Data Save করা যায়নি। Browser Storage চেক করুন।");
-  }
-
-  renderAll();
-}
-
+/* LOAD DATA WITH OLD DATA COMPATIBILITY */
 function loadData(){
+ const raw=read(K_DATA,{});
+ const separateItems=read(K_ITEMS,[]);
 
-  try{
-    const saved=localStorage.getItem(STORAGE_KEY);
+ if(Array.isArray(raw)){
+  connections=raw;
+ }else{
+  connections=Array.isArray(raw.connections)?raw.connections:[];
+ }
 
-    if(saved){
-      const parsed=JSON.parse(saved);
+ if(Array.isArray(separateItems)&&separateItems.length){
+  items=separateItems;
+ }else if(!Array.isArray(separateItems)&&Array.isArray(raw.items)){
+  items=raw.items;
+ }else{
+  items=Array.isArray(raw.items)?raw.items:[];
+ }
 
-      if(Array.isArray(parsed.poles)&&
-         Array.isArray(parsed.customers)&&
-         Array.isArray(parsed.boxes)){
-        data=parsed;
-      }
-    }
-
-  }catch(e){
-    console.error(e);
-  }
+ items=items.filter(x=>x&&x.id);
+ connections=connections.filter(x=>x&&x.from&&x.to);
+}
+function saveData(){
+ const ok1=write(K_ITEMS,items);
+ const ok2=write(K_DATA,{items,connections});
+ updateStats();
+ return ok1&&ok2;
 }
 
-function getEntity(type,id){
-
-  if(type==="pole")return data.poles.find(x=>x.id===id);
-  if(type==="customer")return data.customers.find(x=>x.id===id);
-  if(type==="box")return data.boxes.find(x=>x.id===id);
+/* SETTINGS */
+function getTypes(){
+ const v=read(K_TYPES,null);
+ return Array.isArray(v)&&v.length?v:DEFAULT_TYPES;
+}
+function getConnectionTypes(){
+ const v=read(K_CONNECTION_TYPES,null);
+ return Array.isArray(v)&&v.length?v:DEFAULT_CONNECTIONS;
+}
+function getWireSettings(){
+ return{
+  color:'#19d69a',width:4,opacity:.95,
+  speed:1.1,animated:true,dotted:true,
+  ...read(K_WIRE,{})
+ };
+}
+function typeOf(id){
+ return getTypes().find(x=>x.id===id||x.name===id)||{
+  id,name:id||'Location',icon:'📍',color:'#10b981',enabled:true
+ };
+}
+function connectionTypeOf(name){
+ return getConnectionTypes().find(x=>x.name===name||x.id===name);
 }
 
-/* MAP */
+/* MAP INIT */
+function initMap(){
+ map=L.map('map',{zoomControl:false}).setView([23.8103,90.4125],12);
 
-map=L.map("map").setView([22.3569,91.7832],13);
+ tileLayers.road=L.tileLayer(
+  'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+  {maxZoom:20,attribution:'© OpenStreetMap'}
+ );
 
-L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{
-  maxZoom:20,
-  attribution:"&copy; OpenStreetMap contributors"
-}).addTo(map);
+ tileLayers.satellite=L.tileLayer(
+  'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+  {maxZoom:20,attribution:'Tiles © Esri'}
+ );
 
-function markerIcon(type){
+ tileLayers.hybrid=L.layerGroup([
+  tileLayers.satellite,
+  L.tileLayer(
+   'https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}',
+   {maxZoom:20}
+  )
+ ]);
 
-  let cls="pole-marker";
-  let icon="⚡";
+ markerLayer=L.layerGroup().addTo(map);
+ lineLayer=L.layerGroup().addTo(map);
 
-  if(type==="customer"){
-    cls="customer-marker";
-    icon="👤";
+ currentView=read(K_VIEW,'road');
+ applyView(currentView,false);
+
+ map.on('click',function(e){
+  if(addingLocation){
+   document.getElementById('locationLat').value=e.latlng.lat.toFixed(7);
+   document.getElementById('locationLng').value=e.latlng.lng.toFixed(7);
+   showToast('Map coordinates selected');
   }
-
-  if(type==="box"){
-    cls="box-marker";
-    icon="▣";
-  }
-
-  return L.divIcon({
-    className:"",
-    html:`<div class="marker ${cls}">${icon}</div>`,
-    iconSize:[35,35],
-    iconAnchor:[17,17]
-  });
+ });
 }
+function applyView(view){
+ Object.values(tileLayers).forEach(layer=>{
+  if(map.hasLayer(layer))map.removeLayer(layer);
+ });
+
+ if(view==='road')tileLayers.road.addTo(map);
+ if(view==='satellite')tileLayers.satellite.addTo(map);
+ if(view==='hybrid')tileLayers.hybrid.addTo(map);
+
+ currentView=view;
+ const labels={
+  road:'🗺️ ROAD MAP',
+  satellite:'🛰️ SATELLITE',
+  hybrid:'🌍 HYBRID',
+  network:'📡 NETWORK ONLY'
+ };
+ document.getElementById('mapModeLabel').textContent=labels[view]||'MAP';
+ map.invalidateSize();
+}
+function changeView(view){
+ if(!['road','satellite','hybrid','network'].includes(view))return;
+ currentView=view;
+ write(K_VIEW,view);
+ applyView(view);
+ closeDrawer();
+ showToast('Map view changed');
+}
+function openViewMenu(){openModal('viewModal')}
+function zoomIn(){map.zoomIn()}
+function zoomOut(){map.zoomOut()}
 
 /* MARKERS */
+function makeIcon(item){
+ const t=typeOf(item.typeId);
+ const icon=item.icon||t.icon||'📍';
+ const color=item.color||t.color||'#10b981';
 
-function clearMapObjects(){
-
-  Object.values(markers).forEach(m=>map.removeLayer(m));
-  markers={};
-
-  connectionLines.forEach(l=>map.removeLayer(l));
-  connectionLines=[];
+ return L.divIcon({
+  className:'',
+  html:`<div class="custom-marker" style="background:${escapeHTML(color)}"><span>${escapeHTML(icon)}</span></div>`,
+  iconSize:[36,36],
+  iconAnchor:[18,36],
+  popupAnchor:[0,-35]
+ });
 }
+function drawMarkers(){
+ if(!map)return;
+ markerLayer.clearLayers();
 
-function addMarker(type,item){
+ const q=document.getElementById('searchInput').value.toLowerCase().trim();
+ const filter=document.getElementById('typeFilter').value;
+
+ items.forEach(item=>{
+  const t=typeOf(item.typeId);
+  const hay=[item.name,item.locationNumber,item.code,item.note,t.name].join(' ').toLowerCase();
+
+  if(q&&!hay.includes(q))return;
+  if(filter!=='all'&&item.typeId!==filter)return;
 
   const marker=L.marker([Number(item.lat),Number(item.lng)],{
-    draggable:true,
-    icon:markerIcon(type)
-  }).addTo(map);
-
-  marker.on("click",()=>{
-    if(addMode)return;
-    showInfo(type,item.id);
+   icon:makeIcon(item),draggable:true
   });
 
-  marker.on("dragend",e=>{
-
-    const pos=e.target.getLatLng();
-    const entity=getEntity(type,item.id);
-
-    if(!entity)return;
-
-    entity.lat=pos.lat;
-    entity.lng=pos.lng;
-
-    saveData();
+  marker.bindTooltip(escapeHTML(item.name),{
+   permanent:false,direction:'top',className:'marker-label'
   });
 
-  markers[type+"_"+item.id]=marker;
-}
+  marker.on('click',()=>showDetails(item.id));
 
-/* CONNECTIONS */
-
-function connectionColor(type){
-
-  if(type==="UTP Cable")return "#e59a27";
-  if(type==="Wireless")return "#a855f7";
-
-  return "#16a36a";
-}
-
-function renderConnections(){
-
-  data.boxes.forEach(b=>{
-
-    const pole=getEntity("pole",b.poleId);
-    if(!pole)return;
-
-    const line=L.polyline([
-      [pole.lat,pole.lng],
-      [b.lat,b.lng]
-    ],{
-      color:"#16a36a",
-      weight:3,
-      opacity:.9
-    }).addTo(map);
-
-    connectionLines.push(line);
+  marker.on('dragend',e=>{
+   const pos=e.target.getLatLng();
+   const found=items.find(x=>x.id===item.id);
+   if(!found)return;
+   found.lat=pos.lat;
+   found.lng=pos.lng;
+   saveData();
+   drawLines();
+   showToast('Location moved and saved');
   });
 
-  data.customers.forEach(c=>{
-
-    let source=null;
-
-    if(c.sourceType==="box"){
-      source=getEntity("box",c.sourceId);
-    }else{
-      source=getEntity("pole",c.sourceId);
-    }
-
-    if(!source)return;
-
-    const line=L.polyline([
-      [source.lat,source.lng],
-      [c.lat,c.lng]
-    ],{
-      color:connectionColor(c.type),
-      weight:2.5,
-      opacity:.9,
-      dashArray:c.type==="Wireless"?"7,7":null
-    }).addTo(map);
-
-    connectionLines.push(line);
-  });
+  marker.addTo(markerLayer);
+ });
+ updateStats();
 }
+function renderTypeOptions(){
+ const types=getTypes();
+ const filter=document.getElementById('typeFilter');
+ const old=filter.value;
 
-/* RENDER */
+ filter.innerHTML='<option value="all">All Locations</option>'+
+ types.map(t=>`<option value="${escapeHTML(t.id)}">${escapeHTML(t.name)}</option>`).join('');
 
-function renderAll(){
+ if([...filter.options].some(o=>o.value===old))filter.value=old;
 
-  if(!map)return;
-
-  clearMapObjects();
-
-  data.poles.forEach(p=>addMarker("pole",p));
-  data.boxes.forEach(b=>addMarker("box",b));
-  data.customers.forEach(c=>addMarker("customer",c));
-
-  renderConnections();
-  updateStats();
+ const select=document.getElementById('locationType');
+ select.innerHTML=types.filter(t=>t.enabled!==false)
+  .map(t=>`<option value="${escapeHTML(t.id)}">${escapeHTML(t.icon||'📍')} ${escapeHTML(t.name)}</option>`).join('');
 }
-
-/* MAP CLICK */
-
-map.on("click",e=>{
-
-  if(!addMode)return;
-
-  const pos=e.latlng;
-
-  if(addMode==="pole"){
-
-    resetPoleForm();
-
-    document.getElementById("poleLat").value=pos.lat.toFixed(7);
-    document.getElementById("poleLng").value=pos.lng.toFixed(7);
-
-    openModal("poleModal");
-  }
-
-  if(addMode==="customer"){
-
-    resetCustomerForm();
-
-    document.getElementById("customerLat").value=pos.lat.toFixed(7);
-    document.getElementById("customerLng").value=pos.lng.toFixed(7);
-
-    openModal("customerModal");
-  }
-
-  if(addMode==="box"){
-
-    resetBoxForm();
-
-    document.getElementById("boxLat").value=pos.lat.toFixed(7);
-    document.getElementById("boxLng").value=pos.lng.toFixed(7);
-
-    openModal("boxModal");
-  }
-
-  cancelAddMode();
-});
-
-/* ADD MODES */
-
-function startAddPole(){
-
-  addMode="pole";
-  showHint("Pole বসানোর জন্য Map-এর যেকোনো জায়গায় ক্লিক করুন");
-}
-
-function startAddCustomer(){
-
-  if(!data.poles.length){
-    alert("প্রথমে একটি Pole Add করুন।");
-    return;
-  }
-
-  addMode="customer";
-  showHint("Customer Location নির্বাচন করতে Map-এ ক্লিক করুন");
-}
-
-function startAddBox(){
-
-  if(!data.poles.length){
-    alert("প্রথমে একটি Pole Add করুন।");
-    return;
-  }
-
-  addMode="box";
-  showHint("Sub Box Location নির্বাচন করতে Map-এ ক্লিক করুন");
-}
-
-function showHint(msg){
-
-  const h=document.getElementById("mapHint");
-
-  h.textContent=msg;
-  h.style.display="block";
-}
-
-function cancelAddMode(){
-
-  addMode=null;
-  document.getElementById("mapHint").style.display="none";
-}
-
-/* MODAL */
-
-function openModal(id){
-  document.getElementById(id).classList.add("show");
-}
-
-function closeModal(id){
-
-  document.getElementById(id).classList.remove("show");
-
-  if(["poleModal","customerModal","boxModal"].includes(id)){
-    cancelAddMode();
-  }
-}
-
-document.querySelectorAll(".modal").forEach(modal=>{
-
-  modal.addEventListener("click",e=>{
-
-    if(e.target===modal){
-      closeModal(modal.id);
-    }
-
-  });
-});
-
-/* POLE */
-
-function resetPoleForm(){
-
-  document.getElementById("poleForm").reset();
-  document.getElementById("poleId").value="";
-
-  document.getElementById("poleModalTitle").textContent="Add New Pole";
-}
-
-document.getElementById("poleForm").addEventListener("submit",e=>{
-
-  e.preventDefault();
-
-  const id=document.getElementById("poleId").value;
-  const old=getEntity("pole",id);
-
-  const item={
-    id:id||uid(),
-    name:document.getElementById("poleName").value.trim(),
-    address:document.getElementById("poleAddress").value.trim(),
-    lat:Number(document.getElementById("poleLat").value),
-    lng:Number(document.getElementById("poleLng").value)
-  };
-
-  if(old)Object.assign(old,item);
-  else data.poles.push(item);
-
-  closeModal("poleModal");
-  resetPoleForm();
-  saveData();
-});
-
-function editPole(id){
-
-  const p=getEntity("pole",id);
-  if(!p)return;
-
-  document.getElementById("poleId").value=p.id;
-  document.getElementById("poleName").value=p.name;
-  document.getElementById("poleAddress").value=p.address||"";
-  document.getElementById("poleLat").value=p.lat;
-  document.getElementById("poleLng").value=p.lng;
-
-  document.getElementById("poleModalTitle").textContent="Edit Pole";
-
-  closeModal("infoModal");
-  openModal("poleModal");
-}
-
-/* CUSTOMER */
-
-function updateCustomerSourceOptions(){
-
-  const type=document.getElementById("customerSourceType").value;
-  const select=document.getElementById("customerSource");
-
-  select.innerHTML="";
-
-  if(type==="pole"){
-
-    data.poles.forEach(p=>{
-      select.innerHTML+=`<option value="${esc(p.id)}">${esc(p.name)}</option>`;
-    });
-
-  }else{
-
-    data.boxes.forEach(b=>{
-      select.innerHTML+=`<option value="${esc(b.id)}">${esc(b.name)}</option>`;
-    });
-
-  }
-}
-
-function resetCustomerForm(){
-
-  document.getElementById("customerForm").reset();
-  document.getElementById("customerId").value="";
-
-  document.getElementById("customerModalTitle").textContent="Add Customer";
-
-  document.getElementById("customerSourceType").value="pole";
-
-  updateCustomerSourceOptions();
-
-  if(activePoleId){
-    document.getElementById("customerSource").value=activePoleId;
-  }
-}
-
-document.getElementById("customerForm").addEventListener("submit",e=>{
-
-  e.preventDefault();
-
-  const id=document.getElementById("customerId").value;
-  const old=getEntity("customer",id);
-
-  const sourceType=document.getElementById("customerSourceType").value;
-  const sourceId=document.getElementById("customerSource").value;
-
-  if(!sourceId||!getEntity(sourceType,sourceId)){
-    alert("একটি সঠিক Pole অথবা Sub Box নির্বাচন করুন।");
-    return;
-  }
-
-  const poleId=sourceType==="pole"
-    ?sourceId
-    :getEntity("box",sourceId).poleId;
-
-  const item={
-    id:id||uid(),
-    name:document.getElementById("customerName").value.trim(),
-    ip:document.getElementById("customerIP").value.trim(),
-    address:document.getElementById("customerAddress").value.trim(),
-    type:document.getElementById("customerType").value,
-    sourceType:sourceType,
-    sourceId:sourceId,
-    poleId:poleId,
-    lat:Number(document.getElementById("customerLat").value),
-    lng:Number(document.getElementById("customerLng").value)
-  };
-
-  if(old)Object.assign(old,item);
-  else data.customers.push(item);
-
-  closeModal("customerModal");
-  resetCustomerForm();
-  saveData();
-});
-
-function editCustomer(id){
-
-  const c=getEntity("customer",id);
-  if(!c)return;
-
-  document.getElementById("customerId").value=c.id;
-  document.getElementById("customerName").value=c.name;
-  document.getElementById("customerIP").value=c.ip||"";
-  document.getElementById("customerAddress").value=c.address||"";
-  document.getElementById("customerType").value=c.type||"Fiber";
-
-  document.getElementById("customerSourceType").value=c.sourceType||"pole";
-
-  updateCustomerSourceOptions();
-
-  document.getElementById("customerSource").value=c.sourceId||c.poleId;
-
-  document.getElementById("customerLat").value=c.lat;
-  document.getElementById("customerLng").value=c.lng;
-
-  document.getElementById("customerModalTitle").textContent="Edit Customer";
-
-  closeModal("infoModal");
-  openModal("customerModal");
-}
-
-/* SUB BOX */
-
-function updateBoxPoleOptions(){
-
-  const select=document.getElementById("boxPole");
-
-  select.innerHTML="";
-
-  data.poles.forEach(p=>{
-    select.innerHTML+=`<option value="${esc(p.id)}">${esc(p.name)}</option>`;
-  });
-}
-
-function resetBoxForm(){
-
-  document.getElementById("boxForm").reset();
-  document.getElementById("boxId").value="";
-
-  document.getElementById("boxModalTitle").textContent="Add Sub Box";
-
-  updateBoxPoleOptions();
-
-  if(activePoleId){
-    document.getElementById("boxPole").value=activePoleId;
-  }
-}
-
-document.getElementById("boxForm").addEventListener("submit",e=>{
-
-  e.preventDefault();
-
-  const id=document.getElementById("boxId").value;
-  const old=getEntity("box",id);
-
-  const poleId=document.getElementById("boxPole").value;
-
-  if(!poleId||!getEntity("pole",poleId)){
-    alert("একটি Pole নির্বাচন করুন।");
-    return;
-  }
-
-  const item={
-    id:id||uid(),
-    name:document.getElementById("boxName").value.trim(),
-    fiberName:document.getElementById("fiberName").value.trim(),
-    fiberCode:document.getElementById("fiberCode").value.trim(),
-    fiberMeter:document.getElementById("fiberMeter").value,
-    poleId:poleId,
-    lat:Number(document.getElementById("boxLat").value),
-    lng:Number(document.getElementById("boxLng").value)
-  };
-
-  if(old)Object.assign(old,item);
-  else data.boxes.push(item);
-
-  closeModal("boxModal");
-  resetBoxForm();
-  saveData();
-});
-
-function editBox(id){
-
-  const b=getEntity("box",id);
-  if(!b)return;
-
-  document.getElementById("boxId").value=b.id;
-  document.getElementById("boxName").value=b.name;
-  document.getElementById("fiberName").value=b.fiberName||"";
-  document.getElementById("fiberCode").value=b.fiberCode||"";
-  document.getElementById("fiberMeter").value=b.fiberMeter||"";
-
-  updateBoxPoleOptions();
-
-  document.getElementById("boxPole").value=b.poleId;
-  document.getElementById("boxLat").value=b.lat;
-  document.getElementById("boxLng").value=b.lng;
-
-  document.getElementById("boxModalTitle").textContent="Edit Sub Box";
-
-  closeModal("infoModal");
-  openModal("boxModal");
-}
-
-/* POLE ADD MENU */
-
-function showAddMenu(id){
-
-  activePoleId=id;
-
-  closeModal("infoModal");
-  openModal("addMenu");
-}
-
-function openCustomerFromPole(){
-
-  closeModal("addMenu");
-
-  resetCustomerForm();
-
-  document.getElementById("customerSourceType").value="pole";
-
-  updateCustomerSourceOptions();
-
-  document.getElementById("customerSource").value=activePoleId;
-
-  openModal("customerModal");
-}
-
-function openBoxFromPole(){
-
-  closeModal("addMenu");
-
-  resetBoxForm();
-
-  document.getElementById("boxPole").value=activePoleId;
-
-  openModal("boxModal");
-}
-
-/* ADD CUSTOMER FROM BOX */
-
-function addCustomerToBox(id){
-
-  const box=getEntity("box",id);
-  if(!box)return;
-
-  closeModal("infoModal");
-
-  activePoleId=box.poleId;
-
-  resetCustomerForm();
-
-  document.getElementById("customerSourceType").value="box";
-
-  updateCustomerSourceOptions();
-
-  document.getElementById("customerSource").value=id;
-
-  document.getElementById("customerModalTitle").textContent="Add Customer to Sub Box";
-
-  openModal("customerModal");
-}
-
-/* INFORMATION */
-
-function infoRow(label,value){
-
-  return `
-    <div class="info-line">
-      <span>${esc(label)}</span>
-      <strong>${esc(value)}</strong>
-    </div>
-  `;
-}
-
-function showInfo(type,id){
-
-  const item=getEntity(type,id);
-  if(!item)return;
-
-  selectedInfo={type,id};
-
-  let html="";
-  let actions="";
-
-  if(type==="pole"){
-
-    const customers=data.customers.filter(c=>c.poleId===id);
-    const boxes=data.boxes.filter(b=>b.poleId===id);
-
-    document.getElementById("infoTitle").textContent="Pole Information";
-
-    html=`
-      ${infoRow("Pole Name",item.name)}
-      ${infoRow("Pole Address",item.address||"-")}
-      ${infoRow("Latitude",item.lat)}
-      ${infoRow("Longitude",item.lng)}
-      ${infoRow("Total Customer",customers.length)}
-      ${infoRow("Total Sub Box",boxes.length)}
-
-      <div class="section-label">CONNECTED CUSTOMERS</div>
-
-      ${customers.map(c=>`
-        <div class="info-line">
-          <strong>${esc(c.name)}</strong>
-          <span>${esc(c.ip||"-")}</span>
-        </div>
-      `).join("")||'<div class="empty">No Customer Connected</div>'}
-
-      <div class="section-label">CONNECTED SUB BOXES</div>
-
-      ${boxes.map(b=>`
-        <div class="info-line">
-          <strong>${esc(b.name)}</strong>
-          <span>${esc(b.fiberCode||"-")}</span>
-        </div>
-      `).join("")||'<div class="empty">No Sub Box Connected</div>'}
-    `;
-
-    actions=`
-      <button class="btn" onclick="showAddMenu('${id}')">+ Add</button>
-      <button class="btn blue" onclick="editPole('${id}')">Edit Pole</button>
-      <button class="btn danger" onclick="deleteEntity('pole','${id}')">Delete</button>
-    `;
-  }
-
-  if(type==="customer"){
-
-    const source=getEntity(item.sourceType||"pole",item.sourceId||item.poleId);
-
-    document.getElementById("infoTitle").textContent="Customer Information";
-
-    html=`
-      ${infoRow("Customer Name",item.name)}
-      ${infoRow("Customer IP",item.ip||"-")}
-      ${infoRow("Customer Address",item.address||"-")}
-      ${infoRow("Connection Type",item.type)}
-      ${infoRow("Connected Through",item.sourceType==="box"?"Sub Box":"Pole")}
-      ${infoRow("Connected Device",source?source.name:"-")}
-      ${infoRow("Latitude",item.lat)}
-      ${infoRow("Longitude",item.lng)}
-    `;
-
-    actions=`
-      <button class="btn blue" onclick="editCustomer('${id}')">Edit Customer</button>
-      <button class="btn danger" onclick="deleteEntity('customer','${id}')">Delete</button>
-    `;
-  }
-
-  if(type==="box"){
-
-    const pole=getEntity("pole",item.poleId);
-
-    const customers=data.customers.filter(c=>
-      c.sourceType==="box"&&c.sourceId===id
-    );
-
-    document.getElementById("infoTitle").textContent="Sub Box Information";
-
-    html=`
-      ${infoRow("Box Name",item.name)}
-      ${infoRow("Fiber Name",item.fiberName||"-")}
-      ${infoRow("Fiber Code",item.fiberCode||"-")}
-      ${infoRow("Fiber Meter",item.fiberMeter||"-")}
-      ${infoRow("Connected Pole",pole?pole.name:"-")}
-      ${infoRow("Total Customer",customers.length)}
-      ${infoRow("Latitude",item.lat)}
-      ${infoRow("Longitude",item.lng)}
-
-      <div class="section-label">CONNECTED CUSTOMERS</div>
-
-      ${customers.map(c=>`
-        <div class="info-line">
-          <strong>${esc(c.name)}</strong>
-          <span>${esc(c.ip||"-")}</span>
-        </div>
-      `).join("")||'<div class="empty">No Customer Connected</div>'}
-    `;
-
-    actions=`
-      <button class="btn" onclick="addCustomerToBox('${id}')">+ Customer</button>
-      <button class="btn blue" onclick="editBox('${id}')">Edit Box</button>
-      <button class="btn danger" onclick="deleteEntity('box','${id}')">Delete</button>
-    `;
-  }
-
-  document.getElementById("infoContent").innerHTML=html;
-  document.getElementById("infoActions").innerHTML=actions;
-
-  if(type==="pole")activePoleId=id;
-  else activePoleId=item.poleId;
-
-  openModal("infoModal");
-}
-
-/* DELETE */
-
-function deleteEntity(type,id){
-
-  if(!confirm("আপনি কি নিশ্চিতভাবে এটি Delete করতে চান?"))return;
-
-  if(type==="pole"){
-
-    const linkedBoxes=data.boxes.some(b=>b.poleId===id);
-    const linkedCustomers=data.customers.some(c=>c.poleId===id);
-
-    if(linkedBoxes||linkedCustomers){
-      alert("এই Pole-এর সাথে Customer অথবা Sub Box যুক্ত আছে। আগে Connection সরিয়ে নিন।");
-      return;
-    }
-
-    data.poles=data.poles.filter(x=>x.id!==id);
-  }
-
-  if(type==="customer"){
-    data.customers=data.customers.filter(x=>x.id!==id);
-  }
-
-  if(type==="box"){
-
-    if(data.customers.some(c=>c.sourceType==="box"&&c.sourceId===id)){
-      alert("এই Sub Box-এর সাথে Customer যুক্ত আছে। আগে Customer Connection পরিবর্তন করুন।");
-      return;
-    }
-
-    data.boxes=data.boxes.filter(x=>x.id!==id);
-  }
-
-  closeModal("infoModal");
-  saveData();
-}
-
-/* HEADER COUNTS */
-
 function updateStats(){
+ document.getElementById('totalCount').textContent=items.length;
 
-  document.getElementById("poleCount").textContent=data.poles.length;
-  document.getElementById("customerCount").textContent=data.customers.length;
-  document.getElementById("boxCount").textContent=data.boxes.length;
+ let boxes=0,poles=0,customers=0;
+ items.forEach(i=>{
+  const name=typeOf(i.typeId).name.toLowerCase();
+  if(name.includes('box'))boxes++;
+  if(name.includes('pole'))poles++;
+  if(name.includes('customer'))customers++;
+ });
+
+ document.getElementById('boxCount').textContent=boxes;
+ document.getElementById('poleCount').textContent=poles;
+ document.getElementById('customerCount').textContent=customers;
+ document.getElementById('mapInfo').textContent=
+  items.length+' Locations · '+connections.length+' Connections';
 }
 
-/* RESET MAP */
+/* CONNECTION LINES */
+function drawLines(){
+ if(!map)return;
+ lineLayer.clearLayers();
 
-function resetView(){
+ const cfg=getWireSettings();
 
-  const all=[
-    ...data.poles,
-    ...data.boxes,
-    ...data.customers
-  ];
+ connections.forEach(c=>{
+  const a=items.find(x=>x.id===c.from);
+  const b=items.find(x=>x.id===c.to);
+  if(!a||!b)return;
 
-  if(all.length){
+  const ct=connectionTypeOf(c.type);
+  const color=c.color||ct?.color||cfg.color||'#19d69a';
+  const width=Number(c.width||cfg.width||4);
 
-    const bounds=L.latLngBounds(
-      all.map(x=>[Number(x.lat),Number(x.lng)])
-    );
+  const classes=[
+   cfg.dotted===false?'wire-solid':'wire',
+   cfg.animated===false?'wire-static':''
+  ].filter(Boolean).join(' ');
 
-    map.fitBounds(bounds,{
-      padding:[45,45],
-      maxZoom:17
-    });
+  const line=L.polyline([
+   [Number(a.lat),Number(a.lng)],
+   [Number(b.lat),Number(b.lng)]
+  ],{
+   color,
+   weight:width,
+   opacity:Number(cfg.opacity??.95),
+   className:classes,
+   lineCap:'round'
+  });
 
-  }else{
+  const typeName=c.type||'Connection';
+  const popup=`
+   <div style="color:#182338;min-width:130px">
+    <b>${escapeHTML(c.name||typeName)}</b><br>
+    <small>${escapeHTML(a.name)} → ${escapeHTML(b.name)}</small><br>
+    <small>${escapeHTML(typeName)}</small>
+   </div>
+  `;
+  line.bindPopup(popup);
+  line.addTo(lineLayer);
+ });
+}
 
-    map.setView([22.3569,91.7832],13);
+/* LOCATION FORM */
+function openLocationModal(){
+ renderTypeOptions();
+
+ if(!document.getElementById('locationType').options.length){
+  showToast('First add a Location Type in Map Settings');
+  return;
+ }
+
+ addingLocation=true;
+ document.getElementById('locationModalTitle').textContent='＋ Add Location';
+ document.getElementById('editLocationId').value='';
+ document.getElementById('locationName').value='';
+ document.getElementById('locationLat').value='';
+ document.getElementById('locationLng').value='';
+ document.getElementById('locationNumber').value='';
+ document.getElementById('locationCode').value='';
+ document.getElementById('locationNote').value='';
+ openModal('locationModal');
+ setNav(document.querySelectorAll('.nav-btn')[1]);
+}
+function saveLocation(){
+ const id=document.getElementById('editLocationId').value;
+ const typeId=document.getElementById('locationType').value;
+ const name=document.getElementById('locationName').value.trim();
+ const lat=Number(document.getElementById('locationLat').value);
+ const lng=Number(document.getElementById('locationLng').value);
+
+ if(!name){showToast('Enter location name');return}
+ if(!Number.isFinite(lat)||!Number.isFinite(lng)||lat<-90||lat>90||lng<-180||lng>180){
+  showToast('Enter valid Latitude and Longitude');return;
+ }
+
+ const obj={
+  id:id||uid('loc'),
+  typeId,
+  name,
+  lat,lng,
+  locationNumber:document.getElementById('locationNumber').value.trim(),
+  code:document.getElementById('locationCode').value.trim(),
+  note:document.getElementById('locationNote').value.trim()
+ };
+
+ if(id){
+  const index=items.findIndex(x=>x.id===id);
+  if(index<0)return;
+  items[index]={...items[index],...obj};
+ }else{
+  items.push(obj);
+ }
+
+ saveData();
+ closeModal('locationModal');
+ addingLocation=false;
+ drawMarkers();
+ drawLines();
+
+ map.setView([lat,lng],Math.max(map.getZoom(),15));
+ showToast(id?'Location updated':'New location added');
+ setNav(document.querySelectorAll('.nav-btn')[0]);
+}
+
+/* LOCATION DETAILS */
+function showDetails(id){
+ const item=items.find(x=>x.id===id);
+ if(!item)return;
+
+ currentLocationId=id;
+ const t=typeOf(item.typeId);
+
+ const connected=connections.filter(c=>c.from===id||c.to===id);
+ const linkedNames=connected.map(c=>{
+  const other=items.find(x=>x.id===(c.from===id?c.to:c.from));
+  return other?other.name:'Unknown';
+ });
+
+ document.getElementById('detailContent').innerHTML=`
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+   <div class="item-icon" style="width:48px;height:48px;font-size:24px;background:${escapeHTML(t.color)}">${escapeHTML(item.icon||t.icon||'📍')}</div>
+   <div>
+    <div style="font-size:15px;font-weight:800">${escapeHTML(item.name)}</div>
+    <div style="font-size:10px;color:#91a2bb;margin-top:4px">${escapeHTML(t.name)}</div>
+   </div>
+  </div>
+  <div class="detail-row"><span>Location Number</span><span>${escapeHTML(item.locationNumber||'—')}</span></div>
+  <div class="detail-row"><span>IP / Fiber Code</span><span>${escapeHTML(item.code||'—')}</span></div>
+  <div class="detail-row"><span>Latitude</span><span>${Number(item.lat).toFixed(6)}</span></div>
+  <div class="detail-row"><span>Longitude</span><span>${Number(item.lng).toFixed(6)}</span></div>
+  <div class="detail-row"><span>Address / Note</span><span>${escapeHTML(item.note||'—')}</span></div>
+  <div class="detail-row"><span>Connected Locations</span><span>${connected.length}</span></div>
+  <div class="connection-info">
+   <b>🔗 Connected To</b><br>
+   ${linkedNames.length?linkedNames.map(escapeHTML).join('<br>'):'No connections yet'}
+  </div>
+ `;
+ openModal('detailModal');
+}
+function editCurrentLocation(){
+ const item=items.find(x=>x.id===currentLocationId);
+ if(!item)return;
+
+ closeModal('detailModal');
+ renderTypeOptions();
+ addingLocation=false;
+
+ document.getElementById('locationModalTitle').textContent='✏️ Edit Location';
+ document.getElementById('editLocationId').value=item.id;
+ document.getElementById('locationType').value=item.typeId;
+ document.getElementById('locationName').value=item.name||'';
+ document.getElementById('locationLat').value=item.lat;
+ document.getElementById('locationLng').value=item.lng;
+ document.getElementById('locationNumber').value=item.locationNumber||'';
+ document.getElementById('locationCode').value=item.code||'';
+ document.getElementById('locationNote').value=item.note||'';
+ openModal('locationModal');
+}
+function deleteCurrentLocation(){
+ const item=items.find(x=>x.id===currentLocationId);
+ if(!item)return;
+ if(!confirm('Delete '+item.name+'? Its connections will also be deleted.'))return;
+
+ items=items.filter(x=>x.id!==currentLocationId);
+ connections=connections.filter(x=>x.from!==currentLocationId&&x.to!==currentLocationId);
+ saveData();
+ closeModal('detailModal');
+ drawMarkers();
+ drawLines();
+ showToast('Location deleted');
+}
+
+/* CONNECTION FORM */
+function renderConnectionOptions(){
+ const locations=document.getElementById('connectFrom');
+ const to=document.getElementById('connectTo');
+
+ const options=items.map(x=>
+  `<option value="${escapeHTML(x.id)}">${escapeHTML(x.name)} (${escapeHTML(typeOf(x.typeId).name)})</option>`
+ ).join('');
+
+ locations.innerHTML=options;
+ to.innerHTML=options;
+
+ const types=getConnectionTypes().filter(t=>t.enabled!==false);
+ document.getElementById('connectType').innerHTML=types.map(t=>
+  `<option value="${escapeHTML(t.name)}">${escapeHTML(t.name)}</option>`
+ ).join('');
+}
+function openConnectModal(){
+ if(items.length<2){
+  showToast('Add at least two locations first');
+  return;
+ }
+ renderConnectionOptions();
+ document.getElementById('connectName').value='';
+ openModal('connectModal');
+ setNav(document.querySelectorAll('.nav-btn')[2]);
+}
+function saveConnection(){
+ const from=document.getElementById('connectFrom').value;
+ const to=document.getElementById('connectTo').value;
+ const type=document.getElementById('connectType').value;
+ const name=document.getElementById('connectName').value.trim();
+
+ if(!from||!to){showToast('Select both locations');return}
+ if(from===to){showToast('Choose two different locations');return}
+
+ const exists=connections.some(c=>
+  (c.from===from&&c.to===to)||(c.from===to&&c.to===from)
+ );
+ if(exists){
+  showToast('These locations are already connected');
+  return;
+ }
+
+ connections.push({
+  id:uid('con'),
+  from,to,
+  type:type||'Direct Link',
+  name,
+  createdAt:new Date().toISOString()
+ });
+
+ saveData();
+ closeModal('connectModal');
+ drawLines();
+ showToast('Connection created successfully');
+ setNav(document.querySelectorAll('.nav-btn')[0]);
+}
+
+/* CONNECTION LIST */
+function openConnectionList(){
+ const box=document.getElementById('connectionList');
+
+ if(!connections.length){
+  box.innerHTML='<div class="empty">No connections created yet.</div>';
+ }else{
+  box.innerHTML=connections.map(c=>{
+   const a=items.find(x=>x.id===c.from);
+   const b=items.find(x=>x.id===c.to);
+   const ct=connectionTypeOf(c.type);
+   const color=c.color||ct?.color||getWireSettings().color;
+
+   return `
+    <div class="item" style="margin-bottom:8px">
+     <div style="min-width:0">
+      <div style="font-size:11px;font-weight:800">${escapeHTML(a?.name||'Unknown')} → ${escapeHTML(b?.name||'Unknown')}</div>
+      <div class="item-meta"><span class="color-dot" style="background:${escapeHTML(color)}"></span> ${escapeHTML(c.type||'Connection')} ${c.name?'· '+escapeHTML(c.name):''}</div>
+     </div>
+     <button class="btn btn-red" onclick="deleteConnection('${escapeHTML(c.id)}')">Delete</button>
+    </div>
+   `;
+  }).join('');
+ }
+ openModal('connectionsModal');
+}
+function deleteConnection(id){
+ if(!confirm('Delete this connection?'))return;
+ connections=connections.filter(c=>c.id!==id);
+ saveData();
+ drawLines();
+ openConnectionList();
+ showToast('Connection deleted');
+}
+
+/* FIT MAP */
+function fitAll(){
+ if(!items.length){
+  map.setView([23.8103,90.4125],12);
+  showToast('No locations available yet');
+  return;
+ }
+ const bounds=L.latLngBounds(items.map(x=>[Number(x.lat),Number(x.lng)]));
+ map.fitBounds(bounds.pad(.18),{maxZoom:17});
+}
+function renderAll(){
+ renderTypeOptions();
+ drawMarkers();
+ drawLines();
+}
+
+/* STORAGE SYNC */
+window.addEventListener('storage',e=>{
+ if([K_TYPES,K_CONNECTION_TYPES,K_WIRE,K_VIEW,K_ITEMS,K_DATA].includes(e.key)){
+  loadData();
+  renderAll();
+  if(e.key===K_VIEW)applyView(read(K_VIEW,'road'));
+ }
+});
+
+/* MODAL BACKDROP */
+document.querySelectorAll('.modal-overlay').forEach(el=>{
+ el.addEventListener('click',e=>{
+  if(e.target===el){
+   el.classList.remove('show');
+   if(el.id==='locationModal')addingLocation=false;
   }
+ });
+});
+
+/* ESC KEY */
+document.addEventListener('keydown',e=>{
+ if(e.key==='Escape'){
+  document.querySelectorAll('.modal-overlay.show').forEach(x=>x.classList.remove('show'));
+  closeDrawer();
+  addingLocation=false;
+ }
+});
+
+/* INIT */
+function init(){
+ if(typeof L==='undefined'){
+  showToast('Map library failed to load. Check internet connection.');
+  return;
+ }
+
+ loadData();
+ initMap();
+ renderAll();
+
+ setTimeout(()=>map.invalidateSize(),400);
 }
-
-/* DEMO DATA */
-
-function createDemoData(){
-
-  if(data.poles.length||data.customers.length||data.boxes.length)return;
-
-  const p1=uid();
-  const p2=uid();
-  const b1=uid();
-
-  data.poles=[
-    {
-      id:p1,
-      name:"POLE-001",
-      address:"Main Road",
-      lat:22.3569,
-      lng:91.7832
-    },
-    {
-      id:p2,
-      name:"POLE-002",
-      address:"Market Road",
-      lat:22.3590,
-      lng:91.7860
-    }
-  ];
-
-  data.boxes=[
-    {
-      id:b1,
-      name:"BOX-001",
-      fiberName:"Main Fiber",
-      fiberCode:"FBR-001",
-      fiberMeter:250,
-      poleId:p1,
-      lat:22.3577,
-      lng:91.7842
-    }
-  ];
-
-  data.customers=[
-    {
-      id:uid(),
-      name:"Demo Customer 01",
-      ip:"192.168.1.10",
-      address:"Demo Address",
-      type:"Fiber",
-      poleId:p1,
-      sourceType:"box",
-      sourceId:b1,
-      lat:22.3582,
-      lng:91.7851
-    },
-    {
-      id:uid(),
-      name:"Demo Customer 02",
-      ip:"192.168.1.11",
-      address:"Demo Address 02",
-      type:"UTP Cable",
-      poleId:p2,
-      sourceType:"pole",
-      sourceId:p2,
-      lat:22.3600,
-      lng:91.7870
-    }
-  ];
-
-  localStorage.setItem(STORAGE_KEY,JSON.stringify(data));
-}
-
-/* START */
-
-loadData();
-createDemoData();
-renderAll();
-
-setTimeout(()=>{
-  map.invalidateSize();
-  resetView();
-},300);
-
+init();
 </script>
-
 </body>
 </html>
