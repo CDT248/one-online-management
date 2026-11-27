@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Network Map | ONE ONLINE</title>
 
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
@@ -18,30 +18,61 @@
   --line:#283950;
   --primary:#168b68;
   --blue:#3185ed;
-  --red:#ef5350;
 }
 *{box-sizing:border-box}
-body{
+
+html,body{
   margin:0;
+  width:100%;
+  height:100%;
+  font-family:Arial,sans-serif;
   background:var(--bg);
   color:var(--text);
-  font-family:Arial,sans-serif;
 }
-button,input,select,textarea{font:inherit}
+
+body{
+  overflow:hidden;
+}
+
+button,input,select{font:inherit}
 button{cursor:pointer}
-.topbar{
-  height:65px;
+
+.map-page{
+  width:100%;
+  height:100%;
+  min-height:500px;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+}
+
+/* HEADER */
+
+.map-header{
+  min-height:62px;
   background:var(--panel);
   border-bottom:1px solid var(--line);
   display:flex;
   align-items:center;
   justify-content:space-between;
-  padding:0 20px;
+  padding:10px 16px;
   gap:10px;
+  flex-wrap:wrap;
 }
-.brand{font-size:19px;font-weight:800}
-.brand span{color:#21bd91}
-.top-actions{display:flex;gap:8px;flex-wrap:wrap}
+
+.map-brand{
+  font-size:18px;
+  font-weight:800;
+}
+
+.map-brand span{color:#21bd91}
+
+.map-header-actions{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+
 .btn{
   border:0;
   border-radius:8px;
@@ -49,127 +80,176 @@ button{cursor:pointer}
   background:var(--primary);
   color:white;
   font-weight:600;
-}
-.btn.secondary{background:#263b55}
-.btn.blue{background:#2879d4}
-.btn.danger{background:#bd3942}
-.btn.small{padding:7px 10px;font-size:12px}
-.main{
-  display:grid;
-  grid-template-columns:280px 1fr;
-  height:calc(100vh - 65px);
-}
-.sidebar{
-  background:var(--panel);
-  border-right:1px solid var(--line);
-  padding:16px;
-  overflow:auto;
-}
-.section-title{
-  color:var(--muted);
-  font-size:11px;
-  font-weight:700;
-  letter-spacing:1px;
-  margin:12px 0;
-}
-.stat{
-  background:var(--panel2);
-  border:1px solid var(--line);
-  border-radius:11px;
-  padding:14px;
-  margin-bottom:10px;
-}
-.stat small{color:var(--muted)}
-.stat strong{display:block;font-size:25px;margin-top:7px}
-.legend{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  margin:13px 0;
   font-size:13px;
 }
-.dot{width:12px;height:12px;border-radius:50%}
-.map-area{position:relative;min-width:0}
-#map{height:100%;width:100%;background:#dce6e9}
+
+.btn.blue{background:#2879d4}
+.btn.orange{background:#b87919}
+.btn.secondary{background:#293b53}
+.btn.danger{background:#bd3942}
+.btn.small{padding:8px 11px;font-size:12px}
+
+/* MAP */
+
+.map-area{
+  flex:1;
+  min-height:0;
+  position:relative;
+  width:100%;
+}
+
+#map{
+  height:100%;
+  width:100%;
+  background:#dce6e9;
+}
+
 .map-tools{
   position:absolute;
   z-index:500;
   top:12px;
-  left:60px;
-  right:12px;
+  left:12px;
   display:flex;
   flex-wrap:wrap;
   gap:7px;
-  pointer-events:none;
+  max-width:calc(100% - 24px);
 }
-.map-tools button{pointer-events:auto;box-shadow:0 2px 8px #0004}
-.hint{
+
+.map-tools button{
+  box-shadow:0 2px 8px #0004;
+}
+
+.map-hint{
   position:absolute;
   z-index:500;
   bottom:20px;
   left:50%;
   transform:translateX(-50%);
-  background:#111c2eeF;
+  background:#111c2ef2;
   color:white;
-  border-radius:8px;
-  padding:10px 15px;
+  border-radius:9px;
+  padding:11px 15px;
   font-size:12px;
   display:none;
-  white-space:nowrap;
+  white-space:normal;
+  text-align:center;
+  width:max-content;
+  max-width:90%;
 }
+
+.map-stats{
+  position:absolute;
+  z-index:500;
+  top:65px;
+  right:12px;
+  display:flex;
+  gap:7px;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+}
+
+.stat-box{
+  background:#111c2eeF;
+  border:1px solid #ffffff30;
+  border-radius:9px;
+  padding:8px 12px;
+  color:white;
+  min-width:75px;
+  text-align:center;
+  box-shadow:0 2px 8px #0003;
+}
+
+.stat-box small{
+  display:block;
+  font-size:10px;
+  color:#a9bdd4;
+}
+
+.stat-box strong{
+  display:block;
+  font-size:18px;
+  margin-top:3px;
+}
+
+/* MARKERS */
+
 .marker{
-  width:35px;height:35px;
+  width:35px;
+  height:35px;
   border-radius:50%;
   border:3px solid white;
   display:flex;
-  justify-content:center;
   align-items:center;
+  justify-content:center;
   color:white;
   font-size:17px;
   box-shadow:0 2px 8px #0007;
 }
+
 .pole-marker{background:#2563eb}
 .customer-marker{background:#16a36a}
 .box-marker{background:#db8b20}
+
+/* MODALS */
+
 .modal{
   display:none;
   position:fixed;
-  z-index:2000;
+  z-index:3000;
   inset:0;
   background:#000b;
   align-items:center;
   justify-content:center;
   padding:15px;
 }
+
 .modal.show{display:flex}
+
 .modal-content{
   width:100%;
   max-width:490px;
-  max-height:90vh;
-  overflow:auto;
+  max-height:90%;
+  overflow-y:auto;
   background:#111c2e;
   border:1px solid #35465e;
   border-radius:15px;
   padding:20px;
   box-shadow:0 20px 60px #0008;
 }
+
 .modal-head{
   display:flex;
   justify-content:space-between;
   align-items:center;
+  gap:10px;
   margin-bottom:18px;
 }
-.modal-head h3{margin:0;font-size:19px}
+
+.modal-head h3{
+  margin:0;
+  font-size:19px;
+}
+
 .close{
-  border:0;background:#293950;color:white;
-  width:32px;height:32px;border-radius:8px;
+  border:0;
+  background:#293950;
+  color:white;
+  width:32px;
+  height:32px;
+  border-radius:8px;
 }
+
 .form-group{margin-bottom:13px}
+
 .form-group label{
-  display:block;font-size:12px;
-  color:#b5c5d9;margin-bottom:6px;
+  display:block;
+  font-size:12px;
+  color:#b5c5d9;
+  margin-bottom:6px;
 }
-.form-group input,.form-group select,.form-group textarea{
+
+.form-group input,
+.form-group select{
   width:100%;
   padding:11px;
   background:#1c2b41;
@@ -178,165 +258,269 @@ button{cursor:pointer}
   border-radius:8px;
   outline:none;
 }
-.form-group input:focus,.form-group select:focus{
+
+.form-group input:focus,
+.form-group select:focus{
   border-color:#1cba8a;
 }
+
+.form-group select option{
+  background:#1c2b41;
+  color:white;
+}
+
 .form-row{
   display:grid;
   grid-template-columns:1fr 1fr;
   gap:10px;
 }
-.actions{display:flex;gap:8px;margin-top:18px}
-.actions button{flex:1}
+
+.form-actions{
+  display:flex;
+  gap:8px;
+  margin-top:18px;
+}
+
+.form-actions button{flex:1}
+
 .info-line{
-  display:flex;justify-content:space-between;
-  gap:10px;padding:10px 0;
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:12px;
+  padding:10px 0;
   border-bottom:1px solid var(--line);
   font-size:13px;
 }
+
 .info-line span{color:var(--muted)}
-.info-line strong{text-align:right;overflow-wrap:anywhere}
-.info-actions{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap}
-.popup-title{font-weight:800;font-size:15px;margin-bottom:7px}
-.popup-btn{
-  border:0;background:#168b68;color:white;
-  padding:8px 12px;border-radius:7px;margin-top:9px;
+.info-line strong{
+  text-align:right;
+  overflow-wrap:anywhere;
 }
-#connectionList{max-height:220px;overflow:auto}
-.empty{color:var(--muted);font-size:12px;padding:10px 0}
-@media(max-width:750px){
-  .main{grid-template-columns:1fr;height:auto;min-height:calc(100vh - 65px)}
-  .sidebar{border-right:0;border-bottom:1px solid var(--line)}
-  .stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
-  .stat{padding:10px;margin:0}
-  .stat strong{font-size:20px}
-  .legend-area{display:flex;gap:12px;flex-wrap:wrap}
-  #map{height:65vh;min-height:430px}
-  .map-area{min-height:430px}
-  .map-tools{left:10px;top:10px}
-  .topbar{padding:0 12px}
-  .brand{font-size:15px}
+
+.info-actions{
+  display:flex;
+  gap:8px;
+  margin-top:16px;
+  flex-wrap:wrap;
 }
-@media(max-width:400px){
+
+.info-actions button{flex:1}
+
+.menu-option{
+  width:100%;
+  margin-bottom:10px;
+  padding:14px;
+  border:1px solid var(--line);
+  border-radius:9px;
+  background:#1c2b41;
+  color:white;
+  text-align:left;
+  font-weight:700;
+}
+
+.menu-option:hover{border-color:#168b68}
+
+.menu-option small{
+  display:block;
+  color:#9eb0c6;
+  margin-top:5px;
+  font-weight:400;
+}
+
+.section-label{
+  font-size:11px;
+  font-weight:700;
+  color:#91a2bb;
+  letter-spacing:1px;
+  margin:17px 0 7px;
+}
+
+.empty{
+  color:var(--muted);
+  font-size:12px;
+  padding:10px 0;
+}
+
+#connectionList{
+  max-height:180px;
+  overflow:auto;
+}
+
+.connection-item{
+  padding:9px;
+  border-bottom:1px solid var(--line);
+  font-size:12px;
+  line-height:1.6;
+}
+
+@media(max-width:600px){
+  .map-header{
+    min-height:58px;
+    padding:9px;
+  }
+  .map-brand{font-size:15px}
+  .map-header-actions{gap:5px}
+  .map-header-actions .btn{
+    padding:8px;
+    font-size:11px;
+  }
+  .map-tools{
+    top:10px;
+    left:8px;
+    gap:5px;
+  }
+  .map-tools .btn{
+    padding:8px 9px;
+    font-size:11px;
+  }
+  .map-stats{
+    top:58px;
+    right:8px;
+    gap:4px;
+  }
+  .stat-box{
+    min-width:57px;
+    padding:6px 8px;
+  }
+  .stat-box small{font-size:9px}
+  .stat-box strong{font-size:15px}
   .form-row{grid-template-columns:1fr}
-  .stats-grid{grid-template-columns:1fr 1fr}
+  .modal-content{padding:16px}
 }
 </style>
 </head>
 
 <body>
 
-<header class="topbar">
-  <div class="brand"><span>ONE</span> ONLINE | NETWORK MAP</div>
-  <div class="top-actions">
-    <button class="btn secondary small" onclick="resetView()">Reset View</button>
-    <button class="btn small" onclick="openModal('poleModal')">+ Add Pole</button>
-  </div>
-</header>
+<div class="map-page">
 
-<div class="main">
+  <!-- HEADER -->
+  <header class="map-header">
 
-  <aside class="sidebar">
+    <div class="map-brand">
+      <span>ONE</span> ONLINE | NETWORK MAP
+    </div>
 
-    <div class="section-title">NETWORK OVERVIEW</div>
+    <div class="map-header-actions">
+      <button class="btn secondary small" onclick="resetView()">
+        Reset View
+      </button>
 
-    <div class="stats-grid">
-      <div class="stat">
-        <small>Total Pole</small>
+      <button class="btn small" onclick="startAddPole()">
+        + Add Pole
+      </button>
+    </div>
+
+  </header>
+
+  <!-- MAP AREA -->
+  <main class="map-area">
+
+    <div class="map-tools">
+
+      <button class="btn small" onclick="startAddPole()">
+        + Pole
+      </button>
+
+      <button class="btn blue small" onclick="startAddCustomer()">
+        + Customer
+      </button>
+
+      <button class="btn orange small" onclick="startAddBox()">
+        + Sub Box
+      </button>
+
+    </div>
+
+    <div class="map-stats">
+
+      <div class="stat-box">
+        <small>POLES</small>
         <strong id="poleCount">0</strong>
       </div>
-      <div class="stat">
-        <small>Customers</small>
+
+      <div class="stat-box">
+        <small>CUSTOMERS</small>
         <strong id="customerCount">0</strong>
       </div>
-      <div class="stat">
-        <small>Sub Boxes</small>
+
+      <div class="stat-box">
+        <small>SUB BOX</small>
         <strong id="boxCount">0</strong>
       </div>
+
     </div>
 
-    <div class="section-title">MAP LEGEND</div>
-    <div class="legend-area">
-      <div class="legend"><div class="dot" style="background:#2563eb"></div> Pole</div>
-      <div class="legend"><div class="dot" style="background:#16a36a"></div> Customer</div>
-      <div class="legend"><div class="dot" style="background:#db8b20"></div> Sub Box</div>
-    </div>
-
-    <div class="section-title">CONNECTION TYPE</div>
-    <div class="legend-area">
-      <div class="legend"><div class="dot" style="background:#16a36a"></div> Fiber</div>
-      <div class="legend"><div class="dot" style="background:#e59a27"></div> UTP Cable</div>
-      <div class="legend"><div class="dot" style="background:#a855f7"></div> Wireless</div>
-    </div>
-
-    <div class="section-title">NETWORK CONNECTIONS</div>
-    <div id="connectionList">
-      <div class="empty">No connections available.</div>
-    </div>
-
-    <div style="margin-top:20px;color:#8295ae;font-size:11px;line-height:1.7">
-      DEMO VERSION<br>
-      Data is stored in this browser only.<br>
-      Google Sheet Backend will be added later.
-    </div>
-
-  </aside>
-
-  <main class="map-area">
-    <div class="map-tools">
-      <button class="btn small" onclick="startAddPole()">+ Pole</button>
-      <button class="btn blue small" onclick="startAddCustomer()">+ Customer</button>
-      <button class="btn small" style="background:#b87919" onclick="startAddBox()">+ Sub Box</button>
-    </div>
     <div id="map"></div>
-    <div class="hint" id="mapHint"></div>
+
+    <div class="map-hint" id="mapHint"></div>
+
   </main>
 
 </div>
 
 <!-- POLE MODAL -->
+
 <div class="modal" id="poleModal">
  <div class="modal-content">
+
   <div class="modal-head">
    <h3 id="poleModalTitle">Add New Pole</h3>
    <button class="close" onclick="closeModal('poleModal')">✕</button>
   </div>
+
   <form id="poleForm">
+
    <input type="hidden" id="poleId">
+
    <div class="form-group">
     <label>Pole Name / Number</label>
     <input id="poleName" required placeholder="Example: POLE-001">
    </div>
+
    <div class="form-group">
     <label>Pole Address</label>
-    <input id="poleAddress" placeholder="Pole address">
+    <input id="poleAddress" placeholder="Pole Address">
    </div>
+
    <div class="form-row">
+
     <div class="form-group">
      <label>Latitude</label>
      <input id="poleLat" type="number" step="any" required>
     </div>
+
     <div class="form-group">
      <label>Longitude</label>
      <input id="poleLng" type="number" step="any" required>
     </div>
+
    </div>
-   <div class="actions">
+
+   <div class="form-actions">
     <button type="button" class="btn secondary" onclick="closeModal('poleModal')">Cancel</button>
     <button class="btn">Save Pole</button>
    </div>
+
   </form>
+
  </div>
 </div>
 
 <!-- CUSTOMER MODAL -->
+
 <div class="modal" id="customerModal">
  <div class="modal-content">
+
   <div class="modal-head">
    <h3 id="customerModalTitle">Add Customer</h3>
    <button class="close" onclick="closeModal('customerModal')">✕</button>
   </div>
+
   <form id="customerForm">
+
    <input type="hidden" id="customerId">
 
    <div class="form-group">
@@ -345,10 +529,12 @@ button{cursor:pointer}
    </div>
 
    <div class="form-row">
+
     <div class="form-group">
      <label>Customer IP</label>
      <input id="customerIP" placeholder="192.168.1.10">
     </div>
+
     <div class="form-group">
      <label>Connection Type</label>
      <select id="customerType">
@@ -357,6 +543,7 @@ button{cursor:pointer}
       <option value="Wireless">Wireless</option>
      </select>
     </div>
+
    </div>
 
    <div class="form-group">
@@ -365,37 +552,54 @@ button{cursor:pointer}
    </div>
 
    <div class="form-group">
-    <label>Connected Pole</label>
-    <select id="customerPole"></select>
+    <label>Connect Through</label>
+    <select id="customerSourceType" onchange="updateCustomerSourceOptions()">
+     <option value="pole">Pole</option>
+     <option value="box">Sub Box</option>
+    </select>
+   </div>
+
+   <div class="form-group">
+    <label>Connected Pole / Sub Box</label>
+    <select id="customerSource" required></select>
    </div>
 
    <div class="form-row">
+
     <div class="form-group">
      <label>Latitude</label>
      <input id="customerLat" type="number" step="any" required>
     </div>
+
     <div class="form-group">
      <label>Longitude</label>
      <input id="customerLng" type="number" step="any" required>
     </div>
+
    </div>
 
-   <div class="actions">
+   <div class="form-actions">
     <button type="button" class="btn secondary" onclick="closeModal('customerModal')">Cancel</button>
     <button class="btn">Save Customer</button>
    </div>
+
   </form>
+
  </div>
 </div>
 
 <!-- SUB BOX MODAL -->
+
 <div class="modal" id="boxModal">
  <div class="modal-content">
+
   <div class="modal-head">
    <h3 id="boxModalTitle">Add Sub Box</h3>
    <button class="close" onclick="closeModal('boxModal')">✕</button>
   </div>
+
   <form id="boxForm">
+
    <input type="hidden" id="boxId">
 
    <div class="form-group">
@@ -404,14 +608,17 @@ button{cursor:pointer}
    </div>
 
    <div class="form-row">
+
     <div class="form-group">
      <label>Fiber Name</label>
      <input id="fiberName" placeholder="Fiber Name">
     </div>
+
     <div class="form-group">
      <label>Fiber Code</label>
      <input id="fiberCode" placeholder="Fiber Code">
     </div>
+
    </div>
 
    <div class="form-group">
@@ -421,100 +628,104 @@ button{cursor:pointer}
 
    <div class="form-group">
     <label>Connected Pole</label>
-    <select id="boxPole"></select>
+    <select id="boxPole" required></select>
    </div>
 
    <div class="form-row">
+
     <div class="form-group">
      <label>Latitude</label>
      <input id="boxLat" type="number" step="any" required>
     </div>
+
     <div class="form-group">
      <label>Longitude</label>
      <input id="boxLng" type="number" step="any" required>
     </div>
+
    </div>
 
-   <div class="actions">
+   <div class="form-actions">
     <button type="button" class="btn secondary" onclick="closeModal('boxModal')">Cancel</button>
     <button class="btn">Save Sub Box</button>
    </div>
+
   </form>
+
  </div>
 </div>
 
 <!-- INFORMATION MODAL -->
+
 <div class="modal" id="infoModal">
  <div class="modal-content">
+
   <div class="modal-head">
    <h3 id="infoTitle">Information</h3>
    <button class="close" onclick="closeModal('infoModal')">✕</button>
   </div>
+
   <div id="infoContent"></div>
   <div class="info-actions" id="infoActions"></div>
+
  </div>
 </div>
 
 <!-- ADD MENU -->
+
 <div class="modal" id="addMenu">
- <div class="modal-content" style="max-width:340px">
+ <div class="modal-content" style="max-width:350px">
+
   <div class="modal-head">
    <h3>Add to Pole</h3>
    <button class="close" onclick="closeModal('addMenu')">✕</button>
   </div>
-  <button class="btn" style="width:100%;margin-bottom:10px" onclick="openCustomerFromPole()">+ Add Customer</button>
-  <button class="btn blue" style="width:100%" onclick="openBoxFromPole()">+ Add Sub Box</button>
+
+  <button class="menu-option" onclick="openCustomerFromPole()">
+   👤 Add Customer
+   <small>Connect a customer to this pole</small>
+  </button>
+
+  <button class="menu-option" onclick="openBoxFromPole()">
+   📦 Add Sub Box
+   <small>Create a new fiber distribution box</small>
+  </button>
+
  </div>
 </div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <script>
-/* ===================================
-   ONE ONLINE NETWORK MAP - DEMO
-=================================== */
 
-const STORAGE_KEY = "one_online_network_map_demo_v1";
+/* =========================================
+   ONE ONLINE - NETWORK MAP DEMO
+========================================= */
 
-let data = {
+const STORAGE_KEY="one_online_network_map_demo_v2";
+
+let data={
   poles:[],
   customers:[],
   boxes:[]
 };
 
 let map;
-let markers = {};
-let connectionLines = [];
-let activePoleId = null;
-let selectedInfo = null;
-let addMode = null;
-let tempLocation = null;
+let markers={};
+let connectionLines=[];
+
+let activePoleId=null;
+let selectedInfo=null;
+let addMode=null;
+
+/* HELPERS */
 
 function uid(){
   return Date.now().toString(36)+Math.random().toString(36).slice(2,7);
 }
 
-function saveData(){
-  localStorage.setItem(STORAGE_KEY,JSON.stringify(data));
-  renderAll();
-}
-
-function loadData(){
-  try{
-    const saved=localStorage.getItem(STORAGE_KEY);
-    if(saved){
-      const parsed=JSON.parse(saved);
-      if(parsed.poles && parsed.customers && parsed.boxes){
-        data=parsed;
-      }
-    }
-  }catch(e){
-    console.error(e);
-  }
-}
-
-function escapeHTML(value){
-  return String(value ?? "").replace(/[&<>"']/g,c=>({
+function esc(value){
+  return String(value??"").replace(/[&<>"']/g,c=>({
     "&":"&amp;",
     "<":"&lt;",
     ">":"&gt;",
@@ -523,16 +734,48 @@ function escapeHTML(value){
   })[c]);
 }
 
-/* MAP INITIALIZATION */
+function saveData(){
+  try{
+    localStorage.setItem(STORAGE_KEY,JSON.stringify(data));
+  }catch(e){
+    alert("Data Save করা যায়নি। Browser Storage চেক করুন।");
+  }
+  renderAll();
+}
 
-map=L.map('map').setView([22.3569,91.7832],13);
+function loadData(){
+  try{
+    const saved=localStorage.getItem(STORAGE_KEY);
+    if(saved){
+      const parsed=JSON.parse(saved);
+      if(Array.isArray(parsed.poles)&&
+         Array.isArray(parsed.customers)&&
+         Array.isArray(parsed.boxes)){
+        data=parsed;
+      }
+    }
+  }catch(e){
+    console.error(e);
+  }
+}
 
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+function getEntity(type,id){
+  if(type==="pole")return data.poles.find(x=>x.id===id);
+  if(type==="customer")return data.customers.find(x=>x.id===id);
+  if(type==="box")return data.boxes.find(x=>x.id===id);
+}
+
+/* MAP */
+
+map=L.map("map").setView([22.3569,91.7832],13);
+
+L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{
   maxZoom:20,
-  attribution:'&copy; OpenStreetMap contributors'
+  attribution:"&copy; OpenStreetMap contributors"
 }).addTo(map);
 
 function markerIcon(type){
+
   let cls="pole-marker";
   let icon="⚡";
 
@@ -540,6 +783,7 @@ function markerIcon(type){
     cls="customer-marker";
     icon="👤";
   }
+
   if(type==="box"){
     cls="box-marker";
     icon="▣";
@@ -553,68 +797,52 @@ function markerIcon(type){
   });
 }
 
-function getEntity(type,id){
-  if(type==="pole")return data.poles.find(x=>x.id===id);
-  if(type==="customer")return data.customers.find(x=>x.id===id);
-  if(type==="box")return data.boxes.find(x=>x.id===id);
-}
-
-/* MARKERS AND CONNECTIONS */
+/* MARKERS */
 
 function clearMapObjects(){
-  Object.values(markers).forEach(m=>map.removeLayer(m));
+
+  Object.values(markers).forEach(m=>{
+    map.removeLayer(m);
+  });
+
   markers={};
 
-  connectionLines.forEach(l=>map.removeLayer(l));
+  connectionLines.forEach(l=>{
+    map.removeLayer(l);
+  });
+
   connectionLines=[];
 }
 
-function renderAll(){
-  if(!map)return;
-
-  clearMapObjects();
-
-  data.poles.forEach(p=>{
-    addMarker("pole",p);
-  });
-
-  data.boxes.forEach(b=>{
-    addMarker("box",b);
-  });
-
-  data.customers.forEach(c=>{
-    addMarker("customer",c);
-  });
-
-  renderConnections();
-  updateStats();
-  renderConnectionList();
-}
-
 function addMarker(type,item){
+
   const marker=L.marker([Number(item.lat),Number(item.lng)],{
     draggable:true,
     icon:markerIcon(type)
   }).addTo(map);
 
-  marker.on('click',()=>{
+  marker.on("click",()=>{
     if(addMode)return;
     showInfo(type,item.id);
   });
 
-  marker.on('dragend',e=>{
+  marker.on("dragend",e=>{
+
     const pos=e.target.getLatLng();
     const entity=getEntity(type,item.id);
 
-    if(entity){
-      entity.lat=pos.lat;
-      entity.lng=pos.lng;
-      saveData();
-    }
+    if(!entity)return;
+
+    entity.lat=pos.lat;
+    entity.lng=pos.lng;
+
+    saveData();
   });
 
   markers[type+"_"+item.id]=marker;
 }
+
+/* CONNECTIONS */
 
 function connectionColor(type){
   if(type==="UTP Cable")return "#e59a27";
@@ -623,31 +851,36 @@ function connectionColor(type){
 }
 
 function renderConnections(){
-  // Sub Box to Pole
+
+  // Pole to Sub Box
+
   data.boxes.forEach(b=>{
-    const p=data.poles.find(x=>x.id===b.poleId);
-    if(!p)return;
+
+    const pole=getEntity("pole",b.poleId);
+    if(!pole)return;
 
     const line=L.polyline([
-      [p.lat,p.lng],
+      [pole.lat,pole.lng],
       [b.lat,b.lng]
     ],{
       color:"#16a36a",
       weight:3,
-      opacity:.85
+      opacity:.9
     }).addTo(map);
 
     connectionLines.push(line);
   });
 
-  // Customer to Pole or Sub Box
+  // Pole / Sub Box to Customer
+
   data.customers.forEach(c=>{
+
     let source=null;
 
     if(c.sourceType==="box"){
-      source=data.boxes.find(x=>x.id===c.sourceId);
+      source=getEntity("box",c.sourceId);
     }else{
-      source=data.poles.find(x=>x.id===c.poleId);
+      source=getEntity("pole",c.sourceId);
     }
 
     if(!source)return;
@@ -666,301 +899,434 @@ function renderConnections(){
   });
 }
 
+/* RENDER */
+
+function renderAll(){
+
+  if(!map)return;
+
+  clearMapObjects();
+
+  data.poles.forEach(p=>addMarker("pole",p));
+  data.boxes.forEach(b=>addMarker("box",b));
+  data.customers.forEach(c=>addMarker("customer",c));
+
+  renderConnections();
+  updateStats();
+}
+
 /* MAP CLICK */
 
-map.on('click',e=>{
+map.on("click",e=>{
+
   if(!addMode)return;
 
   const pos=e.latlng;
-  tempLocation=pos;
 
   if(addMode==="pole"){
-    document.getElementById('poleLat').value=pos.lat.toFixed(7);
-    document.getElementById('poleLng').value=pos.lng.toFixed(7);
-    openModal('poleModal');
+    resetPoleForm();
+    document.getElementById("poleLat").value=pos.lat.toFixed(7);
+    document.getElementById("poleLng").value=pos.lng.toFixed(7);
+    openModal("poleModal");
   }
 
   if(addMode==="customer"){
-    document.getElementById('customerLat').value=pos.lat.toFixed(7);
-    document.getElementById('customerLng').value=pos.lng.toFixed(7);
-    prepareCustomerForm();
-    openModal('customerModal');
+    resetCustomerForm();
+    document.getElementById("customerLat").value=pos.lat.toFixed(7);
+    document.getElementById("customerLng").value=pos.lng.toFixed(7);
+    openModal("customerModal");
   }
 
   if(addMode==="box"){
-    document.getElementById('boxLat').value=pos.lat.toFixed(7);
-    document.getElementById('boxLng').value=pos.lng.toFixed(7);
-    prepareBoxForm();
-    openModal('boxModal');
+    resetBoxForm();
+    document.getElementById("boxLat").value=pos.lat.toFixed(7);
+    document.getElementById("boxLng").value=pos.lng.toFixed(7);
+    openModal("boxModal");
   }
 
-  addMode=null;
-  document.getElementById('mapHint').style.display='none';
+  cancelAddMode();
 });
 
-/* ADD MODES */
+/* ADD MODE */
 
 function startAddPole(){
   addMode="pole";
-  showHint("Map-এর যে জায়গায় Pole বসাতে চান সেখানে ক্লিক করুন");
+  showHint("Pole বসানোর জন্য Map-এর যেকোনো জায়গায় ক্লিক করুন");
 }
 
 function startAddCustomer(){
+
   if(!data.poles.length){
     alert("প্রথমে একটি Pole Add করুন।");
     return;
   }
+
   addMode="customer";
   showHint("Customer Location নির্বাচন করতে Map-এ ক্লিক করুন");
 }
 
 function startAddBox(){
+
   if(!data.poles.length){
     alert("প্রথমে একটি Pole Add করুন।");
     return;
   }
+
   addMode="box";
   showHint("Sub Box Location নির্বাচন করতে Map-এ ক্লিক করুন");
 }
 
 function showHint(msg){
-  const h=document.getElementById('mapHint');
+  const h=document.getElementById("mapHint");
   h.textContent=msg;
-  h.style.display='block';
+  h.style.display="block";
 }
 
 function cancelAddMode(){
   addMode=null;
-  document.getElementById('mapHint').style.display='none';
+  document.getElementById("mapHint").style.display="none";
 }
 
 /* MODAL */
 
 function openModal(id){
-  document.getElementById(id).classList.add('show');
+  document.getElementById(id).classList.add("show");
 }
 
 function closeModal(id){
-  document.getElementById(id).classList.remove('show');
-  if(id==="poleModal"||id==="customerModal"||id==="boxModal"){
+
+  document.getElementById(id).classList.remove("show");
+
+  if(["poleModal","customerModal","boxModal"].includes(id)){
     cancelAddMode();
   }
 }
 
-document.querySelectorAll('.modal').forEach(modal=>{
-  modal.addEventListener('click',e=>{
+document.querySelectorAll(".modal").forEach(modal=>{
+  modal.addEventListener("click",e=>{
     if(e.target===modal)closeModal(modal.id);
   });
 });
 
-/* POLE FORM */
+/* POLE */
 
-document.getElementById('poleForm').addEventListener('submit',e=>{
+function resetPoleForm(){
+  document.getElementById("poleForm").reset();
+  document.getElementById("poleId").value="";
+  document.getElementById("poleModalTitle").textContent="Add New Pole";
+}
+
+document.getElementById("poleForm").addEventListener("submit",e=>{
+
   e.preventDefault();
 
-  const id=document.getElementById('poleId').value;
+  const id=document.getElementById("poleId").value;
   const old=getEntity("pole",id);
 
   const item={
     id:id||uid(),
-    name:document.getElementById('poleName').value.trim(),
-    address:document.getElementById('poleAddress').value.trim(),
-    lat:Number(document.getElementById('poleLat').value),
-    lng:Number(document.getElementById('poleLng').value)
+    name:document.getElementById("poleName").value.trim(),
+    address:document.getElementById("poleAddress").value.trim(),
+    lat:Number(document.getElementById("poleLat").value),
+    lng:Number(document.getElementById("poleLng").value)
   };
 
   if(old)Object.assign(old,item);
   else data.poles.push(item);
 
-  closeModal('poleModal');
-  e.target.reset();
-  document.getElementById('poleId').value="";
+  closeModal("poleModal");
+  resetPoleForm();
   saveData();
 });
 
 function editPole(id){
+
   const p=getEntity("pole",id);
   if(!p)return;
 
-  document.getElementById('poleId').value=p.id;
-  document.getElementById('poleName').value=p.name;
-  document.getElementById('poleAddress').value=p.address||"";
-  document.getElementById('poleLat').value=p.lat;
-  document.getElementById('poleLng').value=p.lng;
-  document.getElementById('poleModalTitle').textContent="Edit Pole";
+  document.getElementById("poleId").value=p.id;
+  document.getElementById("poleName").value=p.name;
+  document.getElementById("poleAddress").value=p.address||"";
+  document.getElementById("poleLat").value=p.lat;
+  document.getElementById("poleLng").value=p.lng;
 
-  closeModal('infoModal');
-  openModal('poleModal');
+  document.getElementById("poleModalTitle").textContent="Edit Pole";
+
+  closeModal("infoModal");
+  openModal("poleModal");
 }
 
-/* CUSTOMER FORM */
+/* CUSTOMER */
 
-function prepareCustomerForm(){
-  const select=document.getElementById('customerPole');
-  select.innerHTML='<option value="">Select Pole</option>';
+function updateCustomerSourceOptions(){
 
-  data.poles.forEach(p=>{
-    select.innerHTML+=`<option value="${p.id}">${escapeHTML(p.name)}</option>`;
-  });
+  const type=document.getElementById("customerSourceType").value;
+  const select=document.getElementById("customerSource");
 
-  if(activePoleId){
-    select.value=activePoleId;
+  select.innerHTML="";
+
+  if(type==="pole"){
+
+    data.poles.forEach(p=>{
+      select.innerHTML+=`<option value="${esc(p.id)}">${esc(p.name)}</option>`;
+    });
+
+  }else{
+
+    data.boxes.forEach(b=>{
+      select.innerHTML+=`<option value="${esc(b.id)}">${esc(b.name)}</option>`;
+    });
+
   }
 }
 
-document.getElementById('customerForm').addEventListener('submit',e=>{
+function resetCustomerForm(){
+
+  document.getElementById("customerForm").reset();
+  document.getElementById("customerId").value="";
+  document.getElementById("customerModalTitle").textContent="Add Customer";
+
+  const sourceType=document.getElementById("customerSourceType");
+  sourceType.value="pole";
+
+  updateCustomerSourceOptions();
+
+  if(activePoleId){
+    document.getElementById("customerSource").value=activePoleId;
+  }
+}
+
+document.getElementById("customerForm").addEventListener("submit",e=>{
+
   e.preventDefault();
 
-  const id=document.getElementById('customerId').value;
+  const id=document.getElementById("customerId").value;
   const old=getEntity("customer",id);
 
-  const poleId=document.getElementById('customerPole').value;
+  const sourceType=document.getElementById("customerSourceType").value;
+  const sourceId=document.getElementById("customerSource").value;
 
-  if(!poleId || !getEntity("pole",poleId)){
-    alert("একটি Pole নির্বাচন করুন।");
+  if(!sourceId||!getEntity(sourceType,sourceId)){
+    alert("একটি সঠিক Pole অথবা Sub Box নির্বাচন করুন।");
     return;
   }
 
+  const poleId=sourceType==="pole"
+    ?sourceId
+    :getEntity("box",sourceId).poleId;
+
   const item={
     id:id||uid(),
-    name:document.getElementById('customerName').value.trim(),
-    ip:document.getElementById('customerIP').value.trim(),
-    address:document.getElementById('customerAddress').value.trim(),
-    type:document.getElementById('customerType').value,
+    name:document.getElementById("customerName").value.trim(),
+    ip:document.getElementById("customerIP").value.trim(),
+    address:document.getElementById("customerAddress").value.trim(),
+    type:document.getElementById("customerType").value,
+    sourceType:sourceType,
+    sourceId:sourceId,
     poleId:poleId,
-    sourceType:"pole",
-    sourceId:poleId,
-    lat:Number(document.getElementById('customerLat').value),
-    lng:Number(document.getElementById('customerLng').value)
+    lat:Number(document.getElementById("customerLat").value),
+    lng:Number(document.getElementById("customerLng").value)
   };
 
   if(old)Object.assign(old,item);
   else data.customers.push(item);
 
-  closeModal('customerModal');
-  e.target.reset();
-  document.getElementById('customerId').value="";
+  closeModal("customerModal");
+  resetCustomerForm();
   saveData();
 });
 
 function editCustomer(id){
+
   const c=getEntity("customer",id);
   if(!c)return;
 
-  prepareCustomerForm();
+  document.getElementById("customerId").value=c.id;
+  document.getElementById("customerName").value=c.name;
+  document.getElementById("customerIP").value=c.ip||"";
+  document.getElementById("customerAddress").value=c.address||"";
+  document.getElementById("customerType").value=c.type||"Fiber";
 
-  document.getElementById('customerId').value=c.id;
-  document.getElementById('customerName').value=c.name;
-  document.getElementById('customerIP').value=c.ip||"";
-  document.getElementById('customerAddress').value=c.address||"";
-  document.getElementById('customerType').value=c.type||"Fiber";
-  document.getElementById('customerPole').value=c.poleId||"";
-  document.getElementById('customerLat').value=c.lat;
-  document.getElementById('customerLng').value=c.lng;
-  document.getElementById('customerModalTitle').textContent="Edit Customer";
+  document.getElementById("customerSourceType").value=c.sourceType||"pole";
 
-  closeModal('infoModal');
-  openModal('customerModal');
+  updateCustomerSourceOptions();
+
+  document.getElementById("customerSource").value=c.sourceId||c.poleId;
+
+  document.getElementById("customerLat").value=c.lat;
+  document.getElementById("customerLng").value=c.lng;
+
+  document.getElementById("customerModalTitle").textContent="Edit Customer";
+
+  closeModal("infoModal");
+  openModal("customerModal");
 }
 
-/* SUB BOX FORM */
+/* SUB BOX */
 
-function prepareBoxForm(){
-  const select=document.getElementById('boxPole');
-  select.innerHTML='<option value="">Select Pole</option>';
+function updateBoxPoleOptions(){
+
+  const select=document.getElementById("boxPole");
+  select.innerHTML="";
 
   data.poles.forEach(p=>{
-    select.innerHTML+=`<option value="${p.id}">${escapeHTML(p.name)}</option>`;
+    select.innerHTML+=`<option value="${esc(p.id)}">${esc(p.name)}</option>`;
   });
-
-  if(activePoleId)select.value=activePoleId;
 }
 
-document.getElementById('boxForm').addEventListener('submit',e=>{
+function resetBoxForm(){
+
+  document.getElementById("boxForm").reset();
+  document.getElementById("boxId").value="";
+  document.getElementById("boxModalTitle").textContent="Add Sub Box";
+
+  updateBoxPoleOptions();
+
+  if(activePoleId){
+    document.getElementById("boxPole").value=activePoleId;
+  }
+}
+
+document.getElementById("boxForm").addEventListener("submit",e=>{
+
   e.preventDefault();
 
-  const id=document.getElementById('boxId').value;
+  const id=document.getElementById("boxId").value;
   const old=getEntity("box",id);
 
-  const poleId=document.getElementById('boxPole').value;
+  const poleId=document.getElementById("boxPole").value;
 
-  if(!poleId || !getEntity("pole",poleId)){
+  if(!poleId||!getEntity("pole",poleId)){
     alert("একটি Pole নির্বাচন করুন।");
     return;
   }
 
   const item={
     id:id||uid(),
-    name:document.getElementById('boxName').value.trim(),
-    fiberName:document.getElementById('fiberName').value.trim(),
-    fiberCode:document.getElementById('fiberCode').value.trim(),
-    fiberMeter:document.getElementById('fiberMeter').value,
+    name:document.getElementById("boxName").value.trim(),
+    fiberName:document.getElementById("fiberName").value.trim(),
+    fiberCode:document.getElementById("fiberCode").value.trim(),
+    fiberMeter:document.getElementById("fiberMeter").value,
     poleId:poleId,
-    lat:Number(document.getElementById('boxLat').value),
-    lng:Number(document.getElementById('boxLng').value)
+    lat:Number(document.getElementById("boxLat").value),
+    lng:Number(document.getElementById("boxLng").value)
   };
 
   if(old)Object.assign(old,item);
   else data.boxes.push(item);
 
-  closeModal('boxModal');
-  e.target.reset();
-  document.getElementById('boxId').value="";
+  closeModal("boxModal");
+  resetBoxForm();
   saveData();
 });
 
 function editBox(id){
+
   const b=getEntity("box",id);
   if(!b)return;
 
-  prepareBoxForm();
+  document.getElementById("boxId").value=b.id;
+  document.getElementById("boxName").value=b.name;
+  document.getElementById("fiberName").value=b.fiberName||"";
+  document.getElementById("fiberCode").value=b.fiberCode||"";
+  document.getElementById("fiberMeter").value=b.fiberMeter||"";
 
-  document.getElementById('boxId').value=b.id;
-  document.getElementById('boxName').value=b.name;
-  document.getElementById('fiberName').value=b.fiberName||"";
-  document.getElementById('fiberCode').value=b.fiberCode||"";
-  document.getElementById('fiberMeter').value=b.fiberMeter||"";
-  document.getElementById('boxPole').value=b.poleId||"";
-  document.getElementById('boxLat').value=b.lat;
-  document.getElementById('boxLng').value=b.lng;
-  document.getElementById('boxModalTitle').textContent="Edit Sub Box";
+  updateBoxPoleOptions();
 
-  closeModal('infoModal');
-  openModal('boxModal');
+  document.getElementById("boxPole").value=b.poleId;
+  document.getElementById("boxLat").value=b.lat;
+  document.getElementById("boxLng").value=b.lng;
+
+  document.getElementById("boxModalTitle").textContent="Edit Sub Box";
+
+  closeModal("infoModal");
+  openModal("boxModal");
 }
 
-/* POLE INFORMATION */
+/* POLE ADD MENU */
+
+function showAddMenu(id){
+
+  activePoleId=id;
+  closeModal("infoModal");
+  openModal("addMenu");
+}
+
+function openCustomerFromPole(){
+
+  closeModal("addMenu");
+  resetCustomerForm();
+
+  document.getElementById("customerSourceType").value="pole";
+  updateCustomerSourceOptions();
+  document.getElementById("customerSource").value=activePoleId;
+
+  openModal("customerModal");
+}
+
+function openBoxFromPole(){
+
+  closeModal("addMenu");
+  resetBoxForm();
+
+  document.getElementById("boxPole").value=activePoleId;
+
+  openModal("boxModal");
+}
+
+/* INFORMATION */
+
+function infoRow(label,value){
+  return `
+    <div class="info-line">
+      <span>${esc(label)}</span>
+      <strong>${esc(value)}</strong>
+    </div>
+  `;
+}
 
 function showInfo(type,id){
-  selectedInfo={type,id};
 
   const item=getEntity(type,id);
   if(!item)return;
 
-  activePoleId=type==="pole"?id:
-    type==="box"?item.poleId:item.poleId;
+  selectedInfo={type,id};
 
   let html="";
   let actions="";
 
   if(type==="pole"){
+
     const customers=data.customers.filter(c=>c.poleId===id);
     const boxes=data.boxes.filter(b=>b.poleId===id);
 
-    document.getElementById('infoTitle').textContent="Pole Information";
+    document.getElementById("infoTitle").textContent="Pole Information";
 
     html=`
       ${infoRow("Pole Name",item.name)}
       ${infoRow("Pole Address",item.address||"-")}
       ${infoRow("Latitude",item.lat)}
       ${infoRow("Longitude",item.lng)}
-      ${infoRow("Total Customers",customers.length)}
-      ${infoRow("Total Sub Boxes",boxes.length)}
-      <hr style="border-color:#283950">
-      <b>Connected Customers</b>
-      ${customers.map(c=>`<div class="info-line">${escapeHTML(c.name)} <span>${escapeHTML(c.ip||"-")}</span></div>`).join("")||'<div class="empty">No customer connected</div>'}
-      <br><b>Connected Sub Boxes</b>
-      ${boxes.map(b=>`<div class="info-line">${escapeHTML(b.name)} <span>${escapeHTML(b.fiberCode||"-")}</span></div>`).join("")||'<div class="empty">No sub box connected</div>'}
+      ${infoRow("Total Customer",customers.length)}
+      ${infoRow("Total Sub Box",boxes.length)}
+
+      <div class="section-label">CONNECTED CUSTOMERS</div>
+
+      ${customers.map(c=>`
+        <div class="info-line">
+          <strong>${esc(c.name)}</strong>
+          <span>${esc(c.ip||"-")}</span>
+        </div>
+      `).join("")||'<div class="empty">No Customer Connected</div>'}
+
+      <div class="section-label">CONNECTED SUB BOXES</div>
+
+      ${boxes.map(b=>`
+        <div class="info-line">
+          <strong>${esc(b.name)}</strong>
+          <span>${esc(b.fiberCode||"-")}</span>
+        </div>
+      `).join("")||'<div class="empty">No Sub Box Connected</div>'}
     `;
 
     actions=`
@@ -971,16 +1337,18 @@ function showInfo(type,id){
   }
 
   if(type==="customer"){
-    document.getElementById('infoTitle').textContent="Customer Information";
 
-    const pole=getEntity("pole",item.poleId);
+    const source=getEntity(item.sourceType||"pole",item.sourceId||item.poleId);
+
+    document.getElementById("infoTitle").textContent="Customer Information";
 
     html=`
       ${infoRow("Customer Name",item.name)}
       ${infoRow("Customer IP",item.ip||"-")}
       ${infoRow("Customer Address",item.address||"-")}
       ${infoRow("Connection Type",item.type)}
-      ${infoRow("Connected Pole",pole?pole.name:"-")}
+      ${infoRow("Connected Through",item.sourceType==="box"?"Sub Box":"Pole")}
+      ${infoRow("Connected Device",source?source.name:"-")}
       ${infoRow("Latitude",item.lat)}
       ${infoRow("Longitude",item.lng)}
     `;
@@ -992,13 +1360,14 @@ function showInfo(type,id){
   }
 
   if(type==="box"){
-    document.getElementById('infoTitle').textContent="Sub Box Information";
 
     const pole=getEntity("pole",item.poleId);
 
-    const connected=data.customers.filter(c=>
+    const customers=data.customers.filter(c=>
       c.sourceType==="box"&&c.sourceId===id
     );
+
+    document.getElementById("infoTitle").textContent="Sub Box Information";
 
     html=`
       ${infoRow("Box Name",item.name)}
@@ -1006,9 +1375,18 @@ function showInfo(type,id){
       ${infoRow("Fiber Code",item.fiberCode||"-")}
       ${infoRow("Fiber Meter",item.fiberMeter||"-")}
       ${infoRow("Connected Pole",pole?pole.name:"-")}
-      ${infoRow("Connected Customers",connected.length)}
+      ${infoRow("Total Customer",customers.length)}
       ${infoRow("Latitude",item.lat)}
       ${infoRow("Longitude",item.lng)}
+
+      <div class="section-label">CONNECTED CUSTOMERS</div>
+
+      ${customers.map(c=>`
+        <div class="info-line">
+          <strong>${esc(c.name)}</strong>
+          <span>${esc(c.ip||"-")}</span>
+        </div>
+      `).join("")||'<div class="empty">No Customer Connected</div>'}
     `;
 
     actions=`
@@ -1018,89 +1396,50 @@ function showInfo(type,id){
     `;
   }
 
-  document.getElementById('infoContent').innerHTML=html;
-  document.getElementById('infoActions').innerHTML=actions;
+  document.getElementById("infoContent").innerHTML=html;
+  document.getElementById("infoActions").innerHTML=actions;
 
-  openModal('infoModal');
+  if(type==="pole")activePoleId=id;
+  else activePoleId=item.poleId;
+
+  openModal("infoModal");
 }
 
-function infoRow(label,value){
-  return `<div class="info-line"><span>${escapeHTML(label)}</span><strong>${escapeHTML(value)}</strong></div>`;
-}
-
-/* ADD FROM POLE */
-
-function showAddMenu(id){
-  activePoleId=id;
-  closeModal('infoModal');
-  openModal('addMenu');
-}
-
-function openCustomerFromPole(){
-  closeModal('addMenu');
-  document.getElementById('customerForm').reset();
-  document.getElementById('customerId').value="";
-  document.getElementById('customerModalTitle').textContent="Add Customer";
-  prepareCustomerForm();
-  openModal('customerModal');
-}
-
-function openBoxFromPole(){
-  closeModal('addMenu');
-  document.getElementById('boxForm').reset();
-  document.getElementById('boxId').value="";
-  document.getElementById('boxModalTitle').textContent="Add Sub Box";
-  prepareBoxForm();
-  openModal('boxModal');
-}
-
-/* CUSTOMER DIRECTLY UNDER SUB BOX */
+/* ADD CUSTOMER FROM BOX */
 
 function addCustomerToBox(id){
-  const b=getEntity("box",id);
-  if(!b)return;
 
-  closeModal('infoModal');
-  activePoleId=b.poleId;
+  const box=getEntity("box",id);
+  if(!box)return;
 
-  document.getElementById('customerForm').reset();
-  document.getElementById('customerId').value="";
-  document.getElementById('customerModalTitle').textContent="Add Customer to Sub Box";
+  closeModal("infoModal");
 
-  prepareCustomerForm();
+  activePoleId=box.poleId;
 
-  const c=document.getElementById('customerPole');
-  c.value=b.poleId;
+  resetCustomerForm();
 
-  // Customer will be connected to the selected Sub Box.
-  c.dataset.boxId=id;
+  document.getElementById("customerSourceType").value="box";
+  updateCustomerSourceOptions();
+  document.getElementById("customerSource").value=id;
 
-  openModal('customerModal');
+  document.getElementById("customerModalTitle").textContent="Add Customer to Sub Box";
+
+  openModal("customerModal");
 }
-
-// Update the customer save handler's connection source.
-document.getElementById('customerForm').addEventListener('submit',e=>{
-  // The primary submit handler above saves the customer.
-  // Source information is handled in the additional function below.
-},true);
 
 /* DELETE */
 
 function deleteEntity(type,id){
-  const labels={
-    pole:"Pole",
-    customer:"Customer",
-    box:"Sub Box"
-  };
 
-  if(!confirm("Are you sure you want to delete this "+labels[type]+"?"))return;
+  if(!confirm("আপনি কি নিশ্চিতভাবে এটি Delete করতে চান?"))return;
 
   if(type==="pole"){
-    const linkedBoxes=data.boxes.filter(b=>b.poleId===id);
-    const linkedCustomers=data.customers.filter(c=>c.poleId===id);
 
-    if(linkedBoxes.length||linkedCustomers.length){
-      alert("এই Pole-এর সাথে Customer অথবা Sub Box যুক্ত আছে। আগে সেগুলো সরিয়ে নিন।");
+    const linkedBoxes=data.boxes.some(b=>b.poleId===id);
+    const linkedCustomers=data.customers.some(c=>c.poleId===id);
+
+    if(linkedBoxes||linkedCustomers){
+      alert("এই Pole-এর সাথে Customer অথবা Sub Box যুক্ত আছে। আগে Connection সরিয়ে নিন।");
       return;
     }
 
@@ -1112,61 +1451,48 @@ function deleteEntity(type,id){
   }
 
   if(type==="box"){
+
     if(data.customers.some(c=>c.sourceType==="box"&&c.sourceId===id)){
-      alert("এই Sub Box-এর সাথে Customer যুক্ত আছে।");
+      alert("এই Sub Box-এর সাথে Customer যুক্ত আছে। আগে Customer Connection পরিবর্তন করুন।");
       return;
     }
+
     data.boxes=data.boxes.filter(x=>x.id!==id);
   }
 
-  closeModal('infoModal');
+  closeModal("infoModal");
   saveData();
 }
 
-/* SIDEBAR */
+/* STATS */
 
 function updateStats(){
-  document.getElementById('poleCount').textContent=data.poles.length;
-  document.getElementById('customerCount').textContent=data.customers.length;
-  document.getElementById('boxCount').textContent=data.boxes.length;
+
+  document.getElementById("poleCount").textContent=data.poles.length;
+  document.getElementById("customerCount").textContent=data.customers.length;
+  document.getElementById("boxCount").textContent=data.boxes.length;
 }
 
-function renderConnectionList(){
-  const el=document.getElementById('connectionList');
-
-  let list=[];
-
-  data.boxes.forEach(b=>{
-    const p=getEntity("pole",b.poleId);
-    if(p)list.push("🔵 "+p.name+" → 📦 "+b.name);
-  });
-
-  data.customers.forEach(c=>{
-    const source=c.sourceType==="box"
-      ?getEntity("box",c.sourceId)
-      :getEntity("pole",c.poleId);
-
-    if(source)list.push("📍 "+source.name+" → 👤 "+c.name);
-  });
-
-  el.innerHTML=list.length
-    ?list.map(x=>`<div class="info-line">${escapeHTML(x)}</div>`).join("")
-    :'<div class="empty">No connections available.</div>';
-}
-
-/* MAP CONTROLS */
+/* MAP VIEW */
 
 function resetView(){
+
   const all=[
     ...data.poles,
-    ...data.customers,
-    ...data.boxes
+    ...data.boxes,
+    ...data.customers
   ];
 
   if(all.length){
-    const bounds=L.latLngBounds(all.map(x=>[x.lat,x.lng]));
-    map.fitBounds(bounds,{padding:[50,50],maxZoom:16});
+
+    const bounds=L.latLngBounds(
+      all.map(x=>[Number(x.lat),Number(x.lng)])
+    );
+
+    map.fitBounds(bounds,{padding:[55,55],maxZoom:17});
+
   }else{
+
     map.setView([22.3569,91.7832],13);
   }
 }
@@ -1174,6 +1500,7 @@ function resetView(){
 /* DEMO DATA */
 
 function createDemoData(){
+
   if(data.poles.length||data.customers.length||data.boxes.length)return;
 
   const p1=uid();
@@ -1245,8 +1572,13 @@ function createDemoData(){
 loadData();
 createDemoData();
 renderAll();
-resetView();
+
+setTimeout(()=>{
+  map.invalidateSize();
+  resetView();
+},300);
 
 </script>
+
 </body>
 </html>
