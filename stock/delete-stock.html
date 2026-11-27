@@ -28,7 +28,7 @@ body{
   padding:20px;
   background:var(--bg);
   color:var(--text);
-  font-family:Arial, sans-serif;
+  font-family:Arial,sans-serif;
 }
 .container{max-width:1250px;margin:auto}
 .header{
@@ -222,6 +222,31 @@ td{color:var(--text)}
   gap:9px;
   margin-top:20px;
 }
+
+/* PERMISSION GATE */
+.permission-gate{
+  max-width:600px;
+  margin:70px auto;
+  padding:30px;
+  text-align:center;
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:16px;
+}
+.permission-gate .gate-icon{
+  font-size:42px;
+  margin-bottom:12px;
+}
+.permission-gate h2{margin:0 0 9px}
+.permission-gate p{
+  color:var(--muted);
+  margin:0;
+  line-height:1.6;
+}
+.hidden{display:none!important}
+#appContent{display:none}
+body.auth-ready #appContent{display:block}
+
 @media(max-width:850px){
   .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
@@ -242,6 +267,20 @@ td{color:var(--text)}
 </head>
 
 <body>
+
+<div id="authGate" class="permission-gate">
+  <div class="gate-icon">🔐</div>
+  <h2>Checking Access...</h2>
+  <p>Please wait while ONE ONLINE verifies your account permissions.</p>
+</div>
+
+<div id="deniedGate" class="permission-gate hidden">
+  <div class="gate-icon">⛔</div>
+  <h2>Access Denied</h2>
+  <p id="deniedMessage">You do not have permission to view this page.</p>
+</div>
+
+<div id="appContent">
 <div class="container">
 
   <div class="header">
@@ -249,7 +288,7 @@ td{color:var(--text)}
       <h2><i class="fa-solid fa-trash" style="color:#ef4444"></i> Delete Stock</h2>
       <p>Manage and remove unwanted stock items</p>
     </div>
-    <button class="btn btn-danger" onclick="confirmDeleteAll()">
+    <button class="btn btn-danger" id="deleteAllBtn" onclick="confirmDeleteAll()">
       <i class="fa-solid fa-trash-can"></i> Delete All Stock
     </button>
   </div>
@@ -313,7 +352,7 @@ td{color:var(--text)}
             <th>Quantity</th>
             <th>Unit</th>
             <th>Status</th>
-            <th>Action</th>
+            <th id="actionHeader">Action</th>
           </tr>
         </thead>
         <tbody id="stockTable"></tbody>
@@ -332,6 +371,7 @@ td{color:var(--text)}
     </div>
   </div>
 </div>
+</div>
 
 <div class="modal" id="confirmModal">
   <div class="modal-box">
@@ -347,13 +387,321 @@ td{color:var(--text)}
 <div class="toast" id="toast"></div>
 
 <script>
+/* =====================================================
+   ONE ONLINE AUTH & PERMISSION
+===================================================== */
+
+const PAGE_PERMISSION_KEY = 'delete-stock';
+
 const STOCK_KEY = "ONE_ONLINE_STOCK_DEMO_V1";
 const DELETED_KEY = "ONE_ONLINE_DELETED_STOCK_DEMO_V1";
+
+let authReceived = false;
+let authData = null;
+let appInitialized = false;
+
+let currentPermissions = {
+  view:false,
+  edit:false,
+  delete:false
+};
 
 let stockData = [];
 let deletedData = [];
 let activeTab = "ALL";
 let pendingDelete = null;
+
+function normalizeKey(value){
+  return String(value || '')
+    .trim()
+    .toLowerCase()
+    .replace(/[_\s]+/g,'-')
+    .replace(/[^a-z0-9-]/g,'')
+    .replace(/-+/g,'-');
+}
+
+function truthy(value){
+  return value === true ||
+    value === 1 ||
+    ['true','1','yes','on'].includes(
+      String(value || '').trim().toLowerCase()
+    );
+}
+
+function getUserObject(data){
+  if(!data || typeof data !== 'object') return {};
+  return data.user || data.profile || data.account || data;
+}
+
+function isSystemAdmin(data){
+  if(!data) return false;
+
+  const user = getUserObject(data);
+
+  const roles = [
+    data.role,
+    data.userRole,
+    data.accountRole,
+    user.role,
+    user.user_role,
+    user.account_role
+  ];
+
+  return truthy(data.isSystemAdmin) ||
+    truthy(data.is_system_admin) ||
+    truthy(user.isSystemAdmin) ||
+    truthy(user.is_system_admin) ||
+    roles.map(normalizeKey).some(role =>
+      ['systemadmin','superadmin','system-admin','super-admin'].includes(role)
+    );
+}
+
+function getPermissionSources(data){
+  const sources = [];
+  if(!data || typeof data !== 'object') return sources;
+
+  [
+    data.permissions,
+    data.userPermissions,
+    data.user_permissions,
+    data.pagePermissions,
+    data.page_permissions,
+    data.permission
+  ].forEach(source=>{
+    if(source) sources.push(source);
+  });
+
+  const user = getUserObject(data);
+
+  if(user && user !== data){
+    [
+      user.permissions,
+      user.userPermissions,
+      user.user_permissions,
+      user.pagePermissions,
+      user.page_permissions
+    ].forEach(source=>{
+      if(source) sources.push(source);
+    });
+  }
+
+  return sources;
+}
+
+function permissionKeyMatches(key){
+  const aliases = [
+    'delete-stock',
+    'deletestock',
+    'stock-delete'
+  ];
+
+  return aliases.some(alias =>
+    normalizeKey(alias) === normalizeKey(key)
+  );
+}
+
+function findPermissionRecord(source){
+  if(!source) return null;
+
+  if(Array.isArray(source)){
+    return source.find(item=>{
+      if(!item || typeof item !== 'object') return false;
+
+      return [
+        item.page_key,
+        item.pageKey,
+        item.key,
+        item.page,
+        item.name,
+        item.module
+      ].some(permissionKeyMatches);
+    }) || null;
+  }
+
+  if(typeof source === 'object'){
+    for(const key of Object.keys(source)){
+      if(permissionKeyMatches(key)) return source[key];
+    }
+
+    if([
+      source.page_key,
+      source.pageKey,
+      source.key,
+      source.page,
+      source.name
+    ].some(permissionKeyMatches)){
+      return source;
+    }
+  }
+
+  return null;
+}
+
+function permissionValue(record,action){
+  if(!record) return false;
+
+  if(typeof record === 'boolean' || typeof record === 'string'){
+    return action === 'view' && truthy(record);
+  }
+
+  const keys = {
+    view:['can_view','canView','view','view_permission'],
+    edit:['can_edit','canEdit','edit','edit_permission'],
+    delete:['can_delete','canDelete','delete','delete_permission']
+  };
+
+  return keys[action].some(key=>truthy(record[key]));
+}
+
+function resolvePermissions(data){
+  if(isSystemAdmin(data)){
+    return {view:true,edit:true,delete:true};
+  }
+
+  for(const source of getPermissionSources(data)){
+    const record = findPermissionRecord(source);
+
+    if(record){
+      return {
+        view:permissionValue(record,'view'),
+        edit:permissionValue(record,'edit'),
+        delete:permissionValue(record,'delete')
+      };
+    }
+  }
+
+  return {view:false,edit:false,delete:false};
+}
+
+/* ACCESS GATES */
+
+function showPermissionGate(){
+  document.body.classList.remove('auth-ready');
+
+  document.getElementById('authGate').classList.remove('hidden');
+  document.getElementById('deniedGate').classList.add('hidden');
+  document.getElementById('appContent').style.display='none';
+}
+
+function showPermissionDenied(message){
+  document.body.classList.remove('auth-ready');
+
+  document.getElementById('authGate').classList.add('hidden');
+  document.getElementById('appContent').style.display='none';
+  document.getElementById('deniedGate').classList.remove('hidden');
+
+  document.getElementById('deniedMessage').textContent=message;
+}
+
+function requirePermission(action){
+  if(!authReceived){
+    showPermissionGate();
+    return false;
+  }
+
+  if(!currentPermissions.view){
+    showPermissionDenied(
+      'Your account does not have View permission for Delete Stock. Please contact your administrator.'
+    );
+    return false;
+  }
+
+  if(action && !currentPermissions[action]){
+    showToast(
+      'You do not have '+action.toUpperCase()+' permission.',
+      true
+    );
+    return false;
+  }
+
+  return true;
+}
+
+function applyPagePermissions(){
+  document.getElementById('authGate').classList.add('hidden');
+
+  if(!currentPermissions.view){
+    showPermissionDenied(
+      'Your account does not have View permission for Delete Stock. Please contact your administrator.'
+    );
+    return false;
+  }
+
+  document.getElementById('deniedGate').classList.add('hidden');
+
+  document.body.classList.add('auth-ready');
+  document.getElementById('appContent').style.display='block';
+
+  /* Hide delete controls for view-only accounts */
+  document.getElementById('deleteAllBtn').style.display =
+    currentPermissions.delete ? '' : 'none';
+
+  document.getElementById('actionHeader').style.display =
+    currentPermissions.delete ? '' : 'none';
+
+  return true;
+}
+
+/* RECEIVE PARENT AUTH */
+
+function handleAuthMessage(event){
+  if(event.source !== window.parent) return;
+
+  const message=event.data;
+
+  if(!message || typeof message !== 'object') return;
+  if(message.type !== 'ONE_ONLINE_AUTH') return;
+
+  const data =
+    message.data ||
+    message.payload ||
+    message.auth ||
+    message.userData ||
+    message;
+
+  authData=data;
+  authReceived=true;
+
+  currentPermissions=resolvePermissions(data);
+
+  if(!applyPagePermissions()) return;
+
+  if(!appInitialized){
+    appInitialized=true;
+    initializeApp();
+  }else{
+    loadStock();
+  }
+}
+
+window.addEventListener('message',handleAuthMessage);
+
+window.addEventListener('load',()=>{
+  showPermissionGate();
+
+  if(window.parent===window){
+    showPermissionDenied(
+      'This page must be opened inside the ONE ONLINE Management System.'
+    );
+  }
+});
+
+function requestAuthAgain(){
+  if(window.parent!==window){
+    window.parent.postMessage({
+      type:'ONE_ONLINE_REQUEST_AUTH',
+      page:PAGE_PERMISSION_KEY
+    },'*');
+  }
+}
+
+setTimeout(()=>{
+  if(!authReceived) requestAuthAgain();
+},1000);
+
+/* =====================================================
+   STORAGE
+===================================================== */
 
 function readStorage(key){
   try{
@@ -365,33 +713,59 @@ function readStorage(key){
 }
 
 function saveStock(){
+  if(!requirePermission('delete')) return false;
+
   localStorage.setItem(STOCK_KEY, JSON.stringify(stockData));
+  return true;
 }
 
 function saveDeleted(){
+  if(!requirePermission('delete')) return false;
+
   localStorage.setItem(DELETED_KEY, JSON.stringify(deletedData));
+  return true;
 }
 
 function loadStock(){
+  if(!requirePermission('view')) return;
+
   stockData = readStorage(STOCK_KEY);
   deletedData = readStorage(DELETED_KEY);
+
   updateStats();
   renderStock();
 }
 
+/* =====================================================
+   STATISTICS
+===================================================== */
+
 function updateStats(){
+  if(!requirePermission('view')) return;
+
   document.getElementById("totalItems").textContent = stockData.length;
 
   document.getElementById("totalOnu").textContent =
-    stockData.filter(x => String(x.category).toUpperCase() === "ONU").length;
+    stockData.filter(x =>
+      String(x.category).toUpperCase() === "ONU"
+    ).length;
 
   document.getElementById("totalFiber").textContent =
-    stockData.filter(x => String(x.category).toUpperCase() === "FIBER").length;
+    stockData.filter(x =>
+      String(x.category).toUpperCase() === "FIBER"
+    ).length;
 
-  document.getElementById("deletedItems").textContent = deletedData.length;
+  document.getElementById("deletedItems").textContent =
+    deletedData.length;
 }
 
+/* =====================================================
+   FILTER TABS
+===================================================== */
+
 function setTab(filter, button){
+  if(!requirePermission('view')) return;
+
   activeTab = filter;
 
   document.querySelectorAll(".tab").forEach(tab=>{
@@ -400,13 +774,23 @@ function setTab(filter, button){
 
   button.classList.add("active");
   document.getElementById("categoryFilter").value = filter;
+
   renderStock();
 }
 
+/* =====================================================
+   RENDER STOCK
+===================================================== */
+
 function renderStock(){
+  if(!requirePermission('view')) return;
+
   const tbody = document.getElementById("stockTable");
   const empty = document.getElementById("emptyState");
-  const search = document.getElementById("searchInput").value.trim().toLowerCase();
+
+  const search = document.getElementById("searchInput")
+    .value.trim().toLowerCase();
+
   const category = document.getElementById("categoryFilter").value;
 
   let filtered = stockData.filter(item=>{
@@ -414,8 +798,11 @@ function renderStock(){
     const name = String(item.name || "").toLowerCase();
     const code = String(item.code || "").toLowerCase();
 
-    const matchesSearch = name.includes(search) || code.includes(search);
-    const matchesCategory = category === "ALL" || itemCategory === category;
+    const matchesSearch =
+      name.includes(search) || code.includes(search);
+
+    const matchesCategory =
+      category === "ALL" || itemCategory === category;
 
     return matchesSearch && matchesCategory;
   });
@@ -466,7 +853,9 @@ function renderStock(){
         td.appendChild(span);
       }else if(i === 2){
         const span = document.createElement("span");
-        span.className = "badge " + (categoryName === "ONU" ? "badge-onu" : "badge-fiber");
+        span.className = "badge " +
+          (categoryName === "ONU" ? "badge-onu" : "badge-fiber");
+
         span.textContent = value || "OTHER";
         td.appendChild(span);
       }else if(i === 3){
@@ -487,32 +876,67 @@ function renderStock(){
     });
 
     const actionTd = document.createElement("td");
-    const deleteButton = document.createElement("button");
-    deleteButton.className = "delete-btn";
-    deleteButton.innerHTML = '<i class="fa-solid fa-trash"></i> Delete';
-    deleteButton.onclick = ()=>confirmDelete(item.id);
-    actionTd.appendChild(deleteButton);
-    tr.appendChild(actionTd);
 
+    if(currentPermissions.delete){
+      const deleteButton = document.createElement("button");
+
+      deleteButton.className = "delete-btn";
+      deleteButton.innerHTML =
+        '<i class="fa-solid fa-trash"></i> Delete';
+
+      deleteButton.onclick = ()=>confirmDelete(item.id);
+
+      actionTd.appendChild(deleteButton);
+    }else{
+      actionTd.textContent = 'No permission';
+      actionTd.style.color = 'var(--muted)';
+    }
+
+    if(!currentPermissions.delete){
+      actionTd.style.display='none';
+    }
+
+    tr.appendChild(actionTd);
     tbody.appendChild(tr);
   });
 }
 
+/* =====================================================
+   SINGLE DELETE CONFIRMATION
+===================================================== */
+
 function confirmDelete(id){
-  const item = stockData.find(x=>String(x.id) === String(id));
+  if(!requirePermission('delete')) return;
+
+  const item = stockData.find(
+    x=>String(x.id) === String(id)
+  );
+
   if(!item) return;
 
   pendingDelete = {type:"single",id:id};
 
-  document.getElementById("modalTitle").textContent = "Delete Stock Item";
-  document.getElementById("modalMessage").textContent =
-    'Are you sure you want to delete "' + (item.name || "this item") + '"? This item will be moved to Deleted Stock storage.';
+  document.getElementById("modalTitle").textContent =
+    "Delete Stock Item";
 
-  document.getElementById("confirmButton").textContent = "Delete Item";
+  document.getElementById("modalMessage").textContent =
+    'Are you sure you want to delete "' +
+    (item.name || "this item") +
+    '"? This item will be moved to Deleted Stock storage.';
+
+  document.getElementById("confirmButton").textContent =
+    "Delete Item";
+
   document.getElementById("confirmModal").style.display = "flex";
 }
 
+/* =====================================================
+   DELETE ALL CONFIRMATION
+===================================================== */
+
 function confirmDeleteAll(){
+  if(!requirePermission('delete')) return;
+
   if(stockData.length === 0){
     showToast("There is no stock to delete.",true);
     return;
@@ -520,31 +944,48 @@ function confirmDeleteAll(){
 
   pendingDelete = {type:"all"};
 
-  document.getElementById("modalTitle").textContent = "Delete All Stock";
+  document.getElementById("modalTitle").textContent =
+    "Delete All Stock";
+
   document.getElementById("modalMessage").textContent =
-    "Are you sure you want to delete all " + stockData.length +
+    "Are you sure you want to delete all " +
+    stockData.length +
     " stock items? All items will be moved to Deleted Stock storage.";
 
-  document.getElementById("confirmButton").textContent = "Delete All";
+  document.getElementById("confirmButton").textContent =
+    "Delete All";
+
   document.getElementById("confirmModal").style.display = "flex";
 }
 
+/* =====================================================
+   EXECUTE DELETE
+===================================================== */
+
 function executeDelete(){
+  if(!requirePermission('delete')) return;
   if(!pendingDelete) return;
+
+  const oldStock = [...stockData];
+  const oldDeleted = [...deletedData];
 
   if(pendingDelete.type === "single"){
     const index = stockData.findIndex(
       x=>String(x.id) === String(pendingDelete.id)
     );
 
-    if(index !== -1){
-      const item = stockData.splice(index,1)[0];
-
-      deletedData.unshift({
-        ...item,
-        deletedAt:new Date().toISOString()
-      });
+    if(index === -1){
+      showToast("Stock item not found.",true);
+      closeModal();
+      return;
     }
+
+    const item = stockData.splice(index,1)[0];
+
+    deletedData.unshift({
+      ...item,
+      deletedAt:new Date().toISOString()
+    });
   }
 
   if(pendingDelete.type === "all"){
@@ -560,24 +1001,46 @@ function executeDelete(){
     stockData = [];
   }
 
-  saveStock();
-  saveDeleted();
+  try{
+    localStorage.setItem(STOCK_KEY,JSON.stringify(stockData));
+    localStorage.setItem(DELETED_KEY,JSON.stringify(deletedData));
+  }catch(error){
+    stockData = oldStock;
+    deletedData = oldDeleted;
+
+    showToast("Could not save deleted stock. Storage may be full.",true);
+    return;
+  }
 
   pendingDelete = null;
   closeModal();
+
   updateStats();
   renderStock();
 
   showToast("Stock deleted successfully.");
 }
 
+/* =====================================================
+   MODAL
+===================================================== */
+
 function closeModal(){
   document.getElementById("confirmModal").style.display = "none";
   pendingDelete = null;
 }
 
+document.getElementById("confirmModal").addEventListener("click",function(e){
+  if(e.target === this) closeModal();
+});
+
+/* =====================================================
+   TOAST
+===================================================== */
+
 function showToast(message,error=false){
   const toast = document.getElementById("toast");
+
   toast.textContent = message;
   toast.className = error ? "toast error" : "toast";
   toast.style.display = "block";
@@ -587,19 +1050,34 @@ function showToast(message,error=false){
   },3000);
 }
 
-document.getElementById("confirmModal").addEventListener("click",function(e){
-  if(e.target === this) closeModal();
-});
+/* =====================================================
+   STORAGE SYNC
+===================================================== */
 
 window.addEventListener("storage",function(e){
+  if(!authReceived || !currentPermissions.view) return;
+
   if(e.key === STOCK_KEY || e.key === DELETED_KEY){
     loadStock();
   }
 });
 
-window.addEventListener("focus",loadStock);
+window.addEventListener("focus",function(){
+  if(authReceived && currentPermissions.view){
+    loadStock();
+  }
+});
 
-loadStock();
+/* =====================================================
+   INITIALIZE
+===================================================== */
+
+function initializeApp(){
+  if(!requirePermission('view')) return;
+
+  loadStock();
+}
 </script>
+
 </body>
 </html>
