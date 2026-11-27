@@ -110,6 +110,9 @@ input:focus,select:focus{
 .btn.red{background:var(--red)}
 .btn.gray{background:#30435d}
 .btn.small{padding:9px 12px}
+.btn:disabled{
+  opacity:.45;cursor:not-allowed;
+}
 .actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:18px}
 .msg{
   display:none;padding:12px;border-radius:9px;
@@ -128,6 +131,23 @@ input:focus,select:focus{
 .stat strong{display:block;font-size:22px;margin-top:4px}
 .hidden{display:none!important}
 .note{font-size:12px;color:var(--muted);margin-top:12px}
+
+/* Permission Gate */
+.permission-gate{
+  max-width:600px;margin:70px auto;
+  padding:30px;text-align:center;
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:16px;
+}
+.permission-gate .gate-icon{
+  font-size:42px;margin-bottom:12px;
+}
+.permission-gate h2{margin:0 0 9px}
+.permission-gate p{color:var(--muted);margin:0}
+#appContent{display:none}
+body.auth-ready #appContent{display:block}
+
 @media(max-width:700px){
   body{padding:13px}
   .card{padding:15px}
@@ -140,6 +160,14 @@ input:focus,select:focus{
 </head>
 
 <body>
+
+<div id="authGate" class="permission-gate">
+  <div class="gate-icon">🔐</div>
+  <h2>Checking Access...</h2>
+  <p>Please wait while ONE ONLINE verifies your account permissions.</p>
+</div>
+
+<div id="appContent">
 <div class="wrap">
 
 <header class="top">
@@ -182,11 +210,10 @@ input:focus,select:focus{
 
 <form id="stockForm">
 
-  <!-- ONU SECTION -->
   <div class="card" id="onuSection">
     <div class="section-head">
       <h2 style="margin:0">ONU Stock Information</h2>
-      <button type="button" class="btn small"
+      <button type="button" class="btn small edit-control"
               onclick="addRow('ONU')">
         + Add ONU Make
       </button>
@@ -200,11 +227,10 @@ input:focus,select:focus{
     </div>
   </div>
 
-  <!-- FIBER SECTION -->
   <div class="card hidden" id="fiberSection">
     <div class="section-head">
       <h2 style="margin:0">Fiber Stock Information</h2>
-      <button type="button" class="btn small"
+      <button type="button" class="btn small edit-control"
               onclick="addRow('FIBER')">
         + Add Fiber
       </button>
@@ -220,10 +246,10 @@ input:focus,select:focus{
 
   <div class="card">
     <div class="actions">
-      <button type="submit" class="btn green">
+      <button type="submit" class="btn green edit-control">
         Save All Stock
       </button>
-      <button type="reset" class="btn gray">
+      <button type="reset" class="btn gray edit-control">
         Reset Form
       </button>
     </div>
@@ -238,14 +264,347 @@ input:focus,select:focus{
 </p>
 
 </div>
+</div>
+
+<div id="deniedGate" class="permission-gate hidden">
+  <div class="gate-icon">⛔</div>
+  <h2>Access Denied</h2>
+  <p id="deniedMessage">
+    You do not have permission to view this page.
+  </p>
+</div>
 
 <script>
-const DB_KEY = 'ONE_ONLINE_STOCK_DEMO_V1';
+/* =========================================================
+   ONE ONLINE AUTH & PERMISSION SYSTEM
+========================================================= */
+
+const PAGE_PERMISSION_KEY = 'add-stock';
+
+let authReceived = false;
+let authData = null;
+let currentPermissions = {
+  view:false,
+  edit:false,
+  delete:false
+};
 
 let currentType = 'ONU';
 let rowCounter = 0;
+let appInitialized = false;
 
-/* DATABASE */
+const DB_KEY = 'ONE_ONLINE_STOCK_DEMO_V1';
+
+function normalizeKey(value){
+  return String(value || '')
+    .trim()
+    .toLowerCase()
+    .replace(/[_\s]+/g,'-')
+    .replace(/[^a-z0-9-]/g,'')
+    .replace(/-+/g,'-');
+}
+
+function truthy(value){
+  return value === true ||
+    value === 1 ||
+    ['true','1','yes','on'].includes(
+      String(value || '').trim().toLowerCase()
+    );
+}
+
+function getUserObject(data){
+  if(!data || typeof data !== 'object') return {};
+  return data.user || data.profile || data.account || data;
+}
+
+function isSystemAdmin(data){
+  if(!data) return false;
+
+  const user = getUserObject(data);
+
+  const roles = [
+    data.role,
+    data.userRole,
+    data.accountRole,
+    user.role,
+    user.user_role,
+    user.account_role
+  ];
+
+  const normalizedRoles = roles.map(normalizeKey);
+
+  return truthy(data.isSystemAdmin) ||
+    truthy(data.is_system_admin) ||
+    truthy(user.isSystemAdmin) ||
+    truthy(user.is_system_admin) ||
+    normalizedRoles.some(role =>
+      ['systemadmin','superadmin','system-admin','super-admin'].includes(role)
+    );
+}
+
+function getPermissionSources(data){
+  const sources = [];
+
+  if(!data || typeof data !== 'object') return sources;
+
+  [
+    data.permissions,
+    data.userPermissions,
+    data.user_permissions,
+    data.pagePermissions,
+    data.page_permissions,
+    data.permission
+  ].forEach(source=>{
+    if(source) sources.push(source);
+  });
+
+  const user = getUserObject(data);
+
+  if(user && user !== data){
+    [
+      user.permissions,
+      user.userPermissions,
+      user.user_permissions,
+      user.pagePermissions,
+      user.page_permissions
+    ].forEach(source=>{
+      if(source) sources.push(source);
+    });
+  }
+
+  return sources;
+}
+
+function permissionKeyMatches(key){
+  const aliases = [
+    'add-stock',
+    'addstock',
+    'stock-add',
+    'stock-management-add'
+  ];
+
+  const normalized = normalizeKey(key);
+
+  return aliases.some(alias =>
+    normalizeKey(alias) === normalized
+  );
+}
+
+function findPermissionRecord(source){
+  if(!source) return null;
+
+  if(Array.isArray(source)){
+    return source.find(item=>{
+      if(!item || typeof item !== 'object') return false;
+
+      const keys = [
+        item.page_key,
+        item.pageKey,
+        item.key,
+        item.page,
+        item.name,
+        item.module
+      ];
+
+      return keys.some(permissionKeyMatches);
+    }) || null;
+  }
+
+  if(typeof source === 'object'){
+    for(const key of Object.keys(source)){
+      if(permissionKeyMatches(key)){
+        return source[key];
+      }
+    }
+
+    const directKeys = [
+      source.page_key,
+      source.pageKey,
+      source.key,
+      source.page,
+      source.name
+    ];
+
+    if(directKeys.some(permissionKeyMatches)){
+      return source;
+    }
+  }
+
+  return null;
+}
+
+function permissionValue(record,action){
+  if(!record) return false;
+
+  if(typeof record === 'boolean' || typeof record === 'string'){
+    return action === 'view' && truthy(record);
+  }
+
+  const keys = {
+    view:['can_view','canView','view','view_permission'],
+    edit:['can_edit','canEdit','edit','edit_permission'],
+    delete:['can_delete','canDelete','delete','delete_permission']
+  };
+
+  return keys[action].some(key=>truthy(record[key]));
+}
+
+function resolvePermissions(data){
+  if(isSystemAdmin(data)){
+    return {view:true,edit:true,delete:true};
+  }
+
+  const sources = getPermissionSources(data);
+
+  for(const source of sources){
+    const record = findPermissionRecord(source);
+
+    if(record){
+      return {
+        view:permissionValue(record,'view'),
+        edit:permissionValue(record,'edit'),
+        delete:permissionValue(record,'delete')
+      };
+    }
+  }
+
+  return {view:false,edit:false,delete:false};
+}
+
+function showPermissionDenied(message){
+  document.body.classList.remove('auth-ready');
+
+  document.getElementById('authGate').classList.add('hidden');
+  document.getElementById('appContent').style.display='none';
+
+  const gate = document.getElementById('deniedGate');
+  gate.classList.remove('hidden');
+
+  document.getElementById('deniedMessage').textContent = message;
+}
+
+function showPermissionGate(){
+  document.body.classList.remove('auth-ready');
+
+  document.getElementById('authGate').classList.remove('hidden');
+  document.getElementById('deniedGate').classList.add('hidden');
+  document.getElementById('appContent').style.display='none';
+}
+
+function applyPagePermissions(){
+  const gate = document.getElementById('authGate');
+
+  gate.classList.add('hidden');
+
+  if(!currentPermissions.view){
+    showPermissionDenied(
+      'Your account does not have View permission for Add Stock. Please contact your administrator.'
+    );
+    return false;
+  }
+
+  document.getElementById('deniedGate').classList.add('hidden');
+  document.body.classList.add('auth-ready');
+  document.getElementById('appContent').style.display='block';
+
+  document.querySelectorAll('.edit-control').forEach(element=>{
+    element.style.display = currentPermissions.edit ? '' : 'none';
+  });
+
+  document.querySelectorAll('.type-option').forEach(element=>{
+    element.style.pointerEvents = currentPermissions.edit ? 'auto' : 'none';
+    element.style.opacity = currentPermissions.edit ? '1' : '.65';
+  });
+
+  return true;
+}
+
+function hasPermission(action){
+  if(isSystemAdmin(authData)) return true;
+  return !!currentPermissions[action];
+}
+
+function requirePermission(action){
+  if(!authReceived){
+    showMessage('Please wait for account verification.',true);
+    return false;
+  }
+
+  if(!currentPermissions.view){
+    showPermissionDenied('You do not have View permission.');
+    return false;
+  }
+
+  if(!hasPermission(action)){
+    showMessage(
+      'You do not have ' + action.toUpperCase() + ' permission.',
+      true
+    );
+    return false;
+  }
+
+  return true;
+}
+
+function handleAuthMessage(event){
+  if(event.source !== window.parent) return;
+
+  const message = event.data;
+
+  if(!message || typeof message !== 'object') return;
+  if(message.type !== 'ONE_ONLINE_AUTH') return;
+
+  const data =
+    message.data ||
+    message.payload ||
+    message.auth ||
+    message.userData ||
+    message;
+
+  authData = data;
+  authReceived = true;
+
+  currentPermissions = resolvePermissions(data);
+
+  if(!applyPagePermissions()) return;
+
+  if(!appInitialized){
+    appInitialized = true;
+    initializeApp();
+  }
+}
+
+window.addEventListener('message',handleAuthMessage);
+
+window.addEventListener('load',()=>{
+  showPermissionGate();
+
+  if(window.parent === window){
+    showPermissionDenied(
+      'This page must be opened inside the ONE ONLINE Management System.'
+    );
+  }
+});
+
+/* Ask parent to resend authentication if needed */
+function requestAuthAgain(){
+  if(window.parent !== window){
+    window.parent.postMessage({
+      type:'ONE_ONLINE_REQUEST_AUTH',
+      page:PAGE_PERMISSION_KEY
+    },'*');
+  }
+}
+
+setTimeout(()=>{
+  if(!authReceived){
+    requestAuthAgain();
+  }
+},1000);
+
+/* =========================================================
+   DATABASE
+========================================================= */
 
 function loadStock(){
   try{
@@ -275,6 +634,8 @@ function money(value){
 /* SUMMARY */
 
 function updateSummary(){
+  if(!requirePermission('view')) return;
+
   const items = loadStock();
 
   const totalQty = items.reduce(
@@ -308,6 +669,8 @@ function updateSummary(){
 /* SELECT ONU / FIBER */
 
 function selectType(type){
+  if(!requirePermission('edit')) return;
+
   currentType = type;
 
   document.getElementById('onuSection')
@@ -326,6 +689,8 @@ function selectType(type){
 /* ADD ROW */
 
 function addRow(type){
+  if(!requirePermission('edit')) return;
+
   rowCounter++;
 
   const id = 'row_' + rowCounter;
@@ -399,6 +764,8 @@ function addRow(type){
 /* REMOVE ROW */
 
 function removeRow(id){
+  if(!requirePermission('edit')) return;
+
   const row = document.getElementById(id);
   if(row) row.remove();
 }
@@ -407,6 +774,9 @@ function removeRow(id){
 
 function showMessage(text,error=false){
   const msg = document.getElementById('message');
+
+  if(!msg) return;
+
   msg.textContent = text;
   msg.className = 'msg' + (error ? ' error' : '');
   msg.style.display = 'block';
@@ -441,6 +811,8 @@ document.getElementById('stockForm')
 
   e.preventDefault();
 
+  if(!requirePermission('edit')) return;
+
   const type = currentType;
   const rows = getRows(type);
 
@@ -462,14 +834,6 @@ document.getElementById('stockForm')
 
     const category = type;
     const unit = type === 'ONU' ? 'pcs' : 'meter';
-
-    /*
-      ONU: name = ONU - Make
-      Fiber: name = Fiber - Fiber Name
-
-      Existing stock-list / delete-stock / use-stock
-      pages-এর একই data structure ব্যবহার করা হয়েছে।
-    */
 
     const stockName = type + ' - ' + row.name;
 
@@ -521,22 +885,52 @@ document.getElementById('stockForm')
 /* RESET */
 
 document.getElementById('stockForm')
-.addEventListener('reset',function(){
+.addEventListener('reset',function(e){
+
+  if(!requirePermission('edit')){
+    e.preventDefault();
+    return;
+  }
+
   setTimeout(()=>{
+    if(!hasPermission('edit')) return;
+
     document.getElementById('onuRows').innerHTML = '';
     document.getElementById('fiberRows').innerHTML = '';
     addRow(currentType);
   },0);
 });
 
-/* INITIAL LOAD */
+/* INITIALIZE AFTER AUTH */
 
-addRow('ONU');
-addRow('FIBER');
+function initializeApp(){
+  if(!requirePermission('view')) return;
 
-updateSummary();
-selectType('ONU');
+  if(hasPermission('edit')){
+    addRow('ONU');
+    addRow('FIBER');
+  }
 
+  updateSummary();
+  selectInitialType();
+}
+
+function selectInitialType(){
+  currentType = 'ONU';
+
+  document.getElementById('onuSection')
+    .classList.remove('hidden');
+
+  document.getElementById('fiberSection')
+    .classList.add('hidden');
+
+  document.getElementById('onuOption')
+    .classList.add('active');
+
+  document.getElementById('fiberOption')
+    .classList.remove('active');
+}
 </script>
+
 </body>
 </html>
