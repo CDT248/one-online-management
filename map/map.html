@@ -17,7 +17,6 @@
   --muted:#91a2bb;
   --line:#283950;
   --primary:#168b68;
-  --blue:#3185ed;
 }
 *{box-sizing:border-box}
 
@@ -30,17 +29,17 @@ html,body{
   color:var(--text);
 }
 
-body{
-  overflow:hidden;
-}
+body{overflow:hidden}
 
 button,input,select{font:inherit}
 button{cursor:pointer}
 
+/* PAGE */
+
 .map-page{
   width:100%;
   height:100%;
-  min-height:500px;
+  min-height:400px;
   display:flex;
   flex-direction:column;
   overflow:hidden;
@@ -49,45 +48,119 @@ button{cursor:pointer}
 /* HEADER */
 
 .map-header{
-  min-height:62px;
+  min-height:72px;
   background:var(--panel);
   border-bottom:1px solid var(--line);
   display:flex;
   align-items:center;
   justify-content:space-between;
   padding:10px 16px;
-  gap:10px;
+  gap:12px;
+  flex-wrap:wrap;
+  z-index:600;
+}
+
+.header-left{
+  display:flex;
+  align-items:center;
+  gap:20px;
   flex-wrap:wrap;
 }
 
 .map-brand{
   font-size:18px;
   font-weight:800;
+  white-space:nowrap;
 }
 
 .map-brand span{color:#21bd91}
 
-.map-header-actions{
+/* COUNTS */
+
+.map-counts{
   display:flex;
+  align-items:center;
   gap:8px;
+}
+
+.count-item{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:8px 11px;
+  border-radius:8px;
+  background:var(--panel2);
+  border:1px solid var(--line);
+  min-width:90px;
+}
+
+.count-icon{
+  width:29px;
+  height:29px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:7px;
+  font-size:15px;
+}
+
+.count-item small{
+  display:block;
+  font-size:10px;
+  color:var(--muted);
+}
+
+.count-item strong{
+  display:block;
+  font-size:17px;
+  margin-top:2px;
+}
+
+.count-pole .count-icon{
+  background:#2563eb30;
+  color:#60a5fa;
+}
+
+.count-customer .count-icon{
+  background:#16a36a30;
+  color:#34d399;
+}
+
+.count-box .count-icon{
+  background:#db8b2030;
+  color:#fbbf24;
+}
+
+/* BUTTONS */
+
+.header-actions{
+  display:flex;
+  align-items:center;
+  gap:7px;
   flex-wrap:wrap;
 }
 
 .btn{
   border:0;
   border-radius:8px;
-  padding:10px 14px;
-  background:var(--primary);
+  padding:10px 13px;
+  background:#168b68;
   color:white;
   font-weight:600;
-  font-size:13px;
+  font-size:12px;
+  white-space:nowrap;
 }
 
 .btn.blue{background:#2879d4}
 .btn.orange{background:#b87919}
 .btn.secondary{background:#293b53}
 .btn.danger{background:#bd3942}
-.btn.small{padding:8px 11px;font-size:12px}
+.btn:hover{filter:brightness(1.12)}
+
+.btn.small{
+  padding:8px 10px;
+  font-size:12px;
+}
 
 /* MAP */
 
@@ -96,28 +169,16 @@ button{cursor:pointer}
   min-height:0;
   position:relative;
   width:100%;
-}
-
-#map{
-  height:100%;
-  width:100%;
   background:#dce6e9;
 }
 
-.map-tools{
-  position:absolute;
-  z-index:500;
-  top:12px;
-  left:12px;
-  display:flex;
-  flex-wrap:wrap;
-  gap:7px;
-  max-width:calc(100% - 24px);
+#map{
+  width:100%;
+  height:100%;
+  background:#dce6e9;
 }
 
-.map-tools button{
-  box-shadow:0 2px 8px #0004;
-}
+/* MAP HINT */
 
 .map-hint{
   position:absolute;
@@ -128,47 +189,11 @@ button{cursor:pointer}
   background:#111c2ef2;
   color:white;
   border-radius:9px;
-  padding:11px 15px;
+  padding:11px 16px;
   font-size:12px;
   display:none;
-  white-space:normal;
   text-align:center;
-  width:max-content;
   max-width:90%;
-}
-
-.map-stats{
-  position:absolute;
-  z-index:500;
-  top:65px;
-  right:12px;
-  display:flex;
-  gap:7px;
-  flex-wrap:wrap;
-  justify-content:flex-end;
-}
-
-.stat-box{
-  background:#111c2eeF;
-  border:1px solid #ffffff30;
-  border-radius:9px;
-  padding:8px 12px;
-  color:white;
-  min-width:75px;
-  text-align:center;
-  box-shadow:0 2px 8px #0003;
-}
-
-.stat-box small{
-  display:block;
-  font-size:10px;
-  color:#a9bdd4;
-}
-
-.stat-box strong{
-  display:block;
-  font-size:18px;
-  margin-top:3px;
 }
 
 /* MARKERS */
@@ -294,6 +319,7 @@ button{cursor:pointer}
 }
 
 .info-line span{color:var(--muted)}
+
 .info-line strong{
   text-align:right;
   overflow-wrap:anywhere;
@@ -343,51 +369,75 @@ button{cursor:pointer}
   padding:10px 0;
 }
 
-#connectionList{
-  max-height:180px;
-  overflow:auto;
-}
+/* MOBILE */
 
-.connection-item{
-  padding:9px;
-  border-bottom:1px solid var(--line);
-  font-size:12px;
-  line-height:1.6;
-}
+@media(max-width:950px){
 
-@media(max-width:600px){
   .map-header{
-    min-height:58px;
+    align-items:flex-start;
+  }
+
+  .header-left{
+    gap:10px;
+  }
+
+}
+
+@media(max-width:650px){
+
+  .map-header{
     padding:9px;
+    gap:9px;
   }
-  .map-brand{font-size:15px}
-  .map-header-actions{gap:5px}
-  .map-header-actions .btn{
-    padding:8px;
-    font-size:11px;
+
+  .header-left{
+    width:100%;
+    justify-content:space-between;
   }
-  .map-tools{
-    top:10px;
-    left:8px;
+
+  .map-brand{
+    font-size:15px;
+  }
+
+  .map-counts{
     gap:5px;
   }
-  .map-tools .btn{
-    padding:8px 9px;
-    font-size:11px;
+
+  .count-item{
+    min-width:0;
+    padding:6px;
+    gap:5px;
   }
-  .map-stats{
-    top:58px;
-    right:8px;
-    gap:4px;
+
+  .count-icon{
+    width:24px;
+    height:24px;
+    font-size:12px;
   }
-  .stat-box{
-    min-width:57px;
-    padding:6px 8px;
+
+  .count-item small{font-size:9px}
+  .count-item strong{font-size:14px}
+
+  .header-actions{
+    width:100%;
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:5px;
   }
-  .stat-box small{font-size:9px}
-  .stat-box strong{font-size:15px}
-  .form-row{grid-template-columns:1fr}
-  .modal-content{padding:16px}
+
+  .header-actions .btn{
+    padding:9px 4px;
+    font-size:10px;
+    white-space:normal;
+  }
+
+  .form-row{
+    grid-template-columns:1fr;
+  }
+
+  .modal-content{
+    padding:16px;
+  }
 }
 </style>
 </head>
@@ -399,59 +449,68 @@ button{cursor:pointer}
   <!-- HEADER -->
   <header class="map-header">
 
-    <div class="map-brand">
-      <span>ONE</span> ONLINE | NETWORK MAP
+    <div class="header-left">
+
+      <div class="map-brand">
+        <span>ONE</span> ONLINE | NETWORK MAP
+      </div>
+
+      <!-- TOTAL COUNTS -->
+      <div class="map-counts">
+
+        <div class="count-item count-pole">
+          <div class="count-icon">⚡</div>
+          <div>
+            <small>POLES</small>
+            <strong id="poleCount">0</strong>
+          </div>
+        </div>
+
+        <div class="count-item count-customer">
+          <div class="count-icon">👤</div>
+          <div>
+            <small>CUSTOMERS</small>
+            <strong id="customerCount">0</strong>
+          </div>
+        </div>
+
+        <div class="count-item count-box">
+          <div class="count-icon">▣</div>
+          <div>
+            <small>SUB BOX</small>
+            <strong id="boxCount">0</strong>
+          </div>
+        </div>
+
+      </div>
+
     </div>
 
-    <div class="map-header-actions">
-      <button class="btn secondary small" onclick="resetView()">
-        Reset View
+    <!-- ALL ACTION BUTTONS IN HEADER -->
+    <div class="header-actions">
+
+      <button class="btn secondary" onclick="resetView()">
+        ↗ Reset Map
       </button>
 
-      <button class="btn small" onclick="startAddPole()">
-        + Add Pole
-      </button>
-    </div>
-
-  </header>
-
-  <!-- MAP AREA -->
-  <main class="map-area">
-
-    <div class="map-tools">
-
-      <button class="btn small" onclick="startAddPole()">
+      <button class="btn" onclick="startAddPole()">
         + Pole
       </button>
 
-      <button class="btn blue small" onclick="startAddCustomer()">
+      <button class="btn blue" onclick="startAddCustomer()">
         + Customer
       </button>
 
-      <button class="btn orange small" onclick="startAddBox()">
+      <button class="btn orange" onclick="startAddBox()">
         + Sub Box
       </button>
 
     </div>
 
-    <div class="map-stats">
+  </header>
 
-      <div class="stat-box">
-        <small>POLES</small>
-        <strong id="poleCount">0</strong>
-      </div>
-
-      <div class="stat-box">
-        <small>CUSTOMERS</small>
-        <strong id="customerCount">0</strong>
-      </div>
-
-      <div class="stat-box">
-        <small>SUB BOX</small>
-        <strong id="boxCount">0</strong>
-      </div>
-
-    </div>
+  <!-- CLEAN MAP -->
+  <main class="map-area">
 
     <div id="map"></div>
 
@@ -486,7 +545,6 @@ button{cursor:pointer}
    </div>
 
    <div class="form-row">
-
     <div class="form-group">
      <label>Latitude</label>
      <input id="poleLat" type="number" step="any" required>
@@ -496,7 +554,6 @@ button{cursor:pointer}
      <label>Longitude</label>
      <input id="poleLng" type="number" step="any" required>
     </div>
-
    </div>
 
    <div class="form-actions">
@@ -529,7 +586,6 @@ button{cursor:pointer}
    </div>
 
    <div class="form-row">
-
     <div class="form-group">
      <label>Customer IP</label>
      <input id="customerIP" placeholder="192.168.1.10">
@@ -543,7 +599,6 @@ button{cursor:pointer}
       <option value="Wireless">Wireless</option>
      </select>
     </div>
-
    </div>
 
    <div class="form-group">
@@ -565,7 +620,6 @@ button{cursor:pointer}
    </div>
 
    <div class="form-row">
-
     <div class="form-group">
      <label>Latitude</label>
      <input id="customerLat" type="number" step="any" required>
@@ -575,7 +629,6 @@ button{cursor:pointer}
      <label>Longitude</label>
      <input id="customerLng" type="number" step="any" required>
     </div>
-
    </div>
 
    <div class="form-actions">
@@ -608,7 +661,6 @@ button{cursor:pointer}
    </div>
 
    <div class="form-row">
-
     <div class="form-group">
      <label>Fiber Name</label>
      <input id="fiberName" placeholder="Fiber Name">
@@ -618,7 +670,6 @@ button{cursor:pointer}
      <label>Fiber Code</label>
      <input id="fiberCode" placeholder="Fiber Code">
     </div>
-
    </div>
 
    <div class="form-group">
@@ -632,7 +683,6 @@ button{cursor:pointer}
    </div>
 
    <div class="form-row">
-
     <div class="form-group">
      <label>Latitude</label>
      <input id="boxLat" type="number" step="any" required>
@@ -642,7 +692,6 @@ button{cursor:pointer}
      <label>Longitude</label>
      <input id="boxLng" type="number" step="any" required>
     </div>
-
    </div>
 
    <div class="form-actions">
@@ -698,9 +747,9 @@ button{cursor:pointer}
 
 <script>
 
-/* =========================================
-   ONE ONLINE - NETWORK MAP DEMO
-========================================= */
+/* ====================================
+   ONE ONLINE NETWORK MAP DEMO
+==================================== */
 
 const STORAGE_KEY="one_online_network_map_demo_v2";
 
@@ -713,7 +762,6 @@ let data={
 let map;
 let markers={};
 let connectionLines=[];
-
 let activePoleId=null;
 let selectedInfo=null;
 let addMode=null;
@@ -735,31 +783,38 @@ function esc(value){
 }
 
 function saveData(){
+
   try{
     localStorage.setItem(STORAGE_KEY,JSON.stringify(data));
   }catch(e){
     alert("Data Save করা যায়নি। Browser Storage চেক করুন।");
   }
+
   renderAll();
 }
 
 function loadData(){
+
   try{
     const saved=localStorage.getItem(STORAGE_KEY);
+
     if(saved){
       const parsed=JSON.parse(saved);
+
       if(Array.isArray(parsed.poles)&&
          Array.isArray(parsed.customers)&&
          Array.isArray(parsed.boxes)){
         data=parsed;
       }
     }
+
   }catch(e){
     console.error(e);
   }
 }
 
 function getEntity(type,id){
+
   if(type==="pole")return data.poles.find(x=>x.id===id);
   if(type==="customer")return data.customers.find(x=>x.id===id);
   if(type==="box")return data.boxes.find(x=>x.id===id);
@@ -801,16 +856,10 @@ function markerIcon(type){
 
 function clearMapObjects(){
 
-  Object.values(markers).forEach(m=>{
-    map.removeLayer(m);
-  });
-
+  Object.values(markers).forEach(m=>map.removeLayer(m));
   markers={};
 
-  connectionLines.forEach(l=>{
-    map.removeLayer(l);
-  });
-
+  connectionLines.forEach(l=>map.removeLayer(l));
   connectionLines=[];
 }
 
@@ -845,14 +894,14 @@ function addMarker(type,item){
 /* CONNECTIONS */
 
 function connectionColor(type){
+
   if(type==="UTP Cable")return "#e59a27";
   if(type==="Wireless")return "#a855f7";
+
   return "#16a36a";
 }
 
 function renderConnections(){
-
-  // Pole to Sub Box
 
   data.boxes.forEach(b=>{
 
@@ -870,8 +919,6 @@ function renderConnections(){
 
     connectionLines.push(line);
   });
-
-  // Pole / Sub Box to Customer
 
   data.customers.forEach(c=>{
 
@@ -924,32 +971,42 @@ map.on("click",e=>{
   const pos=e.latlng;
 
   if(addMode==="pole"){
+
     resetPoleForm();
+
     document.getElementById("poleLat").value=pos.lat.toFixed(7);
     document.getElementById("poleLng").value=pos.lng.toFixed(7);
+
     openModal("poleModal");
   }
 
   if(addMode==="customer"){
+
     resetCustomerForm();
+
     document.getElementById("customerLat").value=pos.lat.toFixed(7);
     document.getElementById("customerLng").value=pos.lng.toFixed(7);
+
     openModal("customerModal");
   }
 
   if(addMode==="box"){
+
     resetBoxForm();
+
     document.getElementById("boxLat").value=pos.lat.toFixed(7);
     document.getElementById("boxLng").value=pos.lng.toFixed(7);
+
     openModal("boxModal");
   }
 
   cancelAddMode();
 });
 
-/* ADD MODE */
+/* ADD MODES */
 
 function startAddPole(){
+
   addMode="pole";
   showHint("Pole বসানোর জন্য Map-এর যেকোনো জায়গায় ক্লিক করুন");
 }
@@ -977,12 +1034,15 @@ function startAddBox(){
 }
 
 function showHint(msg){
+
   const h=document.getElementById("mapHint");
+
   h.textContent=msg;
   h.style.display="block";
 }
 
 function cancelAddMode(){
+
   addMode=null;
   document.getElementById("mapHint").style.display="none";
 }
@@ -1003,16 +1063,23 @@ function closeModal(id){
 }
 
 document.querySelectorAll(".modal").forEach(modal=>{
+
   modal.addEventListener("click",e=>{
-    if(e.target===modal)closeModal(modal.id);
+
+    if(e.target===modal){
+      closeModal(modal.id);
+    }
+
   });
 });
 
 /* POLE */
 
 function resetPoleForm(){
+
   document.getElementById("poleForm").reset();
   document.getElementById("poleId").value="";
+
   document.getElementById("poleModalTitle").textContent="Add New Pole";
 }
 
@@ -1084,10 +1151,10 @@ function resetCustomerForm(){
 
   document.getElementById("customerForm").reset();
   document.getElementById("customerId").value="";
+
   document.getElementById("customerModalTitle").textContent="Add Customer";
 
-  const sourceType=document.getElementById("customerSourceType");
-  sourceType.value="pole";
+  document.getElementById("customerSourceType").value="pole";
 
   updateCustomerSourceOptions();
 
@@ -1167,6 +1234,7 @@ function editCustomer(id){
 function updateBoxPoleOptions(){
 
   const select=document.getElementById("boxPole");
+
   select.innerHTML="";
 
   data.poles.forEach(p=>{
@@ -1178,6 +1246,7 @@ function resetBoxForm(){
 
   document.getElementById("boxForm").reset();
   document.getElementById("boxId").value="";
+
   document.getElementById("boxModalTitle").textContent="Add Sub Box";
 
   updateBoxPoleOptions();
@@ -1248,6 +1317,7 @@ function editBox(id){
 function showAddMenu(id){
 
   activePoleId=id;
+
   closeModal("infoModal");
   openModal("addMenu");
 }
@@ -1255,10 +1325,13 @@ function showAddMenu(id){
 function openCustomerFromPole(){
 
   closeModal("addMenu");
+
   resetCustomerForm();
 
   document.getElementById("customerSourceType").value="pole";
+
   updateCustomerSourceOptions();
+
   document.getElementById("customerSource").value=activePoleId;
 
   openModal("customerModal");
@@ -1267,6 +1340,7 @@ function openCustomerFromPole(){
 function openBoxFromPole(){
 
   closeModal("addMenu");
+
   resetBoxForm();
 
   document.getElementById("boxPole").value=activePoleId;
@@ -1274,9 +1348,34 @@ function openBoxFromPole(){
   openModal("boxModal");
 }
 
+/* ADD CUSTOMER FROM BOX */
+
+function addCustomerToBox(id){
+
+  const box=getEntity("box",id);
+  if(!box)return;
+
+  closeModal("infoModal");
+
+  activePoleId=box.poleId;
+
+  resetCustomerForm();
+
+  document.getElementById("customerSourceType").value="box";
+
+  updateCustomerSourceOptions();
+
+  document.getElementById("customerSource").value=id;
+
+  document.getElementById("customerModalTitle").textContent="Add Customer to Sub Box";
+
+  openModal("customerModal");
+}
+
 /* INFORMATION */
 
 function infoRow(label,value){
+
   return `
     <div class="info-line">
       <span>${esc(label)}</span>
@@ -1405,28 +1504,6 @@ function showInfo(type,id){
   openModal("infoModal");
 }
 
-/* ADD CUSTOMER FROM BOX */
-
-function addCustomerToBox(id){
-
-  const box=getEntity("box",id);
-  if(!box)return;
-
-  closeModal("infoModal");
-
-  activePoleId=box.poleId;
-
-  resetCustomerForm();
-
-  document.getElementById("customerSourceType").value="box";
-  updateCustomerSourceOptions();
-  document.getElementById("customerSource").value=id;
-
-  document.getElementById("customerModalTitle").textContent="Add Customer to Sub Box";
-
-  openModal("customerModal");
-}
-
 /* DELETE */
 
 function deleteEntity(type,id){
@@ -1464,7 +1541,7 @@ function deleteEntity(type,id){
   saveData();
 }
 
-/* STATS */
+/* HEADER COUNTS */
 
 function updateStats(){
 
@@ -1473,7 +1550,7 @@ function updateStats(){
   document.getElementById("boxCount").textContent=data.boxes.length;
 }
 
-/* MAP VIEW */
+/* RESET MAP */
 
 function resetView(){
 
@@ -1489,7 +1566,10 @@ function resetView(){
       all.map(x=>[Number(x.lat),Number(x.lng)])
     );
 
-    map.fitBounds(bounds,{padding:[55,55],maxZoom:17});
+    map.fitBounds(bounds,{
+      padding:[45,45],
+      maxZoom:17
+    });
 
   }else{
 
