@@ -1,0 +1,1414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ONE ONLINE | Management System</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+:root{
+  --bg:#f4f6fa;--surface:#fff;--surface2:#f8fafc;
+  --text:#172033;--muted:#78869a;--border:#e5eaf1;
+  --primary:#087f5b;--primary-soft:#e7f5ef;--danger:#dc3545;
+  --sidebar:#101b2d;--sidebar-text:#c5d0df;--sidebar-muted:#8190a5;
+  --shadow:0 8px 28px rgba(20,35,55,.07);
+  --sidebar-width:260px;--sidebar-small:82px;
+}
+[data-theme="dark"]{
+  --bg:#0b1220;--surface:#111c2e;--surface2:#17243a;
+  --text:#edf4ff;--muted:#91a2ba;--border:#26364d;
+  --primary:#10b981;--primary-soft:#123b32;--danger:#f87171;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,Arial,sans-serif;background:var(--bg);color:var(--text);font-size:14px}
+button,input{font:inherit}
+button{cursor:pointer}
+.hidden{display:none!important}
+#app{display:none;min-height:100vh}
+
+/* LOGIN */
+#loginScreen{
+  min-height:100vh;display:flex;align-items:center;justify-content:center;
+  padding:22px;background:linear-gradient(135deg,#071b2b,#0b3d35 55%,#087f5b);
+}
+.login-card{
+  width:100%;max-width:420px;background:#fff;color:#172033;
+  border-radius:18px;padding:32px;box-shadow:0 25px 80px rgba(0,0,0,.25);
+}
+.login-logo{
+  width:58px;height:58px;border-radius:15px;background:#087f5b;color:white;
+  display:grid;place-items:center;font-size:30px;font-weight:800;margin:0 auto 16px;
+}
+.login-card h1{text-align:center;font-size:21px;margin:0 0 7px}
+.login-sub{text-align:center;color:#78869a;font-size:12px;margin-bottom:27px}
+.login-field{margin-bottom:16px}
+.login-field label{display:block;font-size:12px;font-weight:700;margin-bottom:7px}
+.login-input{
+  width:100%;height:45px;border:1px solid #dce3eb;border-radius:9px;
+  padding:0 13px;background:#f8fafc;color:#172033;outline:none;
+}
+.login-input:focus{border-color:#087f5b;box-shadow:0 0 0 3px rgba(8,127,91,.1)}
+.login-password-wrap{position:relative}
+.login-password-wrap .login-input{padding-right:44px}
+.password-toggle{
+  position:absolute;right:12px;top:50%;transform:translateY(-50%);
+  border:0;background:none;color:#78869a;
+}
+.login-btn{
+  width:100%;height:46px;border:0;border-radius:9px;background:#087f5b;
+  color:#fff;font-weight:800;margin-top:5px;
+}
+.login-btn:disabled{opacity:.65;cursor:wait}
+.login-error{
+  color:#c62828;background:#fff0f0;border:1px solid #ffd3d3;
+  border-radius:8px;padding:10px;font-size:12px;margin:0 0 14px;display:none;
+}
+.login-footer{text-align:center;color:#78869a;font-size:10px;margin-top:22px}
+
+/* SIDEBAR */
+.sidebar{
+  position:fixed;left:0;top:0;bottom:0;width:var(--sidebar-width);
+  background:var(--sidebar);color:white;z-index:1000;display:flex;
+  flex-direction:column;transition:width .25s ease,transform .25s ease;overflow:hidden;
+}
+.brand{
+  height:76px;min-height:76px;display:flex;align-items:center;gap:12px;
+  padding:0 20px;border-bottom:1px solid rgba(255,255,255,.08);
+  cursor:pointer;user-select:none;
+}
+.brand-mark{
+  width:39px;height:39px;min-width:39px;display:grid;place-items:center;
+  border-radius:11px;background:#087f5b;font-size:21px;font-weight:800;color:white;
+}
+.brand-text{white-space:nowrap;overflow:hidden}
+.brand-text strong{display:block;font-size:15px;letter-spacing:.8px}
+.brand-text small{display:block;font-size:9px;color:#91a2ba;letter-spacing:1.5px;margin-top:4px}
+.sidebar-nav{padding:18px 12px;overflow-y:auto;flex:1}
+.nav-heading{
+  color:var(--sidebar-muted);font-size:10px;font-weight:700;
+  letter-spacing:1.3px;padding:13px 11px 9px;white-space:nowrap;
+}
+.nav-item{
+  width:100%;height:43px;display:flex;align-items:center;gap:13px;
+  padding:0 13px;margin:3px 0;border:0;border-radius:8px;
+  background:transparent;color:var(--sidebar-text);text-align:left;
+  white-space:nowrap;transition:.2s;
+}
+.nav-item i{width:19px;text-align:center;font-size:15px}
+.nav-item span{overflow:hidden;text-overflow:ellipsis}
+.nav-item:hover{background:rgba(255,255,255,.08);color:#fff}
+.nav-item.active{color:#fff;background:rgba(16,185,129,.17);box-shadow:inset 3px 0 #10b981}
+.sidebar-bottom{padding:13px 12px;border-top:1px solid rgba(255,255,255,.08)}
+.sidebar-user{display:flex;align-items:center;gap:10px;padding:8px 7px 12px;overflow:hidden}
+.avatar{
+  width:36px;height:36px;min-width:36px;border-radius:50%;display:grid;
+  place-items:center;background:#d8eee6;color:#087f5b;font-weight:700;overflow:hidden;
+}
+.avatar img{width:100%;height:100%;object-fit:cover}
+.user-info{overflow:hidden;white-space:nowrap}
+.user-info strong{display:block;font-size:12px}
+.user-info small{display:block;color:var(--sidebar-muted);font-size:10px;margin-top:3px}
+.sidebar.collapsed{width:var(--sidebar-small)}
+.sidebar.collapsed .brand{padding:0 21px}
+.sidebar.collapsed .brand-text,.sidebar.collapsed .nav-heading,
+.sidebar.collapsed .nav-item span,.sidebar.collapsed .user-info{display:none}
+.sidebar.collapsed .nav-item{justify-content:center;padding:0}
+.sidebar.collapsed .nav-item i{font-size:17px}
+.sidebar.collapsed .sidebar-user{justify-content:center;padding:8px 0 12px}
+
+/* MAIN */
+.main{margin-left:var(--sidebar-width);min-height:100vh;transition:margin-left .25s ease}
+.main.collapsed{margin-left:var(--sidebar-small)}
+.topbar{
+  height:76px;position:sticky;top:0;z-index:500;background:var(--surface);
+  border-bottom:1px solid var(--border);display:flex;align-items:center;
+  justify-content:space-between;padding:0 28px;
+}
+.top-left{display:flex;align-items:center;gap:14px;min-width:0}
+.page-title{font-size:17px;font-weight:700;white-space:nowrap}
+.page-subtitle{font-size:11px;color:var(--muted);margin-top:4px}
+.top-right{display:flex;align-items:center;gap:13px}
+.theme-btn,.mobile-menu{
+  width:37px;height:37px;border:1px solid var(--border);border-radius:9px;
+  background:var(--surface2);color:var(--text);
+}
+.profile-wrap{position:relative}
+.profile-button{
+  display:flex;align-items:center;gap:9px;border:1px solid var(--border);
+  background:var(--surface2);border-radius:30px;padding:4px 11px 4px 4px;color:var(--text);
+}
+.profile-button .avatar{width:32px;height:32px;min-width:32px}
+.profile-button .fa-chevron-down{font-size:10px;color:var(--muted)}
+.profile-dropdown{
+  position:absolute;right:0;top:48px;width:190px;background:var(--surface);
+  border:1px solid var(--border);box-shadow:var(--shadow);border-radius:11px;
+  padding:7px;z-index:1500;
+}
+.profile-dropdown button{
+  width:100%;border:0;background:transparent;color:var(--text);
+  padding:11px 10px;border-radius:7px;text-align:left;font-size:13px;
+}
+.profile-dropdown button:hover{background:var(--surface2)}
+.profile-dropdown button i{width:22px;color:var(--muted)}
+.mobile-menu{display:none}
+.content{padding:26px;max-width:1600px;margin:auto}
+#pageFrame{width:100%;height:calc(100vh - 130px);min-height:600px;border:0;background:transparent;display:block}
+
+/* DASHBOARD */
+.welcome{padding:25px 27px;background:var(--surface);border:1px solid var(--border);border-radius:13px;margin-bottom:20px}
+.welcome h2{font-size:21px;margin:0 0 8px}
+.welcome p{color:var(--muted);margin:0;line-height:1.6}
+.section-title{font-size:15px;font-weight:700;margin:25px 0 14px}
+.stat-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:15px}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:19px}
+.stat-top{display:flex;align-items:center;justify-content:space-between}
+.stat-icon{width:39px;height:39px;border-radius:10px;background:var(--primary-soft);color:var(--primary);display:grid;place-items:center;font-size:16px}
+.stat-card small{color:var(--muted);font-size:11px}
+.stat-card h3{font-size:23px;margin:15px 0 4px}
+.quick-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px}
+.quick-card{
+  display:flex;align-items:center;gap:12px;padding:16px;background:var(--surface);
+  border:1px solid var(--border);border-radius:11px;color:var(--text);
+  text-align:left;transition:.2s;
+}
+.quick-card:hover{border-color:var(--primary);transform:translateY(-2px)}
+.quick-card i{font-size:17px;color:var(--primary)}
+.quick-card strong{font-size:12px}
+
+/* ACCOUNT */
+.account-grid{display:grid;grid-template-columns:300px 1fr;gap:18px}
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:22px}
+.panel h3{margin:0 0 18px;font-size:15px}
+.profile-preview{text-align:center}
+.profile-preview .avatar{width:95px;height:95px;margin:10px auto 15px;font-size:27px}
+.profile-preview h3{margin:0 0 5px}
+.profile-preview p{color:var(--muted);font-size:12px}
+.small-btn{
+  border:1px solid var(--border);background:var(--surface2);color:var(--text);
+  border-radius:7px;padding:8px 11px;font-size:11px;font-weight:600;margin:4px;
+}
+.small-btn.danger{color:var(--danger)}
+.account-fields{display:grid;grid-template-columns:1fr 1fr;gap:0 15px}
+.save-btn{border:0;background:var(--primary);color:white;padding:11px 18px;border-radius:8px;font-weight:700}
+.account-input{
+  width:100%;padding:11px 12px;border:1px solid var(--border);border-radius:8px;
+  background:var(--surface2);color:var(--text);outline:none;
+}
+.account-input:focus{border-color:var(--primary)}
+.form-label{display:block;font-size:12px;font-weight:600;margin-bottom:7px}
+.account-field{margin-bottom:15px}
+.status-note{font-size:12px;color:var(--muted);margin-top:10px}
+.account-divider{border:0;border-top:1px solid var(--border);margin:22px 0}
+.account-section-title{font-size:14px;font-weight:700;margin:0 0 14px}
+.role-pill{display:inline-block;padding:5px 10px;border-radius:20px;background:var(--primary-soft);color:var(--primary);font-size:11px;font-weight:800}
+
+/* NOTICES */
+.app-notice{
+  position:fixed;right:20px;bottom:20px;z-index:3000;max-width:360px;
+  padding:13px 17px;border-radius:10px;background:#172033;color:white;
+  box-shadow:0 10px 30px rgba(0,0,0,.2);font-size:12px;display:none;
+}
+.app-notice.error{background:#a92835}
+.app-notice.success{background:#087f5b}
+.access-denied{
+  background:var(--surface);border:1px solid var(--border);border-radius:12px;
+  padding:35px;text-align:center;color:var(--muted);
+}
+.access-denied i{font-size:30px;margin-bottom:12px;color:var(--danger)}
+
+/* MOBILE */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:900}
+@media(max-width:1000px){
+  .stat-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .quick-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:760px){
+  .sidebar{transform:translateX(-100%);width:260px}
+  .sidebar.mobile-open{transform:translateX(0)}
+  .sidebar.collapsed{width:260px}
+  .sidebar.collapsed .brand{padding:0 20px}
+  .sidebar.collapsed .brand-text,.sidebar.collapsed .nav-heading,
+  .sidebar.collapsed .nav-item span,.sidebar.collapsed .user-info{display:initial}
+  .sidebar.collapsed .nav-item{justify-content:flex-start;padding:0 13px}
+  .sidebar.collapsed .sidebar-user{justify-content:flex-start;padding:8px 7px 12px}
+  .main,.main.collapsed{margin-left:0}
+  .mobile-menu{display:block}
+  .topbar{height:65px;padding:0 14px}
+  .content{padding:15px}
+  .overlay.show{display:block}
+  .account-grid{grid-template-columns:1fr}
+  .account-fields{grid-template-columns:1fr}
+  #pageFrame{height:calc(100vh - 105px);min-height:500px}
+  .page-subtitle{display:none}
+  .profile-button{padding:3px}
+  .profile-button .fa-chevron-down{display:none}
+}
+@media(max-width:430px){
+  .stat-grid{grid-template-columns:1fr 1fr;gap:9px}
+  .stat-card{padding:13px}
+  .stat-card h3{font-size:19px}
+  .quick-grid{grid-template-columns:1fr 1fr;gap:9px}
+  .quick-card{padding:12px}
+  .welcome{padding:19px}
+  .welcome h2{font-size:18px}
+  .login-card{padding:25px 21px}
+}
+</style>
+</head>
+
+<body data-theme="light">
+
+<!-- LOGIN SCREEN -->
+<section id="loginScreen">
+  <div class="login-card">
+    <div class="login-logo">O</div>
+    <h1>ONE ONLINE</h1>
+    <div class="login-sub">MANAGEMENT SYSTEM</div>
+
+    <div class="login-error" id="loginError"></div>
+
+    <form id="loginForm">
+      <div class="login-field">
+        <label for="loginEmail">Email Address</label>
+        <input class="login-input" id="loginEmail" type="email"
+          placeholder="Enter your email" autocomplete="username" required>
+      </div>
+
+      <div class="login-field">
+        <label for="loginPassword">Password</label>
+        <div class="login-password-wrap">
+          <input class="login-input" id="loginPassword" type="password"
+            placeholder="Enter your password" autocomplete="current-password" required>
+          <button class="password-toggle" type="button" id="toggleLoginPassword">
+            <i class="fa-solid fa-eye"></i>
+          </button>
+        </div>
+      </div>
+
+      <button class="login-btn" id="loginButton" type="submit">
+        <i class="fa-solid fa-right-to-bracket"></i> Sign In
+      </button>
+    </form>
+
+    <div class="login-footer">Secure access · ONE ONLINE</div>
+  </div>
+</section>
+
+<!-- APPLICATION -->
+<div id="app">
+  <div class="overlay" id="sidebarOverlay"></div>
+
+  <aside class="sidebar" id="sidebar">
+    <div class="brand" id="brandToggle" title="Minimize / Expand Sidebar">
+      <div class="brand-mark">O</div>
+      <div class="brand-text">
+        <strong>ONE ONLINE</strong>
+        <small>MANAGEMENT SYSTEM</small>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-heading">MAIN MENU</div>
+      <button class="nav-item active" data-page="dashboard">
+        <i class="fa-solid fa-chart-pie"></i><span>Dashboard</span>
+      </button>
+
+      <div class="nav-heading">CUSTOMER MANAGEMENT</div>
+      <button class="nav-item" data-page="add-customer">
+        <i class="fa-solid fa-user-plus"></i><span>Add Customer</span>
+      </button>
+      <button class="nav-item" data-page="customer-list">
+        <i class="fa-solid fa-users"></i><span>Customer List</span>
+      </button>
+      <button class="nav-item" data-page="deleted-customer">
+        <i class="fa-solid fa-user-slash"></i><span>Deleted Customer</span>
+      </button>
+
+      <div class="nav-heading">SPEND MANAGEMENT</div>
+      <button class="nav-item" data-page="add-earn">
+        <i class="fa-solid fa-circle-plus"></i><span>Add Earn</span>
+      </button>
+      <button class="nav-item" data-page="add-spend">
+        <i class="fa-solid fa-circle-plus"></i><span>Add Spend</span>
+      </button>
+      <button class="nav-item" data-page="spend-list">
+        <i class="fa-solid fa-money-bill-transfer"></i><span>Spend List</span>
+      </button>
+      <button class="nav-item" data-page="Dellet-spend">
+        <i class="fa-solid fa-money-bill-transfer"></i><span> Delete Spend List</span>
+      </button>
+
+     <div class="nav-heading">Stock Management</div>
+      <button class="nav-item" data-page="add-stock">
+      <i class="fa-solid fa-circle-plus"></i><span>Add Stock</span>
+     </button>
+     <button class="nav-item" data-page="stock-list">
+     <i class="fa-solid fa-boxes-stacked"></i><span>Stock List</span>
+      </button>
+     <button class="nav-item" data-page="delete-stock">
+     <i class="fa-solid fa-trash"></i><span>Delete Stock</span>
+      </button>
+       <button class="nav-item" data-page="use-stock">
+       <i class="fa-solid fa-box-open"></i><span>Use Stock</span>
+        </button>
+      
+      <div class="nav-heading">EMAIL MANAGEMENT</div>
+      <button class="nav-item" data-page="email-settings">
+        <i class="fa-solid fa-envelope-open-text"></i><span>Email Settings</span>
+      </button>
+      <button class="nav-item" data-page="email-template">
+        <i class="fa-solid fa-file-lines"></i><span>Email Template</span>
+      </button>
+      <button class="nav-item" data-page="email-history">
+        <i class="fa-solid fa-clock-rotate-left"></i><span>Email History</span>
+      </button>
+
+      <div class="nav-heading">MAP MANAGEMENT</div>
+      <button class="nav-item" data-page="map-entry">
+        <i class="fa-solid fa-location-dot"></i><span>Map Entry</span>
+      </button>
+      <button class="nav-item" data-page="map">
+        <i class="fa-solid fa-map-location-dot"></i><span>Map</span>
+      </button>
+      <button class="nav-item" data-page="map-setting">
+        <i class="fa-solid fa-map-location-dot"></i><span>Map Setting</span>
+      </button>
+
+
+      <div class="nav-heading">CUSTOM PAGES</div>
+      <button class="nav-item" data-page="page1">
+        <i class="fa-solid fa-file"></i><span>Page 1</span>
+      </button>
+      <button class="nav-item" data-page="page2">
+        <i class="fa-solid fa-file"></i><span>Page 2</span>
+      </button>
+
+      <div class="nav-heading">SYSTEM</div>
+      <button class="nav-item" data-page="account">
+        <i class="fa-solid fa-user-gear"></i><span>My Account</span>
+      </button>
+
+      <!-- SYSTEM ADMIN ONLY -->
+      <button class="nav-item" data-page="manage-admins" id="manageAdminsNav" style="display:none">
+        <i class="fa-solid fa-user-shield"></i><span>Manage Admins</span>
+      </button>
+    </nav>
+
+    <div class="sidebar-bottom">
+      <div class="sidebar-user">
+        <div class="avatar" id="sideAvatar">O</div>
+        <div class="user-info">
+          <strong id="sideUserName">ONE ONLINE</strong>
+          <small id="sideUserRole">Loading...</small>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main" id="mainArea">
+    <header class="topbar">
+      <div class="top-left">
+        <button class="mobile-menu" id="mobileMenuBtn">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+        <div>
+          <div class="page-title" id="topPageTitle">Dashboard</div>
+          <div class="page-subtitle">ONE ONLINE Management System</div>
+        </div>
+      </div>
+
+      <div class="top-right">
+        <button class="theme-btn" id="themeToggle" title="Change Theme">
+          <i class="fa-solid fa-moon" id="themeIcon"></i>
+        </button>
+
+        <div class="profile-wrap">
+          <button class="profile-button" id="profileMenuButton">
+            <div class="avatar" id="topAvatar">O</div>
+            <i class="fa-solid fa-chevron-down"></i>
+          </button>
+
+          <div class="profile-dropdown hidden" id="profileDropdown">
+            <button id="dropdownAccount">
+              <i class="fa-solid fa-user"></i> My Account
+            </button>
+            <button id="dropdownLogout">
+              <i class="fa-solid fa-right-from-bracket"></i> Logout
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <section class="content" id="contentArea">
+
+      <!-- DASHBOARD -->
+      <div id="dashboardPage">
+        <div class="welcome">
+          <h2>Welcome, <span id="welcomeName">ONE ONLINE</span></h2>
+          <p>Welcome to ONE ONLINE Management System. Manage your business operations from one place.</p>
+        </div>
+
+        <div class="section-title">Overview</div>
+        <div class="stat-grid">
+          <div class="stat-card">
+            <div class="stat-top">
+              <small>Total Customers</small>
+              <div class="stat-icon"><i class="fa-solid fa-users"></i></div>
+            </div>
+            <h3>—</h3><small>Customer overview</small>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-top">
+              <small>Due Customers</small>
+              <div class="stat-icon"><i class="fa-solid fa-file-invoice-dollar"></i></div>
+            </div>
+            <h3>—</h3><small>Due overview</small>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-top">
+              <small>Total Spend</small>
+              <div class="stat-icon"><i class="fa-solid fa-wallet"></i></div>
+            </div>
+            <h3>—</h3><small>Spend overview</small>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-top">
+              <small>System Status</small>
+              <div class="stat-icon"><i class="fa-solid fa-gauge-high"></i></div>
+            </div>
+            <h3 style="font-size:18px">Active</h3><small>Dashboard status</small>
+          </div>
+        </div>
+
+        <div class="section-title">Quick Access</div>
+        <div class="quick-grid">
+          <button class="quick-card" data-quick="add-customer">
+            <i class="fa-solid fa-user-plus"></i><strong>Add Customer</strong>
+          </button>
+          <button class="quick-card" data-quick="customer-list">
+            <i class="fa-solid fa-users"></i><strong>Customer List</strong>
+          </button>
+          <button class="quick-card" data-quick="add-spend">
+            <i class="fa-solid fa-circle-plus"></i><strong>Add Spend</strong>
+          </button>
+          <button class="quick-card" data-quick="map">
+            <i class="fa-solid fa-map-location-dot"></i><strong>Open Map</strong>
+          </button>
+        </div>
+      </div>
+
+      <!-- MY ACCOUNT -->
+      <div id="accountPage" class="hidden">
+        <div class="account-grid">
+          <div class="panel profile-preview">
+            <h3>Profile Picture</h3>
+            <div class="avatar" id="accountAvatar">O</div>
+            <h3 id="accountDisplayName">ONE ONLINE</h3>
+            <p id="accountEmailText">Account profile</p>
+
+            <input type="file" id="avatarFile"
+              accept="image/png,image/jpeg,image/webp" hidden>
+
+            <button class="small-btn" id="uploadAvatarBtn">
+              <i class="fa-solid fa-camera"></i> Change Picture
+            </button>
+            <button class="small-btn danger" id="removeAvatarBtn">
+              <i class="fa-solid fa-trash"></i> Remove
+            </button>
+            <div class="status-note">Maximum image size: 5 MB</div>
+          </div>
+
+          <div class="panel">
+            <h3>Personal Information</h3>
+            <div class="account-fields">
+              <div class="account-field">
+                <label class="form-label">Full Name</label>
+                <input class="account-input" id="profileName" placeholder="Full name">
+              </div>
+              <div class="account-field">
+                <label class="form-label">Phone Number</label>
+                <input class="account-input" id="profilePhone" placeholder="Phone number">
+              </div>
+              <div class="account-field">
+                <label class="form-label">Account Type</label>
+                <input class="account-input" id="profileRole" disabled>
+              </div>
+              <div class="account-field">
+                <label class="form-label">Email Address</label>
+                <input class="account-input" id="profileEmail" disabled>
+              </div>
+            </div>
+
+            <button class="save-btn" id="saveProfileBtn">Save Changes</button>
+            <div class="status-note" id="profileSaveMessage"></div>
+
+            <hr class="account-divider">
+
+            <div class="account-section-title">Change Password</div>
+            <div class="account-fields">
+              <div class="account-field">
+                <label class="form-label">Current Password</label>
+                <input class="account-input" id="currentPassword" type="password" autocomplete="current-password">
+              </div>
+              <div class="account-field">
+                <label class="form-label">New Password</label>
+                <input class="account-input" id="newPassword" type="password" autocomplete="new-password">
+              </div>
+              <div class="account-field">
+                <label class="form-label">Confirm New Password</label>
+                <input class="account-input" id="confirmPassword" type="password" autocomplete="new-password">
+              </div>
+            </div>
+            <button class="save-btn" id="changePasswordBtn">Update Password</button>
+            <div class="status-note" id="passwordMessage"></div>
+
+            <hr class="account-divider">
+            <div class="account-section-title">Account Permission</div>
+            <span class="role-pill" id="accountRoleBadge">GUEST</span>
+            <div class="status-note">
+              Your account access is controlled by the System Administrator.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="deniedPage" class="hidden">
+        <div class="access-denied">
+          <i class="fa-solid fa-lock"></i>
+          <h3>Access Restricted</h3>
+          <p>You do not have permission to open this page.</p>
+        </div>
+      </div>
+
+      <iframe id="pageFrame" class="hidden" title="Management page"></iframe>
+    </section>
+  </main>
+</div>
+
+<div class="app-notice" id="appNotice"></div>
+
+<script>
+/* =========================================================
+   ONE ONLINE MANAGEMENT SYSTEM
+   SUPABASE AUTH + PROFILE + PERMISSIONS
+   ========================================================= */
+
+/* SUPABASE CONFIG */
+const SUPABASE_URL = "https://dmeusqzvhxixfntdqtzp.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_OxD9SDk-ZUHrak0vBXK_yw_Oo3MH0Pn";
+const AVATAR_BUCKET = "one-online-avatars";
+
+const sb = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_ANON_KEY,
+  {
+    auth:{
+      persistSession:true,
+      autoRefreshToken:true,
+      detectSessionInUrl:true
+    }
+  }
+);
+
+const $ = id => document.getElementById(id);
+
+let currentUser = null;
+let currentProfile = null;
+let userPermissions = [];
+let signedAvatarUrl = "";
+let currentPage = "dashboard";
+let authReady = false;
+
+/* PAGE CONFIGURATION */
+const PAGE_CONFIG = {
+  "add-customer":{title:"Add Customer",file:"customers/add-customer.html"},
+  "customer-list":{title:"Customer List",file:"customers/customer-list.html"},
+  "deleted-customer":{title:"Deleted Customer",file:"customers/deleted-customer.html"},
+  "add-earn":{title:"Add earn",file:"spends/add-earn.html"},
+  "add-spend":{title:"Add Spend",file:"spends/add-spend.html"},
+  "spend-list":{title:"Spend List",file:"spends/spend-list.html"},
+  "Dellet-spend":{title:"Dellet Spend",file:"spends/Dellet-spend.html"},
+  "add-stock":{title:"Add Stock",file:"stock/add-stock.html"},
+  "stock-list":{title:"Stock List",file:"stock/stock-list.html"},
+  "delete-stock":{title:"Delete Stock",file:"stock/delete-stock.html"},
+  "use-stock":{title:"Use Stock",file:"stock/use-stock.html"},
+  "email-settings":{title:"Email Settings",file:"email/email-settings.html"},
+  "email-template":{title:"Email Template",file:"email/email-template.html"},
+  "email-history":{title:"Email History",file:"email/email-history.html"},
+  "map-entry":{title:"Map Entry",file:"map/map-entry.html"},
+  "map":{title:"Map",file:"map/map.html"},
+  "map-setting":{title:"map-setting",file:"map/map-setting.html"},
+  "page1":{title:"Page 1",file:"pages/page1.html"},
+  "page2":{title:"Page 2",file:"pages/page2.html"},
+
+  /* NEW: MANAGE ADMINS */
+  "manage-admins":{title:"Manage Admins",file:"manage-admins.html"}
+};
+
+const ROLE_LABELS = {
+  system_admin:"SYSTEM ADMIN",
+  super_admin:"SUPER ADMIN",
+  superadmin:"SUPER ADMIN",
+  systemadmin:"SYSTEM ADMIN",
+  admin:"ADMIN",
+  staff:"STAFF",
+  account:"ACCOUNT",
+  support:"SUPPORT",
+  accounting:"ACCOUNTING",
+  guest:"GUEST"
+};
+
+/* NOTIFICATION */
+let noticeTimer = null;
+function notify(message,type="success"){
+  const box = $("appNotice");
+  box.textContent = message;
+  box.className = "app-notice " + type;
+  box.style.display = "block";
+  clearTimeout(noticeTimer);
+  noticeTimer = setTimeout(()=>box.style.display="none",3500);
+}
+
+/* ERROR MESSAGE */
+function readableError(error){
+  if(!error)return "Something went wrong.";
+  return error.message || String(error);
+}
+
+/* INITIALS */
+function initials(name){
+  return (name || "O").trim().split(/\s+/).slice(0,2)
+    .map(part=>part[0] || "").join("").toUpperCase() || "O";
+}
+
+/* AVATAR DISPLAY */
+function setAvatar(element,url,name){
+  if(!element)return;
+  element.replaceChildren();
+
+  if(url){
+    const img = document.createElement("img");
+    img.src = url;
+    img.alt = "Profile picture";
+    img.onerror = ()=>element.textContent=initials(name);
+    element.appendChild(img);
+  }else{
+    element.textContent = initials(name);
+  }
+}
+
+/* ROLE */
+function normalizeKey(value){
+  return String(value || "").toLowerCase().replace(/[^a-z0-9]/g,"");
+}
+
+function getRole(){
+  return normalizeKey(currentProfile?.role || "guest");
+}
+function isSystemAdmin(){
+  return ["systemadmin","superadmin"].includes(getRole());
+}
+
+/* PERMISSION LOOKUP — supports legacy page-key spellings */
+const PAGE_PERMISSION_ALIASES = {
+  "Dellet-spend":["Dellet-spend","dellet-spend","deleted-earn-spend","deleted-earn-and-spend","deleted-spend","deleted-earn","deleted-records","deleted-earn-spend-history"],
+  "customer-list":["customer-list","total-customer","customers"],
+  "add-customer":["add-customer","customer-add"],
+  "map-setting":["map-setting","map-settings"]
+};
+function permissionRow(pageKey){
+  const aliases = (PAGE_PERMISSION_ALIASES[pageKey] || [pageKey]).map(normalizeKey);
+  return userPermissions.find(p=>aliases.includes(normalizeKey(p.page_key || p.pageKey || p.page || p.key || p.name)));
+}
+
+function canView(pageKey){
+  if(isSystemAdmin())return true;
+  if(pageKey==="account" || pageKey==="dashboard")return true;
+
+  /* Manage Admins is reserved for System Admin */
+  if(pageKey==="manage-admins")return false;
+
+  const row = permissionRow(pageKey);
+  return !!row && row.can_view === true;
+}
+
+function canDo(pageKey,action){
+  if(isSystemAdmin())return true;
+
+  const role = getRole();
+  if(role==="guest" && action!=="view")return false;
+
+  if(action==="view")return canView(pageKey);
+
+  const row = permissionRow(pageKey);
+  if(!row || row.can_view!==true)return false;
+
+  if(["add","edit","delete"].includes(action)){
+    return row["can_"+action] === true;
+  }
+
+  return Array.isArray(row.special_actions) &&
+    row.special_actions.includes(action);
+}
+
+/* LOAD PROFILE AND PERMISSIONS */
+async function loadUserData(user){
+  currentUser = user;
+
+  const {data:profileData,error:profileError} = await sb
+    .from("profiles")
+    .select("user_id,full_name,phone,avatar_path,role,is_active")
+    .eq("user_id",user.id)
+    .maybeSingle();
+
+  if(profileError)throw profileError;
+
+  if(!profileData){
+    throw new Error("Your profile was not found. Contact the System Administrator.");
+  }
+
+  if(profileData.is_active === false){
+    await sb.auth.signOut();
+    throw new Error("Your account is inactive. Contact the System Administrator.");
+  }
+
+  currentProfile = profileData;
+
+  const {data:permissionData,error:permissionError} = await sb
+    .from("user_permissions")
+    .select("page_key,can_view,can_add,can_edit,can_delete,special_actions")
+    .eq("user_id",user.id);
+
+  if(permissionError)throw permissionError;
+
+  userPermissions = permissionData || [];
+
+  signedAvatarUrl = "";
+
+  if(currentProfile.avatar_path){
+    const {data:urlData,error:urlError} = await sb.storage
+      .from(AVATAR_BUCKET)
+      .createSignedUrl(currentProfile.avatar_path,3600);
+
+    if(!urlError && urlData?.signedUrl){
+      signedAvatarUrl = urlData.signedUrl;
+    }
+  }
+
+  renderProfile();
+  applyPermissions();
+  publishAuthBridge();
+}
+
+/* AUTH BRIDGE FOR CHILD PAGES (INCLUDING MANAGE ADMINS) */
+function publishAuthBridge(){
+  window.oneOnlineAuth = {
+    getUser:()=>currentUser ? {
+      ...currentUser,
+      role:isSystemAdmin() ? "SUPER_ADMIN" : getRole().toUpperCase(),
+      full_name:currentProfile?.full_name || "",
+      name:currentProfile?.full_name || currentUser.email || ""
+    } : null,
+    getRole:()=>isSystemAdmin() ? "SUPER_ADMIN" : getRole().toUpperCase(),
+    getPermissions:()=>userPermissions.slice(),
+    isSystemAdmin:()=>isSystemAdmin(),
+    api:async(action,payload={})=>{
+      if(!currentUser)throw new Error("Please sign in again.");
+      if(!isSystemAdmin())throw new Error("Only System Admin can manage accounts.");
+      /* The manage-admins Supabase Edge Function must be deployed for admin CRUD. */
+      const {data,error}=await sb.functions.invoke("manage-admins",{
+        body:{action,...payload,requestedBy:currentUser.id}
+      });
+      if(error)throw error;
+      if(data && (data.success===false || data.ok===false)){
+        throw new Error(data.message || data.error || "Manage Admins request failed.");
+      }
+      return data;
+    }
+  };
+}
+
+/* PROFILE DISPLAY */
+function renderProfile(){
+  if(!currentProfile || !currentUser)return;
+
+  const name = currentProfile.full_name || currentUser.email || "ONE ONLINE";
+  const roleKey = getRole();
+  const role = ROLE_LABELS[roleKey] || (roleKey==="superadmin" ? "SUPER ADMIN" : roleKey.toUpperCase().replace(/_/g," "));
+
+  $("sideUserName").textContent = name;
+  $("sideUserRole").textContent = role;
+  $("welcomeName").textContent = name;
+  $("accountDisplayName").textContent = name;
+  $("accountEmailText").textContent = currentUser.email || "";
+  $("profileName").value = currentProfile.full_name || "";
+  $("profilePhone").value = currentProfile.phone || "";
+  $("profileRole").value = role;
+  $("profileEmail").value = currentUser.email || "";
+  $("accountRoleBadge").textContent = role;
+
+  setAvatar($("sideAvatar"),signedAvatarUrl,name);
+  setAvatar($("topAvatar"),signedAvatarUrl,name);
+  setAvatar($("accountAvatar"),signedAvatarUrl,name);
+}
+
+/* APPLY PAGE PERMISSIONS TO SIDEBAR */
+function applyPermissions(){
+  document.querySelectorAll(".nav-item[data-page]").forEach(button=>{
+    const page = button.dataset.page;
+
+    if(page==="manage-admins"){
+      button.style.display = isSystemAdmin() ? "flex" : "none";
+      return;
+    }
+
+    button.style.display = canView(page) ? "flex" : "none";
+  });
+
+  document.querySelectorAll(".quick-card[data-quick]").forEach(button=>{
+    const page = button.dataset.quick;
+    button.style.display = canView(page) ? "flex" : "none";
+  });
+
+  document.querySelectorAll(".nav-heading").forEach(heading=>{
+    let next = heading.nextElementSibling;
+    let hasVisibleItem = false;
+
+    while(next && !next.classList.contains("nav-heading")){
+      if(next.classList.contains("nav-item") && next.style.display!=="none"){
+        hasVisibleItem = true;
+      }
+      next = next.nextElementSibling;
+    }
+
+    heading.style.display = hasVisibleItem ? "block" : "none";
+  });
+}
+
+/* LOGIN ERROR */
+function showLoginError(message){
+  const box = $("loginError");
+  box.textContent = message;
+  box.style.display = "block";
+}
+function clearLoginError(){
+  $("loginError").textContent = "";
+  $("loginError").style.display = "none";
+}
+
+/* LOGIN */
+$("loginForm").addEventListener("submit",async event=>{
+  event.preventDefault();
+  clearLoginError();
+
+  const email = $("loginEmail").value.trim();
+  const password = $("loginPassword").value;
+  const button = $("loginButton");
+
+  if(!email || !password){
+    showLoginError("Enter your email and password.");
+    return;
+  }
+
+  button.disabled = true;
+  button.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Signing In...';
+
+  try{
+    const {data,error} = await sb.auth.signInWithPassword({email,password});
+    if(error)throw error;
+
+    if(!data.user)throw new Error("Login failed.");
+
+    await startApplication(data.user);
+  }catch(error){
+    showLoginError(readableError(error));
+  }finally{
+    button.disabled = false;
+    button.innerHTML = '<i class="fa-solid fa-right-to-bracket"></i> Sign In';
+  }
+});
+
+/* SHOW/HIDE LOGIN PASSWORD */
+$("toggleLoginPassword").addEventListener("click",()=>{
+  const field = $("loginPassword");
+  const icon = $("toggleLoginPassword").querySelector("i");
+  field.type = field.type==="password" ? "text" : "password";
+  icon.className = field.type==="password" ? "fa-solid fa-eye" : "fa-solid fa-eye-slash";
+});
+
+/* START APPLICATION */
+async function startApplication(user){
+  try{
+    await loadUserData(user);
+
+    $("loginScreen").classList.add("hidden");
+    $("app").style.display = "block";
+
+    navigate("dashboard");
+    authReady = true;
+  }catch(error){
+    await sb.auth.signOut();
+    $("app").style.display = "none";
+    $("loginScreen").classList.remove("hidden");
+    showLoginError(readableError(error));
+    throw error;
+  }
+}
+
+/* LOGOUT */
+async function logout(){
+  closeProfileDropdown();
+
+  const {error} = await sb.auth.signOut();
+  if(error){
+    notify(readableError(error),"error");
+    return;
+  }
+
+  currentUser = null;
+  currentProfile = null;
+  userPermissions = [];
+  signedAvatarUrl = "";
+  authReady = false;
+  window.oneOnlineAuth = null;
+
+  $("app").style.display = "none";
+  $("loginScreen").classList.remove("hidden");
+  $("loginPassword").value = "";
+  clearLoginError();
+}
+
+/* NAVIGATION */
+function navigate(page){
+  if(page!=="dashboard" && page!=="account" && !PAGE_CONFIG[page])return;
+
+  if(!currentUser){
+    $("loginScreen").classList.remove("hidden");
+    $("app").style.display = "none";
+    return;
+  }
+
+  /* Extra protection for Manage Admins */
+  if(page==="manage-admins" && !isSystemAdmin()){
+    $("dashboardPage").classList.add("hidden");
+    $("accountPage").classList.add("hidden");
+    $("pageFrame").classList.add("hidden");
+    $("deniedPage").classList.remove("hidden");
+    $("topPageTitle").textContent = "Access Restricted";
+    closeMobileSidebar();
+    closeProfileDropdown();
+    return;
+  }
+
+  if(!canView(page)){
+    $("dashboardPage").classList.add("hidden");
+    $("accountPage").classList.add("hidden");
+    $("pageFrame").classList.add("hidden");
+    $("deniedPage").classList.remove("hidden");
+    $("topPageTitle").textContent = "Access Restricted";
+    closeMobileSidebar();
+    closeProfileDropdown();
+    return;
+  }
+
+  currentPage = page;
+
+  $("deniedPage").classList.add("hidden");
+  $("topPageTitle").textContent =
+    page==="dashboard" ? "Dashboard" :
+    page==="account" ? "My Account" :
+    PAGE_CONFIG[page].title;
+
+  $("dashboardPage").classList.toggle("hidden",page!=="dashboard");
+  $("accountPage").classList.toggle("hidden",page!=="account");
+  $("pageFrame").classList.toggle("hidden",page==="dashboard" || page==="account");
+
+  document.querySelectorAll(".nav-item[data-page]").forEach(button=>{
+    button.classList.toggle("active",button.dataset.page===page);
+  });
+
+  if(page!=="dashboard" && page!=="account"){
+    const frame = $("pageFrame");
+    const target = PAGE_CONFIG[page].file;
+
+    const sendAuthToFrame = ()=>{
+      if(!currentUser || !frame.contentWindow)return;
+      try{
+        const payload={
+          type:"ONE_ONLINE_AUTH",
+          userId:currentUser.id,
+          user:{
+            id:currentUser.id,
+            email:currentUser.email || "",
+            full_name:currentProfile?.full_name || "",
+            role:getRole()
+          },
+          role:getRole(),
+          permissions:userPermissions,
+          userPermissions:userPermissions,
+          pagePermissions:userPermissions,
+          isSystemAdmin:isSystemAdmin(),
+          systemAdmin:isSystemAdmin()
+        };
+        frame.contentWindow.postMessage(payload,window.location.origin);
+      }catch(error){
+        console.warn("Could not notify child page about permissions.",error);
+      }
+    };
+
+    frame.onload=sendAuthToFrame;
+    if(frame.dataset.currentFile !== target){
+      frame.dataset.currentFile = target;
+      frame.src = target;
+    }else{
+      sendAuthToFrame();
+    }
+  }
+
+  closeMobileSidebar();
+  closeProfileDropdown();
+}
+
+/* SIDEBAR NAVIGATION */
+document.querySelectorAll(".nav-item[data-page]").forEach(button=>{
+  button.addEventListener("click",()=>navigate(button.dataset.page));
+});
+
+/* QUICK ACCESS */
+document.querySelectorAll("[data-quick]").forEach(button=>{
+  button.addEventListener("click",()=>navigate(button.dataset.quick));
+});
+
+/* SIDEBAR COLLAPSE */
+const savedCollapsed = localStorage.getItem("one_online_sidebar_collapsed")==="true";
+
+if(savedCollapsed && window.innerWidth>760){
+  $("sidebar").classList.add("collapsed");
+  $("mainArea").classList.add("collapsed");
+}
+
+$("brandToggle").addEventListener("click",()=>{
+  if(window.innerWidth<=760){
+    $("sidebar").classList.toggle("mobile-open");
+    $("sidebarOverlay").classList.toggle("show");
+    return;
+  }
+
+  const collapsed = $("sidebar").classList.toggle("collapsed");
+  $("mainArea").classList.toggle("collapsed",collapsed);
+  localStorage.setItem("one_online_sidebar_collapsed",String(collapsed));
+});
+
+/* MOBILE SIDEBAR */
+$("mobileMenuBtn").addEventListener("click",()=>{
+  $("sidebar").classList.add("mobile-open");
+  $("sidebarOverlay").classList.add("show");
+});
+
+$("sidebarOverlay").addEventListener("click",closeMobileSidebar);
+
+function closeMobileSidebar(){
+  $("sidebar").classList.remove("mobile-open");
+  $("sidebarOverlay").classList.remove("show");
+}
+
+/* PROFILE DROPDOWN */
+$("profileMenuButton").addEventListener("click",event=>{
+  event.stopPropagation();
+  $("profileDropdown").classList.toggle("hidden");
+});
+
+$("profileDropdown").addEventListener("click",event=>event.stopPropagation());
+
+function closeProfileDropdown(){
+  $("profileDropdown").classList.add("hidden");
+}
+
+document.addEventListener("click",closeProfileDropdown);
+document.addEventListener("keydown",event=>{
+  if(event.key==="Escape"){
+    closeProfileDropdown();
+    closeMobileSidebar();
+  }
+});
+
+$("dropdownAccount").addEventListener("click",()=>navigate("account"));
+$("dropdownLogout").addEventListener("click",logout);
+
+/* SAVE PROFILE */
+$("saveProfileBtn").addEventListener("click",async()=>{
+  const name = $("profileName").value.trim();
+  const phone = $("profilePhone").value.trim();
+  const message = $("profileSaveMessage");
+  const button = $("saveProfileBtn");
+
+  if(!name){
+    message.textContent = "Name is required.";
+    message.style.color = "var(--danger)";
+    return;
+  }
+
+  button.disabled = true;
+  button.textContent = "Saving...";
+
+  try{
+    const {error} = await sb
+      .from("profiles")
+      .update({full_name:name,phone:phone})
+      .eq("user_id",currentUser.id);
+
+    if(error)throw error;
+
+    currentProfile.full_name = name;
+    currentProfile.phone = phone;
+    renderProfile();
+
+    message.textContent = "Profile updated successfully.";
+    message.style.color = "var(--primary)";
+    notify("Profile updated successfully.");
+  }catch(error){
+    message.textContent = readableError(error);
+    message.style.color = "var(--danger)";
+  }finally{
+    button.disabled = false;
+    button.textContent = "Save Changes";
+  }
+});
+
+/* UPLOAD AVATAR */
+$("uploadAvatarBtn").addEventListener("click",()=>$("avatarFile").click());
+
+$("avatarFile").addEventListener("change",async()=>{
+  const file = $("avatarFile").files[0];
+  if(!file)return;
+
+  if(file.size>5*1024*1024){
+    notify("Image must be smaller than 5 MB.","error");
+    $("avatarFile").value = "";
+    return;
+  }
+
+  if(!["image/jpeg","image/png","image/webp"].includes(file.type)){
+    notify("Only JPG, PNG and WEBP images are allowed.","error");
+    $("avatarFile").value = "";
+    return;
+  }
+
+  const extension = file.type==="image/png" ? "png" :
+    file.type==="image/webp" ? "webp" : "jpg";
+
+  const path = currentUser.id + "/avatar-" + Date.now() + "." + extension;
+
+  try{
+    notify("Uploading profile picture...");
+
+    const {error:uploadError} = await sb.storage
+      .from(AVATAR_BUCKET)
+      .upload(path,file,{upsert:false,contentType:file.type});
+
+    if(uploadError)throw uploadError;
+
+    const oldPath = currentProfile.avatar_path;
+
+    const {error:updateError} = await sb
+      .from("profiles")
+      .update({avatar_path:path})
+      .eq("user_id",currentUser.id);
+
+    if(updateError){
+      await sb.storage.from(AVATAR_BUCKET).remove([path]);
+      throw updateError;
+    }
+
+    currentProfile.avatar_path = path;
+
+    const {data:urlData,error:urlError} = await sb.storage
+      .from(AVATAR_BUCKET)
+      .createSignedUrl(path,3600);
+
+    if(urlError)throw urlError;
+
+    signedAvatarUrl = urlData.signedUrl;
+    renderProfile();
+
+    if(oldPath){
+      await sb.storage.from(AVATAR_BUCKET).remove([oldPath]);
+    }
+
+    notify("Profile picture updated.");
+  }catch(error){
+    notify(readableError(error),"error");
+  }finally{
+    $("avatarFile").value = "";
+  }
+});
+
+/* REMOVE AVATAR */
+$("removeAvatarBtn").addEventListener("click",async()=>{
+  if(!currentProfile?.avatar_path){
+    notify("No profile picture found.","error");
+    return;
+  }
+
+  if(!confirm("Remove your profile picture?"))return;
+
+  const oldPath = currentProfile.avatar_path;
+
+  try{
+    const {error:updateError} = await sb
+      .from("profiles")
+      .update({avatar_path:null})
+      .eq("user_id",currentUser.id);
+
+    if(updateError)throw updateError;
+
+    currentProfile.avatar_path = null;
+    signedAvatarUrl = "";
+    renderProfile();
+
+    const {error:removeError} = await sb.storage
+      .from(AVATAR_BUCKET)
+      .remove([oldPath]);
+
+    if(removeError)console.warn("Old avatar could not be removed:",removeError);
+
+    notify("Profile picture removed.");
+  }catch(error){
+    notify(readableError(error),"error");
+  }
+});
+
+/* CHANGE PASSWORD */
+$("changePasswordBtn").addEventListener("click",async()=>{
+  const currentPassword = $("currentPassword").value;
+  const newPassword = $("newPassword").value;
+  const confirmPassword = $("confirmPassword").value;
+  const message = $("passwordMessage");
+  const button = $("changePasswordBtn");
+
+  message.textContent = "";
+
+  if(!currentPassword || !newPassword || !confirmPassword){
+    message.textContent = "Please fill in all password fields.";
+    message.style.color = "var(--danger)";
+    return;
+  }
+
+  if(newPassword.length<8){
+    message.textContent = "New password must be at least 8 characters.";
+    message.style.color = "var(--danger)";
+    return;
+  }
+
+  if(newPassword!==confirmPassword){
+    message.textContent = "New password and confirmation do not match.";
+    message.style.color = "var(--danger)";
+    return;
+  }
+
+  button.disabled = true;
+  button.textContent = "Updating...";
+
+  try{
+    const {error:verifyError} = await sb.auth.signInWithPassword({
+      email:currentUser.email,
+      password:currentPassword
+    });
+
+    if(verifyError)throw new Error("Current password is incorrect.");
+
+    const {error:updateError} = await sb.auth.updateUser({
+      password:newPassword
+    });
+
+    if(updateError)throw updateError;
+
+    $("currentPassword").value = "";
+    $("newPassword").value = "";
+    $("confirmPassword").value = "";
+
+    message.textContent = "Password updated successfully.";
+    message.style.color = "var(--primary)";
+    notify("Password updated successfully.");
+  }catch(error){
+    message.textContent = readableError(error);
+    message.style.color = "var(--danger)";
+  }finally{
+    button.disabled = false;
+    button.textContent = "Update Password";
+  }
+});
+
+/* THEME */
+function applyTheme(theme){
+  if(!["light","dark"].includes(theme))theme="light";
+
+  document.body.setAttribute("data-theme",theme);
+  localStorage.setItem("one_online_theme",theme);
+
+  $("themeIcon").className =
+    theme==="dark" ? "fa-solid fa-sun" : "fa-solid fa-moon";
+}
+
+applyTheme(localStorage.getItem("one_online_theme") || "light");
+
+$("themeToggle").addEventListener("click",()=>{
+  const next = document.body.getAttribute("data-theme")==="dark" ? "light" : "dark";
+  applyTheme(next);
+});
+
+/* AUTH SESSION RESTORE */
+async function initializeAuth(){
+  try{
+    const {data,error} = await sb.auth.getSession();
+    if(error)throw error;
+
+    if(data.session?.user){
+      await startApplication(data.session.user);
+    }else{
+      $("app").style.display = "none";
+      $("loginScreen").classList.remove("hidden");
+    }
+  }catch(error){
+    console.error("Session initialization error:",error);
+    $("app").style.display = "none";
+    $("loginScreen").classList.remove("hidden");
+    showLoginError(readableError(error));
+  }
+}
+
+/* AUTH STATE CHANGES */
+sb.auth.onAuthStateChange((event,session)=>{
+  if(event==="SIGNED_OUT"){
+    currentUser = null;
+    currentProfile = null;
+    userPermissions = [];
+    signedAvatarUrl = "";
+    authReady = false;
+    window.oneOnlineAuth = null;
+
+    $("app").style.display = "none";
+    $("loginScreen").classList.remove("hidden");
+    return;
+  }
+
+  if(event==="TOKEN_REFRESHED" && session?.user){
+    currentUser = session.user;
+  }
+});
+
+/* START */
+initializeAuth();
+</script>
+
+</body>
+</html>
