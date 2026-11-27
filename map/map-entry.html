@@ -68,6 +68,22 @@ button{
 button:disabled{opacity:.55;cursor:not-allowed}
 .status{font-size:13px;margin-top:12px;min-height:18px}
 .success{color:#22c55e}.error{color:#f87171}
+
+.permission-note{
+  display:none;padding:11px 13px;margin-bottom:15px;
+  border:1px solid #8b6b25;background:#332a16;
+  border-radius:9px;color:#facc15;font-size:13px
+}
+#authGate{
+  max-width:480px;margin:12vh auto;padding:25px;
+  background:var(--panel);border:1px solid var(--line);
+  border-radius:14px;text-align:center
+}
+#authGate h3{margin:0 0 9px}
+#authGate p{color:var(--muted);font-size:13px;line-height:1.6}
+#authGate .gate-icon{font-size:35px;margin-bottom:12px}
+#authGate.denied h3{color:#f87171}
+
 @media(max-width:550px){
   body{padding:12px}.grid{grid-template-columns:1fr}
   .full{grid-column:auto}.card{padding:14px}
@@ -76,11 +92,22 @@ button:disabled{opacity:.55;cursor:not-allowed}
 </head>
 
 <body>
-<div class="container">
+
+<div id="authGate">
+  <div class="gate-icon">🔐</div>
+  <h3>Checking Permission...</h3>
+  <p>Please wait while your account permission is being verified.</p>
+</div>
+
+<div class="container hidden" id="mainContent">
 
   <div class="header">
     <h2>🗺️ Add Map</h2>
     <p>Add a location and automatically find nearby network points.</p>
+  </div>
+
+  <div class="permission-note" id="viewOnlyNote">
+    👁️ View Only Mode — You can search nearby locations, but you cannot save a new location.
   </div>
 
   <div class="card">
@@ -157,8 +184,7 @@ const API_URL =
 "https://script.google.com/macros/s/AKfycbxmDzfnY3LpvfvHjC4usnZiBT4BX4KZIjVoCGcSULikoTKQaC_mj7cbG_zUaiTyZ4sb8w/exec";
 
 const CACHE_KEY = "ONE_ONLINE_MAP_DATA_V1";
-
-// Nearby search distance: 1 kilometre
+const PAGE_KEY = "map-entry";
 const NEARBY_DISTANCE_KM = 1;
 
 let mapData = {
@@ -173,12 +199,183 @@ let currentCoordinates = null;
 let loading = false;
 let coordinateTimer = null;
 
+let authResolved = false;
+let canView = false;
+let canEdit = false;
+let isSystemAdmin = false;
+let mapDataLoaded = false;
+
+// --------------------------------
+// AUTH / PERMISSION
+// --------------------------------
+function normalizeKey(value){
+  return String(value || "")
+    .trim()
+    .toLowerCase()
+    .replace(/[_\s]+/g,"-");
+}
+
+function isTrue(value){
+  return value === true ||
+    ["true","1","yes","on"].includes(
+      String(value).trim().toLowerCase()
+    );
+}
+
+function isAdminMessage(message){
+  if(message.isSystemAdmin === true) return true;
+
+  const role = normalizeKey(message.role || message.userRole || "");
+  return [
+    "systemadmin",
+    "superadmin",
+    "system-admin",
+    "super-admin"
+  ].includes(role);
+}
+
+function getPermissionRecord(permissions){
+  if(!permissions) return null;
+
+  // Array format:
+  // [{page_key:"map-entry",can_view:true,can_edit:true}]
+  if(Array.isArray(permissions)){
+    return permissions.find(item=>{
+      if(typeof item === "string"){
+        return normalizeKey(item) === PAGE_KEY;
+      }
+
+      const key = valueOf(
+        item,
+        "page_key","pageKey","key","page","name","module"
+      );
+
+      return normalizeKey(key) === PAGE_KEY;
+    }) || null;
+  }
+
+  // Object format:
+  // {"map-entry":{can_view:true,can_edit:true}}
+  if(typeof permissions === "object"){
+    if(permissions[PAGE_KEY] !== undefined){
+      return permissions[PAGE_KEY];
+    }
+
+    const matchedKey = Object.keys(permissions).find(
+      key=>normalizeKey(key) === PAGE_KEY
+    );
+
+    if(matchedKey !== undefined){
+      return permissions[matchedKey];
+    }
+  }
+
+  return null;
+}
+
+function permissionAllowed(record,action){
+  if(record === true) return true;
+  if(record === false || record === null || record === undefined) return false;
+
+  if(Array.isArray(record)){
+    return record.some(item=>normalizeKey(item) === action);
+  }
+
+  if(typeof record === "string"){
+    return normalizeKey(record) === action;
+  }
+
+  if(typeof record !== "object") return false;
+
+  const aliases = {
+    view:["can_view","canView","view"],
+    edit:["can_edit","canEdit","edit"],
+    delete:["can_delete","canDelete","delete"]
+  };
+
+  return aliases[action].some(key=>isTrue(record[key]));
+}
+
+function applyAuth(message){
+  isSystemAdmin = isAdminMessage(message);
+
+  if(isSystemAdmin){
+    canView = true;
+    canEdit = true;
+  }else{
+    const record = getPermissionRecord(message.permissions);
+    canView = permissionAllowed(record,"view");
+    canEdit = permissionAllowed(record,"edit");
+  }
+
+  authResolved = true;
+  renderAuthState();
+
+  if(canView && !mapDataLoaded){
+    mapDataLoaded = true;
+    typeChanged();
+    loadMapData();
+  }
+}
+
+function renderAuthState(){
+  const gate = document.getElementById("authGate");
+  const content = document.getElementById("mainContent");
+
+  if(!authResolved){
+    gate.className = "";
+    gate.innerHTML =
+      '<div class="gate-icon">🔐</div>' +
+      '<h3>Checking Permission...</h3>' +
+      '<p>Please wait while your account permission is being verified.</p>';
+    content.classList.add("hidden");
+    return;
+  }
+
+  if(!canView){
+    gate.className = "denied";
+    gate.innerHTML =
+      '<div class="gate-icon">⛔</div>' +
+      '<h3>Access Denied</h3>' +
+      '<p>You do not have View Permission for Map Entry.<br>' +
+      'Please contact your System Admin.</p>';
+    content.classList.add("hidden");
+    return;
+  }
+
+  gate.classList.add("hidden");
+  content.classList.remove("hidden");
+
+  const saveBtn = document.getElementById("saveBtn");
+  const viewNote = document.getElementById("viewOnlyNote");
+
+  if(canEdit){
+    saveBtn.disabled = false;
+    saveBtn.textContent = "SAVE LOCATION";
+    viewNote.style.display = "none";
+  }else{
+    saveBtn.disabled = true;
+    saveBtn.textContent = "VIEW ONLY";
+    viewNote.style.display = "block";
+  }
+}
+
+window.addEventListener("message",function(event){
+  if(event.source !== window.parent) return;
+
+  const message = event.data;
+  if(!message || message.type !== "ONE_ONLINE_AUTH") return;
+
+  applyAuth(message);
+});
+
 // --------------------------------
 // DATA HELPERS
 // --------------------------------
-function valueOf(item, ...keys){
+function valueOf(item,...keys){
   for(const key of keys){
-    if(item && item[key] !== undefined && item[key] !== null && item[key] !== ""){
+    if(item && item[key] !== undefined &&
+       item[key] !== null && item[key] !== ""){
       return item[key];
     }
   }
@@ -228,6 +425,8 @@ function locationLabel(item){
 // LOAD MAP DATA
 // --------------------------------
 async function loadMapData(){
+  if(!canView) return;
+
   setStatus("Loading existing map locations...");
 
   try{
@@ -253,8 +452,8 @@ async function loadMapData(){
     try{
       const cached = JSON.parse(localStorage.getItem(CACHE_KEY) || "{}");
 
-      mapData.locations = cached.locations || [];
-      mapData.connections = cached.connections || [];
+      mapData.locations = Array.isArray(cached.locations) ? cached.locations : [];
+      mapData.connections = Array.isArray(cached.connections) ? cached.connections : [];
       mapData.settings = cached.settings || {};
       mapData.customTypes = cached.customTypes || [];
 
@@ -271,12 +470,13 @@ async function loadMapData(){
 // TYPE
 // --------------------------------
 function typeChanged(){
+  if(!authResolved || !canView) return;
+
   const type = document.getElementById("type").value;
 
   document.getElementById("codeField")
     .classList.toggle("hidden",type !== "Customer");
 
-  // Nearby network points are shown for Customers.
   document.getElementById("nearbyCard")
     .classList.toggle("hidden",type !== "Customer");
 
@@ -308,6 +508,8 @@ function parseCoordinates(value){
 }
 
 function coordinatesChanged(){
+  if(!canView) return;
+
   clearTimeout(coordinateTimer);
 
   coordinateTimer = setTimeout(()=>{
@@ -341,7 +543,7 @@ function coordinatesChanged(){
 // --------------------------------
 function distanceKm(lat1,lon1,lat2,lon2){
   const R = 6371;
-  const toRad = value => value * Math.PI / 180;
+  const toRad = value=>value * Math.PI / 180;
 
   const dLat = toRad(lat2-lat1);
   const dLon = toRad(lon2-lon1);
@@ -363,6 +565,8 @@ function distanceText(km){
 // FIND NEARBY PULL / SWITCH / MAIN BOX
 // --------------------------------
 function findNearby(){
+  if(!canView) return;
+
   const coords = currentCoordinates;
 
   if(!coords){
@@ -464,6 +668,9 @@ function renderNearby(items){
   updateConnectionPreview();
 }
 
+// --------------------------------
+// MESSAGE
+// --------------------------------
 function showNearbyMessage(message){
   document.getElementById("nearbyMessage").textContent = message;
   document.getElementById("nearbyList").innerHTML = "";
@@ -476,8 +683,15 @@ function updateConnectionPreview(){
   const preview = document.getElementById("connectionPreview");
 
   if(!selectedNearbyId){
-    preview.innerHTML =
-      "From: Not selected<br>To: New location";
+    preview.textContent = "";
+    const fromLine = document.createElement("div");
+    fromLine.textContent = "From: Not selected";
+
+    const toLine = document.createElement("div");
+    toLine.textContent = "To: New location";
+
+    preview.appendChild(fromLine);
+    preview.appendChild(toLine);
     return;
   }
 
@@ -486,14 +700,14 @@ function updateConnectionPreview(){
   );
 
   if(!selected){
-    preview.innerHTML =
-      "From: Not selected<br>To: New location";
+    preview.textContent = "From: Not selected\nTo: New location";
     return;
   }
 
-  const customerCode = document.getElementById("code").value.trim() || "New Customer";
+  const customerCode =
+    document.getElementById("code").value.trim() || "New Customer";
 
-  preview.innerHTML = "";
+  preview.textContent = "";
 
   const fromLine = document.createElement("div");
   fromLine.textContent = "From: " + locationLabel(selected);
@@ -509,6 +723,16 @@ function updateConnectionPreview(){
 // SAVE LOCATION
 // --------------------------------
 async function saveLocation(){
+  if(!authResolved || !canView){
+    setStatus("Access denied.",false);
+    return;
+  }
+
+  if(!canEdit){
+    setStatus("You do not have Edit Permission.",false);
+    return;
+  }
+
   if(loading) return;
 
   const type = document.getElementById("type").value;
@@ -567,11 +791,9 @@ async function saveLocation(){
     }
   };
 
-  // Preserve all existing locations and connections.
   const locations = [...mapData.locations,newLocation];
   const connections = [...mapData.connections];
 
-  // Customer connection: From selected Pull/Switch/Main Box -> To Customer.
   if(type === "Customer" && selectedNearbyId){
     connections.push({
       id:"CON-" + Date.now(),
@@ -630,8 +852,8 @@ async function saveLocation(){
 
   }finally{
     loading = false;
-    btn.disabled = false;
-    btn.textContent = "SAVE LOCATION";
+    btn.disabled = !canEdit;
+    btn.textContent = canEdit ? "SAVE LOCATION" : "VIEW ONLY";
   }
 }
 
@@ -639,6 +861,8 @@ async function saveLocation(){
 // RESET
 // --------------------------------
 function resetForm(clearStatus=true){
+  if(!canView) return;
+
   document.getElementById("type").value = "Customer";
   document.getElementById("name").value = "";
   document.getElementById("ip").value = "";
@@ -660,16 +884,14 @@ function resetForm(clearStatus=true){
 // --------------------------------
 function setStatus(message,success=null){
   const el = document.getElementById("status");
+  if(!el) return;
+
   el.textContent = message;
   el.className = "status";
 
   if(success === true) el.classList.add("success");
   if(success === false) el.classList.add("error");
 }
-
-// START
-typeChanged();
-loadMapData();
 </script>
 </body>
 </html>
