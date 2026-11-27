@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -343,20 +344,20 @@ button{cursor:pointer}
         <i class="fa-solid fa-money-bill-transfer"></i><span> Delete Spend List</span>
       </button>
 
-     <div class="nav-heading">Stock Management</div>
+      <div class="nav-heading">Stock Management</div>
       <button class="nav-item" data-page="add-stock">
-      <i class="fa-solid fa-circle-plus"></i><span>Add Stock</span>
-     </button>
-     <button class="nav-item" data-page="stock-list">
-     <i class="fa-solid fa-boxes-stacked"></i><span>Stock List</span>
+        <i class="fa-solid fa-circle-plus"></i><span>Add Stock</span>
       </button>
-     <button class="nav-item" data-page="delete-stock">
-     <i class="fa-solid fa-trash"></i><span>Delete Stock</span>
+      <button class="nav-item" data-page="stock-list">
+        <i class="fa-solid fa-boxes-stacked"></i><span>Stock List</span>
       </button>
-       <button class="nav-item" data-page="use-stock">
-       <i class="fa-solid fa-box-open"></i><span>Use Stock</span>
-        </button>
-      
+      <button class="nav-item" data-page="delete-stock">
+        <i class="fa-solid fa-trash"></i><span>Delete Stock</span>
+      </button>
+      <button class="nav-item" data-page="use-stock">
+        <i class="fa-solid fa-box-open"></i><span>Use Stock</span>
+      </button>
+
       <div class="nav-heading">EMAIL MANAGEMENT</div>
       <button class="nav-item" data-page="email-settings">
         <i class="fa-solid fa-envelope-open-text"></i><span>Email Settings</span>
@@ -379,7 +380,6 @@ button{cursor:pointer}
         <i class="fa-solid fa-map-location-dot"></i><span>Map Setting</span>
       </button>
 
-
       <div class="nav-heading">CUSTOM PAGES</div>
       <button class="nav-item" data-page="page1">
         <i class="fa-solid fa-file"></i><span>Page 1</span>
@@ -393,7 +393,6 @@ button{cursor:pointer}
         <i class="fa-solid fa-user-gear"></i><span>My Account</span>
       </button>
 
-      <!-- SYSTEM ADMIN ONLY -->
       <button class="nav-item" data-page="manage-admins" id="manageAdminsNav" style="display:none">
         <i class="fa-solid fa-user-shield"></i><span>Manage Admins</span>
       </button>
@@ -599,7 +598,7 @@ button{cursor:pointer}
 <script>
 /* =========================================================
    ONE ONLINE MANAGEMENT SYSTEM
-   SUPABASE AUTH + PROFILE + PERMISSIONS
+   SUPABASE AUTH + PROFILE + PAGE PERMISSIONS
    ========================================================= */
 
 /* SUPABASE CONFIG */
@@ -627,6 +626,7 @@ let userPermissions = [];
 let signedAvatarUrl = "";
 let currentPage = "dashboard";
 let authReady = false;
+let noticeTimer = null;
 
 /* PAGE CONFIGURATION */
 const PAGE_CONFIG = {
@@ -649,21 +649,71 @@ const PAGE_CONFIG = {
   "map-setting":{title:"map-setting",file:"map/map-setting.html"},
   "page1":{title:"Page 1",file:"pages/page1.html"},
   "page2":{title:"Page 2",file:"pages/page2.html"},
-
-  /* NEW: MANAGE ADMINS */
   "manage-admins":{title:"Manage Admins",file:"manage-admins.html"}
 };
 
 const ROLE_LABELS = {
   system_admin:"SYSTEM ADMIN",
+  systemadmin:"SYSTEM ADMIN",
+  super_admin:"SYSTEM ADMIN",
+  superadmin:"SYSTEM ADMIN",
   admin:"ADMIN",
   support:"SUPPORT",
   accounting:"ACCOUNTING",
+  account:"ACCOUNT",
   guest:"GUEST"
 };
 
-/* NOTIFICATION */
-let noticeTimer = null;
+/*
+  Permission page aliases.
+  Database page_key-এর নাম ভিন্ন হলেও matching করার চেষ্টা করবে।
+*/
+const PAGE_PERMISSION_ALIASES = {
+  "add-customer":["add-customer","addcustomer","customer-add"],
+  "customer-list":["customer-list","customerlist","total-customer","totalcustomer"],
+  "deleted-customer":["deleted-customer","deletedcustomer"],
+  "add-earn":["add-earn","addearn"],
+  "add-spend":["add-spend","addspend"],
+  "spend-list":["spend-list","spendlist"],
+  "Dellet-spend":[
+    "Dellet-spend","dellet-spend","deleted-earn-spend",
+    "deleted-earn-and-spend","deleted-spend","deleted-earn",
+    "deleted-records","deleted-earn-spend-history"
+  ],
+  "add-stock":["add-stock","addstock"],
+  "stock-list":["stock-list","stocklist"],
+  "delete-stock":["delete-stock","deletestock","deleted-stock"],
+  "use-stock":["use-stock","usestock"],
+  "email-settings":["email-settings","emailsettings"],
+  "email-template":["email-template","emailtemplate"],
+  "email-history":["email-history","emailhistory"],
+  "map-entry":["map-entry","mapentry"],
+  "map":["map","customer-map"],
+  "map-setting":["map-setting","mapsetting"],
+  "page1":["page1","custom-page-1"],
+  "page2":["page2","custom-page-2"]
+};
+
+/* BASIC HELPERS */
+function normalizeKey(value){
+  return String(value || "").toLowerCase().replace(/[^a-z0-9]/g,"");
+}
+
+function truthyPermission(value){
+  return value === true || value === 1 ||
+    ["true","1","yes","on"].includes(String(value).toLowerCase());
+}
+
+function readableError(error){
+  if(!error)return "Something went wrong.";
+  return error.message || String(error);
+}
+
+function initials(name){
+  return (name || "O").trim().split(/\s+/).slice(0,2)
+    .map(part=>part[0] || "").join("").toUpperCase() || "O";
+}
+
 function notify(message,type="success"){
   const box = $("appNotice");
   box.textContent = message;
@@ -671,18 +721,6 @@ function notify(message,type="success"){
   box.style.display = "block";
   clearTimeout(noticeTimer);
   noticeTimer = setTimeout(()=>box.style.display="none",3500);
-}
-
-/* ERROR MESSAGE */
-function readableError(error){
-  if(!error)return "Something went wrong.";
-  return error.message || String(error);
-}
-
-/* INITIALS */
-function initials(name){
-  return (name || "O").trim().split(/\s+/).slice(0,2)
-    .map(part=>part[0] || "").join("").toUpperCase() || "O";
 }
 
 /* AVATAR DISPLAY */
@@ -701,47 +739,125 @@ function setAvatar(element,url,name){
   }
 }
 
-/* ROLE */
+/* ROLE HELPERS */
 function getRole(){
-  return currentProfile?.role || "guest";
+  return normalizeKey(currentProfile?.role || "guest");
 }
+
 function isSystemAdmin(){
-  return getRole() === "system_admin";
+  return [
+    "systemadmin","superadmin"
+  ].includes(getRole());
 }
 
 /* PERMISSION LOOKUP */
+function permissionAliases(pageKey){
+  const configured = PAGE_PERMISSION_ALIASES[pageKey] || [pageKey];
+  return [...new Set([pageKey,...configured].map(normalizeKey))];
+}
+
 function permissionRow(pageKey){
-  return userPermissions.find(p=>p.page_key===pageKey);
+  const aliases = permissionAliases(pageKey);
+
+  return userPermissions.find(row=>{
+    const key = normalizeKey(
+      row.page_key || row.pageKey || row.page || row.key || row.name
+    );
+    return aliases.includes(key);
+  });
 }
 
 function canView(pageKey){
   if(isSystemAdmin())return true;
-  if(pageKey==="account" || pageKey==="dashboard")return true;
 
-  /* Manage Admins is reserved for System Admin */
+  if(pageKey==="dashboard" || pageKey==="account")return true;
   if(pageKey==="manage-admins")return false;
 
   const row = permissionRow(pageKey);
-  return !!row && row.can_view === true;
+  return !!row && truthyPermission(row.can_view);
 }
 
 function canDo(pageKey,action){
   if(isSystemAdmin())return true;
 
-  const role = getRole();
-  if(role==="guest" && action!=="view")return false;
-
   if(action==="view")return canView(pageKey);
+  if(pageKey==="manage-admins")return false;
 
   const row = permissionRow(pageKey);
-  if(!row || row.can_view!==true)return false;
+  if(!row || !truthyPermission(row.can_view))return false;
 
   if(["add","edit","delete"].includes(action)){
-    return row["can_"+action] === true;
+    return truthyPermission(row["can_"+action]);
   }
 
-  return Array.isArray(row.special_actions) &&
-    row.special_actions.includes(action);
+  const special = Array.isArray(row.special_actions)
+    ? row.special_actions : [];
+
+  return special.some(item=>normalizeKey(item)===normalizeKey(action));
+}
+
+/* CHILD PAGE PERMISSION MESSAGE */
+function sendAuthToFrame(){
+  const frame = $("pageFrame");
+  if(!frame || !frame.contentWindow || !currentUser)return;
+
+  const payload = {
+    type:"ONE_ONLINE_AUTH",
+    userId:currentUser.id,
+    user:{
+      id:currentUser.id,
+      email:currentUser.email,
+      full_name:currentProfile?.full_name || "",
+      role:getRole()
+    },
+    role:getRole(),
+    permissions:userPermissions,
+    pagePermissions:userPermissions,
+    isSystemAdmin:isSystemAdmin(),
+    systemAdmin:isSystemAdmin()
+  };
+
+  try{
+    frame.contentWindow.postMessage(payload,"*");
+  }catch(error){
+    console.warn("Could not send permission data to child page:",error);
+  }
+}
+
+/* APPLY PAGE PERMISSIONS TO SIDEBAR */
+function applyPermissions(){
+  document.querySelectorAll(".nav-item[data-page]").forEach(button=>{
+    const page = button.dataset.page;
+
+    if(page==="manage-admins"){
+      button.style.display = isSystemAdmin() ? "flex" : "none";
+      return;
+    }
+
+    button.style.display = canView(page) ? "flex" : "none";
+  });
+
+  document.querySelectorAll(".quick-card[data-quick]").forEach(button=>{
+    const page = button.dataset.quick;
+    button.style.display = canView(page) ? "flex" : "none";
+  });
+
+  document.querySelectorAll(".nav-heading").forEach(heading=>{
+    let next = heading.nextElementSibling;
+    let hasVisibleItem = false;
+
+    while(next && !next.classList.contains("nav-heading")){
+      if(next.classList.contains("nav-item") &&
+         next.style.display!=="none"){
+        hasVisibleItem = true;
+      }
+      next = next.nextElementSibling;
+    }
+
+    heading.style.display = hasVisibleItem ? "block" : "none";
+  });
+
+  sendAuthToFrame();
 }
 
 /* LOAD PROFILE AND PERMISSIONS */
@@ -797,7 +913,7 @@ function renderProfile(){
   if(!currentProfile || !currentUser)return;
 
   const name = currentProfile.full_name || currentUser.email || "ONE ONLINE";
-  const role = ROLE_LABELS[currentProfile.role] || "GUEST";
+  const role = ROLE_LABELS[getRole()] || "GUEST";
 
   $("sideUserName").textContent = name;
   $("sideUserRole").textContent = role;
@@ -815,45 +931,13 @@ function renderProfile(){
   setAvatar($("accountAvatar"),signedAvatarUrl,name);
 }
 
-/* APPLY PAGE PERMISSIONS TO SIDEBAR */
-function applyPermissions(){
-  document.querySelectorAll(".nav-item[data-page]").forEach(button=>{
-    const page = button.dataset.page;
-
-    if(page==="manage-admins"){
-      button.style.display = isSystemAdmin() ? "flex" : "none";
-      return;
-    }
-
-    button.style.display = canView(page) ? "flex" : "none";
-  });
-
-  document.querySelectorAll(".quick-card[data-quick]").forEach(button=>{
-    const page = button.dataset.quick;
-    button.style.display = canView(page) ? "flex" : "none";
-  });
-
-  document.querySelectorAll(".nav-heading").forEach(heading=>{
-    let next = heading.nextElementSibling;
-    let hasVisibleItem = false;
-
-    while(next && !next.classList.contains("nav-heading")){
-      if(next.classList.contains("nav-item") && next.style.display!=="none"){
-        hasVisibleItem = true;
-      }
-      next = next.nextElementSibling;
-    }
-
-    heading.style.display = hasVisibleItem ? "block" : "none";
-  });
-}
-
 /* LOGIN ERROR */
 function showLoginError(message){
   const box = $("loginError");
   box.textContent = message;
   box.style.display = "block";
 }
+
 function clearLoginError(){
   $("loginError").textContent = "";
   $("loginError").style.display = "none";
@@ -896,7 +980,8 @@ $("toggleLoginPassword").addEventListener("click",()=>{
   const field = $("loginPassword");
   const icon = $("toggleLoginPassword").querySelector("i");
   field.type = field.type==="password" ? "text" : "password";
-  icon.className = field.type==="password" ? "fa-solid fa-eye" : "fa-solid fa-eye-slash";
+  icon.className = field.type==="password"
+    ? "fa-solid fa-eye" : "fa-solid fa-eye-slash";
 });
 
 /* START APPLICATION */
@@ -907,8 +992,8 @@ async function startApplication(user){
     $("loginScreen").classList.add("hidden");
     $("app").style.display = "block";
 
-    navigate("dashboard");
     authReady = true;
+    navigate("dashboard");
   }catch(error){
     await sb.auth.signOut();
     $("app").style.display = "none";
@@ -950,24 +1035,17 @@ function navigate(page){
     return;
   }
 
-  /* Extra protection for Manage Admins */
-  if(page==="manage-admins" && !isSystemAdmin()){
-    $("dashboardPage").classList.add("hidden");
-    $("accountPage").classList.add("hidden");
-    $("pageFrame").classList.add("hidden");
-    $("deniedPage").classList.remove("hidden");
-    $("topPageTitle").textContent = "Access Restricted";
-    closeMobileSidebar();
-    closeProfileDropdown();
-    return;
-  }
-
   if(!canView(page)){
     $("dashboardPage").classList.add("hidden");
     $("accountPage").classList.add("hidden");
     $("pageFrame").classList.add("hidden");
     $("deniedPage").classList.remove("hidden");
     $("topPageTitle").textContent = "Access Restricted";
+
+    document.querySelectorAll(".nav-item[data-page]").forEach(button=>{
+      button.classList.toggle("active",false);
+    });
+
     closeMobileSidebar();
     closeProfileDropdown();
     return;
@@ -983,7 +1061,9 @@ function navigate(page){
 
   $("dashboardPage").classList.toggle("hidden",page!=="dashboard");
   $("accountPage").classList.toggle("hidden",page!=="account");
-  $("pageFrame").classList.toggle("hidden",page==="dashboard" || page==="account");
+  $("pageFrame").classList.toggle(
+    "hidden",page==="dashboard" || page==="account"
+  );
 
   document.querySelectorAll(".nav-item[data-page]").forEach(button=>{
     button.classList.toggle("active",button.dataset.page===page);
@@ -994,23 +1074,15 @@ function navigate(page){
     const target = PAGE_CONFIG[page].file;
 
     if(frame.dataset.currentFile !== target){
+      frame.onload = ()=>{
+        sendAuthToFrame();
+      };
+
       frame.dataset.currentFile = target;
       frame.src = target;
+    }else{
+      sendAuthToFrame();
     }
-
-    frame.onload = ()=>{
-      try{
-        frame.contentWindow.postMessage({
-          type:"ONE_ONLINE_AUTH",
-          userId:currentUser.id,
-          role:getRole(),
-          permissions:userPermissions,
-          isSystemAdmin:isSystemAdmin()
-        },"*");
-      }catch(error){
-        console.warn("Could not notify child page about permissions.",error);
-      }
-    };
   }
 
   closeMobileSidebar();
@@ -1028,7 +1100,8 @@ document.querySelectorAll("[data-quick]").forEach(button=>{
 });
 
 /* SIDEBAR COLLAPSE */
-const savedCollapsed = localStorage.getItem("one_online_sidebar_collapsed")==="true";
+const savedCollapsed =
+  localStorage.getItem("one_online_sidebar_collapsed")==="true";
 
 if(savedCollapsed && window.innerWidth>760){
   $("sidebar").classList.add("collapsed");
@@ -1073,6 +1146,7 @@ function closeProfileDropdown(){
 }
 
 document.addEventListener("click",closeProfileDropdown);
+
 document.addEventListener("keydown",event=>{
   if(event.key==="Escape"){
     closeProfileDropdown();
@@ -1218,7 +1292,9 @@ $("removeAvatarBtn").addEventListener("click",async()=>{
       .from(AVATAR_BUCKET)
       .remove([oldPath]);
 
-    if(removeError)console.warn("Old avatar could not be removed:",removeError);
+    if(removeError){
+      console.warn("Old avatar could not be removed:",removeError);
+    }
 
     notify("Profile picture removed.");
   }catch(error){
@@ -1296,12 +1372,24 @@ function applyTheme(theme){
 
   $("themeIcon").className =
     theme==="dark" ? "fa-solid fa-sun" : "fa-solid fa-moon";
+
+  /* Keep the selected theme available to child pages */
+  const frame = $("pageFrame");
+  try{
+    if(frame?.contentWindow){
+      frame.contentWindow.postMessage({
+        type:"ONE_ONLINE_THEME",
+        theme:theme
+      },"*");
+    }
+  }catch(error){}
 }
 
 applyTheme(localStorage.getItem("one_online_theme") || "light");
 
 $("themeToggle").addEventListener("click",()=>{
-  const next = document.body.getAttribute("data-theme")==="dark" ? "light" : "dark";
+  const next =
+    document.body.getAttribute("data-theme")==="dark" ? "light" : "dark";
   applyTheme(next);
 });
 
