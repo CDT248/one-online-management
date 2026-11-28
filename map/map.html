@@ -1,452 +1,1274 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>ONE ONLINE | Network Map</title>
+<title>Network Map | ONE ONLINE</title>
+
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
 <style>
-:root{--bg:#08111f;--panel:#101d30;--panel2:#172840;--line:#293b54;--text:#edf4ff;--muted:#91a4bf;--green:#10b981;--red:#fb626b;--shadow:0 12px 35px #0005}
-*{box-sizing:border-box}html,body{height:100%;margin:0;font-family:Inter,Arial,sans-serif;background:var(--bg);color:var(--text)}button,input,select,textarea{font:inherit}button{cursor:pointer}
-#app{height:100%;display:flex;flex-direction:column}
-.topbar{height:58px;flex:none;display:flex;align-items:center;gap:10px;padding:0 14px;background:#0d192b;border-bottom:1px solid var(--line);z-index:500}
-.brand{display:flex;align-items:center;gap:9px;font-weight:800;font-size:14px;white-space:nowrap}.brand-icon{width:34px;height:34px;border-radius:10px;background:#123d35;display:grid;place-items:center;font-size:18px}
-.top-actions{margin-left:auto;display:flex;align-items:center;gap:7px;flex-wrap:wrap}
-.btn{border:1px solid #344963;background:#1a2b43;color:#e8f1ff;border-radius:8px;padding:8px 11px;font-size:11px;font-weight:700}
-.btn:hover{filter:brightness(1.15)}.btn.primary{background:#087f5b;border-color:#0c9c70;color:#fff}.btn.danger{background:#44232d;border-color:#733541;color:#ffabb2}.btn.active{background:#075b47;border-color:#10b981}
-.status{font-size:10px;color:#9eb1ca;white-space:nowrap}.status:before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:#e5a23b;margin-right:6px}.status.ok:before{background:#10b981}.status.err:before{background:#fb626b}
-.workspace{position:relative;flex:1;min-height:0;display:flex}
-#map{height:100%;width:100%;background:#101d2e}
-.panel{position:absolute;z-index:450;top:12px;left:12px;width:310px;max-height:calc(100% - 24px);overflow:auto;background:#0e1a2bF2;border:1px solid #34465e;border-radius:13px;box-shadow:var(--shadow);backdrop-filter:blur(12px)}
-.panel-head{padding:13px 14px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between}.panel-head strong{font-size:12px}.panel-body{padding:12px}
-.search{width:100%;height:36px;border:1px solid #34465e;border-radius:8px;background:#091525;color:#fff;padding:0 10px;font-size:11px;outline:none}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:10px 0}.stat{background:#172840;border:1px solid #2b405c;border-radius:8px;padding:9px}.stat b{display:block;font-size:17px}.stat span{font-size:9px;color:var(--muted)}
-.node-list{display:grid;gap:6px;margin-top:10px}.node-row{display:flex;align-items:center;gap:9px;padding:9px;background:#14243a;border:1px solid #293d58;border-radius:8px;cursor:pointer}.node-row:hover{border-color:#10b981}.node-emoji{width:29px;height:29px;display:grid;place-items:center;background:#20344e;border-radius:8px;font-size:16px;flex:none}.node-copy{min-width:0;flex:1}.node-copy b{display:block;font-size:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.node-copy small{font-size:9px;color:var(--muted)}
-.empty{padding:18px;text-align:center;color:#8296b1;font-size:11px;border:1px dashed #34465e;border-radius:8px}
-.map-tools{position:absolute;z-index:430;right:12px;top:12px;display:grid;gap:7px}.tool{width:39px;height:39px;border:1px solid #40536d;background:#102039ed;color:#fff;border-radius:9px;font-size:16px;box-shadow:0 5px 15px #0004}
-.legend{position:absolute;z-index:420;right:12px;bottom:14px;background:#0e1a2bf0;border:1px solid #34465e;border-radius:10px;padding:10px 12px;max-width:210px;font-size:9px;box-shadow:var(--shadow)}.legend-title{font-weight:800;margin-bottom:7px}.legend-row{display:flex;align-items:center;gap:7px;margin:5px 0;color:#c8d5e7}.legend-dot{width:9px;height:9px;border-radius:50%}
-.leaflet-popup-content-wrapper,.leaflet-popup-tip{background:#122139;color:#edf4ff}.leaflet-popup-content{margin:10px 12px;font-family:Inter,sans-serif;font-size:11px}.popup-title{font-weight:800;font-size:13px;margin-bottom:5px}.popup-meta{color:#b6c7dc;line-height:1.7}
-.modal-bg{position:fixed;inset:0;z-index:1000;background:#000b;display:none;align-items:center;justify-content:center;padding:14px}.modal-bg.show{display:flex}.modal{width:min(480px,100%);max-height:92vh;overflow:auto;background:#122139;border:1px solid #3a506d;border-radius:14px;box-shadow:0 20px 70px #0009;padding:18px}.modal h3{font-size:16px;margin:0 0 14px}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.field{min-width:0}.field.full{grid-column:1/-1}.field label{display:block;font-size:10px;font-weight:700;color:#b9c9dd;margin-bottom:5px}.field input,.field select,.field textarea{width:100%;border:1px solid #354a66;background:#091729;color:#f1f6ff;border-radius:8px;padding:9px;font-size:11px;outline:none}.field textarea{min-height:65px;resize:vertical}.field input:focus,.field select:focus,.field textarea:focus{border-color:#10b981}.modal-actions{display:flex;justify-content:flex-end;gap:7px;margin-top:15px;flex-wrap:wrap}
-.details{font-size:11px;line-height:1.8;color:#c7d5e7}.details b{color:#fff}.toast{position:fixed;z-index:2000;bottom:20px;left:50%;transform:translate(-50%,15px);opacity:0;pointer-events:none;background:#17382f;color:#d7fff0;border:1px solid #26765c;padding:11px 16px;border-radius:9px;font-size:11px;font-weight:700;transition:.2s;max-width:90vw;text-align:center}.toast.show{opacity:1;transform:translate(-50%,0)}
-.loading{position:absolute;inset:0;z-index:600;background:#08111fe8;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;font-size:12px}.spinner{width:30px;height:30px;border:3px solid #344963;border-top-color:#10b981;border-radius:50%;animation:spin .8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
-.leaflet-div-icon{background:transparent;border:0}.marker{width:31px;height:31px;border-radius:50% 50% 50% 8px;transform:rotate(-45deg);display:grid;place-items:center;border:2px solid #fff;box-shadow:0 3px 10px #0008}.marker span{transform:rotate(45deg);font-size:15px}
-@media(max-width:700px){.topbar{height:auto;min-height:56px;padding:8px;align-items:flex-start}.brand{font-size:11px}.top-actions{gap:5px}.btn{padding:7px 8px;font-size:9px}.status{display:none}.panel{top:auto;left:8px;right:8px;bottom:8px;width:auto;max-height:38%;}.panel-head{padding:9px 11px}.panel-body{padding:9px}.stats{margin:7px 0}.node-list{grid-template-columns:1fr 1fr;gap:5px}.node-row{padding:6px}.node-emoji{width:25px;height:25px}.map-tools{top:8px;right:8px}.tool{width:34px;height:34px}.legend{right:8px;bottom:calc(38% + 18px);max-width:160px}.form-grid{grid-template-columns:1fr}.field.full{grid-column:auto}}
+:root{
+ --bg:#0b1220;
+ --panel:#111c2e;
+ --panel2:#1c2b41;
+ --text:#e8f0fc;
+ --muted:#91a2bb;
+ --line:#283950;
+ --primary:#168b68;
+ --blue:#3185ed;
+}
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;font-family:Arial,sans-serif;background:var(--bg);color:var(--text)}
+body{overflow:hidden}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+.map-page{height:100%;width:100%;display:flex;flex-direction:column;overflow:hidden}
+.map-header{
+ min-height:60px;background:var(--panel);border-bottom:1px solid var(--line);
+ display:flex;align-items:center;justify-content:space-between;padding:9px 14px;gap:8px;flex-wrap:wrap
+}
+.map-brand{font-weight:800;font-size:18px}
+.map-brand span{color:#21bd91}
+.header-actions,.map-tools{display:flex;gap:7px;flex-wrap:wrap}
+.btn{
+ border:0;border-radius:8px;padding:9px 13px;background:var(--primary);
+ color:white;font-weight:700;font-size:12px
+}
+.btn.blue{background:#2879d4}
+.btn.orange{background:#b87919}
+.btn.red{background:#bd3942}
+.btn.gray{background:#293b53}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn.small{padding:7px 10px}
+.map-area{flex:1;min-height:0;position:relative}
+#map{width:100%;height:100%;background:#dce6e9}
+.map-tools{
+ position:absolute;z-index:500;top:12px;left:12px;
+ max-width:calc(100% - 24px)
+}
+.map-stats{
+ position:absolute;z-index:500;right:12px;top:12px;
+ display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end
+}
+.stat-box{
+ background:#111c2eee;border:1px solid #ffffff30;border-radius:9px;
+ padding:7px 11px;min-width:66px;text-align:center;color:white;
+ box-shadow:0 2px 8px #0003
+}
+.stat-box small{display:block;color:#a9bdd4;font-size:9px}
+.stat-box strong{display:block;font-size:17px;margin-top:3px}
+.map-hint{
+ display:none;position:absolute;z-index:600;bottom:18px;left:50%;
+ transform:translateX(-50%);background:#111c2ef2;color:white;
+ padding:11px 15px;border-radius:9px;font-size:12px;
+ max-width:90%;text-align:center
+}
+.marker{
+ width:36px;height:36px;border-radius:50%;border:3px solid white;
+ display:flex;align-items:center;justify-content:center;color:white;
+ font-size:16px;font-weight:bold;box-shadow:0 2px 9px #0008
+}
+.marker.main{background:#dc493f}
+.marker.sub{background:#d58a20}
+.marker.pole{background:#2563eb}
+.marker.customer{background:#16a36a}
+.leaflet-popup-content-wrapper,.leaflet-popup-tip{background:#111c2e;color:white}
+.leaflet-popup-content{margin:12px;font-size:12px}
+.leaflet-popup-content button{margin-top:6px}
+.network-line{cursor:pointer}
+.network-line.animated{
+ animation:flowLine 1.2s linear infinite
+}
+@keyframes flowLine{
+ from{stroke-dashoffset:24}
+ to{stroke-dashoffset:0}
+}
+.modal{
+ display:none;position:fixed;z-index:3000;inset:0;background:#000b;
+ align-items:center;justify-content:center;padding:12px
+}
+.modal.show{display:flex}
+.modal-content{
+ width:100%;max-width:510px;max-height:92%;overflow:auto;
+ background:#111c2e;border:1px solid #35465e;border-radius:14px;
+ padding:19px;box-shadow:0 20px 60px #0008
+}
+.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;gap:10px}
+.modal-head h3{font-size:18px;margin:0}
+.close{border:0;background:#293950;color:white;width:32px;height:32px;border-radius:8px}
+.form-group{margin-bottom:12px}
+.form-group label{display:block;font-size:12px;color:#b5c5d9;margin-bottom:6px}
+.form-group input,.form-group select,.form-group textarea{
+ width:100%;padding:10px;background:#1c2b41;color:white;
+ border:1px solid #3a4b62;border-radius:8px;outline:none
+}
+.form-group textarea{min-height:65px;resize:vertical}
+.form-group input:focus,.form-group select:focus{border-color:#1cba8a}
+.form-group option{background:#1c2b41}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.form-actions,.info-actions{display:flex;gap:8px;margin-top:16px}
+.form-actions button,.info-actions button{flex:1}
+.info-line{
+ display:flex;justify-content:space-between;gap:12px;
+ padding:10px 0;border-bottom:1px solid var(--line);font-size:12px
+}
+.info-line span{color:var(--muted)}
+.info-line strong{text-align:right;overflow-wrap:anywhere}
+.section-label{
+ font-size:11px;color:#91a2bb;font-weight:bold;letter-spacing:1px;margin:17px 0 7px
+}
+.empty{font-size:12px;color:var(--muted);padding:10px 0}
+.menu-option{
+ width:100%;margin-bottom:9px;padding:13px;border:1px solid var(--line);
+ border-radius:9px;background:#1c2b41;color:white;text-align:left;font-weight:bold
+}
+.menu-option small{display:block;color:#9eb0c6;margin-top:5px;font-weight:normal}
+.connection-item{padding:10px;border-bottom:1px solid var(--line);font-size:12px}
+.connection-item button{margin-top:7px;margin-right:4px}
+.status{
+ position:absolute;z-index:800;bottom:12px;right:12px;
+ background:#111c2eeb;border:1px solid #ffffff30;border-radius:8px;
+ padding:8px 11px;font-size:11px;color:white
+}
+.status.ok{border-color:#16a36a}
+.status.error{border-color:#bd3942}
+.legend{
+ position:absolute;z-index:500;left:12px;bottom:12px;
+ background:#111c2eeb;padding:10px;border-radius:9px;
+ font-size:10px;line-height:1.9;color:white
+}
+.legend span{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px}
+@media(max-width:600px){
+ .map-header{padding:8px;min-height:54px}
+ .map-brand{font-size:14px}
+ .header-actions{gap:4px}
+ .header-actions .btn{padding:7px;font-size:10px}
+ .map-tools{top:8px;left:7px;gap:4px}
+ .map-tools .btn{padding:7px 8px;font-size:10px}
+ .map-stats{top:53px;right:7px;gap:4px}
+ .stat-box{min-width:53px;padding:5px}
+ .stat-box strong{font-size:14px}
+ .stat-box small{font-size:8px}
+ .form-row{grid-template-columns:1fr}
+ .modal-content{padding:15px}
+ .legend{bottom:9px;left:7px;font-size:9px}
+ .status{bottom:9px;right:7px}
+}
 </style>
 </head>
+
 <body>
-<div id="app">
-<header class="topbar">
- <div class="brand"><div class="brand-icon">🗺️</div><div>ONE ONLINE<br><small style="font-size:9px;color:#91a4bf;font-weight:600">NETWORK MAP</small></div></div>
- <div class="top-actions">
-  <span id="syncStatus" class="status">Connecting...</span>
-  <button class="btn" id="viewModeBtn" onclick="toggleEditMode()">👁 View Mode</button>
-  <button class="btn primary" onclick="openAddModal()">＋ Add Location</button>
-  <button class="btn" onclick="openConnectionModal()">🔗 Connect</button>
-  <button class="btn" onclick="undo()">↶ Undo</button>
-  <button class="btn" onclick="redo()">↷ Redo</button>
-  <button class="btn" onclick="openSettings()">⚙ Settings</button>
+<div class="map-page">
+
+<header class="map-header">
+ <div class="map-brand"><span>ONE</span> ONLINE | NETWORK MAP</div>
+ <div class="header-actions">
+  <button class="btn gray small" onclick="undo()">↶ Undo</button>
+  <button class="btn gray small" onclick="redo()">↷ Redo</button>
+  <button class="btn gray small" onclick="resetView()">Reset View</button>
+  <button class="btn small" onclick="startAdd('main_box')">+ Main Box</button>
  </div>
 </header>
-<main class="workspace">
- <div id="map"></div>
- <aside class="panel">
-  <div class="panel-head"><strong>📍 Network Locations</strong><button class="btn" style="padding:5px 8px" onclick="loadAll()">↻</button></div>
-  <div class="panel-body">
-   <input class="search" id="searchBox" placeholder="Search name, IP, code..." oninput="renderNodeList()">
-   <div class="stats">
-    <div class="stat"><b id="nodeCount">0</b><span>LOCATIONS</span></div>
-    <div class="stat"><b id="lineCount">0</b><span>CONNECTIONS</span></div>
-    <div class="stat"><b id="customerCount">0</b><span>CUSTOMERS</span></div>
-   </div>
-   <div id="nodeList" class="node-list"><div class="empty">Loading locations...</div></div>
-  </div>
- </aside>
+
+<main class="map-area">
  <div class="map-tools">
-  <button class="tool" title="Zoom in" onclick="map.zoomIn()">＋</button>
-  <button class="tool" title="Zoom out" onclick="map.zoomOut()">−</button>
-  <button class="tool" title="My view" onclick="goDefaultView()">⌖</button>
-  <button class="tool" title="Map layers" onclick="cycleLayer()">🌍</button>
-  <button class="tool" title="Refresh" onclick="loadAll()">↻</button>
+  <button class="btn small" onclick="startAdd('pole')">+ Pole</button>
+  <button class="btn blue small" onclick="startAdd('customer')">+ Customer</button>
+  <button class="btn orange small" onclick="startAdd('sub_box')">+ Sub Box</button>
+  <button class="btn gray small" onclick="startConnection()">+ Connection</button>
  </div>
- <div class="legend" id="legend"><div class="legend-title">NETWORK LEGEND</div><div id="legendItems"></div></div>
- <div class="loading" id="loading"><div class="spinner"></div><b>Loading Network Map...</b><span style="color:#91a4bf">Connecting to Google Sheets</span></div>
+
+ <div class="map-stats">
+  <div class="stat-box"><small>MAIN BOX</small><strong id="mainCount">0</strong></div>
+  <div class="stat-box"><small>SUB BOX</small><strong id="boxCount">0</strong></div>
+  <div class="stat-box"><small>POLES</small><strong id="poleCount">0</strong></div>
+  <div class="stat-box"><small>CUSTOMERS</small><strong id="customerCount">0</strong></div>
+ </div>
+
+ <div id="map"></div>
+
+ <div class="legend">
+  <div><span style="background:#dc493f"></span>Main Box</div>
+  <div><span style="background:#d58a20"></span>Sub Box</div>
+  <div><span style="background:#2563eb"></span>Pole / Switch</div>
+  <div><span style="background:#16a36a"></span>Customer</div>
+ </div>
+
+ <div class="map-hint" id="mapHint"></div>
+ <div class="status" id="saveStatus">Connecting to Google Sheets...</div>
 </main>
 </div>
 
-<div class="modal-bg" id="nodeModal">
- <div class="modal">
-  <h3 id="nodeModalTitle">Add Location</h3>
-  <input type="hidden" id="editNodeId">
-  <div class="form-grid">
-   <div class="field"><label>Location Type *</label><select id="nodeType"></select></div>
-   <div class="field"><label>Location Name *</label><input id="nodeName" placeholder="Example: Main Box 01"></div>
-   <div class="field"><label>Customer IP</label><input id="nodeIP" placeholder="192.168.1.10"></div>
-   <div class="field"><label>Box / Pole Code</label><input id="nodeCode" placeholder="BOX-001"></div>
-   <div class="field"><label>Latitude *</label><input id="nodeLat" type="number" step="any" placeholder="22.3569"></div>
-   <div class="field"><label>Longitude *</label><input id="nodeLng" type="number" step="any" placeholder="91.7832"></div>
-   <div class="field full"><label>Address</label><input id="nodeAddress" placeholder="Location address"></div>
-   <div class="field full"><label>Internet Source / Parent</label><select id="nodeParent"><option value="">No parent / independent</option></select></div>
-   <div class="field full"><label>Note</label><textarea id="nodeNote" placeholder="Additional information"></textarea></div>
-  </div>
-  <div class="modal-actions">
-   <button class="btn" onclick="chooseOnMap()">📌 Choose on Map</button>
-   <button class="btn" onclick="closeModal('nodeModal')">Cancel</button>
-   <button class="btn primary" onclick="saveNode()">Save Location</button>
-  </div>
+<!-- NODE MODAL -->
+<div class="modal" id="nodeModal">
+<div class="modal-content">
+ <div class="modal-head">
+  <h3 id="nodeTitle">Add Node</h3>
+  <button class="close" onclick="closeModal('nodeModal')">✕</button>
  </div>
+
+ <form id="nodeForm">
+  <input type="hidden" id="nodeId">
+  <input type="hidden" id="nodeType">
+
+  <div class="form-group">
+   <label>Name / Number</label>
+   <input id="nodeName" required placeholder="Enter name">
+  </div>
+
+  <div class="form-row">
+   <div class="form-group">
+    <label>IP Address</label>
+    <input id="nodeIP" placeholder="192.168.1.1">
+   </div>
+   <div class="form-group">
+    <label>Code / Fiber Code</label>
+    <input id="nodeCode" placeholder="CODE-001">
+   </div>
+  </div>
+
+  <div class="form-group">
+   <label>Address</label>
+   <input id="nodeAddress" placeholder="Address">
+  </div>
+
+  <div class="form-group">
+   <label>Connected From / Parent</label>
+   <select id="nodeParent"></select>
+  </div>
+
+  <div class="form-row">
+   <div class="form-group">
+    <label>Latitude</label>
+    <input id="nodeLat" type="number" step="any" required>
+   </div>
+   <div class="form-group">
+    <label>Longitude</label>
+    <input id="nodeLng" type="number" step="any" required>
+   </div>
+  </div>
+
+  <div class="form-group">
+   <label>Note</label>
+   <textarea id="nodeNote" placeholder="Additional information"></textarea>
+  </div>
+
+  <div class="form-actions">
+   <button type="button" class="btn gray" onclick="closeModal('nodeModal')">Cancel</button>
+   <button class="btn">Save</button>
+  </div>
+ </form>
+</div>
 </div>
 
-<div class="modal-bg" id="detailModal">
- <div class="modal">
-  <h3 id="detailTitle">Location Details</h3>
-  <div id="detailContent" class="details"></div>
-  <div class="modal-actions">
-   <button class="btn" onclick="closeModal('detailModal')">Close</button>
-   <button class="btn" id="detailEditBtn" onclick="editSelected()">✎ Edit</button>
-   <button class="btn danger" id="detailDeleteBtn" onclick="deleteSelected()">Delete</button>
-  </div>
+<!-- CONNECTION MODAL -->
+<div class="modal" id="connectionModal">
+<div class="modal-content">
+ <div class="modal-head">
+  <h3 id="connectionTitle">Create Connection</h3>
+  <button class="close" onclick="closeModal('connectionModal')">✕</button>
  </div>
+
+ <form id="connectionForm">
+  <input type="hidden" id="connectionId">
+
+  <div class="form-group">
+   <label>Connection Type</label>
+   <select id="connectionType">
+    <option value="direct">Direct Link</option>
+    <option value="main_fiber">Main Fiber</option>
+    <option value="switch_link">Switch Link</option>
+    <option value="box_link">Box Link</option>
+    <option value="wireless">Wireless</option>
+   </select>
+  </div>
+
+  <div class="form-group">
+   <label>From Device</label>
+   <select id="connectionFrom" required></select>
+  </div>
+
+  <div class="form-group">
+   <label>To Device</label>
+   <select id="connectionTo" required></select>
+  </div>
+
+  <div class="form-actions">
+   <button type="button" class="btn gray" onclick="closeModal('connectionModal')">Cancel</button>
+   <button class="btn">Save Connection</button>
+  </div>
+ </form>
+</div>
 </div>
 
-<div class="modal-bg" id="lineModal">
- <div class="modal">
-  <h3>Connect Locations</h3>
-  <div class="form-grid">
-   <div class="field"><label>From *</label><select id="lineFrom"></select></div>
-   <div class="field"><label>To *</label><select id="lineTo"></select></div>
-   <div class="field full"><label>Connection Type</label><select id="lineType"></select></div>
-  </div>
-  <div class="modal-actions">
-   <button class="btn" onclick="closeModal('lineModal')">Cancel</button>
-   <button class="btn primary" onclick="saveConnection()">Save Connection</button>
-  </div>
+<!-- INFO MODAL -->
+<div class="modal" id="infoModal">
+<div class="modal-content">
+ <div class="modal-head">
+  <h3 id="infoTitle">Information</h3>
+  <button class="close" onclick="closeModal('infoModal')">✕</button>
  </div>
+ <div id="infoContent"></div>
+ <div class="info-actions" id="infoActions"></div>
+</div>
 </div>
 
-<div class="toast" id="toast"></div>
+<!-- CONNECTION INFO -->
+<div class="modal" id="lineModal">
+<div class="modal-content">
+ <div class="modal-head">
+  <h3>Connection Information</h3>
+  <button class="close" onclick="closeModal('lineModal')">✕</button>
+ </div>
+ <div id="lineContent"></div>
+ <div class="info-actions" id="lineActions"></div>
+</div>
+</div>
+
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
 <script>
-'use strict';
+/* ===========================================
+ ONE ONLINE NETWORK MAP
+ Google Sheets Backend Integration
+ =========================================== */
 
-/* Apps Script HTML Service backend */
-const BACKEND = {
-  load: 'getMapBootstrap',
-  saveData: 'saveMapData',
-  saveSettings: 'saveMapSettings'
+const TYPE_NAMES={
+ main_box:"Main Box",
+ sub_box:"Sub Box",
+ pole:"Pole / Switch",
+ customer:"Customer"
 };
 
-const DEFAULT_SETTINGS = {
- view:'road',
- types:[
-  {id:'main_box',name:'Main Box',icon:'🗄️',color:'#e74c3c',enabled:true},
-  {id:'sub_box',name:'Sub Box',icon:'📦',color:'#2878d0',enabled:true},
-  {id:'pole',name:'Pole',icon:'🗼',color:'#e89b21',enabled:true},
-  {id:'customer',name:'Customer',icon:'🏠',color:'#12a66a',enabled:true}
- ],
- connectionTypes:[
-  {id:'direct',name:'Direct Link',color:'#a855f7',enabled:true},
-  {id:'main_fiber',name:'Main Fiber',color:'#ff3030',enabled:true},
-  {id:'switch_link',name:'Switch Link',color:'#2878d0',enabled:true},
-  {id:'box_link',name:'Box Link',color:'#19d69a',enabled:true},
-  {id:'wireless',name:'Wireless',color:'#e6a23c',enabled:true}
- ],
- wire:{color:'#19d69a',width:4,opacity:.95,speed:1.1,animated:true,dotted:true}
+const CONNECTION_NAMES={
+ direct:"Direct Link",
+ main_fiber:"Main Fiber",
+ switch_link:"Switch Link",
+ box_link:"Box Link",
+ wireless:"Wireless"
 };
 
-let map, nodeLayer, lineLayer, layers={}, currentLayer='road';
-let nodes=[], connections=[], settings=structuredCloneSafe(DEFAULT_SETTINGS);
-let editMode=false, selectedNodeId=null, chooseLocation=false;
-let undoStack=[], redoStack=[], saveTimer=null, saving=false, saveAgain=false;
-let openingView={lat:22.3569,lng:91.7832,zoom:13};
+const CONNECTION_COLORS={
+ direct:"#3185ed",
+ main_fiber:"#16a36a",
+ switch_link:"#e59a27",
+ box_link:"#dc493f",
+ wireless:"#a855f7"
+};
 
-function structuredCloneSafe(v){return JSON.parse(JSON.stringify(v))}
-function byId(id){return document.getElementById(id)}
-function toast(msg){const el=byId('toast');el.textContent=msg;el.classList.add('show');clearTimeout(window._toast);window._toast=setTimeout(()=>el.classList.remove('show'),2600)}
-function setStatus(msg,state=''){const el=byId('syncStatus');el.textContent=msg;el.className='status '+state}
-function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-function googleRun(fn,arg){
+let data={items:[],connections:[]};
+let settings={
+ view:"road",
+ types:{},
+ connectionTypes:{},
+ wire:{}
+};
+
+let map;
+let markers={};
+let lines={};
+let bendMarkers=[];
+let addMode=null;
+let connectionMode=false;
+let connectionStart=null;
+let selectedNode=null;
+let selectedLine=null;
+let history=[];
+let historyIndex=-1;
+let isLoading=false;
+let saveTimer=null;
+let settingsTimer=null;
+let pendingSaves=0;
+let currentView="road";
+
+/* MAP INITIALIZATION */
+
+map=L.map("map",{preferCanvas:true,zoomControl:true})
+ .setView([22.3569,91.7832],13);
+
+const roadLayer=L.tileLayer(
+ "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+ {maxZoom:20,attribution:"&copy; OpenStreetMap"}
+);
+
+const satelliteLayer=L.tileLayer(
+ "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+ {maxZoom:19,attribution:"Tiles &copy; Esri"}
+);
+
+const labelsLayer=L.tileLayer(
+ "https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png",
+ {maxZoom:20,attribution:"&copy; CARTO"}
+);
+
+const networkLayer=L.layerGroup();
+
+roadLayer.addTo(map);
+
+/* HELPERS */
+
+function uid(){
+ return "MAP-"+Date.now().toString(36)+"-"+Math.random().toString(36).slice(2,7);
+}
+
+function esc(v){
+ return String(v??"").replace(/[&<>"']/g,c=>({
+ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+ })[c]);
+}
+
+function getNode(id){
+ return data.items.find(x=>x.id===id);
+}
+
+function getConnection(id){
+ return data.connections.find(x=>x.id===id);
+}
+
+function nodeLabel(n){
+ return (TYPE_NAMES[n.type]||n.type)+" - "+n.name;
+}
+
+function validPosition(n){
+ return Number.isFinite(Number(n.lat))&&Number.isFinite(Number(n.lng));
+}
+
+function setStatus(msg,type=""){
+ const el=document.getElementById("saveStatus");
+ el.textContent=msg;
+ el.className="status "+type;
+}
+
+function showHint(msg){
+ const el=document.getElementById("mapHint");
+ el.textContent=msg;
+ el.style.display="block";
+}
+
+function hideHint(){
+ document.getElementById("mapHint").style.display="none";
+}
+
+function openModal(id){
+ document.getElementById(id).classList.add("show");
+}
+
+function closeModal(id){
+ document.getElementById(id).classList.remove("show");
+ if(id==="nodeModal"||id==="connectionModal"){
+  addMode=null;
+  connectionMode=false;
+  hideHint();
+ }
+}
+
+document.querySelectorAll(".modal").forEach(m=>{
+ m.addEventListener("click",e=>{
+  if(e.target===m)closeModal(m.id);
+ });
+});
+
+/* GOOGLE SHEETS */
+
+function googleAvailable(){
+ return typeof google!=="undefined"&&
+ google.script&&google.script.run;
+}
+
+function backendCall(name,payload){
  return new Promise((resolve,reject)=>{
-  if(!window.google||!google.script||!google.script.run){reject(new Error('Google Apps Script connection is unavailable. Open this page using the deployed Web App URL.'));return}
-  const runner=google.script.run.withSuccessHandler(resolve).withFailureHandler(reject);
-  if(typeof arg==='undefined') runner[fn](); else runner[fn](arg);
+  if(!googleAvailable()){
+   reject(new Error("Google Apps Script environment পাওয়া যায়নি।"));
+   return;
+  }
+
+  const runner=google.script.run
+   .withSuccessHandler(resolve)
+   .withFailureHandler(reject);
+
+  if(payload===undefined)runner[name]();
+  else runner[name](payload);
  });
 }
-function normalizeSettings(s){
- s=s||{};
- return {
-  view:['road','satellite','hybrid','network'].includes(s.view)?s.view:'road',
-  types:Array.isArray(s.types)?s.types:structuredCloneSafe(DEFAULT_SETTINGS.types),
-  connectionTypes:Array.isArray(s.connectionTypes)?s.connectionTypes:structuredCloneSafe(DEFAULT_SETTINGS.connectionTypes),
-  wire:Object.assign({},DEFAULT_SETTINGS.wire,s.wire||{})
+
+async function loadFromSheet(){
+ setStatus("Loading Google Sheets...");
+
+ try{
+  const result=await backendCall("getMapBootstrap");
+
+  if(!result||result.success===false){
+   throw new Error(result?.message||"Map data load হয়নি");
+  }
+
+  data.items=Array.isArray(result.items)?result.items:
+   Array.isArray(result.nodes)?result.nodes:[];
+
+  data.connections=Array.isArray(result.connections)?result.connections:[];
+
+  if(result.settings){
+   settings={...settings,...result.settings};
+  }
+
+  applySettings();
+  renderAll();
+  pushHistory();
+  setStatus("Google Sheets Connected","ok");
+
+  setTimeout(()=>{
+   map.invalidateSize();
+   resetView();
+  },300);
+
+ }catch(err){
+  console.error(err);
+  setStatus("Google Sheets Error","error");
+  alert("Google Sheet থেকে ডেটা লোড হয়নি। Code.gs-এর getMapBootstrap() ফাংশন পরীক্ষা করুন।\n\n"+err.message);
+ }
+}
+
+function scheduleSave(){
+ clearTimeout(saveTimer);
+ pendingSaves++;
+ setStatus("Changes pending...");
+ saveTimer=setTimeout(saveToSheet,650);
+}
+
+async function saveToSheet(){
+ clearTimeout(saveTimer);
+
+ if(!googleAvailable()){
+  setStatus("Google Sheets Connection Missing","error");
+  return;
+ }
+
+ const payload={
+  items:data.items,
+  connections:data.connections
  };
-}
 
-function initMap(){
- map=L.map('map',{zoomControl:false,preferCanvas:true,renderer:L.canvas({padding:.5})}).setView([22.3569,91.7832],13);
- layers.road=L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',{maxZoom:20,attribution:'© OpenStreetMap © CARTO'});
- layers.satellite=L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{maxZoom:19,attribution:'Tiles © Esri'});
- layers.hybrid=L.layerGroup([
-  L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{maxZoom:19}),
-  L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}',{maxZoom:19})
- ]);
- layers.network=L.layerGroup([]);
- layers.road.addTo(map);
- nodeLayer=L.layerGroup().addTo(map);
- lineLayer=L.layerGroup().addTo(map);
- map.on('click',e=>{
-  // Map clicks are used by the one-time location picker below.
- });
-}
+ setStatus("Saving to Google Sheets...");
 
-function setLayer(name){
- if(!layers[name])name='road';
- Object.values(layers).forEach(l=>{if(map.hasLayer(l))map.removeLayer(l)});
- if(name==='network'){/* Network-only intentionally has no basemap. */}
- else layers[name].addTo(map);
- currentLayer=name;
- settings.view=name;
-}
-function cycleLayer(){const names=['road','satellite','hybrid','network'];setLayer(names[(names.indexOf(currentLayer)+1)%names.length]);queueSettingsSave({view:currentLayer});toast('Map style: '+currentLayer)}
-function goDefaultView(){map.setView([openingView.lat,openingView.lng],openingView.zoom)}
-function openSettings(){const base=location.href.split('?')[0];location.href=base+'?page=map_setting'}
+ try{
+  const result=await backendCall("saveMapData",payload);
 
-function markerIcon(node){
- const t=settings.types.find(x=>x.id===node.type)||{};
- const color=t.color||'#10b981',emoji=t.icon||'📍';
- return L.divIcon({className:'',html:`<div class="marker" style="background:${esc(color)}"><span>${esc(emoji)}</span></div>`,iconSize:[31,31],iconAnchor:[15,29],popupAnchor:[0,-27]});
-}
-function getNode(id){return nodes.find(n=>String(n.id)===String(id))}
-function nodeName(id){const n=getNode(id);return n?n.name:'Unknown'}
-function connectionColor(line){const t=settings.connectionTypes.find(x=>x.id===line.type);return t?.color||settings.wire.color||'#19d69a'}
-
-function renderAll(){
- nodeLayer.clearLayers();lineLayer.clearLayers();
- renderLines();renderMarkers();renderNodeList();renderLegend();updateStats();
-}
-function renderMarkers(){
- nodes.forEach(n=>{
-  if(!Number.isFinite(Number(n.lat))||!Number.isFinite(Number(n.lng)))return;
-  const marker=L.marker([Number(n.lat),Number(n.lng)],{icon:markerIcon(n),draggable:editMode});
-  marker.bindPopup(`<div class="popup-title">${esc(n.name)}</div><div class="popup-meta">${esc(typeName(n.type))}<br>${n.ip?'IP: '+esc(n.ip)+'<br>':''}${n.code?'Code: '+esc(n.code)+'<br>':''}${n.address?esc(n.address):''}</div>`);
-  marker.on('click',()=>showDetails(n.id));
-  if(editMode){
-   marker.on('dragend',e=>{
-    const p=e.target.getLatLng();n.lat=p.lat;n.lng=p.lng;pushHistory();queueDataSave();renderAll();toast('Location moved');
-   });
+  if(result&&result.success===false){
+   throw new Error(result.message||"Save failed");
   }
-  marker.addTo(nodeLayer);
- });
+
+  pendingSaves=0;
+  setStatus("All Changes Saved","ok");
+
+ }catch(err){
+  console.error(err);
+  setStatus("Save Failed - Retry Required","error");
+  alert("Google Sheet-এ Save করা যায়নি: "+err.message);
+ }
 }
-function renderLines(){
- connections.forEach(line=>{
-  const a=getNode(line.from),b=getNode(line.to);if(!a||!b)return;
-  const pts=[[Number(a.lat),Number(a.lng)]];
-  (Array.isArray(line.points)?line.points:[]).forEach(p=>{if(Array.isArray(p)&&p.length>=2)pts.push([Number(p[0]),Number(p[1])])});
-  pts.push([Number(b.lat),Number(b.lng)]);
-  const color=connectionColor(line),w=Number(settings.wire.width)||4,opacity=Number(settings.wire.opacity??.95);
-  const dotted=settings.wire.dotted!==false;
-  const path=L.polyline(pts,{color,weight:w,opacity,dashArray:dotted?'3 9':null,lineCap:'round',lineJoin:'round'}).addTo(lineLayer);
-  if(settings.wire.animated!==false && currentLayer!=='network'){
-   const flow=L.polyline(pts,{color:'#ffffff',weight:Math.max(1,w*.45),opacity:.85,dashArray:'1 16',lineCap:'round'}).addTo(lineLayer);
-   let offset=0;const speed=Math.max(.2,Number(settings.wire.speed)||1.1);
-   const anim=()=>{if(!map||!map.hasLayer(lineLayer))return;offset-=speed;flow.setStyle({dashOffset:String(offset)});requestAnimationFrame(anim)};
-   requestAnimationFrame(anim);
+
+function saveSettings(){
+ clearTimeout(settingsTimer);
+ settingsTimer=setTimeout(async()=>{
+  try{
+   await backendCall("saveMapSettings",settings);
+  }catch(err){
+   console.error("Settings save error",err);
   }
-  if(editMode){
-   path.on('click',()=>{const action=prompt('Connection edit:\n1 = Add bend at line midpoint\n2 = Delete this connection\nCancel = Close');if(action==='1'){const mid=pts[Math.floor(pts.length/2)];line.points=line.points||[];line.points.push(mid);pushHistory();queueDataSave();renderAll()}else if(action==='2'){if(confirm('Delete this connection?')){connections=connections.filter(x=>x.id!==line.id);pushHistory();queueDataSave();renderAll()}}});
-  }
- });
-}
-function typeName(id){return settings.types.find(t=>t.id===id)?.name||id||'Location'}
-function renderLegend(){
- byId('legendItems').innerHTML=settings.types.filter(t=>t.enabled!==false).map(t=>`<div class="legend-row"><span class="legend-dot" style="background:${esc(t.color)}"></span>${esc(t.icon||'📍')} ${esc(t.name)}</div>`).join('')+
- '<div class="legend-row"><span style="width:20px;border-top:3px dashed #19d69a"></span>Connection</div>';
-}
-function updateStats(){
- byId('nodeCount').textContent=nodes.length;
- byId('lineCount').textContent=connections.length;
- byId('customerCount').textContent=nodes.filter(n=>n.type==='customer').length;
-}
-function renderNodeList(){
- const q=(byId('searchBox').value||'').toLowerCase();
- const arr=nodes.filter(n=>[n.name,n.ip,n.code,n.address].join(' ').toLowerCase().includes(q));
- if(!arr.length){byId('nodeList').innerHTML='<div class="empty">No locations found.</div>';return}
- byId('nodeList').innerHTML=arr.map(n=>{
-  const t=settings.types.find(x=>x.id===n.type)||{};
-  return `<div class="node-row" onclick="focusNode('${esc(n.id)}')"><div class="node-emoji">${esc(t.icon||'📍')}</div><div class="node-copy"><b>${esc(n.name)}</b><small>${esc(t.name||n.type)} ${n.ip?'· '+esc(n.ip):''}</small></div></div>`;
- }).join('');
-}
-function focusNode(id){const n=getNode(id);if(!n)return;map.setView([n.lat,n.lng],17);showDetails(id)}
-
-function showDetails(id){
- selectedNodeId=id;const n=getNode(id);if(!n)return;
- const parent=n.parentId?nodeName(n.parentId):'Independent / Not set';
- byId('detailTitle').textContent=n.name;
- byId('detailContent').innerHTML=
- `<b>Type:</b> ${esc(typeName(n.type))}<br>`+
- `<b>IP:</b> ${esc(n.ip||'—')}<br>`+
- `<b>Code:</b> ${esc(n.code||'—')}<br>`+
- `<b>Internet Source:</b> ${esc(parent)}<br>`+
- `<b>Latitude:</b> ${Number(n.lat).toFixed(7)}<br>`+
- `<b>Longitude:</b> ${Number(n.lng).toFixed(7)}<br>`+
- `<b>Address:</b> ${esc(n.address||'—')}<br>`+
- `<b>Note:</b> ${esc(n.note||'—')}`;
- byId('detailEditBtn').style.display=editMode?'':'none';
- byId('detailDeleteBtn').style.display=editMode?'':'none';
- openModal('detailModal');
+ },500);
 }
 
-function toggleEditMode(){
- editMode=!editMode;
- byId('viewModeBtn').textContent=editMode?'✎ Edit Mode':'👁 View Mode';
- byId('viewModeBtn').classList.toggle('active',editMode);
- renderAll();
- toast(editMode?'Edit mode enabled':'View mode enabled');
-}
-function openModal(id){byId(id).classList.add('show')}
-function closeModal(id){byId(id).classList.remove('show')}
-document.querySelectorAll('.modal-bg').forEach(el=>el.addEventListener('click',e=>{if(e.target===el)el.classList.remove('show')}));
+/* UNDO / REDO */
 
-function populateNodeForm(){
- const enabled=settings.types.filter(t=>t.enabled!==false);
- byId('nodeType').innerHTML=enabled.map(t=>`<option value="${esc(t.id)}">${esc(t.icon||'📍')} ${esc(t.name)}</option>`).join('');
- byId('nodeParent').innerHTML='<option value="">No parent / independent</option>'+nodes.map(n=>`<option value="${esc(n.id)}">${esc(n.name)} (${esc(typeName(n.type))})</option>`).join('');
-}
-function openAddModal(){
- if(!editMode){toast('Enable Edit Mode first');return}
- populateNodeForm();byId('nodeModalTitle').textContent='Add Location';byId('editNodeId').value='';
- ['nodeName','nodeIP','nodeCode','nodeLat','nodeLng','nodeAddress','nodeNote'].forEach(id=>byId(id).value='');
- byId('nodeLat').value=map.getCenter().lat.toFixed(7);byId('nodeLng').value=map.getCenter().lng.toFixed(7);
- openModal('nodeModal');
-}
-function chooseOnMap(){chooseLocation=true;closeModal('nodeModal');toast('Click the map to choose coordinates');map.once('click',e=>{if(!chooseLocation)return;byId('nodeLat').value=e.latlng.lat.toFixed(7);byId('nodeLng').value=e.latlng.lng.toFixed(7);chooseLocation=false;openModal('nodeModal');toast('Coordinates selected')})}
-function saveNode(){
- const id=byId('editNodeId').value;
- const node={
-  id:id||('node_'+Date.now()),
-  type:byId('nodeType').value,
-  name:byId('nodeName').value.trim(),
-  ip:byId('nodeIP').value.trim(),
-  code:byId('nodeCode').value.trim(),
-  lat:Number(byId('nodeLat').value),
-  lng:Number(byId('nodeLng').value),
-  address:byId('nodeAddress').value.trim(),
-  parentId:byId('nodeParent').value,
-  note:byId('nodeNote').value.trim()
- };
- if(!node.name){toast('Enter location name');return}
- if(!Number.isFinite(node.lat)||!Number.isFinite(node.lng)){toast('Enter valid latitude and longitude');return}
- if(node.parentId===node.id){toast('A location cannot be its own parent');return}
- pushHistory();
- if(id){const i=nodes.findIndex(n=>n.id===id);if(i>=0)nodes[i]=node}
- else nodes.push(node);
- closeModal('nodeModal');renderAll();queueDataSave();toast('Location saved');
-}
-function editSelected(){
- const n=getNode(selectedNodeId);if(!n)return;
- closeModal('detailModal');populateNodeForm();
- byId('nodeModalTitle').textContent='Edit Location';byId('editNodeId').value=n.id;
- byId('nodeType').value=n.type;byId('nodeName').value=n.name||'';
- byId('nodeIP').value=n.ip||'';byId('nodeCode').value=n.code||'';
- byId('nodeLat').value=n.lat;byId('nodeLng').value=n.lng;
- byId('nodeAddress').value=n.address||'';byId('nodeParent').value=n.parentId||'';
- byId('nodeNote').value=n.note||'';openModal('nodeModal');
-}
-function deleteSelected(){
- const n=getNode(selectedNodeId);if(!n||!confirm('Delete '+n.name+'?'))return;
- pushHistory();
- const remove=new Set([n.id]);let changed=true;
- while(changed){changed=false;nodes.forEach(x=>{if(x.parentId&&remove.has(x.parentId)&&!remove.has(x.id)){remove.add(x.id);changed=true}})}
- nodes=nodes.filter(x=>!remove.has(x.id));
- connections=connections.filter(x=>!remove.has(x.from)&&!remove.has(x.to));
- closeModal('detailModal');renderAll();queueDataSave();toast('Location deleted');
-}
-
-function openConnectionModal(){
- if(!editMode){toast('Enable Edit Mode first');return}
- if(nodes.length<2){toast('Add at least two locations first');return}
- byId('lineFrom').innerHTML=nodes.map(n=>`<option value="${esc(n.id)}">${esc(n.name)}</option>`).join('');
- byId('lineTo').innerHTML=nodes.map(n=>`<option value="${esc(n.id)}">${esc(n.name)}</option>`).join('');
- byId('lineType').innerHTML=settings.connectionTypes.filter(t=>t.enabled!==false).map(t=>`<option value="${esc(t.id)}">${esc(t.name)}</option>`).join('');
- byId('lineTo').selectedIndex=nodes.length>1?1:0;
- openModal('lineModal');
-}
-function saveConnection(){
- const from=byId('lineFrom').value,to=byId('lineTo').value,type=byId('lineType').value;
- if(!from||!to||from===to){toast('Choose two different locations');return}
- if(connections.some(x=>x.from===from&&x.to===to)){toast('This connection already exists');return}
- pushHistory();connections.push({id:'line_'+Date.now(),from,to,type,points:[]});
- closeModal('lineModal');renderAll();queueDataSave();toast('Connection created');
+function snapshot(){
+ return JSON.stringify(data);
 }
 
 function pushHistory(){
- undoStack.push({nodes:structuredCloneSafe(nodes),connections:structuredCloneSafe(connections)});
- if(undoStack.length>60)undoStack.shift();redoStack=[];
+ if(isLoading)return;
+
+ const snap=snapshot();
+
+ if(history[historyIndex]===snap)return;
+
+ history=history.slice(0,historyIndex+1);
+ history.push(snap);
+
+ if(history.length>60)history.shift();
+
+ historyIndex=history.length-1;
+ updateUndoButtons();
 }
+
+function restoreHistory(){
+ data=JSON.parse(history[historyIndex]);
+ renderAll();
+ scheduleSave();
+ updateUndoButtons();
+}
+
 function undo(){
- if(!undoStack.length){toast('Nothing to undo');return}
- redoStack.push({nodes:structuredCloneSafe(nodes),connections:structuredCloneSafe(connections)});
- const s=undoStack.pop();nodes=s.nodes;connections=s.connections;renderAll();queueDataSave();toast('Undo complete');
+ if(historyIndex<=0)return;
+ historyIndex--;
+ restoreHistory();
 }
+
 function redo(){
- if(!redoStack.length){toast('Nothing to redo');return}
- undoStack.push({nodes:structuredCloneSafe(nodes),connections:structuredCloneSafe(connections)});
- const s=redoStack.pop();nodes=s.nodes;connections=s.connections;renderAll();queueDataSave();toast('Redo complete');
+ if(historyIndex>=history.length-1)return;
+ historyIndex++;
+ restoreHistory();
 }
 
-function queueDataSave(){
- clearTimeout(saveTimer);setStatus('Unsaved changes');
- saveTimer=setTimeout(saveDataNow,500);
-}
-async function saveDataNow(){
- if(saving){saveAgain=true;return}
- saving=true;setStatus('Saving...');
- try{
-  const result=await googleRun(BACKEND.saveData,{nodes,connections});
-  if(!result||!result.success)throw new Error(result?.message||'Save failed');
-  setStatus('All changes saved','ok');
- }catch(e){setStatus('Save failed','err');toast(e.message||'Could not save to Google Sheets')}
- finally{saving=false;if(saveAgain){saveAgain=false;saveDataNow()}}
-}
-let settingsTimer=null,settingsPending={};
-function queueSettingsSave(part){
- settingsPending=Object.assign(settingsPending,part);
- clearTimeout(settingsTimer);
- settingsTimer=setTimeout(async()=>{
-  const payload=settingsPending;settingsPending={};
-  setStatus('Saving settings...');
-  try{
-   const result=await googleRun(BACKEND.saveSettings,payload);
-   if(!result||!result.success)throw new Error(result?.message||'Settings save failed');
-   setStatus('Settings saved','ok');
-  }catch(e){setStatus('Settings save failed','err');toast(e.message||'Settings save failed')}
- },350);
-}
-async function loadAll(){
- byId('loading').style.display='flex';setStatus('Loading...');
- try{
-  const result=await googleRun(BACKEND.load);
-  if(!result||!result.success)throw new Error(result?.message||'Could not load map');
-  nodes=Array.isArray(result.nodes)?result.nodes:[];
-  connections=Array.isArray(result.connections)?result.connections:[];
-  settings=normalizeSettings(result.settings);
-  setLayer(settings.view);
-  populateNodeForm();renderAll();
-  setStatus('Connected to Google Sheets','ok');
- }catch(e){
-  setStatus('Connection error','err');
-  toast(e.message||'Could not connect to Google Sheets');
-  byId('nodeList').innerHTML='<div class="empty">Could not load map data.<br>Check deployment access and Code.gs.</div>';
- }finally{byId('loading').style.display='none'}
+function updateUndoButtons(){
+ const buttons=document.querySelectorAll(".header-actions button");
+ if(buttons[0])buttons[0].disabled=historyIndex<=0;
+ if(buttons[1])buttons[1].disabled=historyIndex>=history.length-1;
 }
 
-function init(){
- initMap();
- loadAll();
- window.addEventListener('beforeunload',()=>{if(saveTimer)saveDataNow()});
+/* SETTINGS */
+
+function isNodeEnabled(type){
+ if(!settings.types)return true;
+ return settings.types[type]!==false;
 }
-window.addEventListener('load',init);
+
+function isConnectionEnabled(type){
+ if(!settings.connectionTypes)return true;
+ return settings.connectionTypes[type]!==false;
+}
+
+function getWire(type){
+ const defaultWire={
+  color:CONNECTION_COLORS[type]||"#16a36a",
+  width:type==="main_fiber"?4:3,
+  opacity:.95,
+  speed:1.2,
+  animated:type!=="wireless",
+  dotted:type==="wireless"
+ };
+
+ return {...defaultWire,...(settings.wire?.[type]||{})};
+}
+
+function applySettings(){
+ const view=settings.view||"road";
+ setMapView(view);
+}
+
+function setMapView(view){
+ currentView=view;
+
+ [roadLayer,satelliteLayer,labelsLayer,networkLayer].forEach(l=>{
+  if(map.hasLayer(l))map.removeLayer(l);
+ });
+
+ if(view==="satellite"){
+  satelliteLayer.addTo(map);
+  labelsLayer.addTo(map);
+ }else if(view==="network"){
+  networkLayer.addTo(map);
+ }else{
+  roadLayer.addTo(map);
+ }
+
+ settings.view=view;
+ renderAll();
+}
+
+map.on("baselayerchange",()=>{});
+
+function loadSettingsFromUrl(){
+ const params=new URLSearchParams(location.search);
+ if(params.has("view")){
+  setMapView(params.get("view"));
+ }
+}
+
+/* MARKERS */
+
+function markerIcon(type){
+ const config={
+  main_box:{cls:"main",icon:"⌂"},
+  sub_box:{cls:"sub",icon:"▣"},
+  pole:{cls:"pole",icon:"⚡"},
+  customer:{cls:"customer",icon:"👤"}
+ };
+
+ const c=config[type]||config.pole;
+
+ return L.divIcon({
+  className:"",
+  html:`<div class="marker ${c.cls}">${c.icon}</div>`,
+  iconSize:[36,36],
+  iconAnchor:[18,18]
+ });
+}
+
+function clearMap(){
+ Object.values(markers).forEach(m=>map.removeLayer(m));
+ Object.values(lines).forEach(l=>map.removeLayer(l));
+ bendMarkers.forEach(m=>map.removeLayer(m));
+
+ markers={};
+ lines={};
+ bendMarkers=[];
+}
+
+function addMarker(n){
+ if(!isNodeEnabled(n.type)||!validPosition(n))return;
+
+ const marker=L.marker([Number(n.lat),Number(n.lng)],{
+  icon:markerIcon(n.type),
+  draggable:true,
+  riseOnHover:true
+ });
+
+ marker.addTo(map);
+
+ marker.on("click",()=>{
+  if(connectionMode){
+   selectConnectionNode(n.id);
+  }else if(!addMode){
+   showNodeInfo(n.id);
+  }
+ });
+
+ marker.on("dragstart",()=>{
+  if(!isLoading)pushHistory();
+ });
+
+ marker.on("dragend",e=>{
+  const pos=e.target.getLatLng();
+  const node=getNode(n.id);
+  if(!node)return;
+
+  node.lat=pos.lat;
+  node.lng=pos.lng;
+
+  renderConnections();
+  scheduleSave();
+  pushHistory();
+ });
+
+ markers[n.id]=marker;
+}
+
+/* CONNECTIONS */
+
+function connectionPoints(c){
+ const from=getNode(c.from);
+ const to=getNode(c.to);
+
+ if(!from||!to||!validPosition(from)||!validPosition(to))return [];
+
+ const points=Array.isArray(c.points)?c.points:[];
+ return [
+  [Number(from.lat),Number(from.lng)],
+  ...points.map(p=>[Number(p.lat),Number(p.lng)]),
+  [Number(to.lat),Number(to.lng)]
+ ];
+}
+
+function renderConnections(){
+ Object.values(lines).forEach(l=>map.removeLayer(l));
+ lines={};
+
+ data.connections.forEach(c=>{
+  if(!isConnectionEnabled(c.type))return;
+
+  const points=connectionPoints(c);
+  if(points.length<2)return;
+
+  const wire=getWire(c.type);
+
+  const line=L.polyline(points,{
+   color:wire.color,
+   weight:Number(wire.width)||3,
+   opacity:Number(wire.opacity)||.9,
+   dashArray:wire.dotted?"7 8":(wire.animated?"9 9":null),
+   className:wire.animated?"network-line animated":"network-line"
+  }).addTo(map);
+
+  if(currentView==="network"&&!map.hasLayer(networkLayer)){
+   line.addTo(networkLayer);
+  }
+
+  line.on("click",()=>{
+   if(!connectionMode)showLineInfo(c.id);
+  });
+
+  line.on("dblclick",e=>{
+   L.DomEvent.stop(e);
+   addBendPoint(c.id,e.latlng);
+  });
+
+  lines[c.id]=line;
+ });
+}
+
+function addBendPoint(id,latlng){
+ const c=getConnection(id);
+ if(!c)return;
+
+ pushHistory();
+
+ if(!Array.isArray(c.points))c.points=[];
+
+ c.points.push({
+  lat:latlng.lat,
+  lng:latlng.lng
+ });
+
+ renderAll();
+ scheduleSave();
+ pushHistory();
+}
+
+function enableBendEditing(id){
+ const c=getConnection(id);
+ if(!c)return;
+
+ closeModal("lineModal");
+
+ const from=getNode(c.from);
+ const to=getNode(c.to);
+ if(!from||!to)return;
+
+ c.points=c.points||[];
+
+ const points=connectionPoints(c);
+
+ points.slice(1,-1).forEach((p,index)=>{
+  const marker=L.marker(p,{
+   draggable:true,
+   icon:L.divIcon({
+    className:"",
+    html:'<div style="width:13px;height:13px;background:#f59e0b;border:2px solid white;border-radius:50%"></div>',
+    iconSize:[13,13],
+    iconAnchor:[6,6]
+   })
+  }).addTo(map);
+
+  marker.on("dragstart",()=>pushHistory());
+
+  marker.on("dragend",e=>{
+   const pos=e.target.getLatLng();
+   c.points[index]={lat:pos.lat,lng:pos.lng};
+   renderConnections();
+   scheduleSave();
+   pushHistory();
+  });
+
+  bendMarkers.push(marker);
+ });
+
+ alert("Connection-এর মাঝখানের পয়েন্টগুলো Drag করে Line বাঁকাতে পারবেন। নতুন Bend Point দিতে Line-এ Double Click করুন।");
+}
+
+/* ADD NODE */
+
+function startAdd(type){
+ if(!isNodeEnabled(type)){
+  alert("এই Node Type Settings থেকে বন্ধ করা আছে।");
+  return;
+ }
+
+ addMode=type;
+ connectionMode=false;
+ showHint("নতুন "+TYPE_NAMES[type]+" বসাতে Map-এ ক্লিক করুন");
+}
+
+map.on("click",e=>{
+ if(addMode){
+  openNodeForm(addMode,null,e.latlng);
+ }
+});
+
+function getParents(type){
+ return data.items.filter(n=>{
+  if(type==="sub_box")return n.type==="main_box"||n.type==="sub_box";
+  if(type==="pole")return n.type==="main_box"||n.type==="sub_box";
+  if(type==="customer")return n.type==="pole"||n.type==="sub_box";
+  return n.type==="main_box";
+ });
+}
+
+function openNodeForm(type,id=null,position=null){
+ const node=id?getNode(id):null;
+
+ document.getElementById("nodeForm").reset();
+ document.getElementById("nodeId").value=id||"";
+ document.getElementById("nodeType").value=type;
+ document.getElementById("nodeTitle").textContent=node?"Edit "+TYPE_NAMES[type]:"Add "+TYPE_NAMES[type];
+
+ document.getElementById("nodeName").value=node?.name||"";
+ document.getElementById("nodeIP").value=node?.ip||"";
+ document.getElementById("nodeCode").value=node?.code||"";
+ document.getElementById("nodeAddress").value=node?.address||"";
+ document.getElementById("nodeNote").value=node?.note||"";
+
+ const lat=node?.lat??position?.lat??"";
+ const lng=node?.lng??position?.lng??"";
+
+ document.getElementById("nodeLat").value=lat;
+ document.getElementById("nodeLng").value=lng;
+
+ const parent=document.getElementById("nodeParent");
+ parent.innerHTML='<option value="">No Parent / Select Parent</option>';
+
+ getParents(type).filter(n=>n.id!==id).forEach(n=>{
+  parent.innerHTML+=`<option value="${esc(n.id)}">${esc(nodeLabel(n))}</option>`;
+ });
+
+ parent.value=node?.parentId||"";
+
+ addMode=null;
+ hideHint();
+ openModal("nodeModal");
+}
+
+document.getElementById("nodeForm").addEventListener("submit",e=>{
+ e.preventDefault();
+
+ const id=document.getElementById("nodeId").value;
+ const type=document.getElementById("nodeType").value;
+ const old=getNode(id);
+
+ const item={
+  id:id||uid(),
+  type:type,
+  name:document.getElementById("nodeName").value.trim(),
+  ip:document.getElementById("nodeIP").value.trim(),
+  code:document.getElementById("nodeCode").value.trim(),
+  address:document.getElementById("nodeAddress").value.trim(),
+  lat:Number(document.getElementById("nodeLat").value),
+  lng:Number(document.getElementById("nodeLng").value),
+  note:document.getElementById("nodeNote").value.trim(),
+  parentId:document.getElementById("nodeParent").value
+ };
+
+ if(!item.name)return alert("Name দিতে হবে।");
+ if(!Number.isFinite(item.lat)||!Number.isFinite(item.lng))return alert("Location সঠিক নয়।");
+
+ if(old){
+  pushHistory();
+  Object.assign(old,item);
+ }else{
+  pushHistory();
+  data.items.push(item);
+ }
+
+ closeModal("nodeModal");
+ renderAll();
+ scheduleSave();
+ pushHistory();
+});
+
+/* NODE INFORMATION */
+
+function infoRow(label,value){
+ return `<div class="info-line"><span>${esc(label)}</span><strong>${esc(value||"-")}</strong></div>`;
+}
+
+function showNodeInfo(id){
+ const n=getNode(id);
+ if(!n)return;
+
+ selectedNode=id;
+
+ const parent=getNode(n.parentId);
+ const childCount=data.items.filter(x=>x.parentId===id).length;
+
+ const linked=data.connections.filter(c=>c.from===id||c.to===id);
+
+ let html=
+  infoRow("Type",TYPE_NAMES[n.type])+
+  infoRow("Name",n.name)+
+  infoRow("IP",n.ip)+
+  infoRow("Code",n.code)+
+  infoRow("Address",n.address)+
+  infoRow("Parent",parent?.name)+
+  infoRow("Latitude",n.lat)+
+  infoRow("Longitude",n.lng)+
+  infoRow("Connected Devices",childCount)+
+  infoRow("Connections",linked.length)+
+  infoRow("Note",n.note);
+
+ html+='<div class="section-label">CONNECTED DEVICES</div>';
+
+ const children=data.items.filter(x=>x.parentId===id);
+
+ html+=children.map(x=>
+  `<div class="connection-item">${esc(nodeLabel(x))}</div>`
+ ).join("")||'<div class="empty">No child devices</div>';
+
+ html+='<div class="section-label">CONNECTIONS</div>';
+
+ html+=linked.map(c=>{
+  const other=getNode(c.from===id?c.to:c.from);
+  return `<div class="connection-item">${esc(CONNECTION_NAMES[c.type])} → ${esc(other?.name||"Unknown")}</div>`;
+ }).join("")||'<div class="empty">No connections</div>';
+
+ document.getElementById("infoTitle").textContent=TYPE_NAMES[n.type]+" Information";
+ document.getElementById("infoContent").innerHTML=html;
+
+ document.getElementById("infoActions").innerHTML=`
+  <button class="btn" onclick="openConnectionFor('${id}')">+ Connection</button>
+  <button class="btn blue" onclick="editNode('${id}')">Edit</button>
+  <button class="btn red" onclick="deleteNode('${id}')">Delete</button>
+ `;
+
+ openModal("infoModal");
+}
+
+function editNode(id){
+ const n=getNode(id);
+ if(!n)return;
+ closeModal("infoModal");
+ openNodeForm(n.type,id);
+}
+
+/* DELETE NODE */
+
+function deleteNode(id){
+ const n=getNode(id);
+ if(!n)return;
+
+ const linked=data.connections.some(c=>c.from===id||c.to===id);
+ const children=data.items.some(x=>x.parentId===id);
+
+ if(linked||children){
+  alert("এই Device-এর সাথে Connection অথবা Child Device যুক্ত আছে। আগে সেগুলো সরান।");
+  return;
+ }
+
+ if(!confirm("এই Device Delete করবেন?"))return;
+
+ pushHistory();
+ data.items=data.items.filter(x=>x.id!==id);
+
+ closeModal("infoModal");
+ renderAll();
+ scheduleSave();
+ pushHistory();
+}
+
+/* CONNECTION CREATION */
+
+function updateConnectionOptions(){
+ const from=document.getElementById("connectionFrom");
+ const to=document.getElementById("connectionTo");
+
+ from.innerHTML="";
+ to.innerHTML="";
+
+ data.items.forEach(n=>{
+  const option=`<option value="${esc(n.id)}">${esc(nodeLabel(n))}</option>`;
+  from.innerHTML+=option;
+  to.innerHTML+=option;
+ });
+}
+
+function startConnection(){
+ if(data.items.length<2){
+  alert("Connection করার জন্য কমপক্ষে ২টি Device লাগবে।");
+  return;
+ }
+
+ connectionMode=true;
+ connectionStart=null;
+ addMode=null;
+ showHint("প্রথম Device-এ ক্লিক করুন, তারপর দ্বিতীয় Device-এ ক্লিক করুন");
+}
+
+function selectConnectionNode(id){
+ if(!connectionStart){
+  connectionStart=id;
+  showHint("এখন যে Device-এর সাথে Connect করবেন সেটিতে ক্লিক করুন");
+  return;
+ }
+
+ if(connectionStart===id){
+  alert("একই Device নির্বাচন করা যাবে না।");
+  return;
+ }
+
+ openConnectionForm(null,connectionStart,id);
+ connectionMode=false;
+ connectionStart=null;
+ hideHint();
+}
+
+function openConnectionFor(id){
+ closeModal("infoModal");
+ openConnectionForm(null,id,null);
+}
+
+function openConnectionForm(id=null,from=null,to=null){
+ document.getElementById("connectionForm").reset();
+ document.getElementById("connectionId").value=id||"";
+
+ updateConnectionOptions();
+
+ const c=id?getConnection(id):null;
+
+ document.getElementById("connectionTitle").textContent=c?"Edit Connection":"Create Connection";
+ document.getElementById("connectionType").value=c?.type||"main_fiber";
+ document.getElementById("connectionFrom").value=c?.from||from||"";
+ document.getElementById("connectionTo").value=c?.to||to||"";
+
+ openModal("connectionModal");
+}
+
+document.getElementById("connectionForm").addEventListener("submit",e=>{
+ e.preventDefault();
+
+ const id=document.getElementById("connectionId").value;
+ const from=document.getElementById("connectionFrom").value;
+ const to=document.getElementById("connectionTo").value;
+ const type=document.getElementById("connectionType").value;
+
+ if(from===to)return alert("একই Device-এ Connection করা যাবে না।");
+ if(!getNode(from)||!getNode(to))return alert("Device নির্বাচন সঠিক নয়।");
+
+ const old=id?getConnection(id):null;
+
+ pushHistory();
+
+ if(old){
+  old.from=from;
+  old.to=to;
+  old.type=type;
+ }else{
+  data.connections.push({
+   id:uid(),
+   from:from,
+   to:to,
+   type:type,
+   points:[]
+  });
+ }
+
+ closeModal("connectionModal");
+ renderAll();
+ scheduleSave();
+ pushHistory();
+});
+
+/* CONNECTION INFORMATION */
+
+function showLineInfo(id){
+ const c=getConnection(id);
+ if(!c)return;
+
+ selectedLine=id;
+
+ const from=getNode(c.from);
+ const to=getNode(c.to);
+
+ document.getElementById("lineContent").innerHTML=
+  infoRow("Connection Type",CONNECTION_NAMES[c.type])+
+  infoRow("From",from?.name)+
+  infoRow("To",to?.name)+
+  infoRow("Bend Points",c.points?.length||0);
+
+ document.getElementById("lineActions").innerHTML=`
+  <button class="btn" onclick="enableBendEditing('${id}')">Edit Line</button>
+  <button class="btn blue" onclick="openConnectionForm('${id}')">Edit Connection</button>
+  <button class="btn red" onclick="deleteConnection('${id}')">Delete</button>
+ `;
+
+ openModal("lineModal");
+}
+
+function deleteConnection(id){
+ if(!confirm("Connection Delete করবেন?"))return;
+
+ pushHistory();
+ data.connections=data.connections.filter(c=>c.id!==id);
+
+ closeModal("lineModal");
+ renderAll();
+ scheduleSave();
+ pushHistory();
+}
+
+/* RENDER */
+
+function renderAll(){
+ if(!map)return;
+
+ clearMap();
+
+ data.items.forEach(addMarker);
+ renderConnections();
+
+ updateStats();
+}
+
+function updateStats(){
+ const count=type=>data.items.filter(x=>x.type===type).length;
+
+ document.getElementById("mainCount").textContent=count("main_box");
+ document.getElementById("boxCount").textContent=count("sub_box");
+ document.getElementById("poleCount").textContent=count("pole");
+ document.getElementById("customerCount").textContent=count("customer");
+}
+
+/* MAP VIEW */
+
+function resetView(){
+ const all=data.items.filter(validPosition);
+
+ if(all.length){
+  const bounds=L.latLngBounds(all.map(x=>[Number(x.lat),Number(x.lng)]));
+  map.fitBounds(bounds,{padding:[55,55],maxZoom:17});
+ }else{
+  map.setView([22.3569,91.7832],13);
+ }
+}
+
+/* MAP RESIZE */
+
+window.addEventListener("resize",()=>{
+ setTimeout(()=>map.invalidateSize(),150);
+});
+
+/* KEYBOARD SHORTCUTS */
+
+document.addEventListener("keydown",e=>{
+ if(e.target.matches("input,textarea,select"))return;
+
+ if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="z"){
+  e.preventDefault();
+  undo();
+ }
+
+ if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="y"){
+  e.preventDefault();
+  redo();
+ }
+
+ if(e.key==="Escape"){
+  addMode=null;
+  connectionMode=false;
+  hideHint();
+ }
+});
+
+/* INITIAL LOAD */
+
+(async function init(){
+ if(!googleAvailable()){
+  setStatus("Open through Google Apps Script","error");
+  alert("এই Map Google Apps Script Web App-এর মাধ্যমে খুলুন।");
+  return;
+ }
+
+ await loadFromSheet();
+ loadSettingsFromUrl();
+})();
 </script>
 </body>
 </html>
