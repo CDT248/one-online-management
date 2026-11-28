@@ -1,1003 +1,236 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Map Settings | ONE ONLINE</title>
-
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-
 <style>
-:root{
- --bg:#080f1c;
- --panel:#111c2e;
- --panel2:#17243a;
- --panel3:#1b2b43;
- --text:#e8f0fc;
- --muted:#91a2bb;
- --line:#26364d;
- --primary:#10b981;
- --primary-dark:#087f5b;
- --danger:#fb626b;
- --shadow:0 8px 25px rgba(0,0,0,.20);
-}
-*{box-sizing:border-box}
-body{
- margin:0;
- background:var(--bg);
- color:var(--text);
- font-family:Inter,Arial,sans-serif;
-}
-button,input,select{font:inherit}
-button{cursor:pointer}
-.container{max-width:1250px;margin:auto;padding:25px}
-
-.topbar{
- display:flex;justify-content:space-between;
- align-items:center;gap:15px;margin-bottom:24px;
-}
-.heading{display:flex;align-items:center;gap:13px}
-.heading-icon{
- width:52px;height:52px;border-radius:15px;
- display:grid;place-items:center;
- background:#103b36;color:#5eeac0;font-size:26px;
- border:1px solid #1b6654;
-}
-h1{font-size:25px;margin:0 0 6px;font-weight:800}
-.subtitle{font-size:12px;color:var(--muted)}
-
-.btn{
- border:1px solid transparent;padding:10px 15px;
- border-radius:9px;font-size:12px;font-weight:700;
- transition:.2s;
-}
-.btn-primary{background:var(--primary-dark);color:white}
-.btn-primary:hover{background:#09966d}
-.btn-light{
- background:#1b2a40;color:#d9e5f5;border-color:#30435d;
-}
-.btn-light:hover{background:#263a55}
-.btn-danger{
- background:#3b202b;color:#ff9aa2;border-color:#67313c;
-}
-.btn-small{padding:7px 10px;font-size:10px}
-
-.section{
- background:var(--panel);
- border:1px solid var(--line);
- border-radius:15px;
- box-shadow:var(--shadow);
- margin-bottom:20px;
- overflow:hidden;
-}
-.section-head{
- padding:18px 21px;
- border-bottom:1px solid var(--line);
- display:flex;align-items:center;
- justify-content:space-between;gap:12px;
- background:#131f32;
-}
-.section-title{display:flex;align-items:center;gap:11px}
-.section-icon{
- width:38px;height:38px;border-radius:11px;
- display:grid;place-items:center;
- background:#1c3445;color:#68e3bb;font-size:19px;
-}
-.section-title h2{font-size:15px;margin:0 0 4px}
-.section-title p{font-size:11px;color:var(--muted);margin:0}
-.section-body{padding:20px}
-
-/* MAP DISPLAY */
-.view-grid{
- display:grid;
- grid-template-columns:repeat(4,minmax(0,1fr));
- gap:14px;
-}
-.view-card{
- min-width:0;
- border:2px solid #293a52;
- border-radius:14px;
- padding:10px;
- background:#142136;
- cursor:pointer;
- text-align:left;
- transition:.2s;
-}
-.view-card:hover{
- border-color:#418e79;
- transform:translateY(-2px);
-}
-.view-card.active{
- border-color:#07966c;
- background:#102b2a;
- box-shadow:0 0 0 1px rgba(16,185,129,.08);
-}
-.preview{
- height:116px;
- border-radius:9px;
- overflow:hidden;
- position:relative;
- background:#1a293d;
- margin-bottom:11px;
-}
-.mini-map{width:100%;height:100%;z-index:1}
-.mini-map .leaflet-control-attribution{font-size:6px!important}
-.mini-map .leaflet-control-container{display:none}
-
-.view-name{font-size:12px;font-weight:800;display:block;color:#edf5ff}
-.view-desc{
- font-size:10px;color:#91a2bb;
- display:block;line-height:1.5;margin-top:5px;min-height:30px;
-}
-.view-radio{
- display:flex;justify-content:space-between;
- align-items:center;margin-top:8px;
- font-size:10px;font-weight:700;color:#dce7f6;
-}
-.radio-dot{
- width:17px;height:17px;border-radius:50%;
- border:2px solid #52657f;
- display:grid;place-items:center;
-}
-.active .radio-dot{border-color:#10b981}
-.active .radio-dot:after{
- content:"";width:8px;height:8px;
- border-radius:50%;background:#10b981;
-}
-
-/* NETWORK PREVIEW */
-.network-preview{
- background:#0b1728;
- background-image:radial-gradient(#31465f 1px,transparent 1px);
- background-size:15px 15px;
-}
-.network-preview svg{width:100%;height:100%;position:absolute;inset:0}
-.network-preview .net-path{
- fill:none;stroke:#19d69a;stroke-width:3;
- stroke-dasharray:5 7;stroke-linecap:round;
- animation:networkMove 1.2s linear infinite;
-}
-.network-preview .node{
- fill:#08bd8a;stroke:#eafff7;stroke-width:2.5;
-}
-.network-preview .node-box{fill:#2878d0}
-@keyframes networkMove{to{stroke-dashoffset:-24}}
-
-.hint{
- padding:12px 14px;
- margin-top:16px;
- border-radius:9px;
- background:#152b40;
- border:1px solid #25445c;
- color:#a9c8df;
- font-size:11px;
- line-height:1.8;
-}
-
-/* LOCATION AND CONNECTION TYPES */
-.form-row{display:flex;gap:10px;flex-wrap:wrap;align-items:end}
-.field{flex:1;min-width:140px}
-.field label{
- display:block;font-size:11px;font-weight:700;
- margin-bottom:7px;color:#b7c7dc;
-}
-.field input,.field select{
- width:100%;height:40px;
- border:1px solid #34465e;
- background:#0d192a;color:#e8f0fc;
- border-radius:8px;padding:0 10px;
- outline:none;font-size:12px;
-}
-.field input:focus,.field select:focus{border-color:#10b981}
-input[type=color]{
- padding:4px;height:40px;cursor:pointer;
- background:#0d192a;border:1px solid #34465e;
-}
-input[type=checkbox]{accent-color:#10b981}
-
-.item-list{display:grid;gap:9px;margin-top:15px}
-.item{
- border:1px solid #293a52;
- background:#142136;
- padding:11px;border-radius:10px;
- display:flex;align-items:center;
- justify-content:space-between;gap:10px;
-}
-.item-left{display:flex;align-items:center;gap:10px;min-width:0}
-.item-icon{
- width:38px;height:38px;flex-shrink:0;
- border-radius:9px;display:grid;place-items:center;
- background:#203149;font-size:19px;
-}
-.item-name{font-size:12px;font-weight:800;color:#e8f0fc}
-.item-meta{font-size:10px;color:#91a2bb;margin-top:4px}
-.color-dot{
- width:11px;height:11px;border-radius:50%;
- display:inline-block;border:1px solid #ffffff35;
-}
-.item-actions{display:flex;gap:5px;flex-wrap:wrap}
-.item.disabled{opacity:.4}
-.empty{
- text-align:center;padding:20px;color:#8193ac;
- font-size:12px;border:1px dashed #34465e;border-radius:9px;
-}
-
-/* LINE SETTINGS */
-.line-options{
- display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px;
-}
-.option{
- border:1px solid #293b54;
- background:#142136;
- border-radius:10px;padding:14px;
-}
-.option-title{font-size:12px;font-weight:800;margin-bottom:5px;color:#e8f0fc}
-.option-desc{font-size:10px;color:#91a2bb;line-height:1.6}
-.switch-row{display:flex;justify-content:space-between;align-items:center;gap:12px}
-.switch{position:relative;width:42px;height:23px;flex-shrink:0}
-.switch input{display:none}
-.switch span{
- position:absolute;inset:0;border-radius:30px;
- background:#43536a;transition:.2s;
-}
-.switch span:before{
- content:"";position:absolute;width:17px;height:17px;
- border-radius:50%;background:#fff;left:3px;top:3px;transition:.2s;
-}
-.switch input:checked+span{background:#07966c}
-.switch input:checked+span:before{transform:translateX(19px)}
-
-.range-line{display:flex;align-items:center;gap:10px;margin-top:10px}
-.range-line input{width:100%;accent-color:#10b981}
-.range-value{
- font-size:11px;font-weight:800;min-width:38px;
- text-align:right;color:#7be8c4;
-}
-.line-demo{
- background:#091525;border:1px solid #293e55;
- border-radius:11px;padding:18px;
- margin-top:15px;display:flex;
- align-items:center;gap:12px;
- color:#dce9f8;font-size:10px;
-}
-.demo-wire{height:4px;flex:1}
-@keyframes demoMove{to{background-position:22px 0}}
-
-.footer{text-align:center;color:#71839d;font-size:10px;padding:10px 0 25px}
-
-/* MODAL */
-.modal-backdrop{
- position:fixed;inset:0;background:rgba(0,0,0,.75);
- display:none;align-items:center;justify-content:center;
- padding:15px;z-index:500;
-}
-.modal-backdrop.show{display:flex}
-.modal{
- width:100%;max-width:410px;
- background:#142136;
- border:1px solid #34465e;
- border-radius:14px;padding:20px;
- box-shadow:0 20px 70px #0009;
-}
-.modal h3{margin:0 0 16px;font-size:16px;color:#f1f6ff}
-.modal .field{margin-bottom:12px}
-.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:15px}
-
-.toast{
- position:fixed;bottom:20px;right:20px;
- background:#18382f;color:#c9ffec;
- border:1px solid #26765c;
- padding:12px 17px;border-radius:9px;
- font-size:11px;font-weight:700;
- box-shadow:0 8px 30px #0005;
- opacity:0;transform:translateY(12px);
- transition:.25s;pointer-events:none;z-index:1000;
-}
-.toast.show{opacity:1;transform:translateY(0)}
-
-@media(max-width:900px){
- .view-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
-}
-@media(max-width:600px){
- .container{padding:13px}
- h1{font-size:20px}
- .heading-icon{width:44px;height:44px}
- .topbar{align-items:flex-start}
- .section-head{padding:14px}
- .section-body{padding:14px}
- .view-grid{gap:9px}
- .preview{height:95px}
- .view-name{font-size:11px}
- .view-desc{font-size:9px}
- .line-options{grid-template-columns:1fr}
- .item{align-items:flex-start}
- .item-actions{justify-content:flex-end}
-}
+:root{--bg:#08111f;--panel:#101d30;--panel2:#172840;--line:#293b54;--text:#edf4ff;--muted:#91a4bf;--green:#10b981;--red:#fb626b;--shadow:0 12px 35px #0005}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:Inter,Arial,sans-serif;background:var(--bg);color:var(--text)}button,input,select{font:inherit}button{cursor:pointer}
+.topbar{min-height:62px;display:flex;align-items:center;gap:12px;padding:10px 20px;background:#0d192b;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:20}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:14px}.brand-icon{width:36px;height:36px;border-radius:10px;background:#123d35;display:grid;place-items:center;font-size:19px}.top-actions{margin-left:auto;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.btn{border:1px solid #344963;background:#1a2b43;color:#e8f1ff;border-radius:8px;padding:9px 13px;font-size:11px;font-weight:700}.btn:hover{filter:brightness(1.15)}.btn.primary{background:#087f5b;border-color:#0c9c70;color:white}.btn.danger{background:#44232d;border-color:#733541;color:#ffabb2}
+.status{font-size:10px;color:#9eb1ca}.status:before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:#e5a23b;margin-right:6px}.status.ok:before{background:#10b981}.status.err:before{background:#fb626b}
+.wrap{width:min(1120px,calc(100% - 28px));margin:22px auto 50px}.intro{margin-bottom:18px}.intro h1{font-size:23px;margin:0 0 7px}.intro p{font-size:12px;color:var(--muted);margin:0;line-height:1.7}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.card{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:17px;box-shadow:var(--shadow);min-width:0}.card.full{grid-column:1/-1}.card-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}.card-head h2{font-size:14px;margin:0}.card-head p{font-size:10px;color:var(--muted);margin:5px 0 0}
+.view-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}.view-card{border:1px solid #344963;background:#14243a;color:#eaf2ff;border-radius:10px;padding:13px 8px;text-align:center;min-height:88px}.view-card .emoji{font-size:23px;display:block;margin-bottom:7px}.view-card b{font-size:10px}.view-card.active{border-color:#10b981;background:#103b35;box-shadow:inset 0 0 0 1px #10b981}
+.type-list{display:grid;gap:9px}.type-row{display:grid;grid-template-columns:44px minmax(100px,1fr) 105px 92px auto;gap:9px;align-items:center;padding:10px;background:#14243a;border:1px solid #2b405c;border-radius:9px}.type-row.connection{grid-template-columns:44px minmax(100px,1fr) 110px auto}.type-icon{height:38px;width:42px;border:1px solid #40536d;border-radius:8px;background:#0a1728;color:white;text-align:center;font-size:19px}.type-name,.type-id{width:100%;min-width:0;background:#091729;border:1px solid #354a66;border-radius:7px;color:#f1f6ff;padding:9px;font-size:10px;outline:none}.type-id{color:#9eb1ca}.color-input{width:100%;height:36px;padding:3px;background:#091729;border:1px solid #354a66;border-radius:7px}.switch{display:flex;align-items:center;gap:6px;font-size:10px;color:#c5d3e5;white-space:nowrap}.switch input{accent-color:#10b981;width:15px;height:15px}.mini-btn{border:1px solid #40536d;background:#1b2e48;color:#eaf2ff;border-radius:7px;padding:8px 9px;font-size:10px;font-weight:700}.mini-btn.del{color:#ffabb2;border-color:#733541;background:#44232d}
+.add-row{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}.add-row input{min-width:0;flex:1;background:#091729;border:1px solid #354a66;color:white;border-radius:8px;padding:10px;font-size:11px}
+.wire-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:13px}.field{min-width:0}.field label{display:block;font-size:10px;color:#b9c9dd;font-weight:700;margin-bottom:7px}.field input[type=color]{width:100%;height:39px;background:#091729;border:1px solid #354a66;border-radius:8px;padding:4px}.field input[type=range]{width:100%;accent-color:#10b981}.field input[type=number]{width:100%;background:#091729;border:1px solid #354a66;color:white;border-radius:8px;padding:9px}.range-line{display:flex;align-items:center;gap:10px}.range-line input{flex:1;min-width:0}.range-value{width:46px;text-align:right;color:#dce9f8;font-size:10px;font-weight:700}.checks{display:flex;gap:18px;flex-wrap:wrap;margin-top:16px}.checks label{display:flex;gap:7px;align-items:center;font-size:11px;color:#d0dced}.checks input{accent-color:#10b981;width:16px;height:16px}
+.footer-actions{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:16px;flex-wrap:wrap}.hint{font-size:10px;color:var(--muted);line-height:1.6}.notice{border:1px solid #735d2e;background:#382f1a;color:#f6dda0;padding:10px 12px;border-radius:9px;font-size:10px;line-height:1.6;margin-top:12px}
+.loading{position:fixed;inset:0;background:#08111feF;z-index:50;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;font-size:12px}.spinner{width:30px;height:30px;border:3px solid #344963;border-top-color:#10b981;border-radius:50%;animation:spin .8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
+.toast{position:fixed;z-index:80;bottom:20px;left:50%;transform:translate(-50%,15px);opacity:0;pointer-events:none;background:#17382f;color:#d7fff0;border:1px solid #26765c;padding:11px 16px;border-radius:9px;font-size:11px;font-weight:700;transition:.2s;max-width:90vw;text-align:center}.toast.show{opacity:1;transform:translate(-50%,0)}
+@media(max-width:760px){.grid{grid-template-columns:1fr}.card.full{grid-column:auto}.topbar{padding:9px 12px;align-items:flex-start}.top-actions{gap:5px}.btn{padding:8px 9px;font-size:10px}.status{display:none}.wrap{margin-top:16px}.view-grid{grid-template-columns:repeat(2,1fr)}.type-row{grid-template-columns:40px minmax(80px,1fr) 75px auto;gap:6px}.type-row .type-color{grid-column:2}.type-row .switch{grid-column:3}.type-row.connection{grid-template-columns:40px minmax(80px,1fr) 75px auto}.type-row.connection .switch{grid-column:auto}.type-row .type-id{display:none}.type-row .mini-btn{padding:7px}.wire-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:430px){.brand{font-size:11px}.brand-icon{width:31px;height:31px}.top-actions .btn{font-size:9px;padding:7px}.intro h1{font-size:19px}.card{padding:13px}.type-row{grid-template-columns:36px minmax(70px,1fr) 65px auto}.type-icon{width:35px}.type-row.connection{grid-template-columns:36px minmax(70px,1fr) 65px auto}.wire-grid{grid-template-columns:1fr}.footer-actions{align-items:stretch}.footer-actions .btn{flex:1}}
 </style>
 </head>
-
 <body>
-<div class="container">
-
 <header class="topbar">
- <div class="heading">
-  <div class="heading-icon">🗺️</div>
-  <div>
-   <h1>Map Settings</h1>
-   <div class="subtitle">Manage your network map, locations and connections from one place.</div>
-  </div>
+ <div class="brand"><div class="brand-icon">⚙️</div><div>ONE ONLINE<br><small style="font-size:9px;color:#91a4bf;font-weight:600">NETWORK MAP SETTINGS</small></div></div>
+ <div class="top-actions">
+  <span id="syncStatus" class="status">Connecting...</span>
+  <button class="btn" onclick="goMap()">← Back to Map</button>
+  <button class="btn primary" onclick="saveAll()">💾 Save Settings</button>
  </div>
- <button class="btn btn-primary" onclick="goMap()">← Back to Map</button>
 </header>
 
-<!-- MAP DISPLAY -->
-<section class="section">
- <div class="section-head">
-  <div class="section-title">
-   <div class="section-icon">🌍</div>
-   <div>
-    <h2>Map Display</h2>
-    <p>Choose your default map style</p>
+<main class="wrap">
+ <div class="intro"><h1>Map Settings</h1><p>Control map appearance, location types, connection types and network line animation. Changes are saved to your Google Sheet.</p></div>
+ <div class="grid">
+  <section class="card">
+   <div class="card-head"><div><h2>🌍 Map View</h2><p>Select the default map layer</p></div></div>
+   <div class="view-grid" id="viewGrid">
+    <button class="view-card active" data-view="road" onclick="chooseView('road')"><span class="emoji">🗺️</span><b>Road Map</b></button>
+    <button class="view-card" data-view="satellite" onclick="chooseView('satellite')"><span class="emoji">🛰️</span><b>Satellite</b></button>
+    <button class="view-card" data-view="hybrid" onclick="chooseView('hybrid')"><span class="emoji">🌐</span><b>Hybrid</b></button>
+    <button class="view-card" data-view="network" onclick="chooseView('network')"><span class="emoji">🔗</span><b>Network Only</b></button>
    </div>
-  </div>
+  </section>
+
+  <section class="card">
+   <div class="card-head"><div><h2>📍 Location Types</h2><p>Change labels, icons, colors and visibility</p></div></div>
+   <div class="type-list" id="nodeTypes"></div>
+   <div class="add-row"><input id="newNodeName" placeholder="New location type name"><button class="btn" onclick="addNodeType()">＋ Add Type</button></div>
+   <div class="notice">Note: Existing locations keep their saved type IDs. Do not change or delete a type ID after using it for saved locations.</div>
+  </section>
+
+  <section class="card full">
+   <div class="card-head"><div><h2>🔌 Connection Types</h2><p>Manage the line types used between boxes, poles and customers</p></div></div>
+   <div class="type-list" id="connectionTypes"></div>
+   <div class="add-row"><input id="newConnectionName" placeholder="New connection type name"><button class="btn" onclick="addConnectionType()">＋ Add Connection</button></div>
+  </section>
+
+  <section class="card full">
+   <div class="card-head"><div><h2>〰️ Network Line Appearance</h2><p>Control how connection lines look and move on the map</p></div></div>
+   <div class="wire-grid">
+    <div class="field"><label>Default Line Color</label><input id="wireColor" type="color" value="#19d69a"></div>
+    <div class="field"><label>Line Width: <span id="widthText">4 px</span></label><div class="range-line"><input id="wireWidth" type="range" min="1" max="10" step="1" value="4" oninput="updateRangeText()"><span class="range-value" id="widthValue">4 px</span></div></div>
+    <div class="field"><label>Line Opacity: <span id="opacityText">95%</span></label><div class="range-line"><input id="wireOpacity" type="range" min="10" max="100" step="5" value="95" oninput="updateRangeText()"><span class="range-value" id="opacityValue">95%</span></div></div>
+    <div class="field"><label>Animation Speed: <span id="speedText">1.1x</span></label><div class="range-line"><input id="wireSpeed" type="range" min="0.2" max="5" step="0.1" value="1.1" oninput="updateRangeText()"><span class="range-value" id="speedValue">1.1x</span></div></div>
+   </div>
+   <div class="checks">
+    <label><input id="wireAnimated" type="checkbox" checked> Animated moving dots</label>
+    <label><input id="wireDotted" type="checkbox" checked> Dotted line style</label>
+   </div>
+  </section>
  </div>
-
- <div class="section-body">
-  <div class="view-grid">
-
-   <div class="view-card" data-view="road" onclick="selectView('road')">
-    <div class="preview"><div class="mini-map" id="roadPreview"></div></div>
-    <span class="view-name">🗺️ Road Map</span>
-    <span class="view-desc">Real roads, streets, buildings and area names.</span>
-    <div class="view-radio"><span>Road View</span><span class="radio-dot"></span></div>
-   </div>
-
-   <div class="view-card" data-view="satellite" onclick="selectView('satellite')">
-    <div class="preview"><div class="mini-map" id="satellitePreview"></div></div>
-    <span class="view-name">🛰️ Satellite</span>
-    <span class="view-desc">Real satellite image of land, buildings and roads.</span>
-    <div class="view-radio"><span>Satellite View</span><span class="radio-dot"></span></div>
-   </div>
-
-   <div class="view-card" data-view="hybrid" onclick="selectView('hybrid')">
-    <div class="preview"><div class="mini-map" id="hybridPreview"></div></div>
-    <span class="view-name">🌍 Hybrid</span>
-    <span class="view-desc">Satellite image with road and place labels.</span>
-    <div class="view-radio"><span>Hybrid View</span><span class="radio-dot"></span></div>
-   </div>
-
-   <div class="view-card" data-view="network" onclick="selectView('network')">
-    <div class="preview network-preview">
-     <svg viewBox="0 0 250 116" preserveAspectRatio="none">
-      <path class="net-path" d="M28 35 L90 62 L145 30"/>
-      <path class="net-path" d="M90 62 L145 91"/>
-      <path class="net-path" d="M145 30 L210 55"/>
-      <circle class="node node-box" cx="28" cy="35" r="6"/>
-      <circle class="node" cx="90" cy="62" r="6"/>
-      <circle class="node node-box" cx="145" cy="30" r="6"/>
-      <circle class="node" cx="145" cy="91" r="6"/>
-      <circle class="node" cx="210" cy="55" r="6"/>
-     </svg>
-    </div>
-    <span class="view-name">📡 Network Only</span>
-    <span class="view-desc">Only your network locations and connection lines.</span>
-    <div class="view-radio"><span>Network View</span><span class="radio-dot"></span></div>
-   </div>
-
-  </div>
-
-  <div class="hint">
-   💡 <b>Choose your map style:</b><br>
-   🗺️ Road Map — Real roads, streets and area names.<br>
-   🛰️ Satellite — Real satellite images.<br>
-   🌍 Hybrid — Satellite images with road and place labels.<br>
-   📡 Network Only — Only your network locations and connection lines.
-  </div>
+ <div class="footer-actions">
+  <div class="hint">Settings are stored in the dedicated Network Map Google Sheet.<br>After saving, return to the map and refresh if changes are not visible.</div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" onclick="resetDefaults()">↺ Restore Defaults</button><button class="btn primary" onclick="saveAll()">💾 Save All Settings</button></div>
  </div>
-</section>
+</main>
 
-<!-- LOCATION TYPES -->
-<section class="section">
- <div class="section-head">
-  <div class="section-title">
-   <div class="section-icon">📍</div>
-   <div>
-    <h2>Location Types</h2>
-    <p>Manage Main Box, Sub Box, Pole, Customer and more</p>
-   </div>
-  </div>
-  <button class="btn btn-primary" onclick="openTypeModal()">＋ Add Type</button>
- </div>
- <div class="section-body">
-  <div class="hint" style="margin-top:0">
-   Customize the marker icon and color for each location type. Hide a type to make it unavailable for new locations.
-  </div>
-  <div class="item-list" id="typeList"></div>
- </div>
-</section>
-
-<!-- CONNECTION TYPES -->
-<section class="section">
- <div class="section-head">
-  <div class="section-title">
-   <div class="section-icon">🔗</div>
-   <div>
-    <h2>Connection Types</h2>
-    <p>Manage your network cable and connection types</p>
-   </div>
-  </div>
-  <button class="btn btn-primary" onclick="openConnectionModal()">＋ Add Connection</button>
- </div>
- <div class="section-body">
-  <div class="hint" style="margin-top:0">
-   Create Fiber, Cable, Wireless or custom connection types. Every connection type can have its own color.
-  </div>
-  <div class="item-list" id="connectionList"></div>
- </div>
-</section>
-
-<!-- LIVE CONNECTION LINE -->
-<section class="section">
- <div class="section-head">
-  <div class="section-title">
-   <div class="section-icon">〰️</div>
-   <div>
-    <h2>Live Connection Line</h2>
-    <p>Customize your network connection line appearance</p>
-   </div>
-  </div>
- </div>
-
- <div class="section-body">
-  <div class="line-options">
-
-   <div class="option">
-    <div class="switch-row">
-     <div>
-      <div class="option-title">Live Animation</div>
-      <div class="option-desc">Moving dots show the connection flow.</div>
-     </div>
-     <label class="switch">
-      <input type="checkbox" id="animated" checked onchange="saveWire()">
-      <span></span>
-     </label>
-    </div>
-   </div>
-
-   <div class="option">
-    <div class="switch-row">
-     <div>
-      <div class="option-title">Dotted Line</div>
-      <div class="option-desc">Enable dotted or solid connection lines.</div>
-     </div>
-     <label class="switch">
-      <input type="checkbox" id="dotted" checked onchange="saveWire()">
-      <span></span>
-     </label>
-    </div>
-   </div>
-
-   <div class="option">
-    <div class="option-title">Default Line Color</div>
-    <div class="option-desc">Default color for network connections.</div>
-    <input type="color" id="lineColor" value="#19d69a" style="margin-top:10px" onchange="saveWire()">
-   </div>
-
-   <div class="option">
-    <div class="option-title">Line Width</div>
-    <div class="option-desc">Change the thickness of connection lines.</div>
-    <div class="range-line">
-     <input type="range" id="lineWidth" min="1" max="10" value="4" oninput="updateRange('lineWidth','widthValue')" onchange="saveWire()">
-     <span class="range-value" id="widthValue">4 px</span>
-    </div>
-   </div>
-
-   <div class="option">
-    <div class="option-title">Line Opacity</div>
-    <div class="option-desc">Change the transparency of connection lines.</div>
-    <div class="range-line">
-     <input type="range" id="lineOpacity" min="10" max="100" value="95" oninput="updateRange('lineOpacity','opacityValue')" onchange="saveWire()">
-     <span class="range-value" id="opacityValue">95%</span>
-    </div>
-   </div>
-
-   <div class="option">
-    <div class="option-title">Animation Speed</div>
-    <div class="option-desc">Control the movement speed of dotted lines.</div>
-    <div class="range-line">
-     <input type="range" id="lineSpeed" min="1" max="5" step=".1" value="1.1" oninput="updateRange('lineSpeed','speedValue')" onchange="saveWire()">
-     <span class="range-value" id="speedValue">1.1x</span>
-    </div>
-   </div>
-
-  </div>
-
-  <div class="line-demo">
-   <span>📦 Box</span>
-   <div class="demo-wire" id="demoWire"></div>
-   <span>🏠 Customer</span>
-  </div>
-
-  <div class="hint">
-   💡 Preview shows how the connection line will look. The main map must also read these settings to apply them there.
-  </div>
- </div>
-</section>
-
-<div class="footer">ONE ONLINE | NETWORK MAP SETTINGS</div>
-</div>
-
-<!-- LOCATION TYPE MODAL -->
-<div class="modal-backdrop" id="typeModal">
- <div class="modal">
-  <h3 id="typeModalTitle">Add Location Type</h3>
-  <input type="hidden" id="typeEditId">
-
-  <div class="field">
-   <label>Type Name</label>
-   <input id="typeName" placeholder="Example: Main Box">
-  </div>
-  <div class="field">
-   <label>Icon / Emoji</label>
-   <input id="typeIcon" placeholder="Example: 📦">
-  </div>
-  <div class="field">
-   <label>Marker Color</label>
-   <input type="color" id="typeColor" value="#087f5b">
-  </div>
-  <div class="modal-actions">
-   <button class="btn btn-light" onclick="closeModal('typeModal')">Cancel</button>
-   <button class="btn btn-primary" onclick="saveType()">Save Type</button>
-  </div>
- </div>
-</div>
-
-<!-- CONNECTION TYPE MODAL -->
-<div class="modal-backdrop" id="connectionModal">
- <div class="modal">
-  <h3 id="connectionModalTitle">Add Connection Type</h3>
-  <input type="hidden" id="connectionEditId">
-
-  <div class="field">
-   <label>Connection Name</label>
-   <input id="connectionName" placeholder="Example: Fiber">
-  </div>
-  <div class="field">
-   <label>Connection Color</label>
-   <input type="color" id="connectionColor" value="#19d69a">
-  </div>
-  <div class="modal-actions">
-   <button class="btn btn-light" onclick="closeModal('connectionModal')">Cancel</button>
-   <button class="btn btn-primary" onclick="saveConnection()">Save Connection</button>
-  </div>
- </div>
-</div>
-
+<div class="loading" id="loading"><div class="spinner"></div><b>Loading Map Settings...</b><span style="color:#91a4bf">Connecting to Google Sheets</span></div>
 <div class="toast" id="toast"></div>
 
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
 <script>
-const K_VIEW='one_online_map_view_v1';
-const K_TYPES='one_online_map_types_v1';
-const K_CONNECTION_TYPES='one_online_connection_types_v1';
-const K_WIRE='one_online_map_wire_settings_v1';
-
-const DEFAULT_TYPES=[
- {id:'main_box',name:'Main Box',icon:'🗄️',color:'#e74c3c',enabled:true},
- {id:'sub_box',name:'Sub Box',icon:'📦',color:'#2878d0',enabled:true},
- {id:'pole',name:'Pole',icon:'🗼',color:'#e89b21',enabled:true},
- {id:'customer',name:'Customer',icon:'🏠',color:'#12a66a',enabled:true}
-];
-
-const DEFAULT_CONNECTIONS=[
- {id:'fiber',name:'Fiber',color:'#19d69a',enabled:true},
- {id:'cable',name:'Cable',color:'#2878d0',enabled:true},
- {id:'wireless',name:'Wireless',color:'#e6a23c',enabled:true},
- {id:'direct',name:'Direct Link',color:'#a855f7',enabled:true}
-];
-
-function read(key,fallback){
- try{
-  const v=localStorage.getItem(key);
-  return v===null?fallback:JSON.parse(v);
- }catch(e){return fallback}
-}
-function write(key,value){
- try{
-  localStorage.setItem(key,JSON.stringify(value));
-  return true;
- }catch(e){
-  toast('Could not save settings. Check browser storage.');
-  return false;
- }
-}
-function getTypes(){
- const v=read(K_TYPES,null);
- if(Array.isArray(v))return v;
- write(K_TYPES,DEFAULT_TYPES);
- return DEFAULT_TYPES.map(x=>({...x}));
-}
-function getConnections(){
- const v=read(K_CONNECTION_TYPES,null);
- if(Array.isArray(v))return v;
- write(K_CONNECTION_TYPES,DEFAULT_CONNECTIONS);
- return DEFAULT_CONNECTIONS.map(x=>({...x}));
-}
-function safe(v){
- return String(v??'').replace(/[&<>"']/g,c=>({
-  '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
- }[c]));
-}
-function toast(message){
- const el=document.getElementById('toast');
- el.textContent=message;
- el.classList.add('show');
- clearTimeout(window.toastTimer);
- window.toastTimer=setTimeout(()=>el.classList.remove('show'),2400);
-}
-function goMap(){location.href='map.html'}
-
-/* REAL MAP PREVIEWS */
-let previewMaps={};
-
-function initPreviews(){
- if(typeof L==='undefined'){
-  toast('Map preview library could not load. Check internet.');
-  return;
- }
-
- const center=[23.8103,90.4125];
-
- const common={
-  zoomControl:false,
-  attributionControl:false,
-  dragging:false,
-  scrollWheelZoom:false,
-  doubleClickZoom:false,
-  touchZoom:false,
-  keyboard:false,
-  boxZoom:false
- };
-
- const road=L.map('roadPreview',common).setView(center,13);
- L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
-  maxZoom:19
- }).addTo(road);
-
- const satellite=L.map('satellitePreview',common).setView(center,15);
- L.tileLayer(
-  'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-  {maxZoom:19}
- ).addTo(satellite);
-
- const hybrid=L.map('hybridPreview',common).setView(center,15);
- L.tileLayer(
-  'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-  {maxZoom:19}
- ).addTo(hybrid);
- L.tileLayer(
-  'https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}',
-  {maxZoom:19}
- ).addTo(hybrid);
-
- previewMaps={road,satellite,hybrid};
-
- setTimeout(()=>{
-  Object.values(previewMaps).forEach(m=>m.invalidateSize());
- },500);
-}
-
-/* MAP VIEW */
-function selectView(view){
- if(!['road','satellite','hybrid','network'].includes(view))return;
- if(write(K_VIEW,view)){
-  renderViews();
-  toast('Default map view saved!');
- }
-}
-function renderViews(){
- const current=read(K_VIEW,'road');
- document.querySelectorAll('.view-card').forEach(card=>{
-  card.classList.toggle('active',card.dataset.view===current);
+'use strict';
+const DEFAULT_SETTINGS={
+ view:'road',
+ types:[
+  {id:'main_box',name:'Main Box',icon:'🗄️',color:'#e74c3c',enabled:true},
+  {id:'sub_box',name:'Sub Box',icon:'📦',color:'#2878d0',enabled:true},
+  {id:'pole',name:'Pole',icon:'🗼',color:'#e89b21',enabled:true},
+  {id:'customer',name:'Customer',icon:'🏠',color:'#12a66a',enabled:true}
+ ],
+ connectionTypes:[
+  {id:'direct',name:'Direct Link',color:'#a855f7',enabled:true},
+  {id:'main_fiber',name:'Main Fiber',color:'#ff3030',enabled:true},
+  {id:'switch_link',name:'Switch Link',color:'#2878d0',enabled:true},
+  {id:'box_link',name:'Box Link',color:'#19d69a',enabled:true},
+  {id:'wireless',name:'Wireless',color:'#e6a23c',enabled:true}
+ ],
+ wire:{color:'#19d69a',width:4,opacity:.95,speed:1.1,animated:true,dotted:true}
+};
+let settings=clone(DEFAULT_SETTINGS),saving=false;
+function clone(v){return JSON.parse(JSON.stringify(v))}
+function el(id){return document.getElementById(id)}
+function toast(msg){const t=el('toast');t.textContent=msg;t.classList.add('show');clearTimeout(window._toastTimer);window._toastTimer=setTimeout(()=>t.classList.remove('show'),2800)}
+function setStatus(msg,state=''){el('syncStatus').textContent=msg;el('syncStatus').className='status '+state}
+function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function googleRun(fn,arg){
+ return new Promise((resolve,reject)=>{
+  if(!window.google||!google.script||!google.script.run){reject(new Error('Google Apps Script connection is unavailable. Open this page from your deployed Web App URL.'));return}
+  google.script.run.withSuccessHandler(resolve).withFailureHandler(reject)[fn](arg);
  });
 }
-
-/* LOCATION TYPES */
+function normalize(s){
+ s=s||{};
+ return {
+  view:['road','satellite','hybrid','network'].includes(s.view)?s.view:'road',
+  types:Array.isArray(s.types)&&s.types.length?s.types:clone(DEFAULT_SETTINGS.types),
+  connectionTypes:Array.isArray(s.connectionTypes)&&s.connectionTypes.length?s.connectionTypes:clone(DEFAULT_SETTINGS.connectionTypes),
+  wire:Object.assign({},clone(DEFAULT_SETTINGS.wire),s.wire||{})
+ };
+}
+function chooseView(view){settings.view=view;renderViews()}
+function renderViews(){document.querySelectorAll('.view-card').forEach(b=>b.classList.toggle('active',b.dataset.view===settings.view))}
 function renderTypes(){
- const list=document.getElementById('typeList');
- const types=getTypes();
-
- if(!types.length){
-  list.innerHTML='<div class="empty">No location types added yet.</div>';
-  return;
- }
-
- list.innerHTML=types.map(t=>`
-  <div class="item ${t.enabled===false?'disabled':''}">
-   <div class="item-left">
-    <div class="item-icon" style="color:${safe(t.color)}">${safe(t.icon||'📍')}</div>
-    <div>
-     <div class="item-name">${safe(t.name)}</div>
-     <div class="item-meta">
-      <span class="color-dot" style="background:${safe(t.color)}"></span>
-      ${safe(t.color)} · ${t.enabled===false?'Hidden':'Visible'}
-     </div>
-    </div>
-   </div>
-   <div class="item-actions">
-    <button class="btn btn-light btn-small" onclick="editType('${safe(t.id)}')">Edit</button>
-    <button class="btn btn-light btn-small" onclick="toggleType('${safe(t.id)}')">${t.enabled===false?'Show':'Hide'}</button>
-    <button class="btn btn-danger btn-small" onclick="deleteType('${safe(t.id)}')">Delete</button>
-   </div>
-  </div>
- `).join('');
+ el('nodeTypes').innerHTML=settings.types.map((t,i)=>`
+ <div class="type-row">
+  <input class="type-icon" aria-label="Icon" value="${esc(t.icon||'📍')}" maxlength="4" onchange="settings.types[${i}].icon=this.value">
+  <input class="type-name" aria-label="Location type name" value="${esc(t.name)}" onchange="settings.types[${i}].name=this.value">
+  <input class="color-input type-color" type="color" aria-label="Type color" value="${safeColor(t.color)}" onchange="settings.types[${i}].color=this.value">
+  <label class="switch"><input type="checkbox" ${t.enabled!==false?'checked':''} onchange="settings.types[${i}].enabled=this.checked"> Enabled</label>
+  <button class="mini-btn del" onclick="deleteType('node',${i})" title="Delete type">✕</button>
+ </div>`).join('')||'<div class="hint">No location types. Add a type below.</div>';
+ el('connectionTypes').innerHTML=settings.connectionTypes.map((t,i)=>`
+ <div class="type-row connection">
+  <span class="type-icon" style="display:grid;place-items:center">〰️</span>
+  <input class="type-name" aria-label="Connection type name" value="${esc(t.name)}" onchange="settings.connectionTypes[${i}].name=this.value">
+  <input class="color-input" type="color" aria-label="Connection color" value="${safeColor(t.color)}" onchange="settings.connectionTypes[${i}].color=this.value">
+  <label class="switch"><input type="checkbox" ${t.enabled!==false?'checked':''} onchange="settings.connectionTypes[${i}].enabled=this.checked"> Enabled</label>
+  <button class="mini-btn del" onclick="deleteType('connection',${i})" title="Delete type">✕</button>
+ </div>`).join('')||'<div class="hint">No connection types. Add one below.</div>';
 }
-
-function openTypeModal(){
- document.getElementById('typeModalTitle').textContent='Add Location Type';
- document.getElementById('typeEditId').value='';
- document.getElementById('typeName').value='';
- document.getElementById('typeIcon').value='📍';
- document.getElementById('typeColor').value='#087f5b';
- openModal('typeModal');
+function safeColor(c){return /^#[0-9a-f]{6}$/i.test(c||'')?c:'#19d69a'}
+function makeId(name){return String(name||'type').toLowerCase().trim().replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'')||'custom_type'}
+function addNodeType(){
+ const name=el('newNodeName').value.trim();if(!name)return toast('Enter a location type name');
+ let id=makeId(name);if(settings.types.some(t=>t.id===id))id+='_'+Date.now().toString(36);
+ settings.types.push({id,name,icon:'📍',color:'#12a66a',enabled:true});el('newNodeName').value='';renderTypes();
 }
-
-function editType(id){
- const t=getTypes().find(x=>x.id===id);
- if(!t)return;
-
- document.getElementById('typeModalTitle').textContent='Edit Location Type';
- document.getElementById('typeEditId').value=t.id;
- document.getElementById('typeName').value=t.name;
- document.getElementById('typeIcon').value=t.icon||'📍';
- document.getElementById('typeColor').value=t.color||'#087f5b';
- openModal('typeModal');
+function addConnectionType(){
+ const name=el('newConnectionName').value.trim();if(!name)return toast('Enter a connection type name');
+ let id=makeId(name);if(settings.connectionTypes.some(t=>t.id===id))id+='_'+Date.now().toString(36);
+ settings.connectionTypes.push({id,name,color:'#19d69a',enabled:true});el('newConnectionName').value='';renderTypes();
 }
-
-function saveType(){
- const id=document.getElementById('typeEditId').value;
- const name=document.getElementById('typeName').value.trim();
- const icon=document.getElementById('typeIcon').value.trim()||'📍';
- const color=document.getElementById('typeColor').value;
-
- if(!name){toast('Please enter a type name');return}
-
- const types=getTypes();
- if(types.some(t=>t.name.toLowerCase()===name.toLowerCase()&&t.id!==id)){
-  toast('This type name already exists');return;
- }
-
- if(id){
-  const t=types.find(x=>x.id===id);
-  if(t)Object.assign(t,{name,icon,color});
- }else{
-  types.push({id:'type_'+Date.now(),name,icon,color,enabled:true});
- }
-
- if(write(K_TYPES,types)){
-  closeModal('typeModal');
-  renderTypes();
-  toast('Location type saved');
- }
+function deleteType(which,i){
+ const arr=which==='node'?settings.types:settings.connectionTypes;
+ if(arr.length<=1)return toast('At least one type must remain');
+ if(!confirm('Delete this type from settings? Existing saved locations/connections using this type may no longer display with its correct label.'))return;
+ arr.splice(i,1);renderTypes();
 }
-
-function toggleType(id){
- const types=getTypes();
- const t=types.find(x=>x.id===id);
- if(!t)return;
- t.enabled=t.enabled===false;
- write(K_TYPES,types);
- renderTypes();
- toast(t.enabled?'Location type enabled':'Location type hidden');
+function updateRangeText(){
+ el('widthValue').textContent=el('wireWidth').value+' px';
+ el('widthText').textContent=el('wireWidth').value+' px';
+ el('opacityValue').textContent=el('wireOpacity').value+'%';
+ el('opacityText').textContent=el('wireOpacity').value+'%';
+ el('speedValue').textContent=Number(el('wireSpeed').value).toFixed(1)+'x';
+ el('speedText').textContent=Number(el('wireSpeed').value).toFixed(1)+'x';
 }
-
-function deleteType(id){
- const types=getTypes();
- const t=types.find(x=>x.id===id);
- if(!t)return;
- if(!confirm('Delete "'+t.name+'"?'))return;
- write(K_TYPES,types.filter(x=>x.id!==id));
- renderTypes();
- toast('Location type deleted');
+function fillWire(){
+ const w=settings.wire;
+ el('wireColor').value=safeColor(w.color);
+ el('wireWidth').value=Math.min(10,Math.max(1,Number(w.width)||4));
+ el('wireOpacity').value=Math.round(Math.min(1,Math.max(.1,Number(w.opacity??.95)))*100);
+ el('wireSpeed').value=Math.min(5,Math.max(.2,Number(w.speed)||1.1));
+ el('wireAnimated').checked=w.animated!==false;
+ el('wireDotted').checked=w.dotted!==false;
+ updateRangeText();
 }
-
-/* CONNECTION TYPES */
-function renderConnections(){
- const list=document.getElementById('connectionList');
- const types=getConnections();
-
- if(!types.length){
-  list.innerHTML='<div class="empty">No connection types added yet.</div>';
-  return;
- }
-
- list.innerHTML=types.map(t=>`
-  <div class="item ${t.enabled===false?'disabled':''}">
-   <div class="item-left">
-    <div class="item-icon">
-     <span class="color-dot" style="width:22px;height:22px;background:${safe(t.color)}"></span>
-    </div>
-    <div>
-     <div class="item-name">${safe(t.name)}</div>
-     <div class="item-meta">
-      <span class="color-dot" style="background:${safe(t.color)}"></span>
-      ${safe(t.color)} · ${t.enabled===false?'Hidden':'Available'}
-     </div>
-    </div>
-   </div>
-   <div class="item-actions">
-    <button class="btn btn-light btn-small" onclick="editConnection('${safe(t.id)}')">Edit</button>
-    <button class="btn btn-light btn-small" onclick="toggleConnection('${safe(t.id)}')">${t.enabled===false?'Show':'Hide'}</button>
-    <button class="btn btn-danger btn-small" onclick="deleteConnection('${safe(t.id)}')">Delete</button>
-   </div>
-  </div>
- `).join('');
+function renderAll(){renderViews();renderTypes();fillWire()}
+async function loadSettings(){
+ el('loading').style.display='flex';setStatus('Loading...');
+ try{
+  const data=await googleRun('getMapBootstrap',{});
+  if(!data||!data.success)throw new Error(data?.message||'Could not load map settings');
+  settings=normalize(data.settings);renderAll();setStatus('Connected to Google Sheets','ok');
+ }catch(err){
+  setStatus('Connection error','err');toast(err.message||'Could not load settings');
+  // Keep editable defaults visible, but clearly indicate that cloud loading failed.
+  renderAll();
+ }finally{el('loading').style.display='none'}
 }
-
-function openConnectionModal(){
- document.getElementById('connectionModalTitle').textContent='Add Connection Type';
- document.getElementById('connectionEditId').value='';
- document.getElementById('connectionName').value='';
- document.getElementById('connectionColor').value='#19d69a';
- openModal('connectionModal');
-}
-
-function editConnection(id){
- const t=getConnections().find(x=>x.id===id);
- if(!t)return;
-
- document.getElementById('connectionModalTitle').textContent='Edit Connection Type';
- document.getElementById('connectionEditId').value=t.id;
- document.getElementById('connectionName').value=t.name;
- document.getElementById('connectionColor').value=t.color||'#19d69a';
- openModal('connectionModal');
-}
-
-function saveConnection(){
- const id=document.getElementById('connectionEditId').value;
- const name=document.getElementById('connectionName').value.trim();
- const color=document.getElementById('connectionColor').value;
-
- if(!name){toast('Please enter a connection name');return}
-
- const types=getConnections();
- if(types.some(t=>t.name.toLowerCase()===name.toLowerCase()&&t.id!==id)){
-  toast('This connection type already exists');return;
- }
-
- if(id){
-  const t=types.find(x=>x.id===id);
-  if(t)Object.assign(t,{name,color});
- }else{
-  types.push({id:'connection_'+Date.now(),name,color,enabled:true});
- }
-
- if(write(K_CONNECTION_TYPES,types)){
-  closeModal('connectionModal');
-  renderConnections();
-  toast('Connection type saved');
- }
-}
-
-function toggleConnection(id){
- const types=getConnections();
- const t=types.find(x=>x.id===id);
- if(!t)return;
- t.enabled=t.enabled===false;
- write(K_CONNECTION_TYPES,types);
- renderConnections();
- toast(t.enabled?'Connection type enabled':'Connection type hidden');
-}
-
-function deleteConnection(id){
- const types=getConnections();
- const t=types.find(x=>x.id===id);
- if(!t)return;
- if(!confirm('Delete connection type "'+t.name+'"?'))return;
- write(K_CONNECTION_TYPES,types.filter(x=>x.id!==id));
- renderConnections();
- toast('Connection type deleted');
-}
-
-/* LINE SETTINGS */
-function wireDefaults(){
- return{
-  color:'#19d69a',
-  width:4,
-  opacity:.95,
-  speed:1.1,
-  animated:true,
-  dotted:true
- };
-}
-
-function loadWire(){
- const cfg={...wireDefaults(),...read(K_WIRE,{})};
-
- document.getElementById('animated').checked=cfg.animated!==false;
- document.getElementById('dotted').checked=cfg.dotted!==false;
- document.getElementById('lineColor').value=cfg.color||'#19d69a';
- document.getElementById('lineWidth').value=cfg.width||4;
- document.getElementById('lineOpacity').value=Math.round((cfg.opacity??.95)*100);
- document.getElementById('lineSpeed').value=cfg.speed||1.1;
-
- updateRange('lineWidth','widthValue');
- updateRange('lineOpacity','opacityValue');
- updateRange('lineSpeed','speedValue');
- updateDemo();
-}
-
-function saveWire(){
- const cfg={
-  color:document.getElementById('lineColor').value,
-  width:Number(document.getElementById('lineWidth').value),
-  opacity:Number(document.getElementById('lineOpacity').value)/100,
-  speed:Number(document.getElementById('lineSpeed').value),
-  animated:document.getElementById('animated').checked,
-  dotted:document.getElementById('dotted').checked
- };
-
- if(write(K_WIRE,cfg)){
-  updateDemo();
-  toast('Connection line settings saved');
- }
-}
-
-function updateRange(inputId,labelId){
- const v=document.getElementById(inputId).value;
- const suffix=inputId==='lineWidth'?' px':inputId==='lineOpacity'?'%':'x';
- document.getElementById(labelId).textContent=v+suffix;
- updateDemo();
-}
-
-function updateDemo(){
- const line=document.getElementById('demoWire');
- if(!line)return;
-
- const dotted=document.getElementById('dotted').checked;
- const animated=document.getElementById('animated').checked;
- const color=document.getElementById('lineColor').value;
- const width=document.getElementById('lineWidth').value;
- const speed=Number(document.getElementById('lineSpeed').value);
- const opacity=Number(document.getElementById('lineOpacity').value)/100;
-
- line.style.height=width+'px';
- line.style.opacity=opacity;
- line.style.background=dotted
-  ?`repeating-linear-gradient(90deg,${color} 0 3px,transparent 3px 11px)`
-  :color;
- line.style.backgroundSize='22px 100%';
- line.style.animation=animated?`demoMove ${1.1/speed}s linear infinite`:'none';
-}
-
-/* MODALS */
-function openModal(id){
- document.getElementById(id).classList.add('show');
-}
-function closeModal(id){
- document.getElementById(id).classList.remove('show');
-}
-
-document.querySelectorAll('.modal-backdrop').forEach(el=>{
- el.addEventListener('click',e=>{
-  if(e.target===el)el.classList.remove('show');
+async function saveAll(){
+ if(saving)return;
+ // Collect all editable controls into one complete settings object.
+ settings.types.forEach((t,i)=>{
+  const row=el('nodeTypes').children[i];if(!row)return;
+  t.icon=row.querySelector('.type-icon').value.trim()||'📍';
+  t.name=row.querySelector('.type-name').value.trim()||t.name;
+  t.color=row.querySelector('input[type=color]').value;
+  t.enabled=row.querySelector('input[type=checkbox]').checked;
  });
-});
-
-/* INIT */
-function init(){
- getTypes();
- getConnections();
- renderViews();
- renderTypes();
- renderConnections();
- loadWire();
- initPreviews();
+ settings.connectionTypes.forEach((t,i)=>{
+  const row=el('connectionTypes').children[i];if(!row)return;
+  t.name=row.querySelector('.type-name').value.trim()||t.name;
+  t.color=row.querySelector('input[type=color]').value;
+  t.enabled=row.querySelector('input[type=checkbox]').checked;
+ });
+ settings.wire={
+  color:el('wireColor').value,
+  width:Number(el('wireWidth').value),
+  opacity:Number(el('wireOpacity').value)/100,
+  speed:Number(el('wireSpeed').value),
+  animated:el('wireAnimated').checked,
+  dotted:el('wireDotted').checked
+ };
+ saving=true;setStatus('Saving settings...');
+ try{
+  const result=await googleRun('saveMapSettings',settings);
+  if(!result||!result.success)throw new Error(result?.message||'Settings save failed');
+  setStatus('Settings saved to Google Sheets','ok');toast('All map settings saved successfully');
+ }catch(err){setStatus('Save failed','err');toast(err.message||'Could not save settings')}
+ finally{saving=false}
 }
-init();
+function resetDefaults(){
+ if(!confirm('Restore all map settings to default values?'))return;
+ settings=clone(DEFAULT_SETTINGS);renderAll();toast('Default settings loaded. Click Save Settings to apply.');
+}
+function goMap(){const base=location.href.split('?')[0];location.href=base}
+window.addEventListener('load',loadSettings);
 </script>
 </body>
 </html>
